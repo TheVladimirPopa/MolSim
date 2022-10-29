@@ -26,7 +26,6 @@ void FileReader::readFile(std::list<Particle> &particles, char *filename) {
   std::string tmp_string;
 
   if (input_file.is_open()) {
-
     getline(input_file, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
 

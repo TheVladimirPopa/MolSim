@@ -7,13 +7,12 @@
 
 #pragma once
 
-#include "Particle.h"
-
 #include <list>
 
-class FileReader {
+#include "Particle.h"
 
-public:
+class FileReader {
+ public:
   FileReader();
   virtual ~FileReader();
 

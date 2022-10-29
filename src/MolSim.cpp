@@ -1,10 +1,10 @@
 
+#include <iostream>
+#include <list>
+
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
-
-#include <iostream>
-#include <list>
 
 /**** forward declaration of the calculation functions ****/
 
@@ -36,7 +36,6 @@ constexpr double delta_t = 0.014;
 std::list<Particle> particles;
 
 int main(int argc, char *argsv[]) {
-
   std::cout << "Hello from MolSim for PSE!" << std::endl;
   if (argc != 2) {
     std::cout << "Erroneous programme call! " << std::endl;
@@ -96,7 +95,6 @@ void calculateV() {
 }
 
 void plotParticles(int iteration) {
-
   std::string out_name("MD_vtk");
 
   outputWriter::XYZWriter writer;
