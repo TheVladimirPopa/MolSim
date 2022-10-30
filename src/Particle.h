@@ -72,6 +72,12 @@ public:
   bool operator==(Particle &other);
 
   std::string toString() const;
+
+  // Movementstuff
+  void resetForceIteration();
+  void addForce(Particle const& particle);
+  void updateLocation(double const&);
+  void updateVelocity(double const&);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

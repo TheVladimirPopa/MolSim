@@ -1,6 +1,8 @@
 
 #include "FileReader.h"
+#include "Particle.h"
 #include "outputWriter/XYZWriter.h"
+#include "outputWriter/VTKWriter.h"
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
@@ -29,8 +31,8 @@ void calculateV();
 void plotParticles(int iteration);
 
 constexpr double start_time = 0;
-constexpr double end_time = 1000;
-constexpr double delta_t = 0.014;
+constexpr double end_time = 10; // DEFAULT 1000
+constexpr double delta_t = 0.014; // DEFAULT 0.014
 
 // TODO: what data structure to pick?
 std::list<Particle> particles;
@@ -46,6 +48,8 @@ int main(int argc, char *argsv[]) {
   FileReader fileReader;
   fileReader.readFile(particles, argsv[1]);
 
+
+
   double current_time = start_time;
 
   int iteration = 0;
@@ -60,7 +64,8 @@ int main(int argc, char *argsv[]) {
     calculateV();
 
     iteration++;
-    if (iteration % 10 == 0) {
+    // DEFAULT 10
+    if (iteration % 50 == 0) {
       plotParticles(iteration);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
@@ -77,21 +82,26 @@ void calculateF() {
   iterator = particles.begin();
 
   for (auto &p1 : particles) {
-    for (auto &p2 : particles) {
-      // @TODO: insert calculation of forces here!
+      p1.resetForceIteration();
+        for (auto &p2 : particles) {
+            // @TODO: insert calculation of forces here! DONE
+            if (!(p1 == p2)) p1.addForce(p2);
+        }
     }
-  }
 }
 
 void calculateX() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of position updates here!
+    // @TODO: insert calculation of position updates here! DONE
+        p.updateLocation(delta_t);
+        std::cout << p.toString() << '\n';
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of veclocity updates here!
+    // @TODO: insert calculation of veclocity updates here! DONE
+        p.updateVelocity(delta_t);
   }
 }
 
@@ -99,6 +109,14 @@ void plotParticles(int iteration) {
 
   std::string out_name("MD_vtk");
 
-  outputWriter::XYZWriter writer;
-  writer.plotParticles(particles, out_name, iteration);
+  //outputWriter::XYZWriter writer;
+  //writer.plotParticles(particles, out_name, iteration);
+
+  outputWriter::VTKWriter writer;
+  writer.initializeOutput(particles.size());
+  for (auto &p : particles) {
+    writer.plotParticle(p);
+  }
+
+  //writer.writeFile(out_name, iteration);
 }
