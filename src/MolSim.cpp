@@ -1,29 +1,17 @@
 
 #include <iostream>
 #include <list>
-
+#include "utils/Interfaces.h"
 #include "FileReader.h"
+#include "NewtonsLawModel.h"
 #include "Particle.h"
-#include "outputWriter/XYZWriter.h"
 #include "outputWriter/VTKWriter.h"
+#include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
+
 
 /**** forward declaration of the calculation functions ****/
 
-/**
- * calculate the force for all particles
- */
-void calculateF();
-
-/**
- * calculate the position for all particles
- */
-void calculateX();
-
-/**
- * calculate the position for all particles
- */
-void calculateV();
 
 /**
  * plot the particles to a xyz-file
@@ -47,20 +35,21 @@ int main(int argc, char *argsv[]) {
   FileReader fileReader;
   fileReader.readFile(particles, argsv[1]);
 
+  // Strategy pattern, rough idea:
+  ParticleContainer particleContainer;
+  for (auto p : particles)
+    particleContainer.addParticle(p);
 
+  NewtonsLawModel model;
+  particleContainer.setModel(&model);
+  // ----------------
 
   double current_time = start_time;
-
   int iteration = 0;
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < end_time) {
-    // calculate new x
-    calculateX();
-    // calculate new f
-    calculateF();
-    // calculate new v
-    calculateV();
+    model.iterate(particleContainer, delta_t);
 
     iteration++;
     // DEFAULT 10
@@ -76,33 +65,9 @@ int main(int argc, char *argsv[]) {
   return 0;
 }
 
-void calculateF() {
-  std::list<Particle>::iterator iterator;
-  iterator = particles.begin();
 
-  for (auto &p1 : particles) {
-      p1.resetForceIteration();
-        for (auto &p2 : particles) {
-            // @TODO: insert calculation of forces here! DONE
-            if (!(p1 == p2)) p1.addForce(p2);
-        }
-    }
-}
 
-void calculateX() {
-  for (auto &p : particles) {
-    // @TODO: insert calculation of position updates here! DONE
-        p.updateLocation(delta_t);
-        std::cout << p.toString() << '\n';
-  }
-}
 
-void calculateV() {
-  for (auto &p : particles) {
-    // @TODO: insert calculation of veclocity updates here! DONE
-        p.updateVelocity(delta_t);
-  }
-}
 
 void plotParticles(int iteration) {
   std::string out_name("MD_vtk");
