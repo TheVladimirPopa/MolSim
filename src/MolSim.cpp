@@ -11,7 +11,12 @@
 
 
 /**** forward declaration of the calculation functions ****/
-
+/**
+ * Run the particle simulation with the chosen model.
+ * (This implements the strategy pattern.)
+ * @param The chosen model for the simulation in each iteration.
+ */
+void simulate(IModel const& model, ParticleContainer& particles);
 
 /**
  * plot the particles to a xyz-file
@@ -23,7 +28,7 @@ constexpr double end_time = 10; // DEFAULT 1000
 constexpr double delta_t = 0.014; // DEFAULT 0.014
 
 // TODO: what data structure to pick?
-std::list<Particle> particles;
+std::vector<Particle> particles;
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
@@ -35,23 +40,26 @@ int main(int argc, char *argsv[]) {
   FileReader fileReader;
   fileReader.readFile(particles, argsv[1]);
 
-  // Strategy pattern, rough idea:
-  ParticleContainer particleContainer;
-  for (auto p : particles)
-    particleContainer.addParticle(p);
+  ParticleContainer particleContainer{particles};
+  NewtonsLawModel model{};
+  model.setDeltaT(delta_t);
+  simulate(model, particleContainer);
 
-  NewtonsLawModel model;
-  particleContainer.setModel(&model);
-  // ----------------
+  std::cout << "output written. Terminating..." << std::endl;
+  return 0;
+}
 
+void simulate(IModel const& model, ParticleContainer& pContainer) {
   double current_time = start_time;
   int iteration = 0;
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < end_time) {
-    model.iterate(particleContainer, delta_t);
+    pContainer.forEach(model.updateX);
+    pContainer.forEach(model.updateV);
+    pContainer.forEach(model.resetForce);
+    pContainer.forEachPair(model.updateForce);
 
-    iteration++;
     // DEFAULT 10
     if (iteration % 50 == 0) {
       plotParticles(iteration);
@@ -60,11 +68,7 @@ int main(int argc, char *argsv[]) {
 
     current_time += delta_t;
   }
-
-  std::cout << "output written. Terminating..." << std::endl;
-  return 0;
 }
-
 
 
 
@@ -72,14 +76,12 @@ int main(int argc, char *argsv[]) {
 void plotParticles(int iteration) {
   std::string out_name("MD_vtk");
 
-  //outputWriter::XYZWriter writer;
-  //writer.plotParticles(particles, out_name, iteration);
-
   outputWriter::VTKWriter writer;
   writer.initializeOutput(particles.size());
   for (auto &p : particles) {
     writer.plotParticle(p);
   }
 
+  // todo: output code
   //writer.writeFile(out_name, iteration);
 }

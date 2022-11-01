@@ -1,13 +1,16 @@
 #pragma once
 #include "utils/Interfaces.h"
 class NewtonsLawModel : public IModel {
+ private:
+  double computeSquareDistance(const Particle &p1, const Particle &p2);
+
  public:
   virtual ~NewtonsLawModel() {};
-  virtual void iterate(ParticleContainer &particleContainer, double const& delta_t) override;
 
-  void calculateF(ParticleContainer &particles);
-
-  void calculateX(ParticleContainer &particles, double const& delta_t);
-
-  void calculateV(ParticleContainer &particles, double const& delta_t);
+  /**
+   * Add forces to both particles based on Newtons law of gravitation.
+   * @param p1 Particle 1
+   * @param p2 Particle 2
+   */
+  virtual void addForces(Particle &p1, Particle &p2) override;
 };

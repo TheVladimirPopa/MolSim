@@ -72,42 +72,14 @@ std::ostream &operator<<(std::ostream &stream, Particle &p) {
   return stream;
 }
 
-void Particle::updateLocation(double const& delta_t) {
-    x[0] += v[0] * delta_t;
-    x[1] += v[1] * delta_t;
-    x[2] += v[2] * delta_t;
-}
 
-void Particle::resetForceIteration() {
+void Particle::resetForces() {
     // todo: is this a value by value copy?
     old_f = f;
+    f[0] = 0.;
+    f[1] = 0.;
+    f[2] = 0.;
 }
-
-void Particle::addForce(Particle const& partner) {
-    constexpr double grav_const = 1;
-
-    // Calculate difference vector
-    double a = partner.x[0] - x[0];
-    double b = partner.x[1] - x[1];
-    double c = partner.x[2] - x[2];
-
-    // Add current particle force
-    double distance_cube = std::pow(a*a + b*b + c*c, 1.5);
-
-    f[0] += grav_const * ((partner.m * m) / distance_cube) * a;
-    f[1] += grav_const * ((partner.m * m) / distance_cube) * b;
-    f[2] += grav_const * ((partner.m * m) / distance_cube) * c;
-
-    // Todo:
-    // Newtons first law: the force from a upon b is the negative force from b upon a
-}
-
-void Particle::updateVelocity(double const& delta_t) {
-    v[0] += (f[0] + old_f[0]) / (2 * m) * delta_t;
-    v[1] += (f[1] + old_f[1]) / (2 * m) * delta_t;
-    v[2] += (f[2] + old_f[2]) / (2 * m) * delta_t;
-}
-
 
 
 

@@ -10,6 +10,9 @@
 #include <array>
 #include <string>
 
+class IModel;
+class NewtonsLawModel;
+
 class Particle {
  private:
   /**
@@ -72,11 +75,12 @@ class Particle {
 
   std::string toString() const;
 
-  // Movementstuff
-  void resetForceIteration();
-  void addForce(Particle const& particle);
-  void updateLocation(double const&);
-  void updateVelocity(double const&);
+  // Todo: How do we want to expose attributes such as f, old_f, x?
+  //  Friendships cannot be inherited so this is not a good solution.
+  friend class IModel;
+  friend class NewtonsLawModel;
+
+  void resetForces();
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

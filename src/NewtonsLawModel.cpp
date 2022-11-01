@@ -1,43 +1,27 @@
 #include "NewtonsLawModel.h"
 #include <iostream>
-
-void NewtonsLawModel::iterate(ParticleContainer &particleContainer, double const& delta_t)
-{
-  // calculate new x
-  calculateX(particleContainer, delta_t);
-  // calculate new f
-  calculateF(particleContainer);
-  // calculate new v
-  calculateV(particleContainer, delta_t);
-}
+#include <cmath>
 
 /**
- * calculate the force for all particles
+ * todo: document this
  */
-void NewtonsLawModel::calculateF(ParticleContainer &particles) {
-  for (auto &p1 : particles) {
-    p1.resetForceIteration();
-    for (auto &p2 : particles) {
-      if (!(p1 == p2)) p1.addForce(p2);
-    }
+void NewtonsLawModel::addForces(Particle &p1, Particle &p2) {
+  // Todo: this is Leos version. Maybe wait for Vladimirs version.
+  std::array<double, 3> p1Force{0.0, 0.0, 0.0};
+
+  double quotient =
+      p1.getM() * p2.getM() * pow(computeSquareDistance(p1, p2), -1.5);
+  for (size_t dimension = 0; dimension < p1.getX().size(); ++dimension) {
+    double force = quotient * (p2.getX()[dimension] - p1.getX()[dimension]);
+    p1.f[dimension] += force;
+    p2.f[dimension] -= force; // Newtons 3rd law
   }
 }
 
-/**
- * calculate the position for all particles
- */
-void NewtonsLawModel::calculateX(ParticleContainer &particles, double const& delta_t) {
-  for (auto &p : particles) {
-    p.updateLocation(delta_t);
-    std::cout << p.toString() << '\n';
+double NewtonsLawModel::computeSquareDistance(const Particle &p1, const Particle &p2) {
+  double sum{0.0};
+  for (size_t dimension = 0; dimension < p1.getX().size(); ++dimension) {
+    sum += pow(p1.getX()[dimension] - p2.getX()[dimension], 2);
   }
-}
-
-/**
- * calculate the position for all particles
- */
-void NewtonsLawModel::calculateV(ParticleContainer &particles, double const& delta_t) {
-  for (auto &p : particles) {
-    p.updateVelocity(delta_t);
-  }
+  return sum;
 }

@@ -12,6 +12,10 @@ class ParticleContainer {
   std::vector<Particle> vector;
 
  public:
+  ParticleContainer(std::vector<Particle> const& vector) : vector(vector)
+  {
+  }
+
   /**
    *
    * @param unaryFunction The function which gets applied to all particles in
