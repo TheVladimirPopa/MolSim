@@ -1,38 +1,29 @@
+//
+// Created by leo on 01.11.22.
+//
 #pragma once
-
-#include <algorithm>
+#include <functional>
 #include <vector>
 
 #include "Particle.h"
-#include "utils/Interfaces.h"
 
-class IModel;
 class ParticleContainer {
  private:
-  std::vector<Particle> particles;
-  IModel* model = nullptr;
+  std::vector<Particle> vector;
 
  public:
-  ParticleContainer() {}
+  /**
+   *
+   * @param unaryFunction The function which gets applied to all particles in
+   * the container
+   */
+  void forEach(std::function<void(Particle &)> &unaryFunction);
+  /**
+   *
+   * @param binaryFunction The function that gets applied to each possible pair
+   * of Particles
+   */
+  void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction);
 
-  ParticleContainer(IModel* model) : model(model) {}
-
-  ParticleContainer(std::vector<Particle> particles, IModel* model)
-      : particles(particles), model(model) {}
-
-  void addParticle(Particle p) { particles.push_back(std::move(p)); }
-  auto begin() { return particles.begin(); }
-  auto end() { return particles.end(); }
-  auto size() { return particles.size(); }
-  bool operator==(ParticleContainer const& other) const {
-    return false; // todo
-  }
-  auto operator[] (unsigned long n) const { return particles[n]; }
-
-  void setModel(IModel* m) {
-    model = m;
-  }
-
-
+  std::vector<Particle> &getVectorRef();
 };
-
