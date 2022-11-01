@@ -1,17 +1,17 @@
 # make doc_doxygen optional if someone does not have / like doxygen
 
 
-# TODO: create CMake build option for the target.
+# Create CMake build option for the target.
 option(BUILD_DOC "Enable building of doxygen documentation" ON)
 
-# TODO: Add a custom target for building the documentation.
+# Add a custom target for building the documentation.
 
 FIND_PACKAGE(Doxygen)
 
 IF (BUILD_DOC)
 
     IF (DOXYGEN_FOUND)
-        MESSAGE(STATUS "Doxygen found: ${DOXYGEN_EXECUTABLE} -- ${DOXYGEN_VERSION}")
+        MESSAGE(STATUS "Located ${DOXYGEN_EXECUTABLE} with version ${DOXYGEN_VERSION}")
         IF (DOXYGEN_VERSION VERSION_LESS 1.9.1)
             MESSAGE(WARNING "Only tested with doxygen version 1.9, your version(${DOXYGEN_VERSION}) is older and may not work. Consider updating.")
         ENDIF ()
