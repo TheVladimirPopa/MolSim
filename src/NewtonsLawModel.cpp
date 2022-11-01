@@ -2,13 +2,12 @@
 #include <iostream>
 #include <cmath>
 
+
 /**
  * todo: document this
  */
 void NewtonsLawModel::addForces(Particle &p1, Particle &p2) {
   // Todo: this is Leos version. Maybe wait for Vladimirs version.
-  std::array<double, 3> p1Force{0.0, 0.0, 0.0};
-
   double quotient =
       p1.getM() * p2.getM() * pow(computeSquareDistance(p1, p2), -1.5);
   for (size_t dimension = 0; dimension < p1.getX().size(); ++dimension) {

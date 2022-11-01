@@ -1,14 +1,16 @@
 
 #include <iostream>
 #include <list>
-#include "utils/Interfaces.h"
+#include <functional>
+
 #include "FileReader.h"
+#include "IModel.h"
 #include "NewtonsLawModel.h"
 #include "Particle.h"
+#include "ParticleContainer.h"
 #include "outputWriter/VTKWriter.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
-
 
 /**** forward declaration of the calculation functions ****/
 /**
@@ -16,15 +18,15 @@
  * (This implements the strategy pattern.)
  * @param The chosen model for the simulation in each iteration.
  */
-void simulate(IModel const& model, ParticleContainer& particles);
+void simulate(IModel & model, ParticleContainer& particles);
 
 /**
  * plot the particles to a xyz-file
  */
-void plotParticles(int iteration);
+void plotParticles(ParticleContainer& pContainer, int iteration);
 
 constexpr double start_time = 0;
-constexpr double end_time = 10; // DEFAULT 1000
+constexpr double end_time = 500; // DEFAULT 1000
 constexpr double delta_t = 0.014; // DEFAULT 0.014
 
 // TODO: what data structure to pick?
@@ -49,39 +51,53 @@ int main(int argc, char *argsv[]) {
   return 0;
 }
 
-void simulate(IModel const& model, ParticleContainer& pContainer) {
+// todo, model should be const
+void simulate(IModel & model, ParticleContainer& pContainer) {
   double current_time = start_time;
   int iteration = 0;
 
+
+  // todo: There has to be a better way for this kind of wrapping (js):
+  std::function<void(Particle &)> xFun = [&model](Particle &p){ model.updateX(p); };
+  std::function<void(Particle &)> vFun = [&model](Particle &p){ model.updateV(p); };
+  std::function<void(Particle &)> resetFun = [](Particle &p){ p.resetForces(); };
+  std::function<void(Particle &, Particle &)> forcesFun = [&model](Particle &p1, Particle &p2){ model.addForces(p1, p2); };
+
+
+  //std::function<void(Particle &)> debug = [](Particle &p) { std::cout << p.toString() << '\n'; }; // todo remove this
+
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < end_time) {
-    pContainer.forEach(model.updateX);
-    pContainer.forEach(model.updateV);
-    pContainer.forEach(model.resetForce);
-    pContainer.forEachPair(model.updateForce);
+    pContainer.forEach(xFun);
+    pContainer.forEach(vFun);
+    pContainer.forEach(resetFun);
+    pContainer.forEachPair(forcesFun);
+    //pContainer.forEach(debug); // todo remove this
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
-      plotParticles(iteration);
+      plotParticles(pContainer, iteration);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 
     current_time += delta_t;
+    iteration++;
   }
 }
 
 
 
 
-void plotParticles(int iteration) {
+void plotParticles(ParticleContainer& pContainer, int iteration) {
   std::string out_name("MD_vtk");
 
   outputWriter::VTKWriter writer;
   writer.initializeOutput(particles.size());
-  for (auto &p : particles) {
-    writer.plotParticle(p);
-  }
+
+  std::function<void(Particle &)> plotFun = [&writer](Particle &p){ writer.plotParticle(p); };
+  pContainer.forEach(plotFun);
+
 
   // todo: output code
-  //writer.writeFile(out_name, iteration);
+  writer.writeFile(out_name, iteration);
 }

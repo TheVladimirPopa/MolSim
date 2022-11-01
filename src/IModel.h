@@ -10,11 +10,11 @@ enum class Model {
 class IModel
 {
  private:
-  static double delta_t;
+  double delta_t;
 
 
  public:
-  virtual ~IModel() = 0;
+  virtual ~IModel() {}
 
   virtual void setDeltaT(double const& d_t) {
     delta_t = d_t;
@@ -25,7 +25,7 @@ class IModel
    * @param p The particle that gets its location changed
    * @param delta_t The time period in which the velocity affects the location
    */
-  static void updateX(Particle &p) {
+  virtual void updateX(Particle &p) {
     // Todo: this is Leos version. Maybe wait for Vladimirs version.
     for (size_t dimension = 0; dimension < p.getX().size(); ++dimension) {
       p.x[dimension] += (delta_t * p.v[dimension]) +
@@ -53,7 +53,7 @@ class IModel
    * DO NOT FORGET TO RESET THE CURRENT FORCES ON THE PARTICLE AT THE START OF
    * EACH ITERATION.
    */
-  virtual void addForces(Particle &p1, Particle &p2);
+  virtual void addForces(Particle &p1, Particle &p2) = 0;
 
 };
 

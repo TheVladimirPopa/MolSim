@@ -1,5 +1,5 @@
 #pragma once
-#include "utils/Interfaces.h"
+#include "IModel.h"
 class NewtonsLawModel : public IModel {
  private:
   double computeSquareDistance(const Particle &p1, const Particle &p2);
