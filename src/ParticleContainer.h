@@ -26,4 +26,6 @@ class ParticleContainer {
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction);
 
   std::vector<Particle> &getVectorRef();
+
+  ParticleContainer() { vector = std::vector<Particle>{}; }
 };
