@@ -2,33 +2,22 @@
 
 #include "Particle.h"
 #include "ParticleContainer.h"
-
-enum class Model {
-  NewtonsLaw
-};
+#include "utils/ArrayUtils.h"
 
 class IModel
 {
- private:
+  private:
   double delta_t;
 
 
  public:
-  void setDeltaT(double const& d_t) {
-    delta_t = d_t;
-  }
-
   /**
    * Calculate position of particle
    * @param p The particle that gets its location changed
    * @param delta_t The time period in which the velocity affects the location
    */
   virtual void updateX(Particle &p) const {
-    // Todo: this is Leos version. Maybe wait for Vladimirs version.
-    for (size_t dimension = 0; dimension < p.getX().size(); ++dimension) {
-      p.x[dimension] += (delta_t * p.v[dimension]) +
-                  ((delta_t * delta_t * p.getF()[dimension]) / (2 * p.getM()));
-    }
+    p.x = p.x + (delta_t * p.v + delta_t * delta_t * ((1/(2 * p.m)) * p.f));
   }
 
   /**
@@ -37,10 +26,7 @@ class IModel
    * @param delta_t The time period in which the forces accelerate the particle
    */
   virtual void updateV(Particle &p) const {
-    // Todo: this is Leos version. Maybe wait for Vladimirs version.
-    for (size_t dimension = 0; dimension < p.getX().size(); ++dimension) {
-      p.v[dimension] += (delta_t * (p.old_f[dimension] + p.f[dimension]) / (2 * p.m));
-    }
+    p.v = p.v + (delta_t * ((1/(2*p.m)) * (p.f + p.old_f)));
   }
 
   /**
@@ -53,6 +39,14 @@ class IModel
    */
   virtual void addForces(Particle &p1, Particle &p2) const = 0;
 
+
+  /**
+   * Sets the time period for the individual simulation iterations.
+   * @param d_t Simulated length of a single iteration
+   */
+  void setDeltaT(double const& d_t) {
+    delta_t = d_t;
+  }
 };
 
 
