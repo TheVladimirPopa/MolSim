@@ -7,15 +7,8 @@
 
 #include "Particle.h"
 
-class ParticleContainer {
- private:
-  std::vector<Particle> vector;
-
+class ParticleContainer : public std::vector<Particle> {
  public:
-  ParticleContainer(std::vector<Particle> & vector) : vector(std::move(vector))
-  {
-  }
-
   /**
    *
    * @param unaryFunction The function which gets applied to all particles in
@@ -28,6 +21,4 @@ class ParticleContainer {
    * of Particles
    */
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction);
-
-  std::vector<Particle> &getVectorRef();
 };
