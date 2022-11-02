@@ -70,3 +70,16 @@ std::ostream &operator<<(std::ostream &stream, Particle &p) {
   stream << p.toString();
   return stream;
 }
+
+
+void Particle::updateForces() {
+    old_f = f;
+    f = 0 * f;
+}
+
+
+
+
+
+
+

@@ -6,15 +6,15 @@
  */
 
 #pragma once
-
-#include <list>
+#include <vector>
 
 #include "Particle.h"
+
 
 class FileReader {
  public:
   FileReader();
   virtual ~FileReader();
 
-  void readFile(std::list<Particle> &particles, char *filename);
+  void readFile(std::vector<Particle> &particles, char *filename);
 };

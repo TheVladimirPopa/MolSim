@@ -10,6 +10,10 @@
 #include <array>
 #include <string>
 
+
+class IModel;
+class NewtonsLawModel;
+
 class Particle {
  private:
   /**
@@ -71,6 +75,16 @@ class Particle {
   bool operator==(Particle &other);
 
   std::string toString() const;
+
+  // We expose access to attributes via friendships for now. These are classes
+  // that are allowed to manipulate particles.
+  friend class IModel;
+  friend class NewtonsLawModel;
+
+  /**
+   * Move current forces on particle to old_f so we can start a new iteration.
+   */
+  void updateForces();
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

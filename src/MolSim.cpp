@@ -1,39 +1,32 @@
 
 #include <iostream>
-#include <list>
+#include <functional>
+
 
 #include "FileReader.h"
-#include "outputWriter/XYZWriter.h"
-#include "utils/ArrayUtils.h"
+#include "IModel.h"
+#include "NewtonsLawModel.h"
+#include "Particle.h"
+#include "ParticleContainer.h"
+#include "outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
-
 /**
- * calculate the force for all particles
+ * Run the particle simulation with the chosen model.
+ * (This implements the strategy pattern.)
+ * @param The chosen model for the simulation in each iteration.
  */
-void calculateF();
-
-/**
- * calculate the position for all particles
- */
-void calculateX();
-
-/**
- * calculate the position for all particles
- */
-void calculateV();
+void simulate(IModel const& model, ParticleContainer& particles);
 
 /**
  * plot the particles to a xyz-file
  */
-void plotParticles(int iteration);
+void plotParticles(ParticleContainer& pContainer, int iteration);
 
 constexpr double start_time = 0;
-constexpr double end_time = 1000;
-constexpr double delta_t = 0.014;
+constexpr double end_time = 10; // DEFAULT 1000
+constexpr double delta_t = 0.014; // DEFAULT 0.014
 
-// TODO: what data structure to pick?
-std::list<Particle> particles;
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
@@ -43,60 +36,72 @@ int main(int argc, char *argsv[]) {
   }
 
   FileReader fileReader;
+  std::vector<Particle> particles;
   fileReader.readFile(particles, argsv[1]);
 
-  double current_time = start_time;
-
-  int iteration = 0;
-
-  // for this loop, we assume: current x, current f and current v are known
-  while (current_time < end_time) {
-    // calculate new x
-    calculateX();
-    // calculate new f
-    calculateF();
-    // calculate new v
-    calculateV();
-
-    iteration++;
-    if (iteration % 10 == 0) {
-      plotParticles(iteration);
-    }
-    std::cout << "Iteration " << iteration << " finished." << std::endl;
-
-    current_time += delta_t;
-  }
+  ParticleContainer particleContainer{particles};
+  NewtonsLawModel model{};
+  model.setDeltaT(delta_t);
+  simulate(model, particleContainer);
 
   std::cout << "output written. Terminating..." << std::endl;
   return 0;
 }
 
-void calculateF() {
-  std::list<Particle>::iterator iterator;
-  iterator = particles.begin();
 
-  for (auto &p1 : particles) {
-    for (auto &p2 : particles) {
-      // @TODO: insert calculation of forces here!
+void simulate(IModel const& model, ParticleContainer& pContainer) {
+  double current_time = start_time;
+  int iteration = 0;
+
+  // This is wrapper code that hopefully we can replace in the future
+  std::function<void(Particle &)> updateX = [&model](Particle & p){
+    model.updateX(std::forward<Particle &>(p));
+  };
+
+  std::function<void(Particle &)> updateV = [&model](Particle &p){
+    model.updateV(std::forward<Particle &>(p));
+  };
+
+  std::function<void(Particle &)> updateF = [](Particle &p){
+    p.updateForces();
+  };
+
+  std::function<void(Particle &, Particle &)> addForces =
+    [&model](Particle &p1, Particle &p2){
+      model.addForces(std::forward<Particle &>(p1), std::forward<Particle &>(p2));
+    };
+
+  // for this loop, we assume: current x, current f and current v are known
+  while (current_time < end_time) {
+    pContainer.forEach(updateX);
+    pContainer.forEach(updateV);
+    pContainer.forEach(updateF);
+    pContainer.forEachPair(addForces);
+
+    // DEFAULT 10
+    if (iteration % 50 == 0) {
+      plotParticles(pContainer, iteration);
     }
+    std::cout << "Iteration " << iteration << " finished." << std::endl;
+
+    current_time += delta_t;
+    iteration++;
   }
 }
 
-void calculateX() {
-  for (auto &p : particles) {
-    // @TODO: insert calculation of position updates here!
-  }
-}
 
-void calculateV() {
-  for (auto &p : particles) {
-    // @TODO: insert calculation of veclocity updates here!
-  }
-}
 
-void plotParticles(int iteration) {
+
+void plotParticles(ParticleContainer& pContainer, int iteration) {
   std::string out_name("MD_vtk");
 
-  outputWriter::XYZWriter writer;
-  writer.plotParticles(particles, out_name, iteration);
+  outputWriter::VTKWriter writer;
+  writer.initializeOutput(pContainer.getVectorRef().size());
+
+  std::function<void(Particle &)> plotFun = [&writer](Particle &p){
+    writer.plotParticle(std::forward<Particle &>(p));
+  };
+  pContainer.forEach(plotFun);
+
+  writer.writeFile(out_name, iteration);
 }
