@@ -26,7 +26,6 @@ constexpr double start_time = 0;
 constexpr double end_time = 10; // DEFAULT 1000
 constexpr double delta_t = 0.014; // DEFAULT 0.014
 
-std::vector<Particle> particles;
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
@@ -36,6 +35,7 @@ int main(int argc, char *argsv[]) {
   }
 
   FileReader fileReader;
+  std::vector<Particle> particles;
   fileReader.readFile(particles, argsv[1]);
 
   ParticleContainer particleContainer{particles};
@@ -95,9 +95,11 @@ void plotParticles(ParticleContainer& pContainer, int iteration) {
   std::string out_name("MD_vtk");
 
   outputWriter::VTKWriter writer;
-  writer.initializeOutput(particles.size());
+  writer.initializeOutput(pContainer.getVectorRef().size());
 
-  std::function<void(Particle &)> plotFun = [&writer](Particle &p){ writer.plotParticle(p); };
+  std::function<void(Particle &)> plotFun = [&writer](Particle &p){
+    writer.plotParticle(std::forward<Particle &>(p));
+  };
   pContainer.forEach(plotFun);
 
 
