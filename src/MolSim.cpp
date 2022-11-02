@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <list>
 #include <functional>
 
 #include "FileReader.h"
@@ -9,8 +8,6 @@
 #include "Particle.h"
 #include "ParticleContainer.h"
 #include "outputWriter/VTKWriter.h"
-#include "outputWriter/XYZWriter.h"
-#include "utils/ArrayUtils.h"
 
 /**** forward declaration of the calculation functions ****/
 /**
@@ -18,15 +15,15 @@
  * (This implements the strategy pattern.)
  * @param The chosen model for the simulation in each iteration.
  */
-void simulate(IModel & model, ParticleContainer& particles);
+void simulate(IModel const& model, ParticleContainer& particles);
 
 /**
  * plot the particles to a xyz-file
  */
-void plotParticles(ParticleContainer& pContainer, int iteration);
+void plotParticles(ParticleContainer& pContainer);
 
 constexpr double start_time = 0;
-constexpr double end_time = 500; // DEFAULT 1000
+constexpr double end_time = 100; // DEFAULT 1000
 constexpr double delta_t = 0.014; // DEFAULT 0.014
 
 // TODO: what data structure to pick?
@@ -52,7 +49,7 @@ int main(int argc, char *argsv[]) {
 }
 
 // todo, model should be const
-void simulate(IModel & model, ParticleContainer& pContainer) {
+void simulate(IModel const& model, ParticleContainer& pContainer) {
   double current_time = start_time;
   int iteration = 0;
 
@@ -76,7 +73,7 @@ void simulate(IModel & model, ParticleContainer& pContainer) {
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
-      plotParticles(pContainer, iteration);
+      plotParticles(pContainer);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 
@@ -88,7 +85,7 @@ void simulate(IModel & model, ParticleContainer& pContainer) {
 
 
 
-void plotParticles(ParticleContainer& pContainer, int iteration) {
+void plotParticles(ParticleContainer& pContainer) {
   std::string out_name("MD_vtk");
 
   outputWriter::VTKWriter writer;
@@ -98,6 +95,6 @@ void plotParticles(ParticleContainer& pContainer, int iteration) {
   pContainer.forEach(plotFun);
 
 
-  // todo: output code
-  writer.writeFile(out_name, iteration);
+  // todo: uncomment code
+  // writer.writeFile(out_name, iteration);
 }

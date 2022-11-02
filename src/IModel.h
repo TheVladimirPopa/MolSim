@@ -14,9 +14,7 @@ class IModel
 
 
  public:
-  virtual ~IModel() {}
-
-  virtual void setDeltaT(double const& d_t) {
+  void setDeltaT(double const& d_t) {
     delta_t = d_t;
   }
 
@@ -25,7 +23,7 @@ class IModel
    * @param p The particle that gets its location changed
    * @param delta_t The time period in which the velocity affects the location
    */
-  virtual void updateX(Particle &p) {
+  virtual void updateX(Particle &p) const {
     // Todo: this is Leos version. Maybe wait for Vladimirs version.
     for (size_t dimension = 0; dimension < p.getX().size(); ++dimension) {
       p.x[dimension] += (delta_t * p.v[dimension]) +
@@ -38,7 +36,7 @@ class IModel
    * @param p The particle that gets its velocity changed
    * @param delta_t The time period in which the forces accelerate the particle
    */
-  virtual void updateV(Particle &p) {
+  virtual void updateV(Particle &p) const {
     // Todo: this is Leos version. Maybe wait for Vladimirs version.
     for (size_t dimension = 0; dimension < p.getX().size(); ++dimension) {
       p.v[dimension] += (delta_t * (p.old_f[dimension] + p.f[dimension]) / (2 * p.m));
@@ -53,11 +51,9 @@ class IModel
    * DO NOT FORGET TO RESET THE CURRENT FORCES ON THE PARTICLE AT THE START OF
    * EACH ITERATION.
    */
-  virtual void addForces(Particle &p1, Particle &p2) = 0;
+  virtual void addForces(Particle &p1, Particle &p2) const = 0;
 
 };
-
-
 
 
 

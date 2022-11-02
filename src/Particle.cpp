@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include "utils/ArrayUtils.h"
-#include <cmath>
 
 Particle::Particle(int type_arg) {
   type = type_arg;
