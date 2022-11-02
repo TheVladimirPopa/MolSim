@@ -75,12 +75,15 @@ class Particle {
 
   std::string toString() const;
 
-  // Todo: How do we want to expose attributes such as f, old_f, x?
-  //  Friendships cannot be inherited so this is not a good solution.
+  // We expose access to attributes via friendships for now. These are classes
+  // that are allowed to manipulate particles.
   friend class IModel;
   friend class NewtonsLawModel;
 
-  void resetForces();
+  /**
+   * Move current forces on particle to old_f so we can start a new iteration.
+   */
+  void updateForces();
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

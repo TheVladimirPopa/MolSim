@@ -72,12 +72,9 @@ std::ostream &operator<<(std::ostream &stream, Particle &p) {
 }
 
 
-void Particle::resetForces() {
-    // todo: is this a value by value copy?
+void Particle::updateForces() {
     old_f = f;
-    f[0] = 0.;
-    f[1] = 0.;
-    f[2] = 0.;
+    f = 0 * f;
 }
 
 
