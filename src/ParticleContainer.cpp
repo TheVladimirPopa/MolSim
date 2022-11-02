@@ -5,7 +5,7 @@
 #include "ParticleContainer.h"
 
 void ParticleContainer::forEach(std::function<void(Particle&)>& unaryFunction) {
-  for (int i = 0; i < size(); ++i) {
+  for (size_t i = 0; i < size(); ++i) {
     unaryFunction(this->operator[](i));
   }
 }
