@@ -1,4 +1,11 @@
-MolSim
+Molecular Simulation
 ===
+ 
+# Installation
+## Prerequisites
+Doxygen v.1.9
 
-The Molecular Dynamics teaching code.
+TODO
+
+# Usage
+TODO
