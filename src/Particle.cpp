@@ -71,15 +71,7 @@ std::ostream &operator<<(std::ostream &stream, Particle &p) {
   return stream;
 }
 
-
 void Particle::updateForces() {
-    old_f = f;
-    f = 0 * f;
+  old_f = f;
+  f = 0 * f;
 }
-
-
-
-
-
-
-

@@ -6,6 +6,7 @@
  */
 
 #include "outputWriter/XYZWriter.h"
+
 #include <iomanip>
 #include <sstream>
 
@@ -19,7 +20,8 @@ void XYZWriter::plotParticles(std::list<Particle> particles,
                               const std::string &filename, int iteration) {
   std::ofstream file;
   std::stringstream strstr;
-  strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
+  strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
+         << ".xyz";
 
   file.open(strstr.str().c_str());
   file << particles.size() << std::endl;
@@ -42,4 +44,4 @@ void XYZWriter::plotParticles(std::list<Particle> particles,
   file.close();
 }
 
-} // namespace outputWriter
+}  // namespace outputWriter

@@ -10,7 +10,6 @@
 #include <array>
 #include <string>
 
-
 class IModel;
 class NewtonsLawModel;
 

@@ -7,16 +7,15 @@
 
 #pragma once
 
-#include "Particle.h"
-
 #include <fstream>
 #include <list>
+
+#include "Particle.h"
 
 namespace outputWriter {
 
 class XYZWriter {
-
-public:
+ public:
   XYZWriter();
 
   virtual ~XYZWriter();
@@ -25,4 +24,4 @@ public:
                      int iteration);
 };
 
-} // namespace outputWriter
+}  // namespace outputWriter
