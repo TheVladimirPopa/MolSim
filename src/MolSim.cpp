@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 
+
 #include "FileReader.h"
 #include "IModel.h"
 #include "NewtonsLawModel.h"
@@ -102,7 +103,5 @@ void plotParticles(ParticleContainer& pContainer, int iteration) {
   };
   pContainer.forEach(plotFun);
 
-
-  // todo: uncomment code
-  // writer.writeFile(out_name, iteration);
+  writer.writeFile(out_name, iteration);
 }

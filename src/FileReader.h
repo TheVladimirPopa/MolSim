@@ -6,10 +6,10 @@
  */
 
 #pragma once
-
 #include <vector>
 
 #include "Particle.h"
+
 
 class FileReader {
  public:
