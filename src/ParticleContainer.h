@@ -12,7 +12,7 @@ class ParticleContainer {
   std::vector<Particle> vector;
 
  public:
-  ParticleContainer(std::vector<Particle> const& vector) : vector(vector)
+  ParticleContainer(std::vector<Particle> & vector) : vector(std::move(vector))
   {
   }
 
