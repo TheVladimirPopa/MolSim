@@ -2,7 +2,7 @@
 #include "IModel.h"
 class NewtonsLawModel : public IModel {
  public:
-  virtual ~NewtonsLawModel(){};
+  virtual ~NewtonsLawModel() = default;
 
   /**
    * Add the forces both particles apply upon each other according to

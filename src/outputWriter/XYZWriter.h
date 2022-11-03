@@ -13,12 +13,7 @@
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 
-
-
 class XYZWriter : public IWriter {
- private:
-  std::ofstream file;
-
  public:
   XYZWriter();
 
@@ -27,4 +22,3 @@ class XYZWriter : public IWriter {
   void writeFile(const std::string &filename, int iteration,
                  ParticleContainer &particles) override;
 };
-

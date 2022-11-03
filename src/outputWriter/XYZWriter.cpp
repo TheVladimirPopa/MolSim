@@ -10,7 +10,6 @@
 #include <iomanip>
 #include <sstream>
 
-
 XYZWriter::XYZWriter() = default;
 
 XYZWriter::~XYZWriter() = default;
