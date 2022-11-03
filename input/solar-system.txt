@@ -1,0 +1,23 @@
+#
+# file format: 
+# Lines of comment start with '#' and are only allowed at the beginning of the file
+# Empty lines are not allowed.
+# The first line not being a comment has to be one integer, indicating the number of 
+# molecule data sets.
+#
+# Molecule data consists of 
+# * xyz-coordinates (3 double values)
+# * velocities (2 or 3 double values)
+# * mass (1 double value)
+#
+# xyz-coord      velocity        mass
+9
+0.0 0.0 0.0      0.0 0.0 0.0     1.0
+0.0 0.4 0.0     -1.59 0.0 0.0    1.66e-7
+0.0 0.723 0.0   -1.17 0.0 0.0    2.45e-6
+0.0 1.0 0.0     -1.0 0.0 0.0     3.0e-6
+0.0 1.524 0.0   -0.809 0.0 0.0   6.495e-7
+0.0 5.203 0.0   -0.440 0.0 0.0   1.920e-3
+0.0 9.539 0.0   -0.326 0.0 0.0   5.746e-4
+0.0 19.18 0.0   -0.228 0.0 0.0   8.780e-5
+0.0 30.06 0.0   -0.181 0.0 0.0   1.032e-4
