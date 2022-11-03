@@ -7,22 +7,18 @@
 
 #pragma once
 
-#include "Particle.h"
-
 #include <fstream>
-#include <list>
 
-namespace outputWriter {
+#include "IWriter.h"
+#include "dataStructures/Particle.h"
+#include "dataStructures/ParticleContainer.h"
 
-class XYZWriter {
-
-public:
+class XYZWriter : public IWriter {
+ public:
   XYZWriter();
 
   virtual ~XYZWriter();
 
-  void plotParticles(std::list<Particle> particles, const std::string &filename,
-                     int iteration);
+  void writeFile(const std::string &filename, int iteration,
+                 ParticleContainer &particles) override;
 };
-
-} // namespace outputWriter
