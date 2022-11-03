@@ -7,17 +7,23 @@
 
 #include "VTKWriter.h"
 
-#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 
-namespace outputWriter {
-
 VTKWriter::VTKWriter() = default;
 
 VTKWriter::~VTKWriter() = default;
+
+void VTKWriter::writeFile(const std::string &filename, int iteration,
+                          ParticleContainer &particles) {
+  initializeOutput(particles.size());
+  for (auto &p : particles) {
+    plotParticle(p);
+  }
+  writeFile(filename, iteration);
+}
 
 void VTKWriter::initializeOutput(int numParticles) {
   vtkFile = new VTKFile_t("UnstructuredGrid");
@@ -97,5 +103,3 @@ void VTKWriter::plotParticle(Particle &p) {
   pointsIterator->push_back(p.getX()[1]);
   pointsIterator->push_back(p.getX()[2]);
 }
-
-}  // namespace outputWriter

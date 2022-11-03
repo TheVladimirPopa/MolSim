@@ -7,6 +7,7 @@
 #include "NewtonsLawModel.h"
 #include "Particle.h"
 #include "ParticleContainer.h"
+#include "outputWriter/OutputModel.h"
 #include "outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
@@ -15,12 +16,8 @@
  * (This implements the strategy pattern.)
  * @param The chosen model for the simulation in each iteration.
  */
-void simulate(IModel const &model, ParticleContainer &particles);
-
-/**
- * plot the particles to a xyz-file
- */
-void plotParticles(ParticleContainer &pContainer, int iteration);
+void simulate(IModel const &model, ParticleContainer &particles,
+              OutputModel &outputModel);
 
 constexpr double start_time = 0;
 constexpr double end_time = 10;    // DEFAULT 1000
@@ -33,18 +30,20 @@ int main(int argc, char *argsv[]) {
     std::cout << "./molsym filename" << std::endl;
   }
 
+  VTKWriter writer = VTKWriter{};
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, argsv[1]);
 
   NewtonsLawModel model{};
   model.setDeltaT(delta_t);
-  simulate(model, particleContainer);
+  simulate(model, particleContainer, writer);
 
   std::cout << "output written. Terminating..." << std::endl;
   return 0;
 }
 
-void simulate(IModel const &model, ParticleContainer &particles) {
+void simulate(IModel const &model, ParticleContainer &particles,
+              OutputModel &outputModel) {
   double current_time = start_time;
   int iteration = 0;
 
@@ -76,25 +75,11 @@ void simulate(IModel const &model, ParticleContainer &particles) {
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
-      plotParticles(particles, iteration);
+      outputModel.writeFile("MD_vtk", iteration, particles);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 
     current_time += delta_t;
     iteration++;
   }
-}
-
-void plotParticles(ParticleContainer &pContainer, int iteration) {
-  std::string out_name("MD_vtk");
-
-  outputWriter::VTKWriter writer;
-  writer.initializeOutput(static_cast<int>(pContainer.size()));
-
-  std::function<void(Particle &)> plotFun = [&writer](Particle &p) {
-    writer.plotParticle(std::forward<Particle &>(p));
-  };
-  pContainer.forEach(plotFun);
-
-  writer.writeFile(out_name, iteration);
 }

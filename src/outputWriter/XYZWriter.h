@@ -8,20 +8,25 @@
 #pragma once
 
 #include <fstream>
-#include <list>
 
+
+#include "OutputModel.h"
 #include "Particle.h"
+#include "ParticleContainer.h"
 
 namespace outputWriter {
 
-class XYZWriter {
+class XYZWriter : public OutputModel {
+ private:
+  std::ofstream file;
+
  public:
   XYZWriter();
 
   virtual ~XYZWriter();
 
-  void plotParticles(std::list<Particle> particles, const std::string &filename,
-                     int iteration);
+  void writeFile(const std::string &filename, int iteration,
+                 ParticleContainer &particles) override;
 };
 
 }  // namespace outputWriter
