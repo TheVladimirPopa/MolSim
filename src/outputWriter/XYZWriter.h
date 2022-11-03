@@ -9,14 +9,13 @@
 
 #include <fstream>
 
-
-#include "OutputModel.h"
+#include "IWriter.h"
 #include "Particle.h"
 #include "ParticleContainer.h"
 
 namespace outputWriter {
 
-class XYZWriter : public OutputModel {
+class XYZWriter : public IWriter {
  private:
   std::ofstream file;
 

@@ -7,7 +7,7 @@
 #include "NewtonsLawModel.h"
 #include "Particle.h"
 #include "ParticleContainer.h"
-#include "outputWriter/OutputModel.h"
+#include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
@@ -17,7 +17,7 @@
  * @param The chosen model for the simulation in each iteration.
  */
 void simulate(IModel const &model, ParticleContainer &particles,
-              OutputModel &outputModel);
+              IWriter &outputModel);
 
 constexpr double start_time = 0;
 double end_time = 1000;  // DEFAULT 1000
@@ -44,7 +44,7 @@ int main(int argc, char *argsv[]) {
     return 1;
   }
 
-  VTKWriter writer = VTKWriter{};
+  VTKWriter writer{};
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, argsv[1]);
 
@@ -57,7 +57,7 @@ int main(int argc, char *argsv[]) {
 }
 
 void simulate(IModel const &model, ParticleContainer &particles,
-              OutputModel &outputModel) {
+              IWriter &outputModel) {
   double current_time = start_time;
   int iteration = 0;
 

@@ -4,7 +4,7 @@
 #pragma once
 #include "../Particle.h"
 #include "ParticleContainer.h"
-class OutputModel {
+class IWriter {
  public:
   virtual void writeFile(const std::string &filename, int iteration,
                          ParticleContainer &particles) = 0;

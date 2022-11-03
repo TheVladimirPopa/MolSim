@@ -9,7 +9,7 @@
 
 #include <list>
 
-#include "OutputModel.h"
+#include "IWriter.h"
 #include "Particle.h"
 #include "ParticleContainer.h"
 #include "outputWriter/vtk-unstructured.h"
@@ -18,7 +18,7 @@
  * This class implements the functionality to generate vtk output from
  * particles.
  */
-class VTKWriter : public OutputModel {
+class VTKWriter : public IWriter {
  public:
   VTKWriter();
 
