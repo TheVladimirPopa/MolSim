@@ -20,14 +20,28 @@ void simulate(IModel const &model, ParticleContainer &particles,
               OutputModel &outputModel);
 
 constexpr double start_time = 0;
-constexpr double end_time = 10;    // DEFAULT 1000
-constexpr double delta_t = 0.014;  // DEFAULT 0.014
+double end_time = 1000;  // DEFAULT 1000
+double delta_t = 0.014;  // DEFAULT 0.014
+
+/**
+ * Parameters for running the simulation are: input_file, end_time, delta_t
+ */
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
-  if (argc != 2) {
+
+  char *err_ptr1;
+  char *err_ptr2;
+
+  if (argc == 4) {
+    end_time = strtod(argsv[2], &err_ptr1);
+    delta_t = strtod(argsv[3], &err_ptr2);
+  }
+
+  if (argc != 4 || *err_ptr2 != '\0' || *err_ptr1 != '\0') {
     std::cout << "Erroneous programme call! " << std::endl;
-    std::cout << "./molsym filename" << std::endl;
+    std::cout << "./molsym filename end_time delta_t" << std::endl;
+    return 1;
   }
 
   VTKWriter writer = VTKWriter{};
