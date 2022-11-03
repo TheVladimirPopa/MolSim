@@ -38,17 +38,12 @@ double delta_t = 0.014;  // DEFAULT 0.014
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
-  char *err_ptr1;
-  char *err_ptr2;
-
   if (argc == 4) {
-    end_time = strtod(argsv[2], &err_ptr1);
-    delta_t = strtod(argsv[3], &err_ptr2);
-  }
-
-  if (argc != 4 || *err_ptr2 != '\0' || *err_ptr1 != '\0') {
-    std::cout << "Erroneous programme call! " << std::endl;
-    std::cout << "./molsym filename end_time delta_t" << std::endl;
+    end_time = std::stod(argsv[2]);
+    delta_t = std::stod(argsv[3]);
+  } else {
+    std::cout << "Wrong argument count" << std::endl;
+    std::cout << "Usage: ./molsym filename end_time delta_t" << std::endl;
     return 1;
   }
 
