@@ -15,7 +15,7 @@ class IModel {
    * @param delta_t The time period in which the velocity affects the location
    */
   virtual void updateX(Particle &p) const {
-    p.x = p.x + (delta_t * p.v + delta_t * delta_t * ((1 / (2 * p.m)) * p.f));
+    p.x = p.x + ((delta_t * p.v )+ delta_t * delta_t * ((1 / (2 * p.m)) * p.f));
   }
 
   /**

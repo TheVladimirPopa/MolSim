@@ -83,9 +83,11 @@ void simulate(IModel const &model, ParticleContainer &particles,
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < end_time) {
     particles.forEach(updateX);
-    particles.forEach(updateV);
+
     particles.forEach(updateF);
     particles.forEachPair(addForces);
+
+    particles.forEach(updateV);
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
