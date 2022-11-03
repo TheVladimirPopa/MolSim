@@ -44,11 +44,11 @@ $ make
 ```
 
 ## Prerequisites
-- [cmake](https://cmake.org/) (version)
-- [gcc](https://gcc.gnu.org/) (version)
+- [cmake](https://cmake.org/) (3.18.4)
+- [gcc](https://gcc.gnu.org/) (11.1.0)
 - _(optional)_ [Clion](https://www.jetbrains.com/clion/) (IDE for running C++ code)
 - _(optional)_ [Doxygen](https://doxygen.nl/) (1.9)
-- _(optional)_ [Paraview](https://www.paraview.org/) (version)
+- _(optional)_ [Paraview](https://www.paraview.org/) (5.11.0)
 
 # Usage
 In order to perform simulation, run the `molsim` target with command line arguments 
