@@ -29,8 +29,8 @@ IF (BUILD_DOC)
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
         message(STATUS "Writing of doxygen-file done")
 
-        # Add doc_doxygen as a target to
-        add_custom_target(doc_doxygen ALL
+        # Add doc_doxygen as a target
+        add_custom_target(doc_doxygen
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 VERBATIM)
