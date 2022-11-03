@@ -2,65 +2,76 @@
 #include <functional>
 #include <iostream>
 
-#include "FileReader.h"
-#include "IModel.h"
-#include "NewtonsLawModel.h"
-#include "Particle.h"
-#include "ParticleContainer.h"
+#include "dataStructures/Particle.h"
+#include "dataStructures/ParticleContainer.h"
+#include "inputReader/FileReader.h"
+#include "model/IModel.h"
+#include "model/NewtonsLawModel.h"
+#include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
 /**
- * Run the particle simulation with the chosen model.
- * (This implements the strategy pattern.)
- * @param The chosen model for the simulation in each iteration.
+ * Simulate the particles with the given model and stepwidth of delta_t
+ * The start_time and end_time variable are used to determine the duration of
+ * the simulation
+ * @param model Defining the model to update x, f and v in each iteration
+ * @param particles All the particles that take part in the simulation
+ * @param fileWriter A way of outputting the results every nth iterations to a
+ * file
  */
-void simulate(IModel const &model, ParticleContainer &particles);
-
-/**
- * plot the particles to a xyz-file
- */
-void plotParticles(ParticleContainer &pContainer, int iteration);
+void simulate(IModel const &model, ParticleContainer &particles,
+              IWriter &fileWriter);
 
 constexpr double start_time = 0;
 double end_time = 1000;  // DEFAULT 1000
 double delta_t = 0.014;  // DEFAULT 0.014
 
 /**
- * Parameters for running the simulation are: input_file, end_time, delta_t
+ * Usage: ./MolSim inputfile end_time delta_t
+ * @param argc Has to be 4 in order to run
+ * @param argsv argsv[1] = inputfilePath;
+ *  argsv[2]= end_time;
+ *  argsv[3]= delta_t (stepwidth)
+ * @return 0 iff the simulation and I/O was successful
  */
-
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
-  char *err_ptr1;
-  char *err_ptr2;
-
+  // Argument parsing form commandline has to change in the future but for now
+  // it's fine :)
   if (argc == 4) {
-    end_time = strtod(argsv[2], &err_ptr1);
-    delta_t = strtod(argsv[3], &err_ptr2);
-  }
-
-  if (argc != 4 || *err_ptr2 != '\0' || *err_ptr1 != '\0') {
-    std::cout << "Erroneous programme call! " << std::endl;
-    std::cout << "./molsym filename end_time delta_t" << std::endl;
+    try {
+      end_time = std::stod(argsv[2]);
+      delta_t = std::stod(argsv[3]);
+    } catch (std::invalid_argument &e) {
+      std::cout << "Couldn't convert to double" << std::endl;
+      std::cout << "Usage: ./MolSim filename end_time delta_t" << std::endl;
+      return 1;
+    }
+  } else {
+    std::cout << "Wrong argument count" << std::endl;
+    std::cout << "Usage: ./MolSim filename end_time delta_t" << std::endl;
     return 1;
   }
 
-  FileReader fileReader;
-  std::vector<Particle> particles;
-  fileReader.readFile(particles, argsv[1]);
+  std::cout << "Running simulation from " << argsv[1] << " until " << end_time
+            << " with stepwidth of " << delta_t << std::endl;
 
-  ParticleContainer particleContainer{particles};
+  VTKWriter writer{};
+  ParticleContainer particleContainer{};
+  FileReader::readFile(particleContainer, argsv[1]);
+
   NewtonsLawModel model{};
   model.setDeltaT(delta_t);
-  simulate(model, particleContainer);
+  simulate(model, particleContainer, writer);
 
-  std::cout << "output written. Terminating..." << std::endl;
+  std::cout << "Output written. Terminating..." << std::endl;
   return 0;
 }
 
-void simulate(IModel const &model, ParticleContainer &pContainer) {
+void simulate(IModel const &model, ParticleContainer &particles,
+              IWriter &fileWriter) {
   double current_time = start_time;
   int iteration = 0;
 
@@ -85,32 +96,20 @@ void simulate(IModel const &model, ParticleContainer &pContainer) {
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < end_time) {
-    pContainer.forEach(updateX);
-    pContainer.forEach(updateV);
-    pContainer.forEach(updateF);
-    pContainer.forEachPair(addForces);
+    particles.forEach(updateX);
+
+    particles.forEach(updateF);
+    particles.forEachPair(addForces);
+
+    particles.forEach(updateV);
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
-      plotParticles(pContainer, iteration);
+      fileWriter.writeFile("MD_vtk", iteration, particles);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 
     current_time += delta_t;
     iteration++;
   }
-}
-
-void plotParticles(ParticleContainer &pContainer, int iteration) {
-  std::string out_name("MD_vtk");
-
-  outputWriter::VTKWriter writer;
-  writer.initializeOutput(pContainer.getVectorRef().size());
-
-  std::function<void(Particle &)> plotFun = [&writer](Particle &p) {
-    writer.plotParticle(std::forward<Particle &>(p));
-  };
-  pContainer.forEach(plotFun);
-
-  writer.writeFile(out_name, iteration);
 }
