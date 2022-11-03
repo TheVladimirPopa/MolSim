@@ -2,11 +2,11 @@
 #include <functional>
 #include <iostream>
 
-#include "FileReader.h"
-#include "IModel.h"
-#include "NewtonsLawModel.h"
-#include "Particle.h"
-#include "ParticleContainer.h"
+#include "model/IModel.h"
+#include "model/NewtonsLawModel.h"
+#include "dataStructures/Particle.h"
+#include "dataStructures/ParticleContainer.h"
+#include "inputReader/FileReader.h"
 #include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 

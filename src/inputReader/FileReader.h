@@ -8,8 +8,8 @@
 #pragma once
 #include <vector>
 
-#include "Particle.h"
-#include "ParticleContainer.h"
+#include "dataStructures/Particle.h"
+#include "dataStructures/ParticleContainer.h"
 
 class FileReader {
  public:
