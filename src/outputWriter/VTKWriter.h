@@ -28,10 +28,25 @@ class VTKWriter : public IWriter {
                  ParticleContainer &particles) override;
 
  private:
+  /**
+   * Setup internal data structures and prepare to plot data
+   * @param numParticles
+   */
   void initializeOutput(int numParticles);
 
+  /**
+   * writes the final output file.   *
+   * @param filename the base name of the file to be written.
+   * @param iteration the number of the current iteration,
+   *        which is used to generate an unique filename
+   */
   void writeFile(const std::string &filename, int iteration);
 
+  /**
+   * plot type, mass, position, velocity and force of a particle.
+   * @note: initializeOutput() must have been called before.
+   * @param p The particle that gets plotted
+   */
   void plotParticle(Particle &p);
 
   VTKFile_t *vtkFile;

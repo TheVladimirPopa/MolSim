@@ -10,7 +10,6 @@
 #include <iomanip>
 #include <sstream>
 
-namespace outputWriter {
 
 XYZWriter::XYZWriter() = default;
 
@@ -43,5 +42,3 @@ void XYZWriter::writeFile(const std::string &filename, int iteration,
 
   file.close();
 }
-
-}  // namespace outputWriter

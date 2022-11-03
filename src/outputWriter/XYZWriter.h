@@ -13,7 +13,7 @@
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 
-namespace outputWriter {
+
 
 class XYZWriter : public IWriter {
  private:
@@ -28,4 +28,3 @@ class XYZWriter : public IWriter {
                  ParticleContainer &particles) override;
 };
 
-}  // namespace outputWriter

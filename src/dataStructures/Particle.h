@@ -81,7 +81,8 @@ class Particle {
   friend class NewtonsLawModel;
 
   /**
-   * Move current forces on particle to old_f so we can start a new iteration.
+   * Move current forces on particle to old_f and set f to 0-vector so we can
+   * start a new iteration.
    */
   void updateForces();
 };

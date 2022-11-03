@@ -2,31 +2,39 @@
 #include <functional>
 #include <iostream>
 
-#include "model/IModel.h"
-#include "model/NewtonsLawModel.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
+#include "model/IModel.h"
+#include "model/NewtonsLawModel.h"
 #include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
 /**
- * Run the particle simulation with the chosen model.
- * (This implements the strategy pattern.)
- * @param The chosen model for the simulation in each iteration.
+ * Simulate the particles with the given model and stepwidth of delta_t
+ * The start_time and end_time variable are used to determine the duration of
+ * the simulation
+ * @param model Defining the model to update x, f and v in each iteration
+ * @param particles All the particles that take part in the simulation
+ * @param fileWriter A way of outputting the results every nth iterations to a
+ * file
  */
 void simulate(IModel const &model, ParticleContainer &particles,
-              IWriter &outputModel);
+              IWriter &fileWriter);
 
 constexpr double start_time = 0;
 double end_time = 1000;  // DEFAULT 1000
 double delta_t = 0.014;  // DEFAULT 0.014
 
 /**
- * Parameters for running the simulation are: input_file, end_time, delta_t
+ * Usage: ./MolSim inputfile end_time delta_t
+ * @param argc Has to be 4 in order to run
+ * @param argsv argsv[1] = inputfilePath;
+ *  argsv[2]= end_time;
+ *  argsv[3]= delta_t (stepwidth)
+ * @return 0 iff the simulation and I/O was successful
  */
-
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
@@ -52,12 +60,12 @@ int main(int argc, char *argsv[]) {
   model.setDeltaT(delta_t);
   simulate(model, particleContainer, writer);
 
-  std::cout << "output written. Terminating..." << std::endl;
+  std::cout << "Output written. Terminating..." << std::endl;
   return 0;
 }
 
 void simulate(IModel const &model, ParticleContainer &particles,
-              IWriter &outputModel) {
+              IWriter &fileWriter) {
   double current_time = start_time;
   int iteration = 0;
 
@@ -91,7 +99,7 @@ void simulate(IModel const &model, ParticleContainer &particles,
 
     // DEFAULT 10
     if (iteration % 50 == 0) {
-      outputModel.writeFile("MD_vtk", iteration, particles);
+      fileWriter.writeFile("MD_vtk", iteration, particles);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 

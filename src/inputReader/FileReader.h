@@ -16,5 +16,10 @@ class FileReader {
   FileReader();
   virtual ~FileReader();
 
+  /**
+   * Reads in a file and emplaces the read particle in the ParticleContainer
+   * @param particles The particleContainer in which the particles get emplaced
+   * @param filename Path to the input file
+   */
   static void readFile(ParticleContainer &particles, char *filename);
 };
