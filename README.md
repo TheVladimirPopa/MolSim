@@ -36,11 +36,11 @@ In order to perform simulation, run the `molsim` target with command line argume
 ```bash
 # simulation has an end time of 1000 and the difference between time segments (delta_t) is 0.014, with 
 # the input taken from the file ../input/eingabe-sonne.txt
-./MolSim.cpp ../input/eingabe-sonne.txt 1000 0.014
+./molsim ../input/eingabe-sonne.txt 1000 0.014
 ```
 Running the target with faulty parameters or with fewer parameters will return an appropriate output.
 
-# Visualisation
+# Visualisation (_optional_)
 In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
 - Import all `.vtu` output files all at once.
 - Click `Apply` after importing them.
@@ -49,8 +49,8 @@ In order to visualize the results of the simulation, open [Paraview](https://www
 - Choose a sensible scaling and disable masking.
 - Click `Apply`.
 - Center the camera on the data.
-- _(optional)_ Choose cooler colours nad adjust the colour scale.
-- _(optional)_ Rescale colour range over all time steps.
+- (_optional_) Choose cooler colours nad adjust the colour scale.
+- (_optional_) Rescale colour range over all time steps.
 - Run the simulation.
 
 # Full Documentation
