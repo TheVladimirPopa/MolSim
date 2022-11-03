@@ -1,31 +1,16 @@
-Molecular Simulation Assignment 1
+Molecular Simulation Assignment 1 Group D
 ===
+### Authors: Leo Pahl, Vladimir Popa, Jakob Semmler
+
 This is the first assignment as part of the Scientific Computing (PSE) Molecular Dynamics (IN0012, IN4229) practical course. The template this code is based on
 can be found [here](https://github.com/TUM-I5/MolSim).
-# Installation
-```bash
-$ git clone https://github.com/TheVladimirPopa/MolSim.git
-$ cd MolSim
-```
-### Build
 
-#### Using the Makefile:
+## Requirements
+- [cmake](https://cmake.org/) (3.18.4)
+- [gcc](https://gcc.gnu.org/) (11.1.0)
+- [Doxygen](https://doxygen.nl/) (1.9) (_Not mandatory, only for documentation_)
 
-1. Create a `build` folder and rund cmake with make.
-```bash
-$ mkdir build
-$ make
-```
-2. Access the newly created `./build` folder.
-```bash
-$ cd ./build
-```
-3. The `MolSim` target will be created with the generated Makefile.
-```bash
-$ make
-```
-
-#### Using CMake:
+## Build
 1. Create `build` folder.
 ```bash
 $ mkdir build
@@ -36,19 +21,14 @@ $ cd ./build
 ```
 3. Run `cmake` using the following arguments:
 ```bash
- $ cmake .. -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++
+# -D BUILD_DOC=ON is used to obtain a makefile for the documentation
+# -D BUILD_DOC=OFF if Doxygen is not installed
+ $ cmake .. -D BUILD_DOC=ON -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++
 ```
 4. Create the `molsim` target with the generated Makefile:
 ```bash 
 $ make
 ```
-
-## Prerequisites
-- [cmake](https://cmake.org/) (3.18.4)
-- [gcc](https://gcc.gnu.org/) (11.1.0)
-- _(optional)_ [Clion](https://www.jetbrains.com/clion/) (IDE for running C++ code)
-- _(optional)_ [Doxygen](https://doxygen.nl/) (1.9)
-- _(optional)_ [Paraview](https://www.paraview.org/) (5.11.0)
 
 # Usage
 In order to perform simulation, run the `molsim` target with command line arguments 
@@ -61,7 +41,7 @@ In order to perform simulation, run the `molsim` target with command line argume
 Running the target with faulty parameters or with fewer parameters will return an appropriate output.
 
 # Visualisation
-In order to visualize the results of the simulation, open Paraview.
+In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
 - Import all `.vtu` output files all at once.
 - Click `Apply` after importing them.
 - Create a Glyph filter.
