@@ -36,7 +36,7 @@ In order to perform simulation, run the `molsim` target with command line argume
 ```bash
 # simulation has an end time of 1000 and the difference between time segments (delta_t) is 0.014, with 
 # the input taken from the file ../input/eingabe-sonne.txt
-./molsim ../input/eingabe-sonne.txt 1000 0.014
+./MolSim ../input/eingabe-sonne.txt 1000 0.014
 ```
 Running the target with faulty parameters or with fewer parameters will return an appropriate output.
 
