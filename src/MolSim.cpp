@@ -36,13 +36,15 @@ int main(int argc, char *argsv[]) {
   char *err_ptr1;
   char *err_ptr2;
 
-  end_time = strtod(argsv[2], &err_ptr1);
-  delta_t = strtod(argsv[3], &err_ptr2);
+  if (argc == 4) {
+    end_time = strtod(argsv[2], &err_ptr1);
+    delta_t = strtod(argsv[3], &err_ptr2);
+  }
 
   if (argc != 4 || *err_ptr2 != '\0' || *err_ptr1 != '\0') {
     std::cout << "Erroneous programme call! " << std::endl;
-    std::cout << "./molsym filename" << std::endl;
-    return 0;
+    std::cout << "./molsym filename end_time delta_t" << std::endl;
+    return 1;
   }
 
   FileReader fileReader;
