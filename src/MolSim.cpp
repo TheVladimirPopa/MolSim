@@ -38,14 +38,25 @@ double delta_t = 0.014;  // DEFAULT 0.014
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
+  // Argument parsing form commandline has to change in the future but for now
+  // it's fine :)
   if (argc == 4) {
-    end_time = std::stod(argsv[2]);
-    delta_t = std::stod(argsv[3]);
+    try {
+      end_time = std::stod(argsv[2]);
+      delta_t = std::stod(argsv[3]);
+    } catch (std::invalid_argument &e) {
+      std::cout << "Couldn't convert to double" << std::endl;
+      std::cout << "Usage: ./MolSim filename end_time delta_t" << std::endl;
+      return 1;
+    }
   } else {
     std::cout << "Wrong argument count" << std::endl;
-    std::cout << "Usage: ./molsym filename end_time delta_t" << std::endl;
+    std::cout << "Usage: ./MolSim filename end_time delta_t" << std::endl;
     return 1;
   }
+
+  std::cout << "Running simulation from " << argsv[1] << " until " << end_time
+            << " with stepwidth of " << delta_t << std::endl;
 
   VTKWriter writer{};
   ParticleContainer particleContainer{};
