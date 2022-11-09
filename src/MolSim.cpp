@@ -41,15 +41,13 @@ int main(int argc, char *argsv[]) {
     return 1;
   }
 
-  std::cout << "Running simulation from " << argsv[1] << " until " << end_time
-            << " with stepwidth of " << delta_t << std::endl;
 
   VTKWriter writer{};
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, argsv[1]);
 
   NewtonsLawModel model{};
-  model.setDeltaT(delta_t);
+  model.setDeltaT(std::stod(argsv[3]));
   simulation.simulate(model, particleContainer, writer);
 
   std::cout << "Output written. Terminating..." << std::endl;
