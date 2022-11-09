@@ -4,7 +4,7 @@ ___
 
 ## Git workflow
 
-1. Make a new branch from master branch
+1. Make a new branch from master branch (See branch types style guide)
     ``` 
     $ git checkout master
     $ git pull
@@ -23,8 +23,9 @@ ___
     # for example
       $ git push origin feat/commandline-interface
     ```
-6. Click on the link in the command output
-7. Add us as reviewers and you as assignee and open pull request
+6. Loop back to step 2 if necassary
+7. Click on the link in the command output
+8. Add us as reviewers and you as assignee and open pull request
 
 ## Styleguide
 
