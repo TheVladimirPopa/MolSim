@@ -24,10 +24,26 @@ class Simulation {
   void simulate(IModel const &model, ParticleContainer &particles,
                 IWriter &fileWriter);
 
-  void setStartTime(double startTime);
+  /**
+   * Sets the time until the simulation is run
+   * @param endTime the new endTime
+   */
   void setEndTime(double endTime);
+  /**
+   * Sets the timestep by which the time gets increased in every iteration
+   * @param deltaT the new timestep size
+   */
   void setDeltaT(double deltaT);
+  /**
+   * Sets how often the particles get written to a file (every nth iteration)
+   * @param writeOutFrequency the new frequency for the writer
+   */
   void setWriteOutFrequency(int writeOutFrequency);
+  /**
+   * Sets the path to the output files(iteration number and file-ending are
+   * added automatically)
+   * @param filename the new path
+   */
   void setFilename(const std::string &filename);
 
  private:
