@@ -46,6 +46,12 @@ class Simulation {
    */
   void setFilename(const std::string &filename);
 
+  /**
+   * Returns the timestep by which the time gets increased in every iteration
+   * @return The timestep by which the time gets increased in every iteration
+   */
+  double getDeltaT() const;
+
  private:
   /**
    * The starttime where the simulation begins

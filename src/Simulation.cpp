@@ -54,3 +54,4 @@ void Simulation::setWriteOutFrequency(int writeOutFrequency) {
 void Simulation::setFilename(const std::string &filename) {
   Simulation::filename = filename;
 }
+double Simulation::getDeltaT() const { return deltaT; }
