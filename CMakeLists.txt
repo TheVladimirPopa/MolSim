@@ -12,47 +12,27 @@ if(NOT CMAKE_BUILD_TYPE)
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-# collect all cpp files
-file(GLOB_RECURSE MY_SRC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    # header don't need to be included but this might be necessary for some IDEs
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-)
 
-# create make target
-add_executable(MolSim ${MY_SRC})
-
-# set cxx standard. You may raise this if you want.
-target_compile_features(MolSim
-        PRIVATE
-            cxx_std_20
-)
-
-target_include_directories(MolSim
-        PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
-target_link_libraries(MolSim
-        # stuff that is used in headers and source files
-        PUBLIC
-            xerces-c
-)
-
-# activate all compiler warnings. Clean up your code :P
-# depending on the compiler different flags are used
-target_compile_options(MolSim
-        PRIVATE
-            $<$<CXX_COMPILER_ID:GNU>:-Wall>
-            # disable some spam warnings for icpc...
-            $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
-)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
+
+# Include google test
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        # Current commit id is version 1.12.1
+        # https://github.com/google/googletest/releases/tag/release-1.12.1
+        URL https://github.com/google/googletest/archive/58d77fa8070e8cec2dc1ed015d66b454c8d78850.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_subdirectory(src)
 
 
 add_subdirectory(tests)

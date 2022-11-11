@@ -1,10 +1,10 @@
-#include "../../src/dataStructures/Particle.h"
-#include "../../src/dataStructures/ParticleContainer.h"
+#include "ParticleContainerTest.h"
+#include "dataStructures/ParticleContainer.h"
 #include "gtest/gtest.h"
 
 TEST(ForEachTestSuite, AppliesToAllElements) {
   ParticleContainer particleContainer{};
-  /*
+
   std::array<double, 3> x_arg = {0.0, 0.0, 0.0};
   std::array<double, 3> v_arg = {0.0, 0.0, 0.0};
   double m_arg = 1.0;
@@ -13,7 +13,7 @@ TEST(ForEachTestSuite, AppliesToAllElements) {
   for (int i = 0; i < 50; i++) {
     Particle p{x_arg, v_arg, m_arg, type};
     particleContainer.push_back(p);
-  }*/
+  }
 
   int ct = 0;
   std::function<void(Particle &)> count =
