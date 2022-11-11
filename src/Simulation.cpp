@@ -28,6 +28,10 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
     model.addForces(std::forward<Particle &>(p1), std::forward<Particle &>(p2));
   };
 
+  // Initialize the force so that we know the current force for the first loop
+  particles.forEach(updateF);
+  particles.forEachPair(addForces);
+
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
     particles.forEach(updateX);
@@ -48,7 +52,7 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
 
 void Simulation::setEndTime(double endTime) { Simulation::endTime = endTime; }
 void Simulation::setDeltaT(double deltaT) { Simulation::deltaT = deltaT; }
-void Simulation::setWriteOutFrequency(int writeOutFrequency) {
+void Simulation::setIterationsPerWrite(unsigned int writeOutFrequency) {
   Simulation::writeOutFrequency = writeOutFrequency;
 }
 void Simulation::setFilename(const std::string &filename) {
