@@ -1,5 +1,6 @@
 
 #include <getopt.h>
+
 #include <iostream>
 
 #include "Simulation.h"
@@ -59,15 +60,65 @@ int main(int argc, char *argsv[]) {
       case 'i':
         break;
       case 'e': {
-        simulation.setEndTime(std::stod(optarg));
+        try {
+          double end = std::stod(optarg);
+          if (end < 0) {
+            std::cout << "End-time has to be positive but is " << end
+                      << std::endl;
+            printUsage();
+            return 1;
+          } else {
+            simulation.setEndTime(end);
+          }
+        } catch (std::invalid_argument &e) {
+          std::cout << "End-time has to be double, but failed to convert "
+                    << optarg << std::endl;
+          printUsage();
+          return 1;
+        }
+
         break;
       }
       case 'd': {
         simulation.setDeltaT(std::stod(optarg));
+        try {
+          double delta = std::stod(optarg);
+          if (delta < 0) {
+            std::cout << "DeltaT has to be positive but is " << delta
+                      << std::endl;
+            printUsage();
+            return 1;
+          } else {
+            simulation.setDeltaT(delta);
+          }
+        } catch (std::invalid_argument &e) {
+          std::cout << "DeltaT has to be double, but failed to convert "
+                    << optarg << std::endl;
+          printUsage();
+          return 1;
+        }
+
         break;
       }
       case 'w': {
-        simulation.setIterationsPerWrite(std::stoul(optarg));
+        try {
+          int frequency = std::stoi(optarg);
+          if (frequency <= 0) {
+            std::cout << "WriteOutFrequency has to be positive integer but "
+                      << frequency << " is negative" << std::endl;
+            printUsage();
+            return 1;
+          } else {
+            simulation.setIterationsPerWrite(frequency);
+          }
+        } catch (std::invalid_argument &e) {
+          std::cout << "WriteOutFrequency has to be positive integer but "
+                       "failed to convert "
+                    << optarg << std::endl;
+          printUsage();
+          return 1;
+        }
+
         break;
       }
       case 'h': {
@@ -127,12 +178,12 @@ void printHelp() {
          "\n"
          "        -f <filepath>, --input-file=<filepath>\n"
          "                Use the file at the <filepath> as an input.\n"
-         "                The -f option is mutally exclusive with -i.\n"
+         "                The -f option is mutually exclusive with -i.\n"
          "\n"
          "        -i, --interactive\n"
          "                Allows to interactively set up the simulation "
          "instead of reading in a inputfile.\n"
-         "                The -i option is mutally exclusive with -f.\n"
+         "                The -i option is mutually exclusive with -f.\n"
          "\n"
          "        -e <endtime>, --end-time=<endtime>\n"
          "                The time until the simulation is run (default is "
