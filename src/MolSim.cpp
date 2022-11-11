@@ -23,12 +23,14 @@ int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
   Simulation simulation{};
   char *inputFile;
+  simTypes simulationType = simTypes::Single;
   // Argument parsing form commandline has to change in the future but for now
   // it's fine :)
 
   int opt;
   static struct option long_options[] = {
       {"output-file", required_argument, nullptr, 'o'},
+      {"type", required_argument, nullptr, 't'},
       {"input-file", required_argument, nullptr, 'f'},
       {"interactive", no_argument, nullptr, 'i'},
       {"end-time", required_argument, nullptr, 'e'},
@@ -36,11 +38,22 @@ int main(int argc, char *argsv[]) {
       {"write-frequency", required_argument, nullptr, 'w'},
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
-  while ((opt = getopt_long(argc, argsv, "o:f:ie:d:w:h", long_options,
+
+  while ((opt = getopt_long(argc, argsv, "o:t:f:ie:d:w:h", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
+        break;
+      }
+      case 't': {
+        auto pos = simTypeStrings.find(optarg);
+        if (pos == simTypeStrings.end()) {
+          std::cout << "Type " << optarg << " is not known" << std::endl;
+          printUsage();
+        } else {
+          simulationType = pos->second;
+        }
         break;
       }
       case 'f': {
@@ -86,20 +99,22 @@ int main(int argc, char *argsv[]) {
   return 0;
 }
 void printUsage() {
-  std::cout << "Usage\n"
-               "        ./Molsim (-i|-f <inputfile>) [-o <outputfile>] [-e "
-               "<endtime>]\n"
-               "                 [-d <deltaT>] [-w <iteration-count>] \n"
-               "For more information run ./Molsim -h"
-            << std::endl;
+  std::cout
+      << "Usage\n"
+         "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
+         "<output-file>]\n"
+         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>]\n"
+         "\n"
+         "For more information run ./Molsim -h"
+      << std::endl;
 }
 
 void printHelp() {
   std::cout
       << "Usage\n"
-         "        ./Molsim (-i|-f <inputfile>) [-o <outputfile>] [-e "
-         "<endtime>]\n"
-         "                 [-d <deltaT>] [-w <iteration-count>] \n"
+         "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
+         "<output-file>]\n"
+         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>]\n"
          "\n"
          "OPTIONS:\n"
          "        -o <filepath>, --output-name=<filepath>\n"
@@ -107,6 +122,12 @@ void printHelp() {
          "outputfiles(iteration number and file-ending are added "
          "automatically)\n"
          "                If not specified \"MD_vtk\" is used\n"
+         "\n"
+         "        -t (single|cuboid), --type=(single|cuboid)\n"
+         "                Specifies the way to set up particles (default is "
+         "single).\n"
+         "                Use single if you want particles on their own and "
+         "use cuboid if you want the particles to spawn if cuboids.\n"
          "\n"
          "        -f <filepath>, --input-file=<filepath>\n"
          "                Use the file at the <filepath> as an input.\n"
