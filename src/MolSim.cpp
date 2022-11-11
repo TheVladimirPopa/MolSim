@@ -19,7 +19,8 @@ const std::map<std::string, simTypes> simTypeStrings{
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
   Simulation simulation{};
-  char *inputFile;
+  char *inputFile = nullptr;
+  bool interactive = false;
   simTypes simulationType = simTypes::Single;
   // Argument parsing form commandline has to change in the future but for now
   // it's fine :)
@@ -58,6 +59,7 @@ int main(int argc, char *argsv[]) {
         break;
       }
       case 'i':
+        interactive = true;
         break;
       case 'e': {
         try {
@@ -134,6 +136,15 @@ int main(int argc, char *argsv[]) {
     }
   }
 
+  if (interactive == (inputFile != nullptr)) {
+    std::cout
+        << "You have to specify exactly one input method. Use either "
+           "interactive mode or specify an input-file, but not both nor none."
+        << std::endl;
+    printUsage();
+    return 1;
+  }
+
   VTKWriter writer{};
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, inputFile);
@@ -174,7 +185,7 @@ void printHelp() {
          "                Specifies the way to set up particles (default is "
          "single).\n"
          "                Use single if you want particles on their own and "
-         "use cuboid if you want the particles to spawn if cuboids.\n"
+         "use cuboid if you want the particles to spawn in cuboids.\n"
          "\n"
          "        -f <filepath>, --input-file=<filepath>\n"
          "                Use the file at the <filepath> as an input.\n"
@@ -182,7 +193,7 @@ void printHelp() {
          "\n"
          "        -i, --interactive\n"
          "                Allows to interactively set up the simulation "
-         "instead of reading in a inputfile.\n"
+         "instead of reading in an inputfile.\n"
          "                The -i option is mutually exclusive with -f.\n"
          "\n"
          "        -e <endtime>, --end-time=<endtime>\n"
