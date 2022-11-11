@@ -48,7 +48,7 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
 
 void Simulation::setEndTime(double endTime) { Simulation::endTime = endTime; }
 void Simulation::setDeltaT(double deltaT) { Simulation::deltaT = deltaT; }
-void Simulation::setWriteOutFrequency(int writeOutFrequency) {
+void Simulation::setIterationsPerWrite(unsigned int writeOutFrequency) {
   Simulation::writeOutFrequency = writeOutFrequency;
 }
 void Simulation::setFilename(const std::string &filename) {

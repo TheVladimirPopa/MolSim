@@ -38,7 +38,7 @@ class Simulation {
    * Sets how often the particles get written to a file (every nth iteration)
    * @param writeOutFrequency the new frequency for the writer
    */
-  void setWriteOutFrequency(int writeOutFrequency);
+  void setIterationsPerWrite(unsigned int writeOutFrequency);
   /**
    * Sets the path to the output files(iteration number and file-ending are
    * added automatically)
@@ -64,7 +64,7 @@ class Simulation {
    * States how often the particles get written to a file (every nth
    * iteration)(default 10)
    */
-  int writeOutFrequency = 10;
+  unsigned int writeOutFrequency = 10;
   /**
    * Path to output file (default "MD_vtk")
    */

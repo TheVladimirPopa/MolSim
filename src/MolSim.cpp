@@ -1,14 +1,11 @@
 
-#include <functional>
 #include <iostream>
 
 #include "Simulation.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
-#include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
-#include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 
