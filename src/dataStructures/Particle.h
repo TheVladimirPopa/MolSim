@@ -12,6 +12,7 @@
 
 class IModel;
 class NewtonsLawModel;
+class LennardJonesModel;
 
 class Particle {
  private:
@@ -81,6 +82,7 @@ class Particle {
   // that are allowed to manipulate particles.
   friend class IModel;
   friend class NewtonsLawModel;
+  friend class LennardJonesModel;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can
