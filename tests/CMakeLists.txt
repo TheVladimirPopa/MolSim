@@ -13,6 +13,11 @@ target_link_libraries(MolSimTests
     MolSimLib
   )
 
+target_include_directories(MolSimTests
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
 # Standard: C++ 20
 target_compile_features(MolSimTests PRIVATE cxx_std_20)
 
