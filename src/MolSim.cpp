@@ -153,13 +153,16 @@ int main(int argc, char *argsv[]) {
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, inputFile);
 
+  NewtonsLawModel model{};
+  model.setDeltaT(simulation.getDeltaT());
+
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
 
-  NewtonsLawModel model{};
-  model.setDeltaT(simulation.getDeltaT());
-  simulation.simulate(model, particleContainer,
-                      noOutput ? noWriter : vtkWriter);
+  IWriter* selectedWriter = &noWriter;
+  if (!noOutput) selectedWriter = &vtkWriter;
+
+  simulation.simulate(model, particleContainer, *selectedWriter);
 
   std::cout << "Output written. Terminating..." << std::endl;
   return 0;
