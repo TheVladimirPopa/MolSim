@@ -145,10 +145,24 @@ int main(int argc, char *argsv[]) {
     return 1;
   }
 
-  VTKWriter writer{};
   ParticleContainer particleContainer{};
-  FileReader::readFile(particleContainer, inputFile);
+  switch (simulationType) {
+    case simTypes::Single: {
+      if (interactive) {
+      } else {
+        FileReader::readFile(particleContainer, inputFile);
+      }
+      break;
+    }
+    case simTypes::Cuboid: {
+      if (interactive) {
+      } else {
+      }
+      break;
+    }
+  }
 
+  VTKWriter writer{};
   NewtonsLawModel model{};
   model.setDeltaT(simulation.getDeltaT());
   simulation.simulate(model, particleContainer, writer);
