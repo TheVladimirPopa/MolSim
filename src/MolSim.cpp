@@ -152,21 +152,14 @@ int main(int argc, char *argsv[]) {
   ParticleContainer particleContainer{};
   switch (simulationType) {
     case simTypes::Single: {
-      if (interactive) {
-      } else {
         FileReader::readFile(particleContainer, inputFile);
-      }
       break;
     }
     case simTypes::Cuboid: {
-      if (interactive) {
-      } else {
-      }
       break;
     }
   }
 
-  VTKWriter writer{};
   NewtonsLawModel model{};
   model.setDeltaT(simulation.getDeltaT());
 
