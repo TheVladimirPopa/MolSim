@@ -8,6 +8,7 @@
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/NewtonsLawModel.h"
+#include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 void printHelp();
@@ -21,13 +22,13 @@ int main(int argc, char *argsv[]) {
   Simulation simulation{};
   char *inputFile = nullptr;
   bool interactive = false;
+  bool noOutput = false;
   simTypes simulationType = simTypes::Single;
-  // Argument parsing form commandline has to change in the future but for now
-  // it's fine :)
 
   int opt;
   static struct option long_options[] = {
       {"output-file", required_argument, nullptr, 'o'},
+      {"no-output", no_argument, nullptr, 'n'},
       {"type", required_argument, nullptr, 't'},
       {"input-file", required_argument, nullptr, 'f'},
       {"interactive", no_argument, nullptr, 'i'},
@@ -37,11 +38,15 @@ int main(int argc, char *argsv[]) {
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:t:f:ie:d:w:h", long_options,
+  while ((opt = getopt_long(argc, argsv, "o:nt:f:ie:d:w:h", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
+        break;
+      }
+      case 'n': {
+        noOutput = true;
         break;
       }
       case 't': {
@@ -64,7 +69,7 @@ int main(int argc, char *argsv[]) {
       case 'e': {
         try {
           double end = std::stod(optarg);
-          if (end < 0) {
+          if (end <= 0) {
             std::cout << "End-time has to be positive but is " << end
                       << std::endl;
             printUsage();
@@ -85,7 +90,7 @@ int main(int argc, char *argsv[]) {
         simulation.setDeltaT(std::stod(optarg));
         try {
           double delta = std::stod(optarg);
-          if (delta < 0) {
+          if (delta <= 0) {
             std::cout << "DeltaT has to be positive but is " << delta
                       << std::endl;
             printUsage();
@@ -145,26 +150,29 @@ int main(int argc, char *argsv[]) {
     return 1;
   }
 
-  VTKWriter writer{};
   ParticleContainer particleContainer{};
   FileReader::readFile(particleContainer, inputFile);
 
+  VTKWriter vtkWriter{};
+  NoWriter noWriter{};
+
   NewtonsLawModel model{};
   model.setDeltaT(simulation.getDeltaT());
-  simulation.simulate(model, particleContainer, writer);
+  simulation.simulate(model, particleContainer,
+                      noOutput ? noWriter : vtkWriter);
 
   std::cout << "Output written. Terminating..." << std::endl;
   return 0;
 }
 void printUsage() {
-  std::cout
-      << "Usage\n"
-         "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
-         "<output-file>]\n"
-         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>]\n"
-         "\n"
-         "For more information run ./Molsim -h"
-      << std::endl;
+  std::cout << "Usage\n"
+               "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
+               "<output-file>]\n"
+               "                [-e <endtime>] [-d <deltaT>] [-w "
+               "<iteration-count>] [-n]\n"
+               "\n"
+               "For more information run ./Molsim -h"
+            << std::endl;
 }
 
 void printHelp() {
@@ -172,7 +180,8 @@ void printHelp() {
       << "Usage\n"
          "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
          "<output-file>]\n"
-         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>]\n"
+         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] "
+         "[-n]\n"
          "\n"
          "OPTIONS:\n"
          "        -o <filepath>, --output-name=<filepath>\n"
@@ -180,6 +189,10 @@ void printHelp() {
          "outputfiles(iteration number and file-ending are added "
          "automatically)\n"
          "                If not specified \"MD_vtk\" is used\n"
+         "                \n"
+         "        -n, --no-output\n"
+         "                If active no files will be written, even overwrites "
+         "-o.\n"
          "\n"
          "        -t (single|cuboid), --type=(single|cuboid)\n"
          "                Specifies the way to set up particles (default is "
