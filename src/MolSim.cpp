@@ -152,7 +152,7 @@ int main(int argc, char *argsv[]) {
   ParticleContainer particleContainer{};
   switch (simulationType) {
     case simTypes::Single: {
-        FileReader::readFile(particleContainer, inputFile);
+      FileReader::readFileSingle(particleContainer, inputFile);
       break;
     }
     case simTypes::Cuboid: {

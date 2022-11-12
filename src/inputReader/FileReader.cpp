@@ -10,16 +10,13 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
 
-void FileReader::readFile(ParticleContainer &container, char *filename) {
-  std::array<double, 3> x;
-  std::array<double, 3> v;
-  double m;
+void FileReader::readFile(ParticleContainer &container, char *filename,
+                          ILineProcessor &lineProcessor) {
   int num_particles = 0;
 
   std::ifstream input_file(filename);
@@ -42,23 +39,9 @@ void FileReader::readFile(ParticleContainer &container, char *filename) {
 
     container.reserve(num_particles);
     for (int i = 0; i < num_particles; i++) {
-      std::istringstream datastream(tmp_string);
+      std::istringstream dataStream(tmp_string);
 
-      for (auto &xj : x) {
-        datastream >> xj;
-      }
-      for (auto &vj : v) {
-        datastream >> vj;
-      }
-      if (datastream.eof()) {
-        std::cout
-            << "Error reading file: eof reached unexpectedly reading from line "
-            << i << std::endl;
-        exit(-1);
-      }
-      datastream >> m;
-      container.emplace_back(x, v, m);
-
+      lineProcessor.processLine(dataStream, container);
       getline(input_file, tmp_string);
       std::cout << "Read line: " << tmp_string << std::endl;
     }
