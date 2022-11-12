@@ -19,9 +19,15 @@ const std::map<std::string, simTypes> simTypeStrings{
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
+
+  // Print help when no arguments or options are present
+  if (argc == 1) {
+    printUsage();
+    return 1;
+  }
+
   Simulation simulation{};
   char *inputFile = nullptr;
-  bool interactive = false;
   bool noOutput = false;
   simTypes simulationType = simTypes::Single;
 
@@ -31,14 +37,13 @@ int main(int argc, char *argsv[]) {
       {"no-output", no_argument, nullptr, 'n'},
       {"type", required_argument, nullptr, 't'},
       {"input-file", required_argument, nullptr, 'f'},
-      {"interactive", no_argument, nullptr, 'i'},
       {"end-time", required_argument, nullptr, 'e'},
       {"delta-t", required_argument, nullptr, 'd'},
       {"write-frequency", required_argument, nullptr, 'w'},
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:nt:f:ie:d:w:h", long_options,
+  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:h", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -63,9 +68,6 @@ int main(int argc, char *argsv[]) {
         inputFile = optarg;
         break;
       }
-      case 'i':
-        interactive = true;
-        break;
       case 'e': {
         try {
           double end = std::stod(optarg);
@@ -141,11 +143,8 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  if (interactive == (inputFile != nullptr)) {
-    std::cout
-        << "You have to specify exactly one input method. Use either "
-           "interactive mode or specify an input-file, but not both nor none."
-        << std::endl;
+  if (inputFile == nullptr) {
+    std::cout << "You have to specify an input file with -f flag" << std::endl;
     printUsage();
     return 1;
   }
@@ -159,7 +158,7 @@ int main(int argc, char *argsv[]) {
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
 
-  IWriter* selectedWriter = &noWriter;
+  IWriter *selectedWriter = &noWriter;
   if (!noOutput) selectedWriter = &vtkWriter;
 
   simulation.simulate(model, particleContainer, *selectedWriter);
@@ -169,19 +168,18 @@ int main(int argc, char *argsv[]) {
 }
 void printUsage() {
   std::cout << "Usage\n"
-               "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
+               "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
                "<output-file>]\n"
                "                [-e <endtime>] [-d <deltaT>] [-w "
                "<iteration-count>] [-n]\n"
                "\n"
-               "For more information run ./Molsim -h"
+               "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
 }
 
 void printHelp() {
   std::cout
-      << "Usage\n"
-         "        ./Molsim (-i|-f <input-file>) [-t (single|cuboid)] [-o "
+      << "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
          "<output-file>]\n"
          "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] "
          "[-n]\n"
@@ -205,12 +203,6 @@ void printHelp() {
          "\n"
          "        -f <filepath>, --input-file=<filepath>\n"
          "                Use the file at the <filepath> as an input.\n"
-         "                The -f option is mutually exclusive with -i.\n"
-         "\n"
-         "        -i, --interactive\n"
-         "                Allows to interactively set up the simulation "
-         "instead of reading in an inputfile.\n"
-         "                The -i option is mutually exclusive with -f.\n"
          "\n"
          "        -e <endtime>, --end-time=<endtime>\n"
          "                The time until the simulation is run (default is "
