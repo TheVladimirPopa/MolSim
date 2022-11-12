@@ -31,14 +31,40 @@ $ make
 ```
 
 # Usage
-In order to perform simulation, run the `molsim` target with command line arguments 
-`input_file`, `end_time` and `delta_t`, _e.g._ :
 ```bash
-# simulation has an end time of 1000 and the difference between time segments (delta_t) is 0.014, with 
-# the input taken from the file ../input/eingabe-sonne.txt
-./MolSim ../input/eingabe-sonne.txt 1000 0.014
+Usage
+        ./Molsim -f <input-file> [-t (single|cuboid)] [-o <output-file>]
+                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] [-n]
+
+OPTIONS:
+        -o <filepath>, --output-name=<filepath>
+                Use the given <filepath> as the path for the outputfiles(iteration number and file-ending are added automatically)
+                If not specified "MD_vtk" is used
+                
+        -n, --no-output
+                If active no files will be written, even overwrites -o.
+
+        -t (single|cuboid), --type=(single|cuboid)
+                Specifies the way to set up particles (default is single).
+                Use single if you want particles on their own and use cuboid if you want the particles to spawn in cuboids.
+
+        -f <filepath>, --input-file=<filepath>
+                Use the file at the <filepath> as an input.
+
+        -e <endtime>, --end-time=<endtime>
+                The time until the simulation is run (default is 1000).
+
+        -d <deltaT>, --delta-t=<deltaT>
+                The timestep by which the time gets increased in every iteration (default is 0.014).
+
+        -w <iteration-count>, --write-frequency=<iteration-count>
+                Every <iteration-count>nth iteration the particles get written to a file (default is 10).
+
+        -h, --help
+                Prints this help screen.
 ```
-Running the target with faulty parameters or with fewer parameters will return an appropriate output.
+
+Running the target with faulty parameters will return an appropriate message.
 
 # Visualisation (_optional_)
 In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
