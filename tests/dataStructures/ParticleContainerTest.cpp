@@ -4,7 +4,8 @@
 ParticleContainer makeContainer(unsigned size);
 
 /**
- * Tests whether a function is applied to all elements
+ * Tests whether the behaviour of forEach and forEachPair
+ * handles the empty container edge case.
  */
 TEST(ParticleContainer, EmptyDoesNothing) {
   ParticleContainer particle_container{};
@@ -20,7 +21,8 @@ TEST(ParticleContainer, EmptyDoesNothing) {
 }
 
 /**
- * Tests whether a function is applied to all elements
+ * Tests whether a function is applied to all elements of
+ * a particle container.
  */
 TEST(ParticleContainer, ForEachBasic) {
   // Prepare container
@@ -53,7 +55,7 @@ TEST(ParticleContainer, ForEachBasic) {
  */
 TEST(ParticleContainer, ForEachPairBasic) {
   // Prepare container
-  unsigned size = 3;
+  unsigned size = 49;
   ParticleContainer particle_container = makeContainer(size);
 
   ASSERT_GE(size, 1) << "To test pairs we need at least 2 particles.";
@@ -78,7 +80,8 @@ TEST(ParticleContainer, ForEachPairBasic) {
   particle_container.forEachPair(setDummyX);
 
   for (const auto &p : particle_container)
-    ASSERT_EQ(p.getX()[0], size-1) << "ForEachPair did process each pair exactly once.";
+    ASSERT_EQ(p.getX()[0], size-1)
+        << "ForEachPair did not process each pair exactly once.";
 }
 
 

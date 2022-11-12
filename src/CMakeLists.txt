@@ -1,5 +1,4 @@
-
-# Bundle up all files up as a library so we can reuse it for the Tests
+# Bundle up all files as a library so we can reuse it for MolSimTests
 file(GLOB_RECURSE MY_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

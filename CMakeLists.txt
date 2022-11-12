@@ -26,9 +26,14 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Output both src and tests bin to directly build directory
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Compile MolSim
 add_subdirectory(src)
 
 # Enable test detection for tests subdirectory
 enable_testing()
 
+# Compile MolSimTests
 add_subdirectory(tests)
