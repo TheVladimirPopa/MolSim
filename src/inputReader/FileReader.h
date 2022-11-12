@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "ILineProcessor.h"
+#include "LineProcessorCuboid.h"
 #include "LineProcessorSingle.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
@@ -22,10 +23,23 @@ class FileReader {
    * Reads in a file with single particles and emplaces the read particles in
    * the ParticleContainer
    * @param particles The particleContainer in which the particles get emplaced
-   * @param filename Path to the input file
+   * @param filename Path to the input file, see single-format specified in
+   * README.md
    */
   static void readFileSingle(ParticleContainer &particles, char *filename) {
     LineProcessorSingle lineProcessor{};
+    readFile(particles, filename, lineProcessor);
+  }
+
+  /**
+   * Reads in a file with particles packed in cuboids and emplaces the read
+   * particles in the ParticleContainer
+   * @param particles The particleContainer in which the particles get emplaced
+   * @param filename Path to the input file, see cuboid-format specified in
+   * README.md
+   */
+  static void readFileCuboid(ParticleContainer &particles, char *filename) {
+    LineProcessorCuboid lineProcessor;
     readFile(particles, filename, lineProcessor);
   }
 

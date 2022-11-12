@@ -156,6 +156,7 @@ int main(int argc, char *argsv[]) {
       break;
     }
     case simTypes::Cuboid: {
+      FileReader::readFileCuboid(particleContainer, inputFile);
       break;
     }
   }
