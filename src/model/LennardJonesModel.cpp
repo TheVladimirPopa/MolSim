@@ -11,7 +11,7 @@ void LennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   x = x * x * x;          // x^3
   x = x * x;              // x^6
 
-  auto force = ((-24 * epsilon) / (l * l)) * (x * (1 - (2 * x))) * (p1.x - p2.x);
+  auto force = ((24 * epsilon) / (l * l)) * (x * (1 - (2 * x))) * (p1.x - p2.x);
 
   p1.f = p1.f + force;
   p2.f = p2.f - force;
