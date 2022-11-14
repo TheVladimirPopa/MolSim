@@ -150,7 +150,16 @@ int main(int argc, char *argsv[]) {
   }
 
   ParticleContainer particleContainer{};
-  FileReader::readFile(particleContainer, inputFile);
+  switch (simulationType) {
+    case simTypes::Single: {
+      FileReader::readFileSingle(particleContainer, inputFile);
+      break;
+    }
+    case simTypes::Cuboid: {
+      FileReader::readFileCuboid(particleContainer, inputFile);
+      break;
+    }
+  }
 
   NewtonsLawModel model{};
   model.setDeltaT(simulation.getDeltaT());

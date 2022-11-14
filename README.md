@@ -66,8 +66,14 @@ OPTIONS:
 
 Running the target with faulty parameters will return an appropriate message.
 
+# Input file format
+
+//TODO SPECIFY THE FORMAT
+
 # Visualisation (_optional_)
+
 In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
+
 - Import all `.vtu` output files all at once.
 - Click `Apply` after importing them.
 - Create a Glyph filter.
