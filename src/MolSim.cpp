@@ -8,6 +8,7 @@
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/NewtonsLawModel.h"
+#include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
 
@@ -161,7 +162,7 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  NewtonsLawModel model{};
+  LennardJonesModel model{};
   model.setDeltaT(simulation.getDeltaT());
 
   VTKWriter vtkWriter{};

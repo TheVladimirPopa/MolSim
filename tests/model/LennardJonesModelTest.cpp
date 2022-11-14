@@ -29,9 +29,9 @@ TEST(LennardJonesModel, ForceCorrectSign) {
   EXPECT_NE(p1.getF()[0], 0.0) << "Applied force is zero.";
   EXPECT_NE(p2.getF()[0], 0.0) << "Applied force is zero.";
 
-  EXPECT_GT(p1.getF()[0], 0.0)
+  EXPECT_LT(p1.getF()[0], 0.0)
       << "Force on particle 1 points in wrong direction on the x0 axis.";
-  EXPECT_LT(p2.getF()[0], 0.0)
+  EXPECT_GT(p2.getF()[0], 0.0)
       << "Force on particle 2 points in wrong direction on the x0 axis of.";
 }
 
@@ -48,7 +48,7 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
 
   // Expected force via Wolfram Alpha. Formula:
   // (-(24 * 5)/2) * ((1/2)^6 - 2(1/2)^12) * {{2}, {0}, {0}}
-  std::array<double, 3> expected_force = {-465.0 / 512.0, 0.0, 0.0};
+  std::array<double, 3> expected_force = {465.0 / 512.0, 0.0, 0.0};
 
   LennardJonesModel model{};
   model.addForces(p1, p2);
