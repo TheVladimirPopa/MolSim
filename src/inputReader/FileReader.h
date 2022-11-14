@@ -39,7 +39,7 @@ class FileReader {
    * README.md
    */
   static void readFileCuboid(ParticleContainer &particles, char *filename) {
-    LineProcessorCuboid lineProcessor;
+    LineProcessorCuboid lineProcessor{};
     readFile(particles, filename, lineProcessor);
   }
 
