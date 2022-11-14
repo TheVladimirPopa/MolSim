@@ -13,6 +13,12 @@ target_link_libraries(MolSimTests
     MolSimLib
   )
 
+# Consider tests/ as directory to look for files for #include directives.
+target_include_directories(MolSimTests
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
 # Standard: C++ 20
 target_compile_features(MolSimTests PRIVATE cxx_std_20)
 

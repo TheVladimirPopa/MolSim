@@ -1,7 +1,9 @@
 #include "dataStructures/ParticleContainer.h"
+#include "utils/TestUtils.h"
+using TestUtils::makeContainer;
 #include "gtest/gtest.h"
 
-ParticleContainer makeContainer(unsigned size);
+
 
 /**
  * Tests whether the behaviour of forEach and forEachPair
@@ -82,23 +84,4 @@ TEST(ParticleContainer, ForEachPairBasic) {
   for (const auto &p : particle_container)
     ASSERT_EQ(p.getX()[0], size-1)
         << "ForEachPair did not process each pair exactly once.";
-}
-
-
-/**
- * Generates container for the ParticleContainer test suite.
- */
-ParticleContainer makeContainer(unsigned size) {
-  std::array<double, 3> x_arg = {0.0, 0.0, 0.0};
-  std::array<double, 3> v_arg = {0.0, 0.0, 0.0};
-  double m_arg = 1.0;
-  int type = 0;
-
-  ParticleContainer particle_container{};
-  for (unsigned i = 0; i < size; i++) {
-    Particle p{x_arg, v_arg, m_arg, type};
-    particle_container.push_back(p);
-  }
-
-  return particle_container;
 }

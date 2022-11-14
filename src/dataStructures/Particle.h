@@ -12,6 +12,7 @@
 
 class IModel;
 class NewtonsLawModel;
+class LennardJonesModel;
 
 class Particle {
  private:
@@ -52,10 +53,13 @@ class Particle {
   Particle(const Particle &other);
 
   Particle(
-      // for visualization, we need always 3 coordinates
-      // -> in case of 2d, we use only the first and the second
-      std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
-      int type = 0);
+        // for visualization, we need always 3 coordinates
+        // -> in case of 2d, we use only the first and the second
+        std::array<double, 3> x_arg,
+        std::array<double, 3> v_arg = {0.0, 0.0, 0.0},
+        double m_arg = 1.0,
+        int type = 0
+      );
 
   virtual ~Particle();
 
@@ -81,6 +85,7 @@ class Particle {
   // that are allowed to manipulate particles.
   friend class IModel;
   friend class NewtonsLawModel;
+  friend class LennardJonesModel;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can
