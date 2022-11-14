@@ -6,7 +6,7 @@ namespace TestUtils {
   /**
    * Generates container for the ParticleContainer test suite.
    */
-  static ParticleContainer makeContainer(unsigned size) {
+  ParticleContainer makeContainer(unsigned size) {
     ParticleContainer particle_container{};
     for (unsigned i = 0; i < size; i++) {
       Particle p{};
@@ -15,4 +15,4 @@ namespace TestUtils {
 
     return particle_container;
   }
-}  // namespace TestUtils
+}  // end namespace TestUtils

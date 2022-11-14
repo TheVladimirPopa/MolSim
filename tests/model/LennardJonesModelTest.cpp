@@ -18,28 +18,21 @@ TEST(LennardJonesModel, WorksheetParameters) {
 }
 
 /**
- * Check if the applied force has the correct sign on each particle.
- * This tests uses NewtonsLawModel as a assumed correct reference.
+ * Check if the applied forces have the correct sign on each particle.
  */
 TEST(LennardJonesModel, ForceCorrectSign) {
-  // Use NewtonsLawModel as reference as it already works.
-  NewtonsLawModel modelNewton{};
-  Particle pNewton1{{0.0, 0.0, 0.0}};
-  Particle pNewton2{{1.0, 0.0, 0.0}};
-  modelNewton.addForces(pNewton1, pNewton2);
-
   LennardJonesModel model{};
-  Particle pLennard1{{0.0, 0.0, 0.0}};
-  Particle pLennard2{{1.0, 0.0, 0.0}};
-  model.addForces(pLennard1, pLennard2);
+  Particle p1{{0.0, 0.0, 0.0}};
+  Particle p2{{1.0, 0.0, 0.0}};
+  model.addForces(p1, p2);
 
-  EXPECT_NE(pLennard1.getF()[0], 0.0) << "Applied force is zero.";
-  EXPECT_NE(pLennard2.getF()[0], 0.0) << "Applied force is zero.";
+  EXPECT_NE(p1.getF()[0], 0.0) << "Applied force is zero.";
+  EXPECT_NE(p2.getF()[0], 0.0) << "Applied force is zero.";
 
-  EXPECT_EQ(pNewton1.getF()[0] > 0, pLennard1.getF()[0] > 0)
-      << "Force direction is different";
-  EXPECT_EQ(pNewton2.getF()[0] > 0, pLennard2.getF()[0] > 0)
-      << "Force direction is different";
+  EXPECT_GT(p1.getF()[0], 0.0)
+      << "Force on particle 1 points in wrong direction on the x0 axis.";
+  EXPECT_LT(p2.getF()[0], 0.0)
+      << "Force on particle 2 points in wrong direction on the x0 axis of.";
 }
 
 /**

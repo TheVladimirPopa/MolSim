@@ -12,8 +12,8 @@ class LennardJonesModel : public IModel {
   virtual ~LennardJonesModel() = default;
 
   /**
-   * Add the forces both particles apply upon each other according to
-   * Newton's law of gravity.
+   * Add the forces both particles apply upon each based on the
+   * Lennard-Jones potential.
    * @param p1 The particle which influences particle p2
    * @param p2 The particle which influences particle p1
    */
