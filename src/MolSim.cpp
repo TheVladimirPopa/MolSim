@@ -1,6 +1,8 @@
 
 #include <getopt.h>
 
+#include <chrono>
+#include <cmath>
 #include <iostream>
 
 #include "Simulation.h"
@@ -209,7 +211,26 @@ int main(int argc, char *argsv[]) {
   IWriter *selectedWriter = &noWriter;
   if (!noOutput) selectedWriter = &vtkWriter;
 
+  if (performanceMeasure) {
+    std::cout << "Setup done! Starting performance measurement now..."
+              << std::endl;
+  }
+
+  auto startTime = std::chrono::steady_clock::now();
+
   simulation.simulate(model, particleContainer, *selectedWriter);
+
+  if (performanceMeasure) {
+    auto endTime = std::chrono::steady_clock::now();
+    auto durationSec =
+        std::chrono::duration<double>{endTime - startTime}.count();
+    int iterationCount =
+        (int)std::ceil(simulation.getEndTime() / simulation.getDeltaT());
+    std::cout << "Running the simulation took " << durationSec << "s\n"
+              << "The simulation has run " << iterationCount << " iterations\n"
+              << "So one iteration took " << (durationSec / iterationCount)
+              << "s" << std::endl;
+  }
 
   std::cout << "Output written. Terminating..." << std::endl;
   return 0;
