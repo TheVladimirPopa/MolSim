@@ -4,6 +4,7 @@
 
 #include "ParticleGenerator.h"
 
+#include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 void ParticleGeneration::addCuboidToParticleContainer(
@@ -19,8 +20,8 @@ void ParticleGeneration::addCuboidToParticleContainer(
     container.reserve(container.size() + (2 * numParticles));
   }
 
-  std::array<double, 3> position;
-  std::array<double, 3> velocity;
+  std::array<double, 3> position{};
+  std::array<double, 3> velocity{};
   for (int x = 0; x < data.dimension[0]; ++x) {
     for (int y = 0; y < data.dimension[1]; ++y) {
       for (int z = 0; z < data.dimension[2]; ++z) {
@@ -29,7 +30,8 @@ void ParticleGeneration::addCuboidToParticleContainer(
         position[1] += y * data.distance;
         position[2] += z * data.distance;
         velocity = maxwellBoltzmannDistributedVelocity(meanVel, dimension);
-        container.emplace_back(position, velocity, data.mass, data.type);
+        container.emplace_back(position, velocity + data.velocity, data.mass,
+                               data.type);
       }
     }
   }
