@@ -7,7 +7,6 @@
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
-#include "model/NewtonsLawModel.h"
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
@@ -31,6 +30,9 @@ int main(int argc, char *argsv[]) {
   char *inputFile = nullptr;
   bool noOutput = false;
   simTypes simulationType = simTypes::Single;
+  int loglevel = 0;
+  bool quietLog = false;
+  bool performanceMeasure = false;
 
   int opt;
   static struct option long_options[] = {
@@ -41,10 +43,13 @@ int main(int argc, char *argsv[]) {
       {"end-time", required_argument, nullptr, 'e'},
       {"delta-t", required_argument, nullptr, 'd'},
       {"write-frequency", required_argument, nullptr, 'w'},
+      {"performance", no_argument, nullptr, 'p'},
+      {"verbose", no_argument, nullptr, 'v'},
+      {"quiet", no_argument, nullptr, 'q'},
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:h", long_options,
+  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:pvqh", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -131,6 +136,18 @@ int main(int argc, char *argsv[]) {
 
         break;
       }
+      case 'p': {
+        performanceMeasure = true;
+        break;
+      }
+      case 'v': {
+        loglevel += 1;
+        break;
+      }
+      case 'q': {
+        quietLog = true;
+        break;
+      }
       case 'h': {
         printHelp();
         return 0;
@@ -148,6 +165,27 @@ int main(int argc, char *argsv[]) {
     std::cout << "You have to specify an input file with -f flag" << std::endl;
     printUsage();
     return 1;
+  }
+
+  if (performanceMeasure) {
+    noOutput = true;
+    // TODO deactivate console and file logging
+  } else {
+    if (quietLog) {
+      // TODO set loglevel console: error, file: info
+    } else {
+      switch (loglevel) {
+        case 0:
+          // TODO set loglevel console+file info
+          break;
+        case 1:
+          // TODO set loglevel console+file debug
+          break;
+        default:
+          // TODO set loglevel console+file trace
+          break;
+      }
+    }
   }
 
   ParticleContainer particleContainer{};
@@ -176,23 +214,26 @@ int main(int argc, char *argsv[]) {
   std::cout << "Output written. Terminating..." << std::endl;
   return 0;
 }
+
 void printUsage() {
-  std::cout << "Usage\n"
-               "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
-               "<output-file>]\n"
-               "                [-e <endtime>] [-d <deltaT>] [-w "
-               "<iteration-count>] [-n]\n"
-               "\n"
-               "For more information run ./Molsim -h or ./Molsim --help"
-            << std::endl;
+  std::cout
+      << " Usage\n"
+         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "<output-file>] [-e <endtime>]\n"
+         "                                [-d <deltaT>] [-w <iteration-count>] "
+         "[-n] [-p] [-v] [-v] [-q]\n"
+         "\n"
+         "For more information run ./Molsim -h or ./Molsim --help"
+      << std::endl;
 }
 
 void printHelp() {
   std::cout
-      << "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
-         "<output-file>]\n"
-         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] "
-         "[-n]\n"
+      << "Usage\n"
+         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "<output-file>] [-e <endtime>]\n"
+         "                                [-d <deltaT>] [-w <iteration-count>] "
+         "[-n] [-p] [-v] [-v] [-q]\n"
          "\n"
          "OPTIONS:\n"
          "        -o <filepath>, --output-name=<filepath>\n"
@@ -225,6 +266,19 @@ void printHelp() {
          "        -w <iteration-count>, --write-frequency=<iteration-count>\n"
          "                Every <iteration-count>nth iteration the particles "
          "get written to a file (default is 10).\n"
+         "        \n"
+         "        -p, --performance\n"
+         "                Takes a performace measurement of the simulation, "
+         "implicitly sets the -n flag and deactivates logging entirely.\n"
+         "        \n"
+         "        -v, --verbose\n"
+         "                If specified the log-level is lowered from INFO to "
+         "DEBUG.\n"
+         "                If specified twice the log-level is even lowered to "
+         "TRACE.\n"
+         "                \n"
+         "        -q, --quiet\n"
+         "                Set loglevel to ERROR. Overrites -v.\n"
          "\n"
          "        -h, --help\n"
          "                Prints this help screen."
