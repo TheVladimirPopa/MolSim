@@ -38,7 +38,7 @@ jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.clang-format
+      - uses: wolletd/clang-format-checker@v1
         with:
           target-ref: master      # required, merge target
           clang-version: 10     # optional, default: latest (in image)
