@@ -9,7 +9,8 @@ add_executable(MolSimTests ${MY_TESTS})
 target_link_libraries(MolSimTests
   PRIVATE
     gtest_main
-    xerces-c
+        gmock
+        xerces-c
     MolSimLib
   )
 
