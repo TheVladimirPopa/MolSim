@@ -33,4 +33,5 @@ target_compile_options(MolSimTests
 
 include(GoogleTest)
 include(CTest)
-gtest_discover_tests(MolSimTests)
+gtest_discover_tests(MolSimTests
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
