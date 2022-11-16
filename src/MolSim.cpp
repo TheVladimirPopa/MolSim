@@ -224,12 +224,17 @@ int main(int argc, char *argsv[]) {
     auto endTime = std::chrono::steady_clock::now();
     auto durationSec =
         std::chrono::duration<double>{endTime - startTime}.count();
-    int iterationCount =
-        (int)std::ceil(simulation.getEndTime() / simulation.getDeltaT());
-    std::cout << "Running the simulation took " << durationSec << "s\n"
-              << "The simulation has run " << iterationCount << " iterations\n"
-              << "So one iteration took " << (durationSec / iterationCount)
-              << "s" << std::endl;
+    auto iterationCount =
+        std::ceil(simulation.getEndTime() / simulation.getDeltaT());
+    std::cout << "Results of performance measurement\n"
+                 "Execution time       : "
+              << durationSec
+              << "s\n"
+                 "Number of iterations : "
+              << (unsigned long)iterationCount
+              << "\n"
+                 "Time per iteration   : "
+              << (durationSec / iterationCount) << "s" << std::endl;
   }
 
   std::cout << "Output written. Terminating..." << std::endl;
