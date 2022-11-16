@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         working-directory: ${{github.workspace}}/build
-        run: cmake .. -D BUILD_DOC=OFF -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++
+        run: cmake .. -D BUILD_DOC=OFF -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -D CMAKE_CXX_FLAGS="-fsanitize=address
         
       - name: Run make
         working-directory: ${{github.workspace}}/build
