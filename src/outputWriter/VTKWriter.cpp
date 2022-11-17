@@ -12,6 +12,8 @@
 #include <iostream>
 #include <string>
 
+#include "spdlog/spdlog.h"
+
 VTKWriter::VTKWriter() = default;
 
 VTKWriter::~VTKWriter() = default;
@@ -62,16 +64,18 @@ void VTKWriter::writeFile(const std::string &filename, int iteration) {
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
          << ".vtu";
 
-  std::ofstream file(strstr.str().c_str());
+  auto finalFileName = strstr.str().c_str();
+  spdlog::debug("Writing {}", finalFileName);
+  std::ofstream file(finalFileName);
   VTKFile(file, *vtkFile);
   delete vtkFile;
 }
 
 void VTKWriter::plotParticle(Particle &p) {
   if (vtkFile->UnstructuredGrid().present()) {
-    std::cout << "UnstructuredGrid is present" << std::endl;
+    spdlog::trace("UnstructuredGrid is present");
   } else {
-    std::cout << "ERROR: No UnstructuredGrid present" << std::endl;
+    spdlog::warn("ERROR: No UnstructuredGrid present");
   }
 
   PointData::DataArray_sequence &pointDataSequence =
