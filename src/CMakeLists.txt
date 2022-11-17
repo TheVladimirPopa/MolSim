@@ -20,6 +20,11 @@ target_include_directories(MolSimLib
     ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
+target_link_libraries(MolSimLib
+  PUBLIC
+    spdlog::spdlog
+  )
+
 # create make target
 add_executable(MolSim "${CMAKE_CURRENT_SOURCE_DIR}/MolSim.cpp")
 
@@ -39,7 +44,6 @@ target_link_libraries(MolSim
   PUBLIC
     xerces-c
     MolSimLib
-    spdlog::spdlog
 )
 
 # activate all compiler warnings. Clean up your code :P
