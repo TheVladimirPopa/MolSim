@@ -124,7 +124,7 @@ In order to visualize the results of the simulation, open [Paraview](https://www
 - Choose a sensible scaling and disable masking.
 - Click `Apply`.
 - Center the camera on the data.
-- (_optional_) Choose cooler colours nad adjust the colour scale.
+- (_optional_) Choose cooler colours and adjust the colour scale.
 - (_optional_) Rescale colour range over all time steps.
 - Run the simulation.
 
