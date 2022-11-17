@@ -15,14 +15,14 @@ struct cuboid {
   std::array<double, 3> position{0., 0., 0.};
   /// What dimension in particle count the cuboid has
   std::array<int, 3> dimension{1, 1, 1};
+  /// The velocity of the particles, without Brownian Motion
+  std::array<double, 3> velocity{0., 0., 0.};
   /// The distance between adjacent particles(mesh width)
   double distance = 1;
   /// The mass of a single particle
   double mass = 1;
   /// The type the particles have
   int type = 0;
-  /// The velocity of the particles, without Brownian Motion
-  std::array<double, 3> velocity{0., 0., 0.};
 };
 
 /**

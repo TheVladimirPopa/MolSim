@@ -43,7 +43,6 @@ class FileReader {
     readFile(particles, filename, lineProcessor);
   }
 
- private:
   /**
    * Reads in a file and invokes lineProcessor for each line, which emplaces
    * then the particles in the specified container
@@ -51,6 +50,7 @@ class FileReader {
    * @param filename Path to the input file
    * @param lineProcessor The lineprocessor which gets called for every line
    * which is not a comment and not the line with the number of particles
+   * @note This method is only public for testing-reasons
    */
   static void readFile(ParticleContainer &particles, char *filename,
                        ILineProcessor &lineProcessor);

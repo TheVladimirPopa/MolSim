@@ -9,7 +9,8 @@ add_executable(MolSimTests ${MY_TESTS})
 target_link_libraries(MolSimTests
   PRIVATE
     gtest_main
-    xerces-c
+        gmock
+        xerces-c
     MolSimLib
   )
 
@@ -32,4 +33,5 @@ target_compile_options(MolSimTests
 
 include(GoogleTest)
 include(CTest)
-gtest_discover_tests(MolSimTests)
+gtest_discover_tests(MolSimTests
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
