@@ -52,6 +52,8 @@ class Simulation {
    */
   double getDeltaT() const;
 
+  double getEndTime() const { return endTime; };
+
  private:
   /**
    * The starttime where the simulation begins

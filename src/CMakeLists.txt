@@ -39,6 +39,7 @@ target_link_libraries(MolSim
   PUBLIC
     xerces-c
     MolSimLib
+    spdlog::spdlog
 )
 
 # activate all compiler warnings. Clean up your code :P

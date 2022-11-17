@@ -31,10 +31,10 @@ $ make
 ```
 
 # Usage
-```bash
+```
 Usage
-        ./Molsim -f <input-file> [-t (single|cuboid)] [-o <output-file>]
-                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] [-n]
+        ./Molsim -f <input-file> [-t (single|cuboid)] [-o <output-file>] [-e <endtime>]
+                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-v] [-v] [-q]
 
 OPTIONS:
         -o <filepath>, --output-name=<filepath>
@@ -59,6 +59,16 @@ OPTIONS:
 
         -w <iteration-count>, --write-frequency=<iteration-count>
                 Every <iteration-count>nth iteration the particles get written to a file (default is 10).
+        
+        -p, --performance
+                Takes a performace measurement of the simulation, implicitly sets the -n flag and deactivates logging entirely.
+        
+        -v, --verbose
+                If specified the log-level is lowered from INFO to DEBUG.
+                If specified twice the log-level is even lowered to TRACE.
+                
+        -q, --quiet
+                Set loglevel to ERROR. Overrites -v.
 
         -h, --help
                 Prints this help screen.

@@ -1,16 +1,20 @@
 
 #include <getopt.h>
 
+#include <chrono>
+#include <cmath>
 #include <iostream>
 
 #include "Simulation.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
-#include "model/NewtonsLawModel.h"
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
 
 void printHelp();
 void printUsage();
@@ -31,6 +35,9 @@ int main(int argc, char *argsv[]) {
   char *inputFile = nullptr;
   bool noOutput = false;
   simTypes simulationType = simTypes::Single;
+  int loglevel = 0;
+  bool quietLog = false;
+  bool performanceMeasure = false;
 
   int opt;
   static struct option long_options[] = {
@@ -41,10 +48,13 @@ int main(int argc, char *argsv[]) {
       {"end-time", required_argument, nullptr, 'e'},
       {"delta-t", required_argument, nullptr, 'd'},
       {"write-frequency", required_argument, nullptr, 'w'},
+      {"performance", no_argument, nullptr, 'p'},
+      {"verbose", no_argument, nullptr, 'v'},
+      {"quiet", no_argument, nullptr, 'q'},
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:h", long_options,
+  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:pvqh", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -131,6 +141,18 @@ int main(int argc, char *argsv[]) {
 
         break;
       }
+      case 'p': {
+        performanceMeasure = true;
+        break;
+      }
+      case 'v': {
+        loglevel += 1;
+        break;
+      }
+      case 'q': {
+        quietLog = true;
+        break;
+      }
       case 'h': {
         printHelp();
         return 0;
@@ -148,6 +170,33 @@ int main(int argc, char *argsv[]) {
     std::cout << "You have to specify an input file with -f flag" << std::endl;
     printUsage();
     return 1;
+  }
+  auto file_logger =
+      spdlog::rotating_logger_st("file_logger", "logs/logger", 1048576 * 5, 5);
+
+  auto console_logger = spdlog::stdout_color_st("console_logger");
+
+  if (performanceMeasure) {
+    noOutput = true;
+  }
+  if (quietLog) {
+    console_logger->set_level(spdlog::level::err);
+    file_logger->set_level(spdlog::level::info);
+  } else {
+    switch (loglevel) {
+      case 0:
+        console_logger->set_level(spdlog::level::info);
+        file_logger->set_level(spdlog::level::info);
+        break;
+      case 1:
+        console_logger->set_level(spdlog::level::debug);
+        file_logger->set_level(spdlog::level::debug);
+        break;
+      default:
+        console_logger->set_level(spdlog::level::trace);
+        file_logger->set_level(spdlog::level::trace);
+        break;
+    }
   }
 
   ParticleContainer particleContainer{};
@@ -169,30 +218,65 @@ int main(int argc, char *argsv[]) {
   NoWriter noWriter{};
 
   IWriter *selectedWriter = &noWriter;
-  if (!noOutput) selectedWriter = &vtkWriter;
+  if (noOutput) {
+    spdlog::info("No output will b written.");
+  } else {
+    selectedWriter = &vtkWriter;
+  }
+
+  if (performanceMeasure) {
+    spdlog::info(
+        "Setup done! Deactivating logging and starting performance measurement "
+        "now...");
+
+    console_logger->set_level(spdlog::level::off);
+    file_logger->set_level(spdlog::level::off);
+  }
+
+  auto startTime = std::chrono::steady_clock::now();
 
   simulation.simulate(model, particleContainer, *selectedWriter);
 
-  std::cout << "Output written. Terminating..." << std::endl;
+  if (performanceMeasure) {
+    auto endTime = std::chrono::steady_clock::now();
+    auto durationSec =
+        std::chrono::duration<double>{endTime - startTime}.count();
+    auto iterationCount =
+        std::ceil(simulation.getEndTime() / simulation.getDeltaT());
+    std::cout << "Results of performance measurement\n"
+                 "Execution time       : "
+              << durationSec
+              << "s\n"
+                 "Number of iterations : "
+              << static_cast<unsigned long>(iterationCount)
+              << "\n"
+                 "Time per iteration   : "
+              << (durationSec / iterationCount) << "s" << std::endl;
+  }
+
+  spdlog::info("Terminating...");
   return 0;
 }
+
 void printUsage() {
-  std::cout << "Usage\n"
-               "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
-               "<output-file>]\n"
-               "                [-e <endtime>] [-d <deltaT>] [-w "
-               "<iteration-count>] [-n]\n"
-               "\n"
-               "For more information run ./Molsim -h or ./Molsim --help"
-            << std::endl;
+  std::cout
+      << " Usage\n"
+         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "<output-file>] [-e <endtime>]\n"
+         "                                [-d <deltaT>] [-w <iteration-count>] "
+         "[-n] [-p] [-v] [-v] [-q]\n"
+         "\n"
+         "For more information run ./Molsim -h or ./Molsim --help"
+      << std::endl;
 }
 
 void printHelp() {
   std::cout
-      << "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
-         "<output-file>]\n"
-         "                [-e <endtime>] [-d <deltaT>] [-w <iteration-count>] "
-         "[-n]\n"
+      << "Usage\n"
+         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "<output-file>] [-e <endtime>]\n"
+         "                                [-d <deltaT>] [-w <iteration-count>] "
+         "[-n] [-p] [-v] [-v] [-q]\n"
          "\n"
          "OPTIONS:\n"
          "        -o <filepath>, --output-name=<filepath>\n"
@@ -225,6 +309,19 @@ void printHelp() {
          "        -w <iteration-count>, --write-frequency=<iteration-count>\n"
          "                Every <iteration-count>nth iteration the particles "
          "get written to a file (default is 10).\n"
+         "        \n"
+         "        -p, --performance\n"
+         "                Takes a performace measurement of the simulation, "
+         "implicitly sets the -n flag and deactivates logging entirely.\n"
+         "        \n"
+         "        -v, --verbose\n"
+         "                If specified the log-level is lowered from INFO to "
+         "DEBUG.\n"
+         "                If specified twice the log-level is even lowered to "
+         "TRACE.\n"
+         "                \n"
+         "        -q, --quiet\n"
+         "                Set loglevel to ERROR. Overrites -v.\n"
          "\n"
          "        -h, --help\n"
          "                Prints this help screen."
