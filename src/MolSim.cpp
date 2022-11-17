@@ -1,5 +1,6 @@
 
 #include <getopt.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <chrono>
 #include <cmath>
@@ -12,6 +13,9 @@
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
+
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 void printHelp();
 void printUsage();
@@ -168,23 +172,36 @@ int main(int argc, char *argsv[]) {
     printUsage();
     return 1;
   }
+  auto file_logger = spdlog::rotating_logger_st("file_logger", "logs/logger", 1048576 * 5, 5);
+
+  auto console_logger = spdlog::stdout_color_st("console_logger");
 
   if (performanceMeasure) {
     noOutput = true;
     // TODO deactivate console and file logging
+    console_logger->set_level(spdlog::level::off);
+    file_logger->set_level(spdlog::level::off);
   } else {
     if (quietLog) {
       // TODO set loglevel console: error, file: info
+      console_logger->set_level(spdlog::level::err);
+      file_logger->set_level(spdlog::level::info);
     } else {
       switch (loglevel) {
         case 0:
           // TODO set loglevel console+file info
+          console_logger->set_level(spdlog::level::info);
+          file_logger->set_level(spdlog::level::info);
           break;
         case 1:
           // TODO set loglevel console+file debug
+          console_logger->set_level(spdlog::level::debug);
+          file_logger->set_level(spdlog::level::debug);
           break;
         default:
           // TODO set loglevel console+file trace
+          console_logger->set_level(spdlog::level::trace);
+          file_logger->set_level(spdlog::level::trace);
           break;
       }
     }
