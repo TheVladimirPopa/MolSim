@@ -12,20 +12,29 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 
 ## Build
 1. Create `build` folder.
-    ```bash
+
+    ``` bash
     $ mkdir build
     ```
+
 2. Access the newly created `./build` folder
-    ```bash
+
+    ``` bash
     $ cd ./build 
     ```
+
 3. Run `cmake` using the following arguments:
-    ```bash
-    # -D BUILD_DOC=ON is used to obtain a makefile for the documentation
-    # -D BUILD_DOC=OFF if Doxygen is not installed
+
+   `-D BUILD_DOC=ON` is used to obtain a makefile for the documentation
+
+   `-D BUILD_DOC=OFF` if Doxygen is not installed
+
+    ``` bash
      $ cmake .. -D BUILD_DOC=ON -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++
     ```
+
 4. Create the `MolSim` target with the generated Makefile:
+
     ```bash 
     $ make
     ```
