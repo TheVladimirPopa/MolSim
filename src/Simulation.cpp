@@ -40,13 +40,3 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
     iteration++;
   }
 }
-
-void Simulation::setEndTime(double endTime) { Simulation::endTime = endTime; }
-void Simulation::setDeltaT(double deltaT) { Simulation::deltaT = deltaT; }
-void Simulation::setIterationsPerWrite(unsigned int writeOutFrequency) {
-  Simulation::writeOutFrequency = writeOutFrequency;
-}
-void Simulation::setFilename(const std::string &filename) {
-  Simulation::filename = filename;
-}
-double Simulation::getDeltaT() const { return deltaT; }
