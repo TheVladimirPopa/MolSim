@@ -13,9 +13,8 @@
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
-
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/spdlog.h"
 
 void printHelp();
 void printUsage();
@@ -172,7 +171,8 @@ int main(int argc, char *argsv[]) {
     printUsage();
     return 1;
   }
-  auto file_logger = spdlog::rotating_logger_st("file_logger", "logs/logger", 1048576 * 5, 5);
+  auto file_logger =
+      spdlog::rotating_logger_st("file_logger", "logs/logger", 1048576 * 5, 5);
 
   auto console_logger = spdlog::stdout_color_st("console_logger");
 
@@ -221,7 +221,11 @@ int main(int argc, char *argsv[]) {
   NoWriter noWriter{};
 
   IWriter *selectedWriter = &noWriter;
-  if (!noOutput) selectedWriter = &vtkWriter;
+  if (noOutput) {
+    std::cout << "No output will be written" << std::endl;
+  } else {
+    selectedWriter = &vtkWriter;
+  }
 
   if (performanceMeasure) {
     std::cout << "Setup done! Starting performance measurement now..."
@@ -249,7 +253,7 @@ int main(int argc, char *argsv[]) {
               << (durationSec / iterationCount) << "s" << std::endl;
   }
 
-  std::cout << "Output written. Terminating..." << std::endl;
+  std::cout << "Terminating..." << std::endl;
   return 0;
 }
 
