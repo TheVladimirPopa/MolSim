@@ -30,7 +30,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
     $ make
     ```
 
-# Usage
+## Usage
 
 ```
 Usage
@@ -82,7 +82,7 @@ OPTIONS:
 
 Running the target with faulty parameters will return an appropriate message.
 
-# Input file format
+## Input file format
 
 We currently support two different file-formats. For both of them holds:
 
@@ -102,7 +102,7 @@ For example:`0.0 5.36 0.0 -0.425 0.0 0.0   9.55e-4`
 
 ### Cuboid file(`--type=cuboid`)
 
-A line of molecule data consists of
+A line of molecule data consists of:
 
 * xyz-coordinates of left front corner (3 double values)
 * initial velocities (3 double values)
@@ -113,7 +113,7 @@ A line of molecule data consists of
 
 For example: `15.0 15.0 0.0   0.0 -10.0 0.0   8 8 1           1.1225          1.0         2`
 
-# Visualisation (_optional_)
+## Visualisation (_optional_)
 
 In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
 
@@ -128,11 +128,12 @@ In order to visualize the results of the simulation, open [Paraview](https://www
 - (_optional_) Rescale colour range over all time steps.
 - Run the simulation.
 
-# Full Documentation
+## Full Documentation
 In order to view the full the documentation for the project:
+
 - Run the following from the `MolSim` directory:
-```bash
-$ cd cmake-build-debug
-$ make doc_doxygen
-```
+    ```bash
+    $ cd cmake-build-debug
+    $ make doc_doxygen
+    ```
 - Now open the file `./cmake-build-debug/doxys_documentation/html/index.html` in a browser of choice
