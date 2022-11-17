@@ -248,7 +248,7 @@ int main(int argc, char *argsv[]) {
               << durationSec
               << "s\n"
                  "Number of iterations : "
-              << (unsigned long)iterationCount
+              << static_cast<unsigned long>(iterationCount)
               << "\n"
                  "Time per iteration   : "
               << (durationSec / iterationCount) << "s" << std::endl;
