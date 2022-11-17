@@ -171,34 +171,36 @@ int main(int argc, char *argsv[]) {
     printUsage();
     return 1;
   }
-  auto file_logger =
-      spdlog::rotating_logger_st("file_logger", "logs/logger", 1048576 * 5, 5);
+  auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+      "../logs/logger", 1048576 * 5, 5);
 
-  auto console_logger = spdlog::stdout_color_st("console_logger");
+  auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
   if (performanceMeasure) {
     noOutput = true;
   }
   if (quietLog) {
-    console_logger->set_level(spdlog::level::err);
-    file_logger->set_level(spdlog::level::info);
+    console_sink->set_level(spdlog::level::err);
+    file_sink->set_level(spdlog::level::info);
   } else {
     switch (loglevel) {
       case 0:
-        console_logger->set_level(spdlog::level::info);
-        file_logger->set_level(spdlog::level::info);
+        console_sink->set_level(spdlog::level::info);
+        file_sink->set_level(spdlog::level::info);
         break;
       case 1:
-        console_logger->set_level(spdlog::level::debug);
-        file_logger->set_level(spdlog::level::debug);
+        console_sink->set_level(spdlog::level::debug);
+        file_sink->set_level(spdlog::level::debug);
         break;
       default:
-        console_logger->set_level(spdlog::level::trace);
-        file_logger->set_level(spdlog::level::trace);
+        console_sink->set_level(spdlog::level::trace);
+        file_sink->set_level(spdlog::level::trace);
         break;
     }
   }
-
+  spdlog::set_default_logger(std::make_shared<spdlog::logger>(
+      "", spdlog::sinks_init_list({console_sink, file_sink})));
+  spdlog::set_level(spdlog::level::trace);
   ParticleContainer particleContainer{};
   switch (simulationType) {
     case simTypes::Single: {
@@ -219,7 +221,7 @@ int main(int argc, char *argsv[]) {
 
   IWriter *selectedWriter = &noWriter;
   if (noOutput) {
-    spdlog::info("No output will b written.");
+    spdlog::info("No output will be written.");
   } else {
     selectedWriter = &vtkWriter;
   }
@@ -229,8 +231,8 @@ int main(int argc, char *argsv[]) {
         "Setup done! Deactivating logging and starting performance measurement "
         "now...");
 
-    console_logger->set_level(spdlog::level::off);
-    file_logger->set_level(spdlog::level::off);
+    console_sink->set_level(spdlog::level::off);
+    file_sink->set_level(spdlog::level::off);
   }
 
   auto startTime = std::chrono::steady_clock::now();
