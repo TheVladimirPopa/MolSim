@@ -261,7 +261,7 @@ int main(int argc, char *argsv[]) {
 void printUsage() {
   std::cout
       << " Usage\n"
-         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "        ./MolSim -f <input-file> [-t (single|cuboid)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
          "[-n] [-p] [-v] [-v] [-q]\n"
@@ -273,7 +273,7 @@ void printUsage() {
 void printHelp() {
   std::cout
       << "Usage\n"
-         "        ./Molsim -f <input-file> [-t (single|cuboid)] [-o "
+         "        ./MolSim -f <input-file> [-t (single|cuboid)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
          "[-n] [-p] [-v] [-v] [-q]\n"
