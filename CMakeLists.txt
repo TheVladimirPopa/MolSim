@@ -40,7 +40,13 @@ if (NOT spdlog_POPULATED)
 endif()
 
 # Output both src and tests bin to directly build directory
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+set(global_compiler_flags
+  $<$<CXX_COMPILER_ID:GNU>:-Wall>
+  # disable some spam warnings for icpc...
+  $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+)
 
 # Compile MolSim
 add_subdirectory(src)

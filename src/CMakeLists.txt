@@ -34,23 +34,22 @@ target_compile_features(MolSim
     cxx_std_20
   )
 
+# Directories for #include directives
 target_include_directories(MolSim
   PUBLIC
     ${PROJECT_SOURCE_DIR}/libs/libxsd
     ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
+# Link files
 target_link_libraries(MolSim
   PUBLIC
     xerces-c
     MolSimLib
-)
+  )
 
-# activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
 target_compile_options(MolSim
   PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-Wall>
-    # disable some spam warnings for icpc...
-    $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+    ${global_compiler_flags}
   )

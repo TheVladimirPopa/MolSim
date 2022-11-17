@@ -9,23 +9,13 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
   double current_time = startTime;
   int iteration = 0;
 
-  // This is wrapper code that hopefully we can replace in the future
-  std::function<void(Particle &)> updateX = [&model](Particle &p) {
-    model.updateX(std::forward<Particle &>(p));
-  };
-
-  std::function<void(Particle &)> updateV = [&model](Particle &p) {
-    model.updateV(std::forward<Particle &>(p));
-  };
-
-  std::function<void(Particle &)> updateF = [](Particle &p) {
-    p.updateForces();
-  };
-
-  std::function<void(Particle &, Particle &)> addForces = [&model](
-                                                              Particle &p1,
-                                                              Particle &p2) {
-    model.addForces(std::forward<Particle &>(p1), std::forward<Particle &>(p2));
+  // Pass methods of model as lambdas. More lightweight than std::function.
+  using P = Particle &;
+  auto updateX = [&model](P p) { model.updateX(std::forward<P>(p)); };
+  auto updateV = [&model](P p) { model.updateV(std::forward<P>(p)); };
+  auto updateF = [](P p) { p.updateForces(); };
+  auto addForces = [&model](P p1, P p2) {
+    model.addForces(std::forward<P>(p1), std::forward<P>(p2));
   };
 
   // Initialize the force so that we know the current force for the first loop
@@ -35,10 +25,8 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
     particles.forEach(updateX);
-
     particles.forEach(updateF);
     particles.forEachPair(addForces);
-
     particles.forEach(updateV);
 
     if (iteration % writeOutFrequency == 0) {

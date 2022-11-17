@@ -26,9 +26,7 @@ target_compile_features(MolSimTests PRIVATE cxx_std_20)
 # Standard compile flags
 target_compile_options(MolSimTests
   PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-Wall>
-    # disable some spam warnings for icpc...
-    $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+    ${global_compiler_flags}
   )
 
 include(GoogleTest)
