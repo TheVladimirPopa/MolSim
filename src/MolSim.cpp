@@ -178,27 +178,24 @@ int main(int argc, char *argsv[]) {
 
   if (performanceMeasure) {
     noOutput = true;
-    console_logger->set_level(spdlog::level::off);
-    file_logger->set_level(spdlog::level::off);
+  }
+  if (quietLog) {
+    console_logger->set_level(spdlog::level::err);
+    file_logger->set_level(spdlog::level::info);
   } else {
-    if (quietLog) {
-      console_logger->set_level(spdlog::level::err);
-      file_logger->set_level(spdlog::level::info);
-    } else {
-      switch (loglevel) {
-        case 0:
-          console_logger->set_level(spdlog::level::info);
-          file_logger->set_level(spdlog::level::info);
-          break;
-        case 1:
-          console_logger->set_level(spdlog::level::debug);
-          file_logger->set_level(spdlog::level::debug);
-          break;
-        default:
-          console_logger->set_level(spdlog::level::trace);
-          file_logger->set_level(spdlog::level::trace);
-          break;
-      }
+    switch (loglevel) {
+      case 0:
+        console_logger->set_level(spdlog::level::info);
+        file_logger->set_level(spdlog::level::info);
+        break;
+      case 1:
+        console_logger->set_level(spdlog::level::debug);
+        file_logger->set_level(spdlog::level::debug);
+        break;
+      default:
+        console_logger->set_level(spdlog::level::trace);
+        file_logger->set_level(spdlog::level::trace);
+        break;
     }
   }
 
@@ -222,14 +219,18 @@ int main(int argc, char *argsv[]) {
 
   IWriter *selectedWriter = &noWriter;
   if (noOutput) {
-    std::cout << "No output will be written" << std::endl;
+    spdlog::info("No output will b written.");
   } else {
     selectedWriter = &vtkWriter;
   }
 
   if (performanceMeasure) {
-    std::cout << "Setup done! Starting performance measurement now..."
-              << std::endl;
+    spdlog::info(
+        "Setup done! Deactivating logging and starting performance measurement "
+        "now...");
+
+    console_logger->set_level(spdlog::level::off);
+    file_logger->set_level(spdlog::level::off);
   }
 
   auto startTime = std::chrono::steady_clock::now();
@@ -253,7 +254,7 @@ int main(int argc, char *argsv[]) {
               << (durationSec / iterationCount) << "s" << std::endl;
   }
 
-  std::cout << "Terminating..." << std::endl;
+  spdlog::info("Terminating...");
   return 0;
 }
 
