@@ -28,30 +28,38 @@ class Simulation {
    * Sets the time until the simulation is run
    * @param endTime the new endTime
    */
-  void setEndTime(double endTime);
+  void setEndTime(double endTime) { Simulation::endTime = endTime; }
   /**
    * Sets the timestep by which the time gets increased in every iteration
    * @param deltaT the new timestep size
    */
-  void setDeltaT(double deltaT);
+  void setDeltaT(double deltaT) { Simulation::deltaT = deltaT; }
   /**
    * Sets how often the particles get written to a file (every nth iteration)
    * @param writeOutFrequency the new frequency for the writer
    */
-  void setIterationsPerWrite(unsigned int writeOutFrequency);
+  void setIterationsPerWrite(unsigned int writeOutFrequency) {
+    Simulation::writeOutFrequency = writeOutFrequency;
+  }
   /**
    * Sets the path to the output files(iteration number and file-ending are
    * added automatically)
    * @param filename the new path
    */
-  void setFilename(const std::string &filename);
+  void setFilename(const std::string &filename) {
+    Simulation::filename = filename;
+  }
 
   /**
    * Returns the timestep by which the time gets increased in every iteration
    * @return The timestep by which the time gets increased in every iteration
    */
-  double getDeltaT() const;
+  double getDeltaT() const { return deltaT; };
 
+  /**
+   * Returns the time until the simulation is run
+   * @return The time until the simulation is run
+   */
   double getEndTime() const { return endTime; };
 
  private:
