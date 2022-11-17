@@ -40,4 +40,3 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
     iteration++;
   }
 }
-
