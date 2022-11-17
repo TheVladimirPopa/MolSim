@@ -178,28 +178,23 @@ int main(int argc, char *argsv[]) {
 
   if (performanceMeasure) {
     noOutput = true;
-    // TODO deactivate console and file logging
     console_logger->set_level(spdlog::level::off);
     file_logger->set_level(spdlog::level::off);
   } else {
     if (quietLog) {
-      // TODO set loglevel console: error, file: info
       console_logger->set_level(spdlog::level::err);
       file_logger->set_level(spdlog::level::info);
     } else {
       switch (loglevel) {
         case 0:
-          // TODO set loglevel console+file info
           console_logger->set_level(spdlog::level::info);
           file_logger->set_level(spdlog::level::info);
           break;
         case 1:
-          // TODO set loglevel console+file debug
           console_logger->set_level(spdlog::level::debug);
           file_logger->set_level(spdlog::level::debug);
           break;
         default:
-          // TODO set loglevel console+file trace
           console_logger->set_level(spdlog::level::trace);
           file_logger->set_level(spdlog::level::trace);
           break;
