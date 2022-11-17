@@ -50,6 +50,6 @@ TEST(ParticleGeneration, Mass) {
 
   addCuboidToParticleContainer(container, test);
   for (auto &particle : container) {
-    ASSERT_EQ(particle.getM(), 42) << "Particle mass is not set correctly";
+    ASSERT_EQ(particle.getM(), 42.0) << "Particle mass is not set correctly";
   }
 }

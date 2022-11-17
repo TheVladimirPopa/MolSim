@@ -13,7 +13,9 @@ TEST(LineProcessorCuboid, ParticleCount) {
   ParticleContainer container{};
   lineProcessorCuboid.processLine(dataStream, container);
 
-  EXPECT_EQ(40 * 8 * 1, container.size());
+  EXPECT_EQ(40 * 8 * 1, container.size())
+      << "The dimensions are not read in correctly, since the particle count "
+         "is no correct";
 }
 
 /**
@@ -28,7 +30,7 @@ TEST(LineProcessorCuboid, ParticleMass) {
   lineProcessorCuboid.processLine(dataStream, container);
 
   for (auto &p : container) {
-    EXPECT_EQ(42.0, p.getM());
+    EXPECT_EQ(42.0, p.getM()) << "The mass is not read in or set correctly";
   }
 }
 
@@ -44,6 +46,6 @@ TEST(LineProcessorCuboid, ParticleType) {
   lineProcessorCuboid.processLine(dataStream, container);
 
   for (auto &p : container) {
-    EXPECT_EQ(42.0, p.getType());
+    EXPECT_EQ(42.0, p.getType()) << "The type is not read in or set correctly";
   }
 }
