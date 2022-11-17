@@ -4,8 +4,11 @@
 
 #include "Simulation.h"
 
+#include "spdlog/spdlog.h"
+
 void Simulation::simulate(IModel const &model, ParticleContainer &particles,
                           IWriter &fileWriter) {
+  spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
 

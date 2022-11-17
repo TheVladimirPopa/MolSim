@@ -4,6 +4,7 @@
 
 #include "ParticleGenerator.h"
 
+#include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
@@ -16,7 +17,7 @@ void ParticleGeneration::addCuboidToParticleContainer(
   if (container.size() + numParticles > container.capacity()) {
     // Reserve so much that this cuboid would fit in twice to reduce
     // reallocations
-    // TODO DEBUG log expand particle container
+    spdlog::debug("Resizing the particle container");
     container.reserve(container.size() + (2 * numParticles));
   }
 

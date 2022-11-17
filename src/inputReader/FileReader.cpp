@@ -11,6 +11,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "spdlog/spdlog.h"
+
 FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
@@ -23,19 +25,17 @@ void FileReader::readFile(ParticleContainer &container, char *filename,
   std::string tmp_string;
 
   if (input_file.is_open()) {
+    spdlog::info("Reading from file {}", filename);
     getline(input_file, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
 
     while (tmp_string.empty() or tmp_string[0] == '#') {
       getline(input_file, tmp_string);
-      std::cout << "Read line: " << tmp_string << std::endl;
     }
 
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
-    std::cout << "Reading " << num_particles << "." << std::endl;
+    spdlog::debug("Reading in {} particle (groups)", num_particles);
     getline(input_file, tmp_string);
-    std::cout << "Read line: " << tmp_string << std::endl;
 
     container.reserve(num_particles);
     for (int i = 0; i < num_particles; i++) {
@@ -43,10 +43,9 @@ void FileReader::readFile(ParticleContainer &container, char *filename,
 
       lineProcessor.processLine(dataStream, container);
       getline(input_file, tmp_string);
-      std::cout << "Read line: " << tmp_string << std::endl;
     }
   } else {
-    std::cout << "Error: could not open file " << filename << std::endl;
+    spdlog::error("Error: could not open {}", filename);
     exit(-1);
   }
 }

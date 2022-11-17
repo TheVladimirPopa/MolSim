@@ -3,6 +3,8 @@
 //
 
 #include "LineProcessorSingle.h"
+
+#include "spdlog/spdlog.h"
 void LineProcessorSingle::processLine(std::istringstream &dataStream,
                                       ParticleContainer &container) {
   for (auto &xj : x) {
@@ -12,7 +14,7 @@ void LineProcessorSingle::processLine(std::istringstream &dataStream,
     dataStream >> vj;
   }
   if (dataStream.eof()) {
-    // TODO log here that file has wrong format
+    spdlog::error("File format was not correct! Aborting...");
     exit(-1);
   }
   dataStream >> m;
