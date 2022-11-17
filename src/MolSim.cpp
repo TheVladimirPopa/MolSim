@@ -1,6 +1,5 @@
 
 #include <getopt.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <chrono>
 #include <cmath>
@@ -14,6 +13,7 @@
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
 void printHelp();
