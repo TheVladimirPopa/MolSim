@@ -27,6 +27,7 @@ TEST(ParticleGeneration, Position) {
     EXPECT_TRUE(found) << "Particle positions not correct ";
   }
 }
+
 /**
  * Make sure there are as many particles generated as specified by the dimension
  */

@@ -44,6 +44,6 @@ TEST(LineProcessorCuboid, ParticleType) {
   lineProcessorCuboid.processLine(dataStream, container);
 
   for (auto &p : container) {
-    EXPECT_EQ(42, p.getType());
+    EXPECT_EQ(42.0, p.getType());
   }
 }
