@@ -38,9 +38,5 @@ jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: WolleTD/clang-format-checker@v1.7
-        with:
-          target-ref: master      # required, merge target
-          clang-version: 10     # optional, default: latest (in image)
-          fetch-depth: 120       # optional, rarely needed, default: 50
-          source-ref: develop   # optional, almost never needed, default: HEAD
+      - name: clang-format
+        uses: egor-tensin/clang-format@v1
