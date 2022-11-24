@@ -18,9 +18,10 @@
 
 void printHelp();
 void printUsage();
-enum simTypes { Single, Cuboid };
+enum simTypes { Single, Cuboid, Sphere };
 const std::map<std::string, simTypes> simTypeStrings{
-    {"single", simTypes::Single}, {"cuboid", simTypes::Cuboid}};
+    {"single", simTypes::Single}, {"cuboid", simTypes::Cuboid},
+    {"sphere", simTypes::Sphere}};
 
 int main(int argc, char *argsv[]) {
   std::cout << "Hello from MolSim for PSE!" << std::endl;
@@ -209,6 +210,10 @@ int main(int argc, char *argsv[]) {
     }
     case simTypes::Cuboid: {
       FileReader::readFileCuboid(particleContainer, inputFile);
+      break;
+    }
+    case simTypes::Sphere: {
+      FileReader::readFileSphere(particleContainer, inputFile);
       break;
     }
   }
