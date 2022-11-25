@@ -14,12 +14,14 @@ void Simulation::simulate(IModel const &model, ParticleContainer &particles,
 
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;
-  auto updateX = [&model](P p) { model.updateX(std::forward<P>(p)); };
-  auto updateV = [&model](P p) { model.updateV(std::forward<P>(p)); };
-  auto updateF = [](P p) { p.updateForces(); };
-  auto addForces = [&model](P p1, P p2) {
+  std::function<void(P)> updateX{
+      [&model](P p) { model.updateX(std::forward<P>(p)); }};
+  std::function<void(P)> updateV{
+      [&model](P p) { model.updateV(std::forward<P>(p)); }};
+  std::function<void(P)> updateF{[](P p) { p.updateForces(); }};
+  std::function<void(P, P)> addForces{[&model](P p1, P p2) {
     model.addForces(std::forward<P>(p1), std::forward<P>(p2));
-  };
+  }};
 
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
