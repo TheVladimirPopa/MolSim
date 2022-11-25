@@ -42,30 +42,39 @@ void ParticleGeneration::addCuboidToParticleContainer(
   }
 }
 
+/**
+ * Helper function for ParticleContainer::addSphereToParticleContainer.
+ * Given the location of a particle it will place 4 particles at once in 2d or
+ * 8 particles at once in 3d, if that location is within the sphere.
+ * @param container Container that receives particles if location is in sphere
+ * @param data The description of the sphere
+ * @param delta Location offset for the newly added particles
+ * @param dimension Dimension of the sphere
+ * @param bolzmann_v The Bolzmann velocity
+ */
 void addParticlesIfInSphere(ParticleContainer &container,
                             ParticleGeneration::sphere const &data, vec3d delta,
                             int dimension, double bolzmann_v) {
+  // We check only once whether location is within sphere.
   bool checked = false;
   auto is_in_sphere = [&data, &checked](vec3d pos) {
-    // check once per function call to avoid asymmetries due to rounding errors
     if (checked) return checked;
     checked = true;
 
-    pos = pos - data.position;
-
-    // todo: this might fail once we start rounding. an alternative would be to
-    //   first place outer molecules and calculate cutoff distance based on those
-    return L2Norm(pos) <= (data.radius * data.distance);
+    return L2Norm(pos - data.position) <= (data.radius * data.distance);
   };
 
+  // Iterate binary vector over all 4 or 8 possible configurations for signs
   for (unsigned int sign_bin = 0b0000; sign_bin < 0b1000; sign_bin++) {
+    if (dimension == 2 && ((sign_bin & 0b100) != 0)) continue;
+
     vec3d pos = data.position;
 
-    vec3d sign = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0),
+    vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0),
                   ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
                   ((sign_bin & 0b100) == 0 ? 1.0 : -1.0)};
 
-    pos = pos + sign * delta;
+    pos = pos + signs * delta;
 
     if (!is_in_sphere(pos)) break;
 
@@ -76,41 +85,37 @@ void addParticlesIfInSphere(ParticleContainer &container,
 
 void ParticleGeneration::addSphereToParticleContainer(
     ParticleContainer &container, ParticleGeneration::sphere const &data) {
-  size_t dimension = (data.radius == 0 ? 2 : 3);
-  constexpr double meanVel = 0.1;  // todo rausziehen
+  constexpr double meanVel = 0.1;
 
-  // todo: correct number
   size_t numParticles = data.radius * data.radius;
-  numParticles = (dimension == 3 ? numParticles * data.radius : numParticles);
+  numParticles =
+      (data.dimension == 3 ? numParticles * data.radius : numParticles);
 
   if (container.size() + numParticles > container.capacity()) {
-    // Reserve so much that this cuboid would fit in twice to reduce
-    // reallocations
     spdlog::debug("Resizing the particle container");
     container.reserve(container.size() + (2 * numParticles));
   }
 
-  // Imagine a cube in 3d space with a point at its center.
-  // We slice the big cube apart into 8 equally sized smaller cubes.
-  // Our algorithm only looks at 1 of these 8 cubes. We want to generate part of
-  // the sphere. We divide that cube again, into smaller 1 molecule sized cubes.
-  // We iterate over these mini cubes. We add all minicubes to our particle
-  // container, whose distance to the center is smaller than the radius.
-  // We mirror along each dimension once and get the final sphere.
+  // Algorithm: Consider a sphere placed perfectly in a cube. Slice the
+  // sphere and cube into 8 (or 4 in 2d) smaller cubes by slicing along the
+  // center of each surface. Iterate over particle locations in 1 of those small
+  // cubes and add a particle whenever a location lies within the sphere. Mirror
+  // every particle added in this way 8 times (or 4 times in 2d).
 
   for (unsigned int x = 1; x <= data.radius; ++x) {
     for (unsigned int y = 1; y <= data.radius; ++y) {
       for (unsigned int z = 1; z <= data.radius; ++z) {
-        if (dimension == 2) z = 0;
-
+        // delta describes offset of a particle from center point
         vec3d delta = {(x - 1) * data.distance + 0.5 * data.distance,
                        (y - 1) * data.distance + 0.5 * data.distance,
                        (z - 1) * data.distance + 0.5 * data.distance};
+        if (data.dimension == 2) delta[2] = 0.0;
 
-        addParticlesIfInSphere(container, data, delta, dimension, meanVel);
-
-        if (dimension == 2) break;
+        addParticlesIfInSphere(container, data, delta, data.dimension, meanVel);
+        if (data.dimension == 2) break;
       }
     }
   }
+
+  spdlog::debug("Added sphere particles to particle container.");
 }
