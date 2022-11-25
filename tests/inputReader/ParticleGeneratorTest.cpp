@@ -1,3 +1,4 @@
+#include "dataStructures/VectorContainer.h"
 #include "gtest/gtest.h"
 #include "inputReader/ParticleGenerator.h"
 
@@ -9,7 +10,7 @@ using ParticleGeneration::cuboid;
  */
 TEST(ParticleGeneration, Position) {
   cuboid test{{0., 0., 0.}, {2, 1, 2}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
 
@@ -18,7 +19,7 @@ TEST(ParticleGeneration, Position) {
 
   for (auto &expectedPos : expected) {
     bool found = false;
-    for (auto &c : container) {
+    for (auto &c : container.getVector()) {
       if (c.getX() == expectedPos) {
         found = true;
         break;
@@ -33,7 +34,7 @@ TEST(ParticleGeneration, Position) {
  */
 TEST(ParticleGeneration, ParticleCount) {
   cuboid test{{0., 0., 0.}, {3, 4, 5}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
 
@@ -46,10 +47,10 @@ TEST(ParticleGeneration, ParticleCount) {
  */
 TEST(ParticleGeneration, Mass) {
   cuboid test{{0., 0., 0.}, {3, 4, 5}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
-  for (auto &particle : container) {
+  for (auto &particle : container.getVector()) {
     ASSERT_EQ(particle.getM(), 42.0) << "Particle mass is not set correctly";
   }
 }
