@@ -14,7 +14,7 @@ using ArrayUtils::L2Norm;
 
 void ParticleGeneration::addCuboidToParticleContainer(
     ParticleContainer &container, ParticleGeneration::cuboid const &data) {
-  constexpr size_t dimension = 2;  // Todo: This probably shouldn't be constexpr
+  size_t dimension = (data.dimension[2] == 1 ? 2 : 3);
   constexpr double meanVel = 0.1;
 
   int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
