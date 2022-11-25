@@ -6,7 +6,7 @@
 
 #include "spdlog/spdlog.h"
 
-void Simulation::simulate(IModel const &model, ParticleContainer &particles,
+void Simulation::simulate(IModel const &model, IContainer &particles,
                           IWriter &fileWriter) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;

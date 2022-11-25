@@ -34,7 +34,6 @@ struct cuboid {
  * method will reserve additional place, if it is to small.
  * @param data The cuboid struct which holds the data for the generation
  */
-void addCuboidToParticleContainer(ParticleContainer &container,
-                                  cuboid const &data);
+void addCuboidToParticleContainer(IContainer &container, cuboid const &data);
 
 };  // namespace ParticleGeneration

@@ -5,18 +5,19 @@
 #include <functional>
 #include <vector>
 
+#include "IContainer.h"
 #include "Particle.h"
 
-class ParticleContainer : public std::vector<Particle> {
+class VectorContainer : public IContainer {
  public:
   /**
    * Applies a function to all particles in the container
    * @param unaryFunction A function taking a particle reference and returning
    * nothing
    */
-  void forEach(std::function<void(Particle &)> &unaryFunction) {
+  void forEach(std::function<void(Particle &)> &unaryFunction) override {
     for (size_t i = 0; i < size(); ++i) {
-      unaryFunction(this->operator[](i));
+      unaryFunction(vector[i]);
     }
   }
 
@@ -29,11 +30,25 @@ class ParticleContainer : public std::vector<Particle> {
    * are not considered
    */
   void forEachPair(
-      std::function<void(Particle &, Particle &)> &binaryFunction) {
+      std::function<void(Particle &, Particle &)> &binaryFunction) override {
     for (size_t i = 0; i < size(); ++i) {
       for (size_t j = i + 1; j < size(); ++j) {
-        binaryFunction(this->operator[](i), this->operator[](j));
+        binaryFunction(vector[i], vector[j]);
       }
     }
   }
+
+  size_t size() override { return vector.size(); }
+
+  size_t capacity() override { return vector.capacity(); }
+
+  void reserve(size_t amount) override { vector.reserve(amount); }
+
+  void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
+                    double m_arg, int type) override {
+    vector.emplace_back(x_arg, v_arg, m_arg, type);
+  };
+
+ private:
+  std::vector<Particle> vector{};
 };

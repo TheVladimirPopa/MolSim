@@ -16,5 +16,5 @@ class IWriter {
    * @param particles The particle container with all particles
    */
   virtual void writeFile(const std::string &filename, int iteration,
-                         ParticleContainer &particles) = 0;
+                         IContainer &particles) = 0;
 };

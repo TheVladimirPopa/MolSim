@@ -201,14 +201,18 @@ int main(int argc, char *argsv[]) {
   spdlog::set_default_logger(std::make_shared<spdlog::logger>(
       "", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
-  ParticleContainer particleContainer{};
+
+  VectorContainer vectorContainer{};
+
+  IContainer *container = &vectorContainer;
+
   switch (simulationType) {
     case simTypes::Single: {
-      FileReader::readFileSingle(particleContainer, inputFile);
+      FileReader::readFileSingle(*container, inputFile);
       break;
     }
     case simTypes::Cuboid: {
-      FileReader::readFileCuboid(particleContainer, inputFile);
+      FileReader::readFileCuboid(*container, inputFile);
       break;
     }
   }
@@ -237,7 +241,7 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, particleContainer, *selectedWriter);
+  simulation.simulate(model, *container, *selectedWriter);
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();

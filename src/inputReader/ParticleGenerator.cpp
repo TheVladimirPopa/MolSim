@@ -9,7 +9,7 @@
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 void ParticleGeneration::addCuboidToParticleContainer(
-    ParticleContainer &container, ParticleGeneration::cuboid const &data) {
+    IContainer &container, ParticleGeneration::cuboid const &data) {
   constexpr size_t dimension = 2;
   constexpr double meanVel = 0.1;
 

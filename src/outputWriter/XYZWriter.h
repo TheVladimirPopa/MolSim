@@ -20,5 +20,5 @@ class XYZWriter : public IWriter {
   virtual ~XYZWriter();
 
   void writeFile(const std::string &filename, int iteration,
-                 ParticleContainer &particles) override;
+                 IContainer &particles) override;
 };
