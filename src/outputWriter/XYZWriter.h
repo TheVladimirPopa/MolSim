@@ -10,8 +10,8 @@
 #include <fstream>
 
 #include "IWriter.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 
 class XYZWriter : public IWriter {
  public:

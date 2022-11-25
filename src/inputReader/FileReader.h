@@ -11,8 +11,8 @@
 #include "ILineProcessor.h"
 #include "LineProcessorCuboid.h"
 #include "LineProcessorSingle.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 
 class FileReader {
  public:

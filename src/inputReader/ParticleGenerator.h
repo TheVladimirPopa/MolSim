@@ -4,7 +4,7 @@
 #pragma once
 #include <array>
 
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/IContainer.h"
 
 namespace ParticleGeneration {
 /**

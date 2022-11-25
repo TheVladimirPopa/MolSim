@@ -10,8 +10,8 @@
 #include <list>
 
 #include "IWriter.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 #include "outputWriter/vtk-unstructured.h"
 
 /**

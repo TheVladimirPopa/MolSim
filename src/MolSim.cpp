@@ -7,7 +7,7 @@
 
 #include "Simulation.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"

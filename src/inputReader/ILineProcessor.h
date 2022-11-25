@@ -4,7 +4,7 @@
 #pragma once
 #include <sstream>
 
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/IContainer.h"
 
 class ILineProcessor {
  public:

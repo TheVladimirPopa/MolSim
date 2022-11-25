@@ -2,8 +2,8 @@
 // Created by leo on 09.11.22.
 //
 #pragma once
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
