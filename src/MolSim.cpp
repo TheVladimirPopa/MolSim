@@ -70,6 +70,7 @@ int main(int argc, char *argsv[]) {
         if (pos == simTypeStrings.end()) {
           std::cout << "Type " << optarg << " is not known" << std::endl;
           printUsage();
+          return 1;
         } else {
           simulationType = pos->second;
         }
