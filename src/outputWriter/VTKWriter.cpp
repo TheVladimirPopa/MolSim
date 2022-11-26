@@ -63,8 +63,7 @@ void VTKWriter::writeFile(const std::string &filename, int iteration) {
   std::stringstream strstr;
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
          << ".vtu";
-
-  auto finalFileName = strstr.str().c_str();
+  auto finalFileName = strstr.str();
   spdlog::debug("Writing {}", finalFileName);
   std::ofstream file(finalFileName);
   VTKFile(file, *vtkFile);
