@@ -1,3 +1,4 @@
+#include "dataStructures/VectorContainer.h"
 #include "gtest/gtest.h"
 #include "inputReader/ParticleGenerator.h"
 
@@ -10,7 +11,7 @@ using ParticleGeneration::sphere;
  */
 TEST(ParticleGenerationCuboid, Position) {
   cuboid test{{0., 0., 0.}, {2, 1, 2}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
 
@@ -19,7 +20,7 @@ TEST(ParticleGenerationCuboid, Position) {
 
   for (auto &expectedPos : expected) {
     bool found = false;
-    for (auto &c : container) {
+    for (auto &c : container.getVector()) {
       if (c.getX() == expectedPos) {
         found = true;
         break;
@@ -34,7 +35,7 @@ TEST(ParticleGenerationCuboid, Position) {
  */
 TEST(ParticleGenerationCuboid, ParticleCount) {
   cuboid test{{0., 0., 0.}, {3, 4, 5}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
 
@@ -47,10 +48,10 @@ TEST(ParticleGenerationCuboid, ParticleCount) {
  */
 TEST(ParticleGenerationCuboid, Mass) {
   cuboid test{{0., 0., 0.}, {3, 4, 5}, {-10., -20., -30.}, 5, 42};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addCuboidToParticleContainer(container, test);
-  for (auto &particle : container) {
+  for (auto &particle : container.getVector()) {
     ASSERT_EQ(particle.getM(), 42.0) << "Particle mass is not set correctly";
   }
 }
@@ -60,7 +61,7 @@ TEST(ParticleGenerationCuboid, Mass) {
  */
 TEST(ParticleGenerationSphere, Position) {
   sphere test{{0., 0., 0.}, 2, 2, {-10., -20., -30.}, 4, 42, 0};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addSphereToParticleContainer(container, test);
 
@@ -71,7 +72,7 @@ TEST(ParticleGenerationSphere, Position) {
 
   for (auto &expectedPos : expected) {
     bool found = false;
-    for (auto &c : container) {
+    for (auto &c : container.getVector()) {
       if (c.getX() == expectedPos) {
         found = true;
         break;
@@ -86,14 +87,14 @@ TEST(ParticleGenerationSphere, Position) {
  */
 TEST(ParticleGenerationSphere, ParticleCount) {
   sphere test{{0., 0., 0.}, 2, 2, {-10., -20., -30.}, 4, 42, 0};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addSphereToParticleContainer(container, test);
 
   EXPECT_EQ(container.size(), 12) << "Particle count of 2d circle is wrong";
 
   sphere test_3d{{0., 0., 0.}, 2, 3, {-10., -20., -30.}, 4, 42, 0};
-  ParticleContainer container_3d{};
+  VectorContainer container_3d{};
   addSphereToParticleContainer(container_3d, test_3d);
   EXPECT_EQ(container_3d.size(), 4 + 12 + 12 + 4)
       << "Particle count of 3d sphere is wrong";
@@ -106,7 +107,7 @@ TEST(ParticleGenerationSphere, ParticleCount) {
  */
 TEST(ParticleGenerationSphere, ParticleCountHighValues) {
   sphere test_3d{{1e9, 1e9, 1e9}, 3, 3, {1., 5., 3.}, 10000.0, 42, 0};
-  ParticleContainer container_3d{};
+  VectorContainer container_3d{};
   addSphereToParticleContainer(container_3d, test_3d);
   EXPECT_EQ(container_3d.size(), 136) << "Particle count of 3d sphere is wrong";
 }
@@ -116,10 +117,10 @@ TEST(ParticleGenerationSphere, ParticleCountHighValues) {
  */
 TEST(ParticleGenerationSphere, Mass) {
   sphere test{{0., 0., 0.}, 2, 2, {-10., -20., -30.}, 4, 42, 0};
-  ParticleContainer container{};
+  VectorContainer container{};
 
   addSphereToParticleContainer(container, test);
-  for (auto &particle : container) {
+  for (auto &particle : container.getVector()) {
     ASSERT_EQ(particle.getM(), 42.0) << "Particle mass is not set correctly";
   }
 }

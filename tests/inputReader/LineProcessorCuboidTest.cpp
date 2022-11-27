@@ -1,3 +1,4 @@
+#include "dataStructures/VectorContainer.h"
 #include "gtest/gtest.h"
 #include "inputReader/LineProcessorCuboid.h"
 
@@ -10,7 +11,7 @@ TEST(LineProcessorCuboid, ParticleCount) {
   std::istringstream dataStream(
       "0.0 0.0 0.0     0.0 0.0 0.0     40 8 1          1.1225          1.0     "
       "    1");
-  ParticleContainer container{};
+  VectorContainer container{};
   lineProcessorCuboid.processLine(dataStream, container);
 
   EXPECT_EQ(40 * 8 * 1, container.size())
@@ -26,10 +27,10 @@ TEST(LineProcessorCuboid, ParticleMass) {
   std::istringstream dataStream(
       "0.0 0.0 0.0     0.0 0.0 0.0     2 3 1          1.1225          42.0     "
       "    1");
-  ParticleContainer container{};
+  VectorContainer container{};
   lineProcessorCuboid.processLine(dataStream, container);
 
-  for (auto &p : container) {
+  for (auto &p : container.getVector()) {
     EXPECT_EQ(42.0, p.getM()) << "The mass is not read in or set correctly";
   }
 }
@@ -42,10 +43,10 @@ TEST(LineProcessorCuboid, ParticleType) {
   std::istringstream dataStream(
       "0.0 0.0 0.0     0.0 0.0 0.0     4 3 2          1.1225          1.0      "
       "   42");
-  ParticleContainer container{};
+  VectorContainer container{};
   lineProcessorCuboid.processLine(dataStream, container);
 
-  for (auto &p : container) {
+  for (auto &p : container.getVector()) {
     EXPECT_EQ(42.0, p.getType()) << "The type is not read in or set correctly";
   }
 }

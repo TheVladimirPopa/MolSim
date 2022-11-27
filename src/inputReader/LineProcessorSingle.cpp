@@ -6,7 +6,7 @@
 
 #include "spdlog/spdlog.h"
 void LineProcessorSingle::processLine(std::istringstream &dataStream,
-                                      ParticleContainer &container) {
+                                      IContainer &container) {
   for (auto &xj : x) {
     dataStream >> xj;
   }

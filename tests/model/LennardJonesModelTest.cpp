@@ -4,7 +4,6 @@
 #include "model/LennardJonesModel.h"
 #include "model/NewtonsLawModel.h"
 using std::pow;
-#include "climits"
 
 /**
  * Worksheet 2 defines epsilon = 5.0 and sigma = 1.0 for the Lennard-Jones
@@ -40,7 +39,7 @@ TEST(LennardJonesModel, ForceCorrectSign) {
  * the resulting force is already known.
  */
 TEST(LennardJonesModel, ForcePrecalculatedExample) {
-  ParticleContainer c{};
+  VectorContainer c{};
 
   double distance = 2.0;
   Particle p1{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};

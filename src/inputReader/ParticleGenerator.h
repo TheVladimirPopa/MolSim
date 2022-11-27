@@ -4,7 +4,7 @@
 #pragma once
 #include <array>
 
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/IContainer.h"
 
 namespace ParticleGeneration {
 /**
@@ -54,8 +54,7 @@ struct sphere {
  * method will reserve additional place, if it is to small.
  * @param data The cuboid struct which holds the data for the generation
  */
-void addCuboidToParticleContainer(ParticleContainer &container,
-                                  cuboid const &data);
+void addCuboidToParticleContainer(IContainer &container, cuboid const &data);
 
 /**
  * Generate all the single particles for a sphere and places them in the
@@ -66,7 +65,6 @@ void addCuboidToParticleContainer(ParticleContainer &container,
  * method will reserve additional place, if it is to small.
  * @param data The sphere struct which holds the data for the generation
  */
-void addSphereToParticleContainer(ParticleContainer &container,
-                                  sphere const &data);
+void addSphereToParticleContainer(IContainer &container, sphere const &data);
 
 };  // namespace ParticleGeneration

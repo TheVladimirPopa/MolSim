@@ -1,7 +1,7 @@
 #pragma once
 
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/VectorContainer.h"
 #include "utils/ArrayUtils.h"
 
 class IModel {

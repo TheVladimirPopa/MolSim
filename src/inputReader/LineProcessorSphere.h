@@ -8,5 +8,5 @@ class LineProcessorSphere : public ILineProcessor {
 
  public:
   void processLine(std::istringstream &dataStream,
-                   ParticleContainer &container) override;
+                   IContainer &container) override;
 };

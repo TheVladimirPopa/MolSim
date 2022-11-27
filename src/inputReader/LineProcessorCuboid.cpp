@@ -7,7 +7,7 @@
 #include "ParticleGenerator.h"
 
 void LineProcessorCuboid::processLine(std::istringstream &dataStream,
-                                      ParticleContainer &container) {
+                                      IContainer &container) {
   for (auto &xj : cuboid.position) {
     dataStream >> xj;
   }

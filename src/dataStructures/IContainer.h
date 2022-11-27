@@ -1,24 +1,16 @@
-//
-// Created by leo on 01.11.22.
-//
 #pragma once
-#include <vector>
+#include <functional>
 
 #include "Particle.h"
 
-class ParticleContainer : public std::vector<Particle> {
+class IContainer {
  public:
   /**
    * Applies a function to all particles in the container
    * @param unaryFunction A function taking a particle reference and returning
    * nothing
    */
-  template <typename F>
-  void forEach(F unaryFunction) {
-    for (size_t i = 0; i < size(); ++i) {
-      unaryFunction(this->operator[](i));
-    }
-  }
+  virtual void forEach(std::function<void(Particle &)> &unaryFunction) = 0;
 
   /**
    * Applies a function to all particle pairs in the container
@@ -28,12 +20,16 @@ class ParticleContainer : public std::vector<Particle> {
    * (p1,p2), it won't get applied to (p2,p1). Also pairs with the same particle
    * are not considered
    */
-  template <typename F>
-  void forEachPair(F binaryFunction) {
-    for (size_t i = 0; i < size(); ++i) {
-      for (size_t j = i + 1; j < size(); ++j) {
-        binaryFunction(this->operator[](i), this->operator[](j));
-      }
-    }
-  }
+  virtual void forEachPair(
+      std::function<void(Particle &, Particle &)> &binaryFunction) = 0;
+
+  virtual void reserve(size_t amount) = 0;
+
+  virtual void emplace_back(std::array<double, 3> x_arg,
+                            std::array<double, 3> v_arg = {0.0, 0.0, 0.0},
+                            double m_arg = 1.0, int type = 0) = 0;
+  virtual size_t capacity() = 0;
+  virtual size_t size() = 0;
+
+  virtual ~IContainer() = default;
 };

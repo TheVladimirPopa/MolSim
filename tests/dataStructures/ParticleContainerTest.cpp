@@ -1,4 +1,4 @@
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/VectorContainer.h"
 #include "utils/TestUtils.h"
 using TestUtils::makeContainer;
 #include "gtest/gtest.h"
@@ -10,7 +10,7 @@ using TestUtils::makeContainer;
  * handles the empty container edge case.
  */
 TEST(ParticleContainer, EmptyDoesNothing) {
-  ParticleContainer particle_container{};
+  VectorContainer particle_container{};
   unsigned ct = 0;
   std::function<void(Particle &)> count = [&ct](auto& p) { ct++; };
   particle_container.forEach(count);
@@ -29,7 +29,7 @@ TEST(ParticleContainer, EmptyDoesNothing) {
 TEST(ParticleContainer, ForEachBasic) {
   // Prepare container
   unsigned size = 50;
-  ParticleContainer particle_container = makeContainer(size);
+  VectorContainer particle_container = makeContainer(size);
 
   // Make sure we don't lose elements or add something twice
   ASSERT_EQ(particle_container.size(), size);
@@ -48,7 +48,8 @@ TEST(ParticleContainer, ForEachBasic) {
 
   for (unsigned i = 0; i < size; i++) {
     // Check whether the correct particles where modified
-    EXPECT_EQ(particle_container[i].getX()[0], static_cast<double>(i));
+    EXPECT_EQ(particle_container.getVector()[i].getX()[0],
+              static_cast<double>(i));
   }
 }
 
@@ -58,7 +59,7 @@ TEST(ParticleContainer, ForEachBasic) {
 TEST(ParticleContainer, ForEachPairBasic) {
   // Prepare container
   unsigned size = 49;
-  ParticleContainer particle_container = makeContainer(size);
+  VectorContainer particle_container = makeContainer(size);
 
   ASSERT_GE(size, 1) << "To test pairs we need at least 2 particles.";
 
@@ -81,7 +82,7 @@ TEST(ParticleContainer, ForEachPairBasic) {
 
   particle_container.forEachPair(setDummyX);
 
-  for (const auto &p : particle_container)
-    ASSERT_EQ(p.getX()[0], size-1)
+  for (const auto &p : particle_container.getVector())
+    ASSERT_EQ(p.getX()[0], size - 1)
         << "ForEachPair did not process each pair exactly once.";
 }

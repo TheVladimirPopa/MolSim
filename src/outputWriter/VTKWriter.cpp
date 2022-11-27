@@ -19,11 +19,11 @@ VTKWriter::VTKWriter() = default;
 VTKWriter::~VTKWriter() = default;
 
 void VTKWriter::writeFile(const std::string &filename, int iteration,
-                          ParticleContainer &particles) {
+                          IContainer &particles) {
   initializeOutput(static_cast<int>(particles.size()));
-  for (auto &p : particles) {
-    plotParticle(p);
-  }
+  std::function<void(Particle &)> plot{
+      [this](Particle &p) { this->plotParticle(p); }};
+  particles.forEach(plot);
   writeFile(filename, iteration);
 }
 
@@ -63,8 +63,7 @@ void VTKWriter::writeFile(const std::string &filename, int iteration) {
   std::stringstream strstr;
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
          << ".vtu";
-
-  auto finalFileName = strstr.str().c_str();
+  auto finalFileName = strstr.str();
   spdlog::debug("Writing {}", finalFileName);
   std::ofstream file(finalFileName);
   VTKFile(file, *vtkFile);

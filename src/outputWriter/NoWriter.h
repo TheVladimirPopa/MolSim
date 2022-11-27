@@ -4,5 +4,5 @@
 #include "IWriter.h"
 class NoWriter : public IWriter {
   void writeFile(const std::string &filename, int iteration,
-                 ParticleContainer &particles) override {}
+                 IContainer &particles) override {}
 };

@@ -13,7 +13,7 @@ using ArrayUtils::L2Norm;
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 void ParticleGeneration::addCuboidToParticleContainer(
-    ParticleContainer &container, ParticleGeneration::cuboid const &data) {
+    IContainer &container, ParticleGeneration::cuboid const &data) {
   size_t dimension = (data.dimension[2] == 1 ? 2 : 3);
   constexpr double meanVel = 0.1;
 
@@ -52,7 +52,7 @@ void ParticleGeneration::addCuboidToParticleContainer(
  * @param dimension Dimension of the sphere
  * @param bolzmann_v The Bolzmann velocity
  */
-void addParticlesIfInSphere(ParticleContainer &container,
+void addParticlesIfInSphere(IContainer &container,
                             ParticleGeneration::sphere const &data, vec3d delta,
                             int dimension, double bolzmann_v) {
   auto is_in_sphere = [&data](vec3d pos) {
@@ -81,7 +81,7 @@ void addParticlesIfInSphere(ParticleContainer &container,
 }
 
 void ParticleGeneration::addSphereToParticleContainer(
-    ParticleContainer &container, ParticleGeneration::sphere const &data) {
+    IContainer &container, ParticleGeneration::sphere const &data) {
   constexpr double meanVel = 0.1;
 
   size_t numParticles = data.radius * data.radius;
