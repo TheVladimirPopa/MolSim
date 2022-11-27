@@ -57,7 +57,6 @@ struct sphere {
 void addCuboidToParticleContainer(ParticleContainer &container,
                                   cuboid const &data);
 
-
 /**
  * Generate all the single particles for a sphere and places them in the
  * container

@@ -20,7 +20,8 @@ void printHelp();
 void printUsage();
 enum simTypes { Single, Cuboid, Sphere };
 const std::map<std::string, simTypes> simTypeStrings{
-    {"single", simTypes::Single}, {"cuboid", simTypes::Cuboid},
+    {"single", simTypes::Single},
+    {"cuboid", simTypes::Cuboid},
     {"sphere", simTypes::Sphere}};
 
 int main(int argc, char *argsv[]) {

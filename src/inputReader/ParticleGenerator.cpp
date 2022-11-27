@@ -55,28 +55,25 @@ void ParticleGeneration::addCuboidToParticleContainer(
 void addParticlesIfInSphere(ParticleContainer &container,
                             ParticleGeneration::sphere const &data, vec3d delta,
                             int dimension, double bolzmann_v) {
-  // We check only once whether location is within sphere.
-  bool checked = false;
-  auto is_in_sphere = [&data, &checked](vec3d pos) {
-    if (checked) return checked;
-    checked = true;
-
+  auto is_in_sphere = [&data](vec3d pos) {
     return L2Norm(pos - data.position) <= (data.radius * data.distance);
   };
 
   // Iterate binary vector over all 4 or 8 possible configurations for signs
+  bool checked = false;
   for (unsigned int sign_bin = 0b0000; sign_bin < 0b1000; sign_bin++) {
     if (dimension == 2 && ((sign_bin & 0b100) != 0)) continue;
 
     vec3d pos = data.position;
 
     vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0),
-                  ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
-                  ((sign_bin & 0b100) == 0 ? 1.0 : -1.0)};
+                   ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
+                   ((sign_bin & 0b100) == 0 ? 1.0 : -1.0)};
 
     pos = pos + signs * delta;
 
-    if (!is_in_sphere(pos)) break;
+    if (!checked && !is_in_sphere(pos)) break;
+    checked = true;
 
     vec3d bolz_v = maxwellBoltzmannDistributedVelocity(bolzmann_v, dimension);
     container.emplace_back(pos, bolz_v + data.velocity, data.mass, data.type);

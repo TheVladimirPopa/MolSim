@@ -1,4 +1,5 @@
 #include "LineProcessorSphere.h"
+
 #include "ParticleGenerator.h"
 
 void LineProcessorSphere::processLine(std::istringstream &dataStream,
@@ -20,7 +21,6 @@ void LineProcessorSphere::processLine(std::istringstream &dataStream,
   dataStream >> sphere.mass;
 
   dataStream >> sphere.type;
-
 
   ParticleGeneration::addSphereToParticleContainer(container, sphere);
 }
