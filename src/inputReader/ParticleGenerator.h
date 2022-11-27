@@ -18,11 +18,31 @@ struct cuboid {
   /// The velocity of the particles, without Brownian Motion
   std::array<double, 3> velocity{0., 0., 0.};
   /// The distance between adjacent particles(mesh width)
-  double distance = 1;
+  double distance{1.0};
   /// The mass of a single particle
-  double mass = 1;
+  double mass{1.0};
   /// The type the particles have
-  int type = 0;
+  int type{0};
+};
+
+/**
+ * Struct containing all the values specifying a sphere
+ */
+struct sphere {
+  /// The position of the left lower corner of the sphere
+  std::array<double, 3> position{0., 0., 0.};
+  /// What radius in particle count the sphere has
+  unsigned int radius{1};
+  /// What dimension the sphere has (2d or 3d)
+  unsigned int dimension{2};
+  /// The velocity of the particles, without Brownian Motion
+  std::array<double, 3> velocity{0., 0., 0.};
+  /// The distance between adjacent particles(mesh width)
+  double distance{1.0};
+  /// The mass of a single particle
+  double mass{1.0};
+  /// The type the particles have
+  int type{0};
 };
 
 /**
@@ -35,5 +55,16 @@ struct cuboid {
  * @param data The cuboid struct which holds the data for the generation
  */
 void addCuboidToParticleContainer(IContainer &container, cuboid const &data);
+
+/**
+ * Generate all the single particles for a sphere and places them in the
+ * container
+ * @note The particle velocity is calculated with @see
+ * MaxwellBoltzmannDistribution.h
+ * @param container The container in which all the particles get placed. This
+ * method will reserve additional place, if it is to small.
+ * @param data The sphere struct which holds the data for the generation
+ */
+void addSphereToParticleContainer(IContainer &container, sphere const &data);
 
 };  // namespace ParticleGeneration

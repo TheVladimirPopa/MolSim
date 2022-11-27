@@ -43,7 +43,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 
 ```
 Usage
-        ./MolSim -f <input-file> [-t (single|cuboid)] [-o <output-file>] [-e <endtime>]
+        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
                                 [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-v] [-v] [-q]
 
 OPTIONS:
@@ -55,7 +55,7 @@ OPTIONS:
         -n, --no-output
                 If active no files will be written, even overwrites -o.
 
-        -t (single|cuboid), --type=(single|cuboid)
+        -t (single|cuboid|sphere), --type=(single|cuboid|sphere)
                 Specifies the way to set up particles (default is single).
                 Use single if you want particles on their own and use 
                 cuboid if you want the particles to spawn in cuboids.
@@ -121,6 +121,20 @@ A line of molecule data consists of:
 * type of particles (1 integer)
 
 For example: `15.0 15.0 0.0   0.0 -10.0 0.0   8 8 1           1.1225          1.0         2`
+
+### Sphere file(`--type=sphere`)
+
+A line of molecule data consists of:
+
+* xyz-coordinates of center (3 double values)
+* initial velocities (3 double values)
+* radius in number of molecules (1 positive integer)
+* dimension (1 positive integer)
+* distance of particles (1 double value)
+* mass of one particle (1 double value)
+* type of particles (1 integer)
+
+For example: `4.0 15.0 0.0    0.0 -10.0 0.0    6         2            1.1225          1.0         2`
 
 ## Visualisation (_optional_)
 
