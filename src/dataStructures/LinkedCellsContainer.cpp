@@ -48,7 +48,8 @@ LinkedCellsContainer::LinkedCellsContainer(
   for (int y = -1; y < 2; ++y) {
     for (int x = -1; x < 2; ++x) {
       indexOffsetAdjacent[indexAdjacentArray++] =
-          (dimensions[1] * dimensions[0]) + x + (y * dimensions[0]);
+          static_cast<int>(dimensions[1] * dimensions[0]) + x +
+          (y * dimensions[0]);
     }
   }
 }
@@ -65,8 +66,8 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
     if (indexInBox[i] < 0) {
       indexInBox[i] = -1;
     }
-    if (indexInBox[i] > dimensions[i]) {
-      indexInBox[i] = dimensions[i];
+    if (indexInBox[i] > static_cast<int>(dimensions[i])) {
+      indexInBox[i] = static_cast<int>(dimensions[i]);
     }
 
     indexInBox[i] += 1;
@@ -84,11 +85,11 @@ void LinkedCellsContainer::forEachPair(
     std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
 
-  for (int index = 0; index < cells.size(); ++index) {
+  for (size_t index = 0; index < cells.size(); ++index) {
     if (cells[index].type == halo) {
       continue;
     }
-    for (int indexOffset : indexOffsetAdjacent) {
+    for (size_t indexOffset : indexOffsetAdjacent) {
       for (auto cellAParticle : cells[index].particles) {
         for (auto cellBParticle : cells[index + indexOffset].particles) {
           binaryFunction(*cellAParticle, *cellBParticle);
@@ -112,7 +113,7 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
       &particlesVector[particlesVector.size() - 1]);
 }
 void LinkedCellsContainer::recalculateStructure() {
-  for (int cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
+  for (size_t cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
     auto &cell = cells[cellIndex];
     for (auto it = cell.particles.begin(); it != cell.particles.end();) {
       auto pos = (*it)->getX();

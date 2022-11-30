@@ -66,7 +66,7 @@ class LinkedCellsContainer : public IContainer {
 
   /// All the offsets for adjacent cells which have a greater index than the
   /// current one
-  std::array<int, 14> indexOffsetAdjacent;
+  std::array<size_t, 14> indexOffsetAdjacent{};
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
