@@ -101,4 +101,10 @@ class LinkedCellsContainer : public IContainer {
 
   void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
                     double m_arg, int type) override;
+
+  /**
+   * Method returning the cells vector. ONLY USED FOR TESTING
+   * @return a const reference to the cells vector
+   */
+  const std::vector<cell> &getCellsVector() { return cells; }
 };

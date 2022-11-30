@@ -9,7 +9,8 @@
 LinkedCellsContainer::LinkedCellsContainer(
     double cellSize, std::array<double, 3> &leftLowerBound,
     std::array<double, 3> &rightUpperBound)
-    : gridSize{cellSize},
+    : cells{},
+      gridSize{cellSize},
       leftLowerCorner{leftLowerBound},
       rightUpperCorner{rightUpperBound} {
   std::array<double, 3> boundingBoxDim{rightUpperCorner - leftLowerCorner};
@@ -21,19 +22,22 @@ LinkedCellsContainer::LinkedCellsContainer(
 
   cells.reserve(numCells);
 
+  long index = 0;
   // Instantiate all the cells with their specified type
-  for (size_t x = 0; x < dimensions[0]; ++x) {
+  for (size_t z = 0; z < dimensions[2]; ++z) {
     for (size_t y = 0; y < dimensions[1]; ++y) {
-      for (size_t z = 0; z < dimensions[2]; ++z) {
+      for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells[getVectorIndexFromCord(x, y, z)] = cell{halo};
+          cells.emplace(cells.begin() + index, halo);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          cells[getVectorIndexFromCord(x, y, z)] = cell{boundary};
+          cells.emplace(cells.begin() + index, boundary);
+
         } else {
-          cells[getVectorIndexFromCord(x, y, z)] = cell{inner};
+          cells.emplace(cells.begin() + index, inner);
         }
+        ++index;
       }
     }
   }
