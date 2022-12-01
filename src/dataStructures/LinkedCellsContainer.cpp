@@ -66,15 +66,13 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
   std::array<double, 3> positionInBox = position - leftLowerCorner;
   std::array<int, 3> indexInBox{};
   for (int i = 0; i < 3; ++i) {
-    indexInBox[i] = static_cast<int>(floor(positionInBox[i] / gridSize));
+    indexInBox[i] = static_cast<int>(floor(positionInBox[i] / gridSize)) + 1;
     if (indexInBox[i] < 0) {
-      indexInBox[i] = -1;
+      indexInBox[i] = 0;
     }
-    if (indexInBox[i] > static_cast<int>(dimensions[i])) {
-      indexInBox[i] = static_cast<int>(dimensions[i]);
+    if (indexInBox[i] >= static_cast<int>(dimensions[i])) {
+      indexInBox[i] = static_cast<int>(dimensions[i]) - 1;
     }
-
-    indexInBox[i] += 1;
   }
 
   return getVectorIndexFromCord(indexInBox[0], indexInBox[1], indexInBox[2]);
