@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Simulation.h"
+#include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
@@ -206,8 +207,13 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
+  std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  std::array<double, 3> rightUpperCorner{55., 30., 5};
 
-  IContainer *container = &vectorContainer;
+  LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
+                                            rightUpperCorner};
+
+  IContainer *container = &linkedCellsContainer;
 
   switch (simulationType) {
     case simTypes::Single: {
