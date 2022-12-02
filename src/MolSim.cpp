@@ -224,7 +224,7 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  LennardJonesModel model{};
+  LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
 
   VTKWriter vtkWriter{};
