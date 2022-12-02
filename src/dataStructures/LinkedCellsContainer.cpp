@@ -92,11 +92,22 @@ void LinkedCellsContainer::forEachPair(
       continue;
     }
     for (size_t indexOffset : indexOffsetAdjacent) {
-      for (auto cellAParticle : cells[index].particles) {
-        for (auto cellBParticle : cells[index + indexOffset].particles) {
-          if (cellAParticle == cellBParticle) continue;
-          binaryFunction(particlesVector[cellAParticle],
-                         particlesVector[cellBParticle]);
+      if (indexOffset == 0) {
+        auto &particles = cells[index].particles;
+        for (auto first = particles.begin(); first != particles.end();
+             ++first) {
+          for (auto second = first; second != particles.end(); ++second) {
+            if (*second == *first) continue;
+            binaryFunction(particlesVector[*first], particlesVector[*second]);
+          }
+        }
+
+      } else {
+        for (auto cellAParticle : cells[index].particles) {
+          for (auto cellBParticle : cells[index + indexOffset].particles) {
+            binaryFunction(particlesVector[cellAParticle],
+                           particlesVector[cellBParticle]);
+          }
         }
       }
     }
