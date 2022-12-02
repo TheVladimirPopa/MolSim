@@ -36,7 +36,7 @@ class VectorContainer : public IContainer {
     vector.emplace_back(x_arg, v_arg, m_arg, type);
   };
 
-  std::vector<Particle> getVector() { return vector; };
+  std::vector<Particle> &getVector() { return vector; };
 
  private:
   std::vector<Particle> vector{};
