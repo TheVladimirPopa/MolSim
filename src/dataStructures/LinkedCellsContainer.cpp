@@ -94,7 +94,9 @@ void LinkedCellsContainer::forEachPair(
     for (size_t indexOffset : indexOffsetAdjacent) {
       for (auto cellAParticle : cells[index].particles) {
         for (auto cellBParticle : cells[index + indexOffset].particles) {
-          binaryFunction(*cellAParticle, *cellBParticle);
+          if (cellAParticle == cellBParticle) continue;
+          binaryFunction(particlesVector[cellAParticle],
+                         particlesVector[cellBParticle]);
         }
       }
     }
@@ -111,18 +113,17 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
                                         double m_arg, int type) {
   particlesVector.emplace_back(x_arg, v_arg, m_arg, type);
   size_t index = getCellIndexOfPosition(x_arg);
-  cells[index].particles.push_back(
-      &particlesVector[particlesVector.size() - 1]);
+  cells[index].particles.push_back(particlesVector.size() - 1);
 }
 void LinkedCellsContainer::recalculateStructure() {
   for (size_t cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
-    auto &cell = cells[cellIndex];
-    for (auto it = cell.particles.begin(); it != cell.particles.end();) {
-      auto pos = (*it)->getX();
+    auto &particles = cells[cellIndex].particles;
+    for (auto it = particles.begin(); it != particles.end();) {
+      auto pos = particlesVector[(*it)].getX();
       size_t correctIndex = getCellIndexOfPosition(pos);
       if (correctIndex != cellIndex) {
         cells[correctIndex].particles.push_back(*it);
-        cell.particles.erase(it);
+        it = particles.erase(it);
       } else {
         ++it;
       }

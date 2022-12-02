@@ -20,11 +20,11 @@ class LinkedCellsContainer : public IContainer {
    */
   struct cell {
     /// List of pointers to the particles which are currently inside the cell
-    std::list<Particle *> particles{};
+    std::list<size_t> particles{};
     /// The type of the cell
     cellType type = inner;
 
-    explicit cell(cellType t) : type{t} {}
+    explicit cell(cellType t) : particles{}, type{t} {}
   };
 
   /// The vector containing all the particles
