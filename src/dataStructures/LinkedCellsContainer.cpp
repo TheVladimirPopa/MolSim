@@ -20,26 +20,60 @@ LinkedCellsContainer::LinkedCellsContainer(
     numCells *= dimensions[i];
   }
 
-  cells.reserve(numCells);
 
-  long index = 0;
+  auto getBoundaries = [](size_t x, size_t y, size_t z,
+                          std::array<unsigned, 3> &dimensions) {
+    std::vector<boundaryPlane> boundaries{};
+
+
+
+
+    if (x == 1) boundaries.emplace_back(boundaryPlane::LEFT);
+    if (y == 1) boundaries.emplace_back(boundaryPlane::BOTTOM);
+    if (z == 1) boundaries.emplace_back(boundaryPlane::BACK);
+
+    if (x == dimensions[0] - 2) boundaries.emplace_back(boundaryPlane::RIGHT);
+    if (y == dimensions[1] - 2) boundaries.emplace_back(boundaryPlane::TOP);
+    if (z == dimensions[2] - 2) boundaries.emplace_back(boundaryPlane::FRONT);
+
+    return boundaries;
+  };
+
+   cells.reserve(numCells);
+
+  // TODO: Tempnote: iterate through cells line by line, layer by layer
+   long index = 0;
   // Instantiate all the cells with their specified type
   for (size_t z = 0; z < dimensions[2]; ++z) {
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace(cells.begin() + index, halo);
+          // todo: ich glaub das Teil hat lineare Laufzeit und ist undefiniert!
+          cells.emplace(cells.begin() + index, cellType::halo);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          cells.emplace(cells.begin() + index, boundary);
+          cells.emplace(cells.begin() + index, cellType::boundary);
 
+          auto boundaries = getBoundaries(x, y, z, dimensions);
+          auto boundary_cell = boundaryCell{boundaries};
+          cells.push_back(std::move(boundary_cell));
         } else {
-          cells.emplace(cells.begin() + index, inner);
+          cells.emplace(cells.begin() + index, cellType::inner);
         }
         ++index;
       }
     }
+  }
+
+  // Store halo cells and boundary cells separately for easier boundary handling
+  for (auto &cell : cells) {
+    if (cell.type == cellType::halo) haloCells.push_back(&cell);
+    if (cell.type == cellType::boundary) boundaryCells.push_back(&cell);
+  }
+
+  // Boundary cells have to know which of their sides is the outside of the grid
+  for (auto cell : boundaryCells) {
   }
 
   // Precompute the indexOffsets
@@ -57,10 +91,12 @@ LinkedCellsContainer::LinkedCellsContainer(
     }
   }
 }
+
 size_t LinkedCellsContainer::getVectorIndexFromCord(size_t x, size_t y,
                                                     size_t z) {
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
 }
+
 size_t LinkedCellsContainer::getCellIndexOfPosition(
     std::array<double, 3> &position) {
   std::array<double, 3> positionInBox = position - leftLowerCorner;
@@ -77,18 +113,20 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
 
   return getVectorIndexFromCord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
+
 void LinkedCellsContainer::forEach(
     std::function<void(Particle &)> &unaryFunction) {
   for (auto &p : particlesVector) {
     unaryFunction(p);
   }
 }
+
 void LinkedCellsContainer::forEachPair(
     std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == halo) {
+    if (cells[index].type == cellType::halo) {
       continue;
     }
     for (size_t indexOffset : indexOffsetAdjacent) {

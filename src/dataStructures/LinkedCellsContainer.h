@@ -2,36 +2,78 @@
 #include <list>
 
 #include "IContainer.h"
-class LinkedCellsContainer : public IContainer {
- private:
-  enum cellType {
-    /// A cell that is inside the domain bounding box but doesn't touch the
-    /// border
-    inner,
-    /// A cell that is inside the domain bounding box but touches the border
-    boundary,
-    /// A cell that lies outside the domain bounding box
-    halo
-  };
+#include <optional>
 
-  /**
+enum class cellType {
+  /// A cell that is inside the domain bounding box but doesn't touch the
+  /// border
+  inner,
+  /// A cell that is inside the domain bounding box but touches the border
+  boundary,
+  /// A cell that lies outside the domain bounding box
+  halo
+};
+
+/**
    * A struct representing a single cell with its type and pointer to the
    * particles in it
-   */
-  struct cell {
-    /// List of pointers to the particles which are currently inside the cell
-    std::list<size_t> particles{};
-    /// The type of the cell
-    cellType type = inner;
+ */
+struct cell {
+  /// List of pointers to the particles which are currently inside the cell
+  std::list<Particle *> particles{};
+  /// The type of the cell
+  cellType type = cellType::inner;
 
-    explicit cell(cellType t) : particles{}, type{t} {}
+  explicit cell(cellType t) : particles{}, type{t} {}
+
+  auto begin() { return particles.begin(); }
+  auto end() { return particles.end(); }
+};
+
+class LinkedCellsContainer : public IContainer {
+ private:
+
+  double leftPlane;
+  double rightPlane;
+  double frontPlane;
+  double backPlane;
+  double topPlane;
+  double bottomPlane;
+
+  struct boundaryCell : cell {
+    unsigned int boundaries; // encode boundaries in binary vector
+
+
+    explicit boundaryCell(std::vector<boundaryPlane> boundaries = {})
+        : cell(cellType::boundary) {
+      if (!boundaries.empty()) setBoundaries(boundaries);
+    }
+
+    void setBoundaries(std::vector<boundaryPlane> newBoundaries) {
+      for (auto boundary : newBoundaries)
+        boundaries |= static_cast<unsigned int>(boundary);
+    }
+
+    inline bool isBoundary(boundaryPlane&& plane) const {
+      return (static_cast<unsigned int>(plane) & boundaries) != 0;
+    }
+
+
   };
+
+  struct haloCell : cell {};
 
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
   /// A vector containing all the cells
   std::vector<cell> cells;
+
+  /// Vector containing pointers to all halo cells
+  std::vector<cell *> haloCells;
+
+  /// Vector containing pointers to all boundary cells
+  std::vector<cell *> boundaryCells;
 
   /// Edge length of a cell
   double gridSize;
