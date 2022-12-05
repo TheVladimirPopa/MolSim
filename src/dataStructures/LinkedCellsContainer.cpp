@@ -42,7 +42,8 @@ LinkedCellsContainer::LinkedCellsContainer(
     }
   }
 
-  // Precompute the indexOffsets
+  // Precompute the indexOffsets, which are used to quickly determine the
+  // adjacent cells
   int indexAdjacentArray = 0;
   indexOffsetAdjacent[indexAdjacentArray++] = 0;
   indexOffsetAdjacent[indexAdjacentArray++] = 1;
@@ -65,8 +66,13 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
     std::array<double, 3> &position) {
   std::array<double, 3> positionInBox = position - leftLowerCorner;
   std::array<int, 3> indexInBox{};
+
   for (int i = 0; i < 3; ++i) {
+    //+1 has to be added because of the 0 cell in each dimension is a halo cell
     indexInBox[i] = static_cast<int>(floor(positionInBox[i] / gridSize)) + 1;
+
+    // If the position is far outside the domain bounding box  map, set to
+    // according halo box
     if (indexInBox[i] < 0) {
       indexInBox[i] = 0;
     }
@@ -88,21 +94,25 @@ void LinkedCellsContainer::forEachPair(
   recalculateStructure();
 
   for (size_t index = 0; index < cells.size(); ++index) {
+    // Don't do anything for particles a halo cell
     if (cells[index].type == halo) {
       continue;
     }
     for (size_t indexOffset : indexOffsetAdjacent) {
+      // Special case to match particles within one cell
       if (indexOffset == 0) {
         auto &particles = cells[index].particles;
         for (auto first = particles.begin(); first != particles.end();
              ++first) {
           for (auto second = first; second != particles.end(); ++second) {
+            // Don't run the function on a pair consisting of the same particle
             if (*second == *first) continue;
             binaryFunction(particlesVector[*first], particlesVector[*second]);
           }
         }
 
       } else {
+        // Loop so the particles of each of the two cells and match them
         for (auto cellAParticle : cells[index].particles) {
           for (auto cellBParticle : cells[index + indexOffset].particles) {
             binaryFunction(particlesVector[cellAParticle],
@@ -133,6 +143,7 @@ void LinkedCellsContainer::recalculateStructure() {
       auto pos = particlesVector[(*it)].getX();
       size_t correctIndex = getCellIndexOfPosition(pos);
       if (correctIndex != cellIndex) {
+        // Delete particle and push it into correct cell
         cells[correctIndex].particles.push_back(*it);
         it = particles.erase(it);
       } else {

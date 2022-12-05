@@ -70,7 +70,7 @@ class LinkedCellsContainer : public IContainer {
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
-   * cell
+   * cell, is automatically called before each forEachPair call
    */
   void recalculateStructure();
 
