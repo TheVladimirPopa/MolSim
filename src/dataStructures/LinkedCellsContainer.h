@@ -2,7 +2,8 @@
 #include <list>
 
 #include "IContainer.h"
-#include "ILinkedCellsBoundary.h"
+
+
 
 class LinkedCellsContainer : public IContainer {
  private:
@@ -42,8 +43,8 @@ class LinkedCellsContainer : public IContainer {
     };
     enum class boundarySideType { left, right, up, down, front, back };
     boundaryCellType cornerType;
-    boundarySideType boundarySide;
-    std::vector<size_t> neighborHaloIndices;
+    boundarySideType boundarySide; // todo: 1. besser vector, 2. lohnt sich das?
+    std::vector<size_t> neighborHaloIndices; // todo: besser pointer?
 
     explicit boundaryCell(size_t index,
                           std::array<unsigned int, 3> &dim,
@@ -181,6 +182,9 @@ class LinkedCellsContainer : public IContainer {
    */
   void recalculateStructure();
 
+  // The boundaries need access to dimensions, particles, cells
+  friend class LinkedCellsBoundary;
+
  public:
   /**
    * Instantiating a LinkedCells Container
@@ -219,4 +223,6 @@ class LinkedCellsContainer : public IContainer {
   static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
       size_t index, std::array<unsigned int, 3> &dimension);
   std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
+
+  std::array<unsigned int, 3> getDimensions() { return dimensions; };
 };

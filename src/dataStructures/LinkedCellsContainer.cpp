@@ -6,6 +6,8 @@
 
 #include "utils/ArrayUtils.h"
 
+
+
 LinkedCellsContainer::LinkedCellsContainer(
     double cellSize, std::array<double, 3> &leftLowerBound,
     std::array<double, 3> &rightUpperBound)
@@ -20,29 +22,25 @@ LinkedCellsContainer::LinkedCellsContainer(
     numCells *= dimensions[i];
   }
 
-
   auto getBoundaries = [](size_t x, size_t y, size_t z,
                           std::array<unsigned, 3> &dimensions) {
-    std::vector<boundaryPlane> boundaries{};
+    std::vector<cubeSide> boundaries{};
 
+    if (x == 1) boundaries.emplace_back(cubeSide::LEFT);
+    if (y == 1) boundaries.emplace_back(cubeSide::BOTTOM);
+    if (z == 1) boundaries.emplace_back(cubeSide::BACK);
 
-
-
-    if (x == 1) boundaries.emplace_back(boundaryPlane::LEFT);
-    if (y == 1) boundaries.emplace_back(boundaryPlane::BOTTOM);
-    if (z == 1) boundaries.emplace_back(boundaryPlane::BACK);
-
-    if (x == dimensions[0] - 2) boundaries.emplace_back(boundaryPlane::RIGHT);
-    if (y == dimensions[1] - 2) boundaries.emplace_back(boundaryPlane::TOP);
-    if (z == dimensions[2] - 2) boundaries.emplace_back(boundaryPlane::FRONT);
+    if (x == dimensions[0] - 2) boundaries.emplace_back(cubeSide::RIGHT);
+    if (y == dimensions[1] - 2) boundaries.emplace_back(cubeSide::TOP);
+    if (z == dimensions[2] - 2) boundaries.emplace_back(cubeSide::FRONT);
 
     return boundaries;
   };
 
-   cells.reserve(numCells);
+  cells.reserve(numCells);
 
   // TODO: Tempnote: iterate through cells line by line, layer by layer
-   long index = 0;
+  long index = 0;
   // Instantiate all the cells with their specified type
   for (size_t z = 0; z < dimensions[2]; ++z) {
     for (size_t y = 0; y < dimensions[1]; ++y) {
@@ -50,31 +48,28 @@ LinkedCellsContainer::LinkedCellsContainer(
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
           // todo: ich glaub das Teil hat lineare Laufzeit und ist undefiniert!
-          cells.emplace(cells.begin() + index, cellType::halo);
+          cells.emplace(cells.begin() + index, cellType::halo, index);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          cells.emplace(cells.begin() + index, cellType::boundary);
-
           auto boundaries = getBoundaries(x, y, z, dimensions);
-          auto boundary_cell = boundaryCell{boundaries};
+          boundaryCell boundary_cell(index, dimensions, boundaries);
           cells.push_back(std::move(boundary_cell));
         } else {
-          cells.emplace(cells.begin() + index, cellType::inner);
+          cells.emplace(cells.begin() + index, cellType::inner, index);
         }
         ++index;
       }
     }
   }
 
-  // Store halo cells and boundary cells separately for easier boundary handling
+  // Store boundary cells separately for easier handling
   for (auto &cell : cells) {
-    if (cell.type == cellType::halo) haloCells.push_back(&cell);
-    if (cell.type == cellType::boundary) boundaryCells.push_back(&cell);
+    if (cell.type == cellType::boundary) {
+      boundaryCell bCell = static_cast<boundaryCell>(bCell);
+      boundaryCells.push_back(&bCell);
+    }
   }
 
-  // Boundary cells have to know which of their sides is the outside of the grid
-  for (auto cell : boundaryCells) {
-  }
 
   // Precompute the indexOffsets
   int indexAdjacentArray = 0;
@@ -95,6 +90,22 @@ LinkedCellsContainer::LinkedCellsContainer(
 size_t LinkedCellsContainer::getVectorIndexFromCord(size_t x, size_t y,
                                                     size_t z) {
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
+}
+
+std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndexStatic(
+    unsigned int index, std::array<unsigned int, 3>& dim) {
+  unsigned int cellsPerLayer = dim[0] * dim[1];
+  unsigned int layerCount = index / cellsPerLayer;
+  index -= layerCount * cellsPerLayer;
+
+  unsigned int lineCount = index / dim[0];
+  unsigned int cellCount = index - lineCount * dim[0];
+
+  return {cellCount, lineCount, layerCount};
+}
+std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndex(
+    size_t index) {
+  return LinkedCellsContainer::getCoordFromVectorIndexStatic(index, dimensions);
 }
 
 size_t LinkedCellsContainer::getCellIndexOfPosition(
