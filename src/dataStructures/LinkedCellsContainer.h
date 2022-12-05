@@ -2,7 +2,22 @@
 #include <list>
 
 #include "IContainer.h"
-
+/**
+ * A cube placed on an XYZ grid. The keywords name the sides of the cube.
+ *    +--------+
+ *   /        /|
+ *  /  TOP   / |
+ * +--------+  | RIGHT
+ * |        |  +
+ * | FRONT  | /
+ * |        |/
+ * +--------+
+ * If the cube has it's left lower corner at (0,0,0):
+ * LEFT: dimension[0] = 0
+ * RIGHT: dimension[0] > 0
+ * TOP+BOTTOM: dimension[1]
+ * FRONT+BACK: dimension[2]
+ */
 enum class cubeSide {
   LEFT = 0,    // dimension[0]
   RIGHT = 1,   // dimension[0]
@@ -13,8 +28,9 @@ enum class cubeSide {
 };
 
 
+// Predeclare, because LinkedCellsBoundaries require access to the container to
+// be set up correctly, while the container only needs to store the boundaries.
 class LinkedCellsBoundary;
-
 class LinkedCellsContainer : public IContainer {
  private:
   enum class cellType {
@@ -43,26 +59,25 @@ class LinkedCellsContainer : public IContainer {
         : particles{}, type{t}, cellVectorIndex{index} {}
   };
 
-  // todo: documentation
+  /**
+   * A struct representing a boundary cell. Opposed to a standard cell,
+   * it is aware of its neighboring halo cells.
+   */
   struct boundaryCell : cell {
     enum class boundaryCellType {
       // Determines the number of neighbouring halo cells a boundary cell has
-      normal,  // cell has 1 neighboring halo cell
-      edge,    // cell has 3 neighboring halo cells
-      corner   // cell has 7 neighboring halo cells
+      normal,  /// Cell has 1 neighboring halo cell
+      edge,    /// Cell has 3 neighboring halo cells
+      corner   /// Cell has 7 neighboring halo cells
     };
-    enum class boundarySideType { left, right, up, down, front, back };
-    boundaryCellType cornerType;
-    boundarySideType boundarySide; // todo: 1. besser vector, 2. lohnt sich das?
-    std::vector<size_t> neighborHaloIndices; // todo: besser pointer?
+
+    boundaryCellType cornerType; // Not strictly required, so maybe remove this
+    std::vector<size_t> neighborHaloIndices; // Indices vs. pointers for now
 
     explicit boundaryCell(size_t index,
                           std::array<unsigned int, 3> &dim,
                           std::vector<cubeSide> boundaries)
         : cell{cellType::boundary, index} {
-      // Todo: determine type based upon index and dimension
-      // auto location3d = getCoordFromVectorIndexStatic(index, dim);
-
       // Determine corner type (which determines number of neighbor cells)
       if (boundaries.size() <= 1) cornerType = boundaryCellType::normal;
       if (boundaries.size() == 2) cornerType = boundaryCellType::edge;
@@ -104,6 +119,7 @@ class LinkedCellsContainer : public IContainer {
       }
     }
 
+    // Helper to get coordinate of boundary cell based on it's side.
     static unsigned int getIndexByCubeSide(size_t index, cubeSide side,
                                            std::array<unsigned int, 3> &dim) {
       if (side == cubeSide::LEFT) return index - 1;
@@ -113,37 +129,12 @@ class LinkedCellsContainer : public IContainer {
       if (side == cubeSide::FRONT) return index - dim[0] * dim[1];
       if (side == cubeSide::BACK) return index + dim[0] * dim[1];
 
-      return -1;
+      return -1; // Unreachable error case
     }
   };
 
-  /* TODO
-  struct boundaries {
-    const size_t numberOfSides;
-    ILinkedCellsBoundary left{};
-    ILinkedCellsBoundary right{};
-    ILinkedCellsBoundary top{};
-    ILinkedCellsBoundary bottom{};
-    ILinkedCellsBoundary front{};
-    ILinkedCellsBoundary back{};
-
-    boundaries(ILinkedCellsBoundary left, ILinkedCellsBoundary right,
-               ILinkedCellsBoundary top, ILinkedCellsBoundary bottom)
-        : left{left}, right{right}, top{top}, bottom{bottom}, numberOfSides{4} {}
-
-    boundaries(ILinkedCellsBoundary left, ILinkedCellsBoundary right,
-               ILinkedCellsBoundary top, ILinkedCellsBoundary bottom,
-               ILinkedCellsBoundary front, ILinkedCellsBoundary back)
-        : left{left},
-          right{right},
-          top{top},
-          bottom{bottom},
-          back{back},
-          front({front}),
-          numberOfSides{6} {}
-  };
-
-  boundaries boundary; */
+  /// The boundaries the container has
+  //std::vector<LinkedCellsBoundary> boundaries{};
 
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
@@ -184,6 +175,24 @@ class LinkedCellsContainer : public IContainer {
    * bounding box has coordinates (1,1,1)
    */
   size_t getVectorIndexFromCord(size_t x, size_t y, size_t z);
+
+  /**
+   * Translate cell vector index to grid location
+   * @param index the index that gets translated into a grid location
+   * @return grid location {x, y, z} of cell
+   */
+  std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
+
+  /**
+   * Translate cell vector index to grid location specifying the cell grid
+   * dimensions.
+   * @param index the index that gets translated into a grid location
+   * @param dim the dimensions of the grid that gets used as the basis for the
+   *  index to location translation
+   * @return grid location {x, y, z} of cell
+   */
+  static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
+      unsigned int index, std::array<unsigned int, 3> &dim);
 
   /// All the offsets for adjacent cells which have a greater index than the
   /// current one
@@ -231,11 +240,4 @@ class LinkedCellsContainer : public IContainer {
    * @return a const reference to the cells vector
    */
   const std::vector<cell> &getCellsVector() { return cells; }
-
-  // Todo: doc
-  std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
-
-  std::array<unsigned int, 3> getDimensions() { return dimensions; };
-  static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
-      unsigned int index, std::array<unsigned int, 3> &dim);
 };

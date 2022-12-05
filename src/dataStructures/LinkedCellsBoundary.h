@@ -1,48 +1,78 @@
 #pragma once
 
-#include <cmath>
-#include <stdexcept>
-#include <vector>
 
-#include "LinkedCellsContainer.h"
-#include "utils/ArrayUtils.h"
 #include "model/LennardJonesModel.h"
+#include "LinkedCellsContainer.h"
 
+#define QUASI_INFINITE 1e300
+#define SIGMA_PLACEHOLDER 1.0
+#define SIXTH_RT 1.1224620483093729814335330496791795162324111106139867534404095
 
+/// Parameters for reflection boundary.
+namespace ReflectiveBoundary {
+  // Initialize LennardJones model for reflective boundary.
+  static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
+  static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
 
-// todo: do this properly
-static constexpr double CUTOFFRADIUS{42}; // TODO: use correct value
-static const LennardJonesModel lennardJones{CUTOFFRADIUS};
-constexpr double SIGMA = 1.0;  // TODO: nicht hardcoden
-constexpr double SIXTH_ROOT_OF_2 =
-    1.1224620483093729814335330496791795162324111106139867534404095458;
-const double viewDistance = SIXTH_ROOT_OF_2 * SIGMA;
+  // Parameters for reflection
+  constexpr double SIGMA = SIGMA_PLACEHOLDER;
+  constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
+  constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
+}
 
 class LinkedCellsBoundary {
  private:
+  enum class boundaryType {
+    /// Boundary is an outflow boundary
+    OUTFLOW,
+    /// Boundary is a reflecing boundary
+    REFLECT,
+    /// Boundary is a periodic boundary
+    PERIODIC
+  };
+
+  /// The type of the boundary which defines how it behaves
+  boundaryType type;
+
+  /// The side of the linkedCellsContainer where the boundary lies on
   cubeSide side;
+
+  /// Reference to LinkedCellsContainer to set up structure of boundary
   LinkedCellsContainer& container;
-  // std::array<int, 3>& cubeDimension;
 
-  struct dimensionAndPosition {
-    size_t dimensionIndex;
-    unsigned int position;
+
+  // Contains characteristic position parameters for boundary cells based on
+  // cube side. This is an array instead of a map for fast lookup times.
+  // E.g. access via: dimensionTable[static_cast<size_t>(cubeSide::TOP)]
+  std::array<size_t, 6> const dimensionTable = {
+      0,  // Relevant dimension for cubeSide::LEFT
+      0,  // Relevant dimension for cubeSide::RIGHT
+      1,  // Relevant dimension for cubeSide::TOP
+      1,  // Relevant dimension for cubeSide::BOTTOM
+      2,  // Relevant dimension for cubeSide::FRONT
+      2   // Relevant dimension for cubeSide::BACK
   };
 
-  std::unordered_map<cubeSide, std::pair<size_t, unsigned int>> const
-      dimLocation = {
-          // Map boundary side onto dimension and index in dimension
-          {cubeSide::LEFT,   {0, 1}},
-          {cubeSide::RIGHT,  {0, container.dimensions[0] - 2}},
-          {cubeSide::TOP,    {1, 1}},
-          {cubeSide::BOTTOM, {1, container.dimensions[1] - 2}},
-          {cubeSide::FRONT,  {2, 1}},
-          {cubeSide::BACK,   {2, container.dimensions[2] - 2}}
+  // E.g. access via: cellSlotTable[static_cast<size_t>(cubeSide::TOP)]
+  std::array<unsigned int, 6> const cellGridLocationTable = {
+      1,                            // Relevant cell location, cubeSide::LEFT
+      container.dimensions[0] - 2,  // Relevant cell location, cubeSide::RIGHT
+      1,                            // Relevant cell location, cubeSide::TOP
+      container.dimensions[1] - 2,  // Relevant cell location, cubeSide::BOTTOM
+      1,                            // Relevant cell location, cubeSide::FRONT
+      container.dimensions[2] - 2,  // Relevant cell location, cubeSide::BACK
   };
+
+  inline size_t getDimensionBySide(cubeSide side) {
+    return dimensionTable[static_cast<size_t>(side)];
+  }
+
+  inline unsigned int getCellGridLocation(cubeSide side) {
+    return cellGridLocationTable[static_cast<size_t>(side)];
+  }
 
  public:
   std::vector<LinkedCellsContainer::boundaryCell*> connectedCells;
-  virtual void applyBoundaryLogic();
 
   /**
    * Instantiate a LinkedCellsBoundary which is used to model the walls of a

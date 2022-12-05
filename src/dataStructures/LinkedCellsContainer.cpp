@@ -1,12 +1,6 @@
-//
-// Created by leo on 26.11.22.
-//
-
 #include "LinkedCellsContainer.h"
 
 #include "utils/ArrayUtils.h"
-
-
 
 LinkedCellsContainer::LinkedCellsContainer(
     double cellSize, std::array<double, 3> &leftLowerBound,
@@ -39,7 +33,6 @@ LinkedCellsContainer::LinkedCellsContainer(
 
   cells.reserve(numCells);
 
-  // TODO: Tempnote: iterate through cells line by line, layer by layer
   long index = 0;
   // Instantiate all the cells with their specified type
   for (size_t z = 0; z < dimensions[2]; ++z) {
@@ -47,7 +40,6 @@ LinkedCellsContainer::LinkedCellsContainer(
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          // todo: ich glaub das Teil hat lineare Laufzeit und ist undefiniert!
           cells.emplace(cells.begin() + index, cellType::halo, index);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
