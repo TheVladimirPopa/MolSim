@@ -3,7 +3,17 @@
 
 #include "IContainer.h"
 
+enum class cubeSide {
+  LEFT = 0,    // dimension[0]
+  RIGHT = 1,   // dimension[0]
+  TOP = 2,     // dimension[1]
+  BOTTOM = 3,  // dimension[1]
+  FRONT = 4,   // dimension[2]
+  BACK = 5     // dimension[2]
+};
 
+
+class LinkedCellsBoundary;
 
 class LinkedCellsContainer : public IContainer {
  private:
@@ -51,7 +61,7 @@ class LinkedCellsContainer : public IContainer {
                           std::vector<cubeSide> boundaries)
         : cell{cellType::boundary, index} {
       // Todo: determine type based upon index and dimension
-      auto location3d = getCoordFromVectorIndexStatic(index, dim);
+      // auto location3d = getCoordFromVectorIndexStatic(index, dim);
 
       // Determine corner type (which determines number of neighbor cells)
       if (boundaries.size() <= 1) cornerType = boundaryCellType::normal;
@@ -102,9 +112,12 @@ class LinkedCellsContainer : public IContainer {
       if (side == cubeSide::BOTTOM) return index + dim[0];
       if (side == cubeSide::FRONT) return index - dim[0] * dim[1];
       if (side == cubeSide::BACK) return index + dim[0] * dim[1];
+
+      return -1;
     }
   };
 
+  /* TODO
   struct boundaries {
     const size_t numberOfSides;
     ILinkedCellsBoundary left{};
@@ -130,7 +143,7 @@ class LinkedCellsContainer : public IContainer {
           numberOfSides{6} {}
   };
 
-  boundaries boundary;
+  boundaries boundary; */
 
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
@@ -220,9 +233,9 @@ class LinkedCellsContainer : public IContainer {
   const std::vector<cell> &getCellsVector() { return cells; }
 
   // Todo: doc
-  static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
-      size_t index, std::array<unsigned int, 3> &dimension);
   std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
 
   std::array<unsigned int, 3> getDimensions() { return dimensions; };
+  static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
+      unsigned int index, std::array<unsigned int, 3> &dim);
 };
