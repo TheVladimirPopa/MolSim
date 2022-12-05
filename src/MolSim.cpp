@@ -7,6 +7,7 @@
 
 #include "Simulation.h"
 #include "dataStructures/LinkedCellsContainer.h"
+#include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
@@ -212,6 +213,10 @@ int main(int argc, char *argsv[]) {
 
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};
+
+  LinkedCellsBoundary::setBoundaries({
+          {cubeSide::LEFT, boundaryType::OUTFLOW}
+      }, linkedCellsContainer);
 
   IContainer *container = &linkedCellsContainer;
 

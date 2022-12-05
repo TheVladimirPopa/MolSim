@@ -1,5 +1,7 @@
 #pragma once
 #include <list>
+#include <memory>
+#include <stdexcept>
 
 #include "IContainer.h"
 /**
@@ -134,7 +136,7 @@ class LinkedCellsContainer : public IContainer {
   };
 
   /// The boundaries the container has
-  //std::vector<LinkedCellsBoundary> boundaries{};
+  std::vector<LinkedCellsBoundary>* boundaries{};
 
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
@@ -240,4 +242,6 @@ class LinkedCellsContainer : public IContainer {
    * @return a const reference to the cells vector
    */
   const std::vector<cell> &getCellsVector() { return cells; }
+
+
 };

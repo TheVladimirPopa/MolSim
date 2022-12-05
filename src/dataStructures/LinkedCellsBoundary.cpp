@@ -1,10 +1,11 @@
 #include "LinkedCellsBoundary.h"
+
 #include <cmath>
 #include <vector>
 
-LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, LinkedCellsContainer& container)
-    : container{container} {
-
+LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
+                                         LinkedCellsContainer& container)
+    : type{type}, container{container} {
   // Add boundary cells
   for (auto cell : container.boundaryCells) {
     auto position = container.getCoordFromVectorIndex(cell->cellVectorIndex);
@@ -57,6 +58,27 @@ void LinkedCellsBoundary::reflectParticles() {
       lennardJones.addForces(particle, ghost);
     }
   }
+}
+
+void LinkedCellsBoundary::setBoundaries(
+    std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
+    LinkedCellsContainer container) {
+  // Ensure that boundary[0] always is the LEFT one, etc.
+
+  std::sort(sideAndType.begin(), sideAndType.end(),
+            [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
+              return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
+            });
+
+  // todo: wtf this is
+  std::vector<LinkedCellsBoundary>* newBoundaries =
+      new std::vector<LinkedCellsBoundary>();
+
+  for (auto [side, type] : sideAndType)
+    newBoundaries->emplace_back(side, type, container);
+
+  container.boundaries = newBoundaries;
+
 }
 
 // CURRENTLY NOT USED, WILL PROBABLY BE DELETED BEFORE MASTER MERGE:

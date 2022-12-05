@@ -1,8 +1,7 @@
 #pragma once
 
-
-#include "model/LennardJonesModel.h"
 #include "LinkedCellsContainer.h"
+#include "model/LennardJonesModel.h"
 
 #define QUASI_INFINITE 1e300
 #define SIGMA_PLACEHOLDER 1.0
@@ -10,36 +9,35 @@
 
 /// Parameters for reflection boundary.
 namespace ReflectiveBoundary {
-  // Initialize LennardJones model for reflective boundary.
-  static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
-  static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
+// Initialize LennardJones model for reflective boundary.
+static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
+static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
 
-  // Parameters for reflection
-  constexpr double SIGMA = SIGMA_PLACEHOLDER;
-  constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
-  constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
-}
+// Parameters for reflection
+constexpr double SIGMA = SIGMA_PLACEHOLDER;
+constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
+constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
+}  // namespace ReflectiveBoundary
+
+enum class boundaryType {
+  /// Boundary is an outflow boundary
+  OUTFLOW,
+  /// Boundary is a reflecing boundary
+  REFLECT,
+  /// Boundary is a periodic boundary
+  PERIODIC
+};
 
 class LinkedCellsBoundary {
  private:
-  enum class boundaryType {
-    /// Boundary is an outflow boundary
-    OUTFLOW,
-    /// Boundary is a reflecing boundary
-    REFLECT,
-    /// Boundary is a periodic boundary
-    PERIODIC
-  };
+  /// The side of the linkedCellsContainer where the boundary lies on
+  cubeSide side;
 
   /// The type of the boundary which defines how it behaves
   boundaryType type;
 
-  /// The side of the linkedCellsContainer where the boundary lies on
-  cubeSide side;
-
   /// Reference to LinkedCellsContainer to set up structure of boundary
   LinkedCellsContainer& container;
-
 
   // Contains characteristic position parameters for boundary cells based on
   // cube side. This is an array instead of a map for fast lookup times.
@@ -78,9 +76,11 @@ class LinkedCellsBoundary {
    * Instantiate a LinkedCellsBoundary which is used to model the walls of a
    * LinkedCells Container.
    * @param side The side of the LinkedCells container which gets the boundary
+   * @param type The type of the boundary (e.g. outflow, reflective, etc.)
    * @param container The LinkedCells container which receives the boundary
    */
-  LinkedCellsBoundary(cubeSide side, LinkedCellsContainer& container);
+  LinkedCellsBoundary(cubeSide side, boundaryType type,
+                      LinkedCellsContainer& container);
 
   /**
    * Given a particle within a boundary cell returns the distance of said
@@ -95,10 +95,19 @@ class LinkedCellsBoundary {
    */
   void deleteOutFlow();
 
-
   /**
    * Reflects particles that are near the edge using the Lennard Jones force.
    * Reflection distance is per convention: (6th root of 2) * sigma.
    */
   void reflectParticles();
+
+  /**
+   * Generate boundaries based on side and type and adds them to the container
+   * @param sideAndType Pairs of the side and corresponding boundary type
+   * @param container The LinkedCellsContainer that receives the boundaries
+   * @return The generated boundaries
+   */
+  static void setBoundaries(
+      std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
+      LinkedCellsContainer container);
 };
