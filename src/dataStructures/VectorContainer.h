@@ -10,25 +10,12 @@
 
 class VectorContainer : public IContainer {
  public:
-  /**
-   * Applies a function to all particles in the container
-   * @param unaryFunction A function taking a particle reference and returning
-   * nothing
-   */
   void forEach(std::function<void(Particle &)> &unaryFunction) override {
     for (size_t i = 0; i < size(); ++i) {
       unaryFunction(vector[i]);
     }
   }
 
-  /**
-   * Applies a function to all particle pairs in the container
-   * @param binaryFunction A function taking two particle references and
-   * returning nothing
-   * @note A pair is considered without order, so if the function got applied to
-   * (p1,p2), it won't get applied to (p2,p1). Also pairs with the same particle
-   * are not considered
-   */
   void forEachPair(
       std::function<void(Particle &, Particle &)> &binaryFunction) override {
     for (size_t i = 0; i < size(); ++i) {

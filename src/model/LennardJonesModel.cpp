@@ -4,8 +4,10 @@
 using ArrayUtils::L2Norm;
 
 void LennardJonesModel::addForces(Particle &p1, Particle &p2) const {
-  // Calculate (sigma/length)^6
   double length = L2Norm(p1.x - p2.x);
+  if (length >= cutOffRadius) return;
+
+  // Calculate (sigma/length)^6
   double sig_len = sigma / length;        // (sigma/length)^1
   sig_len = sig_len * sig_len * sig_len;  // (sigma/length)^3
   sig_len = sig_len * sig_len;            // (sigma/length)^6
