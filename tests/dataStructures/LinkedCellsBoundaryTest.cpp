@@ -1,3 +1,6 @@
+#include <cmath>
+#include <iostream>
+
 #include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "gtest/gtest.h"
@@ -57,7 +60,10 @@ TEST(LinkedCellsBoundary, SetupDim2D) {
   }
 }
 
-TEST(LinkedCellsBoundary, OutflowWorks2D) {
+/**
+ * TODO doku
+ */
+TEST(LinkedCellsBoundary, Outflow2D) {
   double const meshWidth = 2.0;
 
   v3d dimensions{5, 4, 1};
@@ -98,7 +104,7 @@ TEST(LinkedCellsBoundary, OutflowWorks2D) {
 
   // Helper that utilized .foreach()
   size_t foreachCount{};
-  std::function count{[&foreachCount](Particle & p) { ++foreachCount; }};
+  std::function count{[&foreachCount](Particle& p) { ++foreachCount; }};
 
   // Count particles using the helper
   size_t containerSizeBefore{container.size()};
@@ -134,4 +140,111 @@ TEST(LinkedCellsBoundary, OutflowWorks2D) {
   size_t forEachCountAfter = foreachCount;
   EXPECT_GT(forEachCountBefore, forEachCountAfter)
       << "Foreach must not apply to deleted particles.";
+}
+
+TEST(LinkedCellsBoundary, Reflective) {
+  v3d leftCorner{-5.0, -5.0, -5.0};
+  v3d rightCorner{5.0, 5.0, 5.0};
+
+  LinkedCellsContainer container{10.0, leftCorner, rightCorner};
+
+  std::vector<LinkedCellsBoundary> boundaries{};
+  LinkedCellsBoundary::setBoundaries(
+      {{cubeSide::LEFT, boundaryType::REFLECT},
+       {cubeSide::RIGHT, boundaryType::REFLECT},
+       {cubeSide::TOP, boundaryType::REFLECT},
+       {cubeSide::BOTTOM, boundaryType::REFLECT},
+       {cubeSide::FRONT, boundaryType::REFLECT},
+       {cubeSide::BOTTOM, boundaryType::REFLECT}},
+      boundaries, container);
+
+  double epsilon = ReflectiveBoundary::reflectDistance / 5.0;
+  double centerOffset = 5.0 - epsilon;
+
+  // We check 6 surfaces, 12 edges, 8 corners. Any other case should occur
+  // as a linear combination of these cases.
+  std::vector<v3d> testParticles = {
+      // Particles in center of surface get reflected towards
+      // the center coordinate (0,0,0)
+      {v3d{centerOffset, 0.0, 0.0}},
+      {v3d{-centerOffset, 0.0, 0.0}},
+      {v3d{0.0, centerOffset, 0.0}},
+      {v3d{0.0, -centerOffset, 0.0}},
+      {v3d{0.0, 0.0, centerOffset}},
+      {v3d{0.0, 0.0, -centerOffset}},
+
+      // Particles in edges should be reflected to the center
+      {v3d{centerOffset, centerOffset, 0}},
+      {v3d{-centerOffset, centerOffset, 0}},
+      {v3d{centerOffset, +centerOffset, 0}},
+      {v3d{-centerOffset, -centerOffset, 0}},
+
+      {v3d{0, centerOffset, centerOffset}},
+      {v3d{0, -centerOffset, centerOffset}},
+      {v3d{0, centerOffset, +centerOffset}},
+      {v3d{0, -centerOffset, -centerOffset}},
+
+      {v3d{centerOffset, 0, centerOffset}},
+      {v3d{-centerOffset, 0, centerOffset}},
+      {v3d{centerOffset, 0, +centerOffset}},
+      {v3d{-centerOffset, 0, -centerOffset}},
+
+      // Particle in corners should also be reflected to the center
+      {v3d{centerOffset, centerOffset, centerOffset}},
+      {v3d{-centerOffset, -centerOffset, -centerOffset}},
+      {v3d{centerOffset, centerOffset, -centerOffset}},
+      {v3d{centerOffset, -centerOffset, centerOffset}},
+      {v3d{-centerOffset, centerOffset, centerOffset}},
+      {v3d{-centerOffset, centerOffset, -centerOffset}},
+      {v3d{-centerOffset, -centerOffset, centerOffset}},
+      {v3d{centerOffset, -centerOffset, -centerOffset}}
+
+  };
+
+  for (auto particleX : testParticles)
+    container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
+
+  for (auto& boundary : boundaries) boundary.apply();
+
+  std::vector<Particle> transformedParticles{};
+  std::function copyParticles{[&transformedParticles](Particle& p) {
+    transformedParticles.push_back(p);
+  }};
+  container.forEach(copyParticles);
+
+  ASSERT_EQ(testParticles.size(), transformedParticles.size())
+      << "Particle count unexpectedly changed when applying reflective "
+         "boundary.";
+
+  // The force that now applies to each of the particles now should face towards
+  // the center coordinate. Thanks to the test setup is suffices to just check
+  // whether forces and location share opposite signs.
+
+  for (auto& particle : transformedParticles) {
+    // Figure out signs of forces + location per dimension
+    v3d positionSigns = particle.getX();
+    v3d forcesSigns = particle.getF();
+
+    for (int i = 0; i < 3; i++) {
+      if (positionSigns[i] != 0.0)
+        positionSigns[i] /= std::abs(positionSigns[i]);
+
+      if (forcesSigns[i] != 0.0) forcesSigns[i] /= std::abs(forcesSigns[i]);
+    }
+
+    EXPECT_GT(ArrayUtils::L2Norm(forcesSigns), 0)
+        << "No forces where applied onto particle.";
+
+    if (ArrayUtils::L2Norm(forcesSigns))
+      EXPECT_EQ(positionSigns, (-1.0) * forcesSigns)
+          << "Particle is not symmetrically reflected from boundaries.";
+
+    if (positionSigns == (-1.0) * forcesSigns) {
+      std::cout << "Nice.";
+    }
+  }
+
+  // Do not influence particles that are out of reach
+  // Apply force onto particles very close to the wall
+  // Ensure force direction is correct for all planes (namely away from plane)
 }
