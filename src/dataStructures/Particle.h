@@ -47,6 +47,12 @@ class Particle {
    */
   int type;
 
+  /**
+   * Is true when a particle no longer is part of the simulation and waits for
+   * cleanup.
+   */
+   bool isDeleted_;
+
  public:
   explicit Particle(int type = 0);
 
@@ -90,6 +96,16 @@ class Particle {
    * start a new iteration.
    */
   void updateForces();
+
+  /**
+   *
+   */
+  bool isDeleted() { return isDeleted_; }
+
+  /**
+   * Deleted particle by setting it's deletion state.
+   */
+  void deleteParticle() { isDeleted_ = true; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

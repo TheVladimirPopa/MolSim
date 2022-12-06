@@ -38,10 +38,15 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
 void LinkedCellsBoundary::deleteOutFlow() {
   for (auto cell : connectedCells) {
     for (auto neighborIndex : cell->neighborHaloIndices) {
-      if (!container.cells[neighborIndex].particles.empty())
-        spdlog::warn("DELETING PARTICLE");
+      std::list<size_t>& cellParticleIndices =
+          container.cells[neighborIndex].particles;
 
-      container.cells[neighborIndex].particles.clear();
+      if (cellParticleIndices.empty()) continue;
+
+      for (auto particleIndex : cellParticleIndices)
+        container.particlesVector[particleIndex].deleteParticle();
+
+      cellParticleIndices.clear();
     }
   }
 }
@@ -76,8 +81,6 @@ void LinkedCellsBoundary::setBoundaries(
               return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
             });
 
-  // todo: wtf this is
-
   for (auto [side, type] : sideAndType) {
     LinkedCellsBoundary boundary{side, type, container};
     output.push_back(boundary);
@@ -93,31 +96,3 @@ void LinkedCellsBoundary::apply() {
     reflectParticles();
   }
 }
-
-// CURRENTLY NOT USED, WILL PROBABLY BE DELETED BEFORE MASTER MERGE:
-/*
-namespace boundaryStrategy {
-struct outflow {
-}
-};
-
-struct reflective {
-  static void behave() {}
-};
-
-struct periodic {};
-}  // namespace boundaryStrategy
- */
-
-/*
-template <typename BoundaryStrategy>
-auto applyBehavior() {
-  for (auto& cell : connectedCells) {
-    for (auto particle : (*cell)) {
-      if (!isInRange(particle)) continue;
-
-BoundaryStrategy::behave();
-}
-}
-}
-*/
