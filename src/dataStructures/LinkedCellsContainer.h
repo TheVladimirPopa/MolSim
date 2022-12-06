@@ -27,17 +27,17 @@ enum class cubeSide {
 };
 
 class LinkedCellsBoundary;
+enum class cellType {
+  /// A cell that is inside the domain bounding box but doesn't touch the
+  /// border
+  inner,
+  /// A cell that is inside the domain bounding box but touches the border
+  boundary,
+  /// A cell that lies outside the domain bounding box
+  halo
+};
 class LinkedCellsContainer : public IContainer {
  private:
-  enum class cellType {
-    /// A cell that is inside the domain bounding box but doesn't touch the
-    /// border
-    inner,
-    /// A cell that is inside the domain bounding box but touches the border
-    boundary,
-    /// A cell that lies outside the domain bounding box
-    halo
-  };
 
   /**
    * A struct representing a single cell with its type and pointer to the
@@ -50,6 +50,8 @@ class LinkedCellsContainer : public IContainer {
     cellType type = cellType::inner;
     /// Index of cell in the LinkedCellsContainer cell vector
     size_t cellVectorIndex;
+
+    std::vector<size_t> neighborHaloIndices;  // Indices vs. pointers for now
 
     explicit cell(cellType t, size_t index)
         : particles{}, type{t}, cellVectorIndex{index} {}
@@ -68,7 +70,6 @@ class LinkedCellsContainer : public IContainer {
     };
 
     boundaryCellType cornerType;  // Not strictly required, so maybe remove this
-    std::vector<size_t> neighborHaloIndices;  // Indices vs. pointers for now
 
     explicit boundaryCell(size_t index, std::array<unsigned int, 3> &dim,
                           std::vector<cubeSide> boundaries)
@@ -112,6 +113,8 @@ class LinkedCellsContainer : public IContainer {
         for (auto b : boundaries) i = getIndexByCubeSide(i, b, dim);
         neighborHaloIndices.push_back(i);
       }
+
+      // TODO: neighborIndices sortieren
     }
 
     // Helper to get coordinate of boundary cell based on it's side.
@@ -119,8 +122,8 @@ class LinkedCellsContainer : public IContainer {
                                            std::array<unsigned int, 3> &dim) {
       if (side == cubeSide::LEFT) return index - 1;
       if (side == cubeSide::RIGHT) return index + 1;
-      if (side == cubeSide::TOP) return index - dim[0];
-      if (side == cubeSide::BOTTOM) return index + dim[0];
+      if (side == cubeSide::BOTTOM) return index - dim[0];
+      if (side == cubeSide::TOP) return index + dim[0];
       if (side == cubeSide::FRONT) return index - dim[0] * dim[1];
       if (side == cubeSide::BACK) return index + dim[0] * dim[1];
 
@@ -193,12 +196,6 @@ class LinkedCellsContainer : public IContainer {
   /// current one
   std::array<size_t, 14> indexOffsetAdjacent{};
 
-  /**
-   * Reorders the datastructure to make sure all particles are in the correct
-   * cell
-   */
-  void recalculateStructure();
-
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
 
@@ -231,6 +228,12 @@ class LinkedCellsContainer : public IContainer {
                     double m_arg, int type) override;
 
   /**
+   * Reorders the datastructure to make sure all particles are in the correct
+   * cell
+   */
+  void recalculateStructure();
+
+  /**
    * Method returning the cells vector. ONLY USED FOR TESTING
    * @return a const reference to the cells vector
    */
@@ -241,4 +244,6 @@ class LinkedCellsContainer : public IContainer {
    * @return boundaries
    */
   std::vector<LinkedCellsBoundary>* getBoundaries() { return boundaries; }
+
+  std::array<unsigned int, 3> getDimensions() { return dimensions; }
 };

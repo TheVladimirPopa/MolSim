@@ -19,14 +19,16 @@ LinkedCellsContainer::LinkedCellsContainer(
   auto getBoundaries = [](size_t x, size_t y, size_t z,
                           std::array<unsigned, 3> &dimensions) {
     std::vector<cubeSide> boundaries{};
-    // Todo: is this required?
+
+    bool is3d = dimensions[2] != 3;
+
     if (x == 1) boundaries.emplace_back(cubeSide::LEFT);
     if (y == 1) boundaries.emplace_back(cubeSide::BOTTOM);
-    if (z == 1) boundaries.emplace_back(cubeSide::BACK);
+    if (is3d && z == 1) boundaries.emplace_back(cubeSide::BACK);
 
     if (x == dimensions[0] - 2) boundaries.emplace_back(cubeSide::RIGHT);
     if (y == dimensions[1] - 2) boundaries.emplace_back(cubeSide::TOP);
-    if (z == dimensions[2] - 2) boundaries.emplace_back(cubeSide::FRONT);
+    if (is3d && z == dimensions[2] - 2) boundaries.emplace_back(cubeSide::FRONT);
 
     return boundaries;
   };
@@ -122,7 +124,7 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
 void LinkedCellsContainer::forEach(
     std::function<void(Particle &)> &unaryFunction) {
   for (auto &p : particlesVector) {
-    unaryFunction(p);
+    if (!p.isDeleted()) unaryFunction(p);
   }
 }
 
@@ -161,7 +163,12 @@ void LinkedCellsContainer::reserve(size_t amount) {
   particlesVector.reserve(amount);
 }
 size_t LinkedCellsContainer::capacity() { return particlesVector.capacity(); }
-size_t LinkedCellsContainer::size() { return particlesVector.size(); }
+
+size_t LinkedCellsContainer::size() {
+  return std::count_if(particlesVector.begin(), particlesVector.end(),
+                [](Particle& p) { return !p.isDeleted(); });
+}
+
 void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
                                         std::array<double, 3> v_arg,
                                         double m_arg, int type) {

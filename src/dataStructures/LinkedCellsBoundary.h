@@ -119,4 +119,8 @@ class LinkedCellsBoundary {
    * Applies the effects of the current boundary
    */
    void apply();
+
+   std::vector<LinkedCellsContainer::boundaryCell*> getConnectedCells() {
+     return connectedCells;
+   }
 };
