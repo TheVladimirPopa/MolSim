@@ -22,22 +22,20 @@ LinkedCellsContainer::LinkedCellsContainer(
 
   cells.reserve(numCells);
 
-  long index = 0;
   // Instantiate all the cells with their specified type
   for (size_t z = 0; z < dimensions[2]; ++z) {
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace(cells.begin() + index, halo);
+          cells.emplace_back(halo);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          cells.emplace(cells.begin() + index, boundary);
+          cells.emplace_back(boundary);
 
         } else {
-          cells.emplace(cells.begin() + index, inner);
+          cells.emplace_back(inner);
         }
-        ++index;
       }
     }
   }
@@ -137,13 +135,16 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
   cells[index].particles.push_back(particlesVector.size() - 1);
 }
 void LinkedCellsContainer::recalculateStructure() {
+  // Loop through each cell
   for (size_t cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
+    // Loop through each particle of that cell
     auto &particles = cells[cellIndex].particles;
     for (auto it = particles.begin(); it != particles.end();) {
       auto pos = particlesVector[(*it)].getX();
       size_t correctIndex = getCellIndexOfPosition(pos);
       if (correctIndex != cellIndex) {
-        // Delete particle and push it into correct cell
+        // Delete particle and push it into correct cell, if it is currently in
+        // the wrong cell
         cells[correctIndex].particles.push_back(*it);
         it = particles.erase(it);
       } else {
