@@ -29,8 +29,12 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   // Assumes particle is linked with the cell it's currently in!
   size_t dimIndex = getDimensionBySide(side);
 
+  bool leftRelative = side == cubeSide::LEFT || side == cubeSide::TOP ||
+                      side == cubeSide::FRONT;
   double relativePosition =
-      particle.getX()[dimIndex] - container.leftLowerCorner[dimIndex];
+      leftRelative
+          ? particle.getX()[dimIndex] - container.leftLowerCorner[dimIndex]
+          : particle.getX()[dimIndex] - container.rightUpperCorner[dimIndex];
 
   return std::fmod(relativePosition, container.gridSize);
 }
@@ -62,7 +66,7 @@ void LinkedCellsBoundary::reflectParticles() {
       auto dimIndex = getDimensionBySide(side);
 
       auto ghostPos = particle.getX();
-      ghostPos[dimIndex] += 2 * distance;
+      ghostPos[dimIndex] -= 2 * distance;
 
       Particle ghost{ghostPos};
       lennardJones.addForces(particle, ghost);
@@ -72,10 +76,8 @@ void LinkedCellsBoundary::reflectParticles() {
 
 void LinkedCellsBoundary::setBoundaries(
     std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
-    std::vector<LinkedCellsBoundary>& output,
-    LinkedCellsContainer& container) {
+    std::vector<LinkedCellsBoundary>& output, LinkedCellsContainer& container) {
   // Ensure that boundary[0] always is the LEFT one, etc.
-
   std::sort(sideAndType.begin(), sideAndType.end(),
             [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
               return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);

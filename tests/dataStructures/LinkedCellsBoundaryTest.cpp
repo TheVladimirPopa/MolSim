@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 
 #include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
@@ -155,7 +154,7 @@ TEST(LinkedCellsBoundary, Reflective) {
        {cubeSide::TOP, boundaryType::REFLECT},
        {cubeSide::BOTTOM, boundaryType::REFLECT},
        {cubeSide::FRONT, boundaryType::REFLECT},
-       {cubeSide::BOTTOM, boundaryType::REFLECT}},
+       {cubeSide::BACK, boundaryType::REFLECT}},
       boundaries, container);
 
   double epsilon = ReflectiveBoundary::reflectDistance / 5.0;
@@ -176,17 +175,17 @@ TEST(LinkedCellsBoundary, Reflective) {
       // Particles in edges should be reflected to the center
       {v3d{centerOffset, centerOffset, 0}},
       {v3d{-centerOffset, centerOffset, 0}},
-      {v3d{centerOffset, +centerOffset, 0}},
+      {v3d{centerOffset, -centerOffset, 0}},
       {v3d{-centerOffset, -centerOffset, 0}},
 
       {v3d{0, centerOffset, centerOffset}},
       {v3d{0, -centerOffset, centerOffset}},
-      {v3d{0, centerOffset, +centerOffset}},
+      {v3d{0, centerOffset, -centerOffset}},
       {v3d{0, -centerOffset, -centerOffset}},
 
       {v3d{centerOffset, 0, centerOffset}},
       {v3d{-centerOffset, 0, centerOffset}},
-      {v3d{centerOffset, 0, +centerOffset}},
+      {v3d{centerOffset, 0, -centerOffset}},
       {v3d{-centerOffset, 0, -centerOffset}},
 
       // Particle in corners should also be reflected to the center
@@ -220,27 +219,29 @@ TEST(LinkedCellsBoundary, Reflective) {
   // the center coordinate. Thanks to the test setup is suffices to just check
   // whether forces and location share opposite signs.
 
+  // Todo: ARRAYUTILS TEMPLATE
+  auto signum = [](double x) {
+    if (x > 0) return 1;
+    if (x < 0) return -1;
+    return 0;
+  };
+
   for (auto& particle : transformedParticles) {
     // Figure out signs of forces + location per dimension
     v3d positionSigns = particle.getX();
-    v3d forcesSigns = particle.getF();
+    v3d invForceSigns = (-1.0) * particle.getF();
 
     for (int i = 0; i < 3; i++) {
-      if (positionSigns[i] != 0.0)
-        positionSigns[i] /= std::abs(positionSigns[i]);
-
-      if (forcesSigns[i] != 0.0) forcesSigns[i] /= std::abs(forcesSigns[i]);
+      positionSigns[i] = signum(positionSigns[i]);
+      invForceSigns[i] = signum(invForceSigns[i]);
     }
 
-    EXPECT_GT(ArrayUtils::L2Norm(forcesSigns), 0)
+    EXPECT_GT(ArrayUtils::L2Norm(invForceSigns), 0)
         << "No forces where applied onto particle.";
 
-    if (ArrayUtils::L2Norm(forcesSigns))
-      EXPECT_EQ(positionSigns, (-1.0) * forcesSigns)
+    if (ArrayUtils::L2Norm(invForceSigns)) {
+      EXPECT_EQ(positionSigns, invForceSigns)
           << "Particle is not symmetrically reflected from boundaries.";
-
-    if (positionSigns == (-1.0) * forcesSigns) {
-      std::cout << "Nice.";
     }
   }
 
