@@ -83,7 +83,7 @@ LinkedCellsContainer::LinkedCellsContainer(
   }
 }
 
-size_t LinkedCellsContainer::getVectorIndexFromCord(size_t x, size_t y,
+size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y,
                                                     size_t z) {
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
 }
@@ -118,7 +118,7 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
     }
   }
 
-  return getVectorIndexFromCord(indexInBox[0], indexInBox[1], indexInBox[2]);
+  return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
 
 void LinkedCellsContainer::forEach(

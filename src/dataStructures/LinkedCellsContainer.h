@@ -172,7 +172,7 @@ class LinkedCellsContainer : public IContainer {
    * @note Starting with the halo cell, so left lower corner oft the domain
    * bounding box has coordinates (1,1,1)
    */
-  size_t getVectorIndexFromCord(size_t x, size_t y, size_t z);
+  size_t getVectorIndexFromCoord(size_t x, size_t y, size_t z);
 
   /**
    * Translate cell vector index to grid location

@@ -22,7 +22,7 @@ constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
 enum class boundaryType {
   /// Boundary is an outflow boundary
   OUTFLOW,
-  /// Boundary is a reflecing boundary
+  /// Boundary is a reflecting boundary
   REFLECT,
   /// Boundary is a periodic boundary
   PERIODIC
