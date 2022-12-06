@@ -28,6 +28,8 @@ enum class boundaryType {
   PERIODIC
 };
 
+
+
 class LinkedCellsBoundary {
  private:
   /// The side of the linkedCellsContainer where the boundary lies on
@@ -104,10 +106,17 @@ class LinkedCellsBoundary {
   /**
    * Generate boundaries based on side and type and adds them to the container
    * @param sideAndType Pairs of the side and corresponding boundary type
+   * @param boundaries The boundaries the container will use
    * @param container The LinkedCellsContainer that receives the boundaries
    * @return The generated boundaries
    */
   static void setBoundaries(
       std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
-      LinkedCellsContainer container);
+      std::vector<LinkedCellsBoundary>& boundaries,
+      LinkedCellsContainer& container);
+
+  /**
+   * Applies the effects of the current boundary
+   */
+   void apply();
 };

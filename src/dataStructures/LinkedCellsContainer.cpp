@@ -19,7 +19,7 @@ LinkedCellsContainer::LinkedCellsContainer(
   auto getBoundaries = [](size_t x, size_t y, size_t z,
                           std::array<unsigned, 3> &dimensions) {
     std::vector<cubeSide> boundaries{};
-
+    // Todo: is this required?
     if (x == 1) boundaries.emplace_back(cubeSide::LEFT);
     if (y == 1) boundaries.emplace_back(cubeSide::BOTTOM);
     if (z == 1) boundaries.emplace_back(cubeSide::BACK);
@@ -57,8 +57,10 @@ LinkedCellsContainer::LinkedCellsContainer(
   // Store boundary cells separately for easier handling
   for (auto &cell : cells) {
     if (cell.type == cellType::boundary) {
-      boundaryCell bCell = static_cast<boundaryCell>(bCell);
-      boundaryCells.push_back(&bCell);
+      // Todo: das geht nicht, weil die Celle geslicet wird, wenn sie in den
+      //  Vektor gelegt wird.
+      boundaryCell* bCell = static_cast<boundaryCell*>(&cell);
+      boundaryCells.push_back(bCell);
     }
   }
 

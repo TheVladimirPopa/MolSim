@@ -214,9 +214,15 @@ int main(int argc, char *argsv[]) {
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};
 
+  std::vector<LinkedCellsBoundary> boundaries{};
   LinkedCellsBoundary::setBoundaries({
-          {cubeSide::LEFT, boundaryType::OUTFLOW}
-      }, linkedCellsContainer);
+          {cubeSide::LEFT, boundaryType::OUTFLOW},
+          {cubeSide::RIGHT, boundaryType::OUTFLOW},
+          {cubeSide::TOP, boundaryType::OUTFLOW},
+          {cubeSide::BOTTOM, boundaryType::OUTFLOW},
+          {cubeSide::FRONT, boundaryType::OUTFLOW},
+          {cubeSide::BACK, boundaryType::OUTFLOW},
+      }, boundaries, linkedCellsContainer);
 
   IContainer *container = &linkedCellsContainer;
 

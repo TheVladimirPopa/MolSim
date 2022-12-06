@@ -3,9 +3,11 @@
 #include <cmath>
 #include <vector>
 
+#include "spdlog/spdlog.h"
+
 LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
                                          LinkedCellsContainer& container)
-    : type{type}, container{container} {
+    : side{side}, type{type}, container{container} {
   // Add boundary cells
   for (auto cell : container.boundaryCells) {
     auto position = container.getCoordFromVectorIndex(cell->cellVectorIndex);
@@ -36,6 +38,9 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
 void LinkedCellsBoundary::deleteOutFlow() {
   for (auto cell : connectedCells) {
     for (auto neighborIndex : cell->neighborHaloIndices) {
+      if (!container.cells[neighborIndex].particles.empty())
+        spdlog::warn("DELETING PARTICLE");
+
       container.cells[neighborIndex].particles.clear();
     }
   }
@@ -62,7 +67,8 @@ void LinkedCellsBoundary::reflectParticles() {
 
 void LinkedCellsBoundary::setBoundaries(
     std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
-    LinkedCellsContainer container) {
+    std::vector<LinkedCellsBoundary>& output,
+    LinkedCellsContainer& container) {
   // Ensure that boundary[0] always is the LEFT one, etc.
 
   std::sort(sideAndType.begin(), sideAndType.end(),
@@ -71,14 +77,21 @@ void LinkedCellsBoundary::setBoundaries(
             });
 
   // todo: wtf this is
-  std::vector<LinkedCellsBoundary>* newBoundaries =
-      new std::vector<LinkedCellsBoundary>();
 
-  for (auto [side, type] : sideAndType)
-    newBoundaries->emplace_back(side, type, container);
+  for (auto [side, type] : sideAndType) {
+    LinkedCellsBoundary boundary{side, type, container};
+    output.push_back(boundary);
+  }
 
-  container.boundaries = newBoundaries;
+  container.boundaries = &output;
+}
 
+void LinkedCellsBoundary::apply() {
+  if (type == boundaryType::OUTFLOW)
+    deleteOutFlow();
+  else if (type == boundaryType::REFLECT) {
+    reflectParticles();
+  }
 }
 
 // CURRENTLY NOT USED, WILL PROBABLY BE DELETED BEFORE MASTER MERGE:

@@ -4,21 +4,18 @@
 #include <stdexcept>
 
 #include "IContainer.h"
+
 /**
  * A cube placed on an XYZ grid. The keywords name the sides of the cube.
  *    +--------+
- *   /        /|
  *  /  TOP   / |
  * +--------+  | RIGHT
  * |        |  +
  * | FRONT  | /
- * |        |/
  * +--------+
- * If the cube has it's left lower corner at (0,0,0):
- * LEFT: dimension[0] = 0
- * RIGHT: dimension[0] > 0
- * TOP+BOTTOM: dimension[1]
- * FRONT+BACK: dimension[2]
+ * LEFT and RIGHT are relative to the dimension[0] axis.
+ * TOP and BOTTOM are relative to the dimension[1] axis.
+ * FRONT and BACK are relative to the dimension[2] axis.
  */
 enum class cubeSide {
   LEFT = 0,    // dimension[0]
@@ -29,9 +26,6 @@ enum class cubeSide {
   BACK = 5     // dimension[2]
 };
 
-
-// Predeclare, because LinkedCellsBoundaries require access to the container to
-// be set up correctly, while the container only needs to store the boundaries.
 class LinkedCellsBoundary;
 class LinkedCellsContainer : public IContainer {
  private:
@@ -73,11 +67,10 @@ class LinkedCellsContainer : public IContainer {
       corner   /// Cell has 7 neighboring halo cells
     };
 
-    boundaryCellType cornerType; // Not strictly required, so maybe remove this
-    std::vector<size_t> neighborHaloIndices; // Indices vs. pointers for now
+    boundaryCellType cornerType;  // Not strictly required, so maybe remove this
+    std::vector<size_t> neighborHaloIndices;  // Indices vs. pointers for now
 
-    explicit boundaryCell(size_t index,
-                          std::array<unsigned int, 3> &dim,
+    explicit boundaryCell(size_t index, std::array<unsigned int, 3> &dim,
                           std::vector<cubeSide> boundaries)
         : cell{cellType::boundary, index} {
       // Determine corner type (which determines number of neighbor cells)
@@ -131,7 +124,7 @@ class LinkedCellsContainer : public IContainer {
       if (side == cubeSide::FRONT) return index - dim[0] * dim[1];
       if (side == cubeSide::BACK) return index + dim[0] * dim[1];
 
-      return -1; // Unreachable error case
+      return -1;  // Unreachable error case
     }
   };
 
@@ -243,5 +236,9 @@ class LinkedCellsContainer : public IContainer {
    */
   const std::vector<cell> &getCellsVector() { return cells; }
 
-
+  /**
+   * Returns the boundaries of the LinkedCells container
+   * @return boundaries
+   */
+  std::vector<LinkedCellsBoundary>* getBoundaries() { return boundaries; }
 };
