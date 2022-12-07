@@ -10,7 +10,7 @@ using v3d = std::array<double, 3>;
 /**
  * Ensure internal structure of boundary is consistent with container.
  */
-TEST(LinkedCellsBoundary, SetupDim2D) {
+TEST(LinkedCellsBoundary, SetupStructure) {
   double const meshWidth = 2.0;
 
   for (int i = 0.0; i < 10.0; i++) {
@@ -40,21 +40,6 @@ TEST(LinkedCellsBoundary, SetupDim2D) {
       EXPECT_EQ(boundaries[1].getConnectedCells().size(), heightCellCount);
       EXPECT_EQ(boundaries[2].getConnectedCells().size(), widthCellCount);
       EXPECT_EQ(boundaries[3].getConnectedCells().size(), widthCellCount);
-
-      // Each boundary cell is only linked with halo cells als neighbours
-      for (auto& boundary : boundaries) {
-        for (auto& connectedCell : boundary.connectedCells) {
-          for (auto neighbourIndex : connectedCell->neighborHaloIndices) {
-            ASSERT_LT(neighbourIndex, container.getCellsVector().size())
-                << "Neighbour index is outside vector.";
-            ASSERT_GE(neighbourIndex, 0)
-                << "Neighbour index is outside vector.";
-
-            EXPECT_EQ(container.getCellsVector()[neighbourIndex].type,
-                      cellType::halo);
-          }
-        }
-      }
     }
   }
 }
@@ -134,6 +119,8 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
   EXPECT_EQ(countedSizeAfter, countedSize - numberOfDeletions);
   EXPECT_EQ(countedHaloSizeAfter, 0);
   EXPECT_EQ(container.size() + numberOfDeletions, containerSizeBefore);
+  EXPECT_NE(container.size(), 0)
+      << "The boundaries deleted everything not just halo cell content.";
 
   // Check if .foreach() works correctly
   container.forEach(count);
@@ -142,6 +129,10 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
       << "Foreach must not apply to deleted particles.";
 }
 
+/**
+ * Check if outflow boundary clears halo correctly and nothing else in 3D.
+ * Also checks the internal boundary structure.
+ */
 TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   v3d leftCorner{0., 0., 0.};
   v3d rightCorner{10, 10, 10.};
@@ -149,17 +140,21 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
 
   // Spawn test particles (clang complains when using for loops)
   size_t addedCount{};
-  double x{-1.0}, y{-1.0}, z{-1.0};
-  while (x < rightCorner[0] + 2.0) {
-    while (y < rightCorner[1] + 2.0) {
-      while (z < rightCorner[2] + 2.0) {
-        container.emplace_back(v3d{x,y,z}, v3d{0,0,0}, 1, 0);
+  double cubeInitCoord = -1.0;
+  double particleMeshWidth = 0.6;
+  double x{cubeInitCoord};
+  while (x < rightCorner[0] - cubeInitCoord) {
+    double y{cubeInitCoord};
+    while (y < rightCorner[1] - cubeInitCoord) {
+      double z{cubeInitCoord};
+      while (z < rightCorner[2] - cubeInitCoord) {
+        container.emplace_back(v3d{x, y, z}, v3d{0, 0, 0}, 1, 0);
         addedCount++;
-        z += 0.6;
+        z += particleMeshWidth;
       }
-      y += 0.6;
+      y += particleMeshWidth;
     }
-    x += 0.6;
+    x += particleMeshWidth;
   }
 
   // Measure particle counts in halo and within container
@@ -193,7 +188,18 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
        {cubeSide::FRONT, boundaryType::OUTFLOW},
        {cubeSide::BACK, boundaryType::OUTFLOW}},
       boundaries, container);
-  for (auto &b : boundaries) b.apply();
+
+  for (auto &b : boundaries) {
+    // Check internal structure is still correct
+    for (auto &cell : b.getConnectedCells())
+      EXPECT_EQ(cell->type, cellType::boundary);
+
+    EXPECT_EQ(b.getConnectedCells().size(), 25);
+
+  }
+
+  for (auto &b : boundaries)
+    b.apply();
   container.recalculateStructure();
 
   // Check new particle counts
@@ -202,14 +208,14 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
 
   for (auto cell : container.getCellsVector()) {
     if (cell.type == cellType::halo) {
-      nonHaloParticlesAfter += cell.particles.size();
-    } else {
       haloParticlesAfter += cell.particles.size();
+    } else {
+      nonHaloParticlesAfter += cell.particles.size();
     }
   }
 
   EXPECT_EQ(nonHaloParticlesBefore, nonHaloParticlesAfter)
-      << "Particles that where not in halo cells got deleted.";
+      << "Particles that where not in halo cells got deleted/appeared.";
   EXPECT_EQ(haloParticlesAfter, 0)
       << "Not all particles in halo cells where deleted.";
 }
@@ -223,7 +229,6 @@ class LinkedCellsReflectiveBoundary : public ::testing::Test {
   std::vector<v3d> testParticles;
 
   void SetUp() override {
-    // Avoid reallocating static objects if called in subclasses of FooTest.
     epsilon = ReflectiveBoundary::reflectDistance / 5.0;
     centerOffset = 5.0 - epsilon;
 

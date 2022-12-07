@@ -36,100 +36,26 @@ enum class cellType {
   /// A cell that lies outside the domain bounding box
   halo
 };
-class LinkedCellsContainer : public IContainer {
- private:
 
-  /**
+/**
    * A struct representing a single cell with its type and pointer to the
    * particles in it
-   */
-  struct cell {
-    /// List of pointers to the particles which are currently inside the cell
-    std::list<size_t> particles{};
-    /// The type of the cell
-    cellType type = cellType::inner;
-    /// Index of cell in the LinkedCellsContainer cell vector
-    size_t cellVectorIndex;
+ */
+struct cell {
+  /// List of pointers to the particles which are currently inside the cell
+  std::list<size_t> particles{};
+  /// The type of the cell
+  cellType type = cellType::inner;
+  /// Index of cell in the LinkedCellsContainer cell vector
+  size_t cellVectorIndex;
 
-    std::vector<size_t> neighborHaloIndices;  // Indices vs. pointers for now
+  explicit cell(cellType t, size_t index)
+      : particles{}, type{t}, cellVectorIndex{index} {}
 
-    explicit cell(cellType t, size_t index)
-        : particles{}, type{t}, cellVectorIndex{index} {}
-  };
+};
 
-  /**
-   * A struct representing a boundary cell. Opposed to a standard cell,
-   * it is aware of its neighboring halo cells.
-   */
-  struct boundaryCell : cell {
-    enum class boundaryCellType {
-      // Determines the number of neighbouring halo cells a boundary cell has
-      normal,  /// Cell has 1 neighboring halo cell
-      edge,    /// Cell has 3 neighboring halo cells
-      corner   /// Cell has 7 neighboring halo cells
-    };
-
-    boundaryCellType cornerType;  // Not strictly required, so maybe remove this
-
-    explicit boundaryCell(size_t index, std::array<unsigned int, 3> &dim,
-                          std::vector<cubeSide> boundaries)
-        : cell{cellType::boundary, index} {
-      // Determine corner type (which determines number of neighbor cells)
-      if (boundaries.size() <= 1) cornerType = boundaryCellType::normal;
-      if (boundaries.size() == 2) cornerType = boundaryCellType::edge;
-      if (boundaries.size() >= 3) cornerType = boundaryCellType::corner;
-
-      // Store indices of neighbor halo cells
-      for (auto b : boundaries)
-        neighborHaloIndices.push_back(
-            getIndexByCubeSide(cellVectorIndex, b, dim));
-
-      // Helper that calculates die index of a diagonal cell
-      auto addDiagonalIndices = [this, &dim](size_t indexDiagonal,
-                                             cubeSide sideA, cubeSide sideB) {
-        // E.g. boundaries = { top, right }, we want the top right field
-        // first get index of top field
-        indexDiagonal = getIndexByCubeSide(indexDiagonal, sideA, dim);
-
-        // Then index of right field
-        indexDiagonal = getIndexByCubeSide(indexDiagonal, sideB, dim);
-        neighborHaloIndices.push_back(indexDiagonal);
-      };
-
-      if (cornerType == boundaryCellType::edge) {
-        // boundaries is size 2, or there is a bug
-        addDiagonalIndices(cellVectorIndex, boundaries[0], boundaries[1]);
-      }
-
-      if (cornerType == boundaryCellType::corner) {
-        // boundaries is size 3, or there is a bug
-        addDiagonalIndices(cellVectorIndex, boundaries[0], boundaries[1]);
-        addDiagonalIndices(cellVectorIndex, boundaries[0], boundaries[2]);
-        addDiagonalIndices(cellVectorIndex, boundaries[1], boundaries[2]);
-
-        // E.g. we want the cell that is top, right, front of our boundary cell:
-        // take index and update it with directions { top, right, front }
-        size_t i = cellVectorIndex;
-        for (auto b : boundaries) i = getIndexByCubeSide(i, b, dim);
-        neighborHaloIndices.push_back(i);
-      }
-
-      // TODO: neighborIndices sortieren
-    }
-
-    // Helper to get coordinate of boundary cell based on it's side.
-    static unsigned int getIndexByCubeSide(size_t index, cubeSide side,
-                                           std::array<unsigned int, 3> &dim) {
-      if (side == cubeSide::LEFT) return index - 1;
-      if (side == cubeSide::RIGHT) return index + 1;
-      if (side == cubeSide::BOTTOM) return index - dim[0];
-      if (side == cubeSide::TOP) return index + dim[0];
-      if (side == cubeSide::FRONT) return index - dim[0] * dim[1];
-      if (side == cubeSide::BACK) return index + dim[0] * dim[1];
-
-      return -1;  // Unreachable error case
-    }
-  };
+class LinkedCellsContainer : public IContainer {
+ private:
 
   /// The boundaries the container has
   std::vector<LinkedCellsBoundary>* boundaries{};
@@ -141,7 +67,7 @@ class LinkedCellsContainer : public IContainer {
   std::vector<cell> cells;
 
   /// The vector
-  std::vector<boundaryCell *> boundaryCells;
+  std::vector<cell *> boundaryCells;
 
   /// Edge length of a cell
   double gridSize;
@@ -245,5 +171,8 @@ class LinkedCellsContainer : public IContainer {
    */
   std::vector<LinkedCellsBoundary>* getBoundaries() { return boundaries; }
 
+  /**
+   * @return Cell dimensions in number of cells per dimension
+   */
   std::array<unsigned int, 3> getDimensions() { return dimensions; }
 };

@@ -208,8 +208,10 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{-15., -20., -5};
-  std::array<double, 3> rightUpperCorner{55., 30., 5};
+  std::array<double, 3> leftLowerCorner{-5., -5., -5};
+  std::array<double, 3> rightUpperCorner{5., 5., 5};
+  //std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  //std::array<double, 3> rightUpperCorner{55., 30., 5};
 
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};

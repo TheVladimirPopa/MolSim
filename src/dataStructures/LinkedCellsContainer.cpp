@@ -16,23 +16,6 @@ LinkedCellsContainer::LinkedCellsContainer(
     numCells *= dimensions[i];
   }
 
-  auto getBoundaries = [](size_t x, size_t y, size_t z,
-                          std::array<unsigned, 3> &dimensions) {
-    std::vector<cubeSide> boundaries{};
-
-    bool is3d = dimensions[2] != 3;
-
-    if (x == 1) boundaries.emplace_back(cubeSide::LEFT);
-    if (y == 1) boundaries.emplace_back(cubeSide::BOTTOM);
-    if (is3d && z == 1) boundaries.emplace_back(cubeSide::BACK);
-
-    if (x == dimensions[0] - 2) boundaries.emplace_back(cubeSide::RIGHT);
-    if (y == dimensions[1] - 2) boundaries.emplace_back(cubeSide::TOP);
-    if (is3d && z == dimensions[2] - 2) boundaries.emplace_back(cubeSide::FRONT);
-
-    return boundaries;
-  };
-
   cells.reserve(numCells);
 
   long index = 0;
@@ -45,9 +28,7 @@ LinkedCellsContainer::LinkedCellsContainer(
           cells.emplace(cells.begin() + index, cellType::halo, index);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          auto boundaries = getBoundaries(x, y, z, dimensions);
-          boundaryCell boundary_cell(index, dimensions, boundaries);
-          cells.push_back(std::move(boundary_cell));
+          cells.emplace_back(cellType::boundary, index);
         } else {
           cells.emplace(cells.begin() + index, cellType::inner, index);
         }
@@ -59,13 +40,9 @@ LinkedCellsContainer::LinkedCellsContainer(
   // Store boundary cells separately for easier handling
   for (auto &cell : cells) {
     if (cell.type == cellType::boundary) {
-      // Todo: das geht nicht, weil die Celle geslicet wird, wenn sie in den
-      //  Vektor gelegt wird.
-      boundaryCell* bCell = static_cast<boundaryCell*>(&cell);
-      boundaryCells.push_back(bCell);
+      boundaryCells.push_back(&cell);
     }
   }
-
 
   // Precompute the indexOffsets
   int indexAdjacentArray = 0;

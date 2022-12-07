@@ -53,7 +53,7 @@ class LinkedCellsBoundary {
       2   // Relevant dimension for cubeSide::BACK
   };
 
-  // E.g. access via: cellSlotTable[static_cast<size_t>(cubeSide::TOP)]
+  // E.g. access via: cellGridLocationTable[static_cast<size_t>(cubeSide::TOP)]
   std::array<unsigned int, 6> const cellGridLocationTable = {
       1,                            // Relevant cell location, cubeSide::LEFT
       container.dimensions[0] - 2,  // Relevant cell location, cubeSide::RIGHT
@@ -63,6 +63,17 @@ class LinkedCellsBoundary {
       container.dimensions[2] - 2,  // Relevant cell location, cubeSide::BACK
   };
 
+  // E.g. access via: haloLocationTable[static_cast<size_t>(cubeSide::TOP)]
+  std::array<unsigned int, 6> const haloLocationTable = {
+      0,                            // Relevant cell location, cubeSide::LEFT
+      container.dimensions[0] - 1,  // Relevant cell location, cubeSide::RIGHT
+      0,                            // Relevant cell location, cubeSide::TOP
+      container.dimensions[1] - 1,  // Relevant cell location, cubeSide::BOTTOM
+      0,                            // Relevant cell location, cubeSide::FRONT
+      container.dimensions[2] - 1,  // Relevant cell location, cubeSide::BACK
+  };
+
+
   inline size_t getDimensionBySide(cubeSide side) {
     return dimensionTable[static_cast<size_t>(side)];
   }
@@ -71,8 +82,20 @@ class LinkedCellsBoundary {
     return cellGridLocationTable[static_cast<size_t>(side)];
   }
 
+  inline unsigned int getHaloGridLocation(cubeSide side) {
+    return haloLocationTable[static_cast<size_t>(side)];
+  }
+
+  /**
+   * Adds halo neighbors to boundary cells for the outflow boundary
+   */
+  void linkOutflowNeighbors();
+
  public:
-  std::vector<LinkedCellsContainer::boundaryCell*> connectedCells;
+  std::vector<cell*> connectedCells;
+
+  std::vector<cell*> connectedHalos;
+
 
   /**
    * Instantiate a LinkedCellsBoundary which is used to model the walls of a
@@ -120,7 +143,9 @@ class LinkedCellsBoundary {
    */
    void apply();
 
-   std::vector<LinkedCellsContainer::boundaryCell*> getConnectedCells() {
+   std::vector<cell*> getConnectedCells() {
      return connectedCells;
    }
+
+   cubeSide getSide() { return side; }
 };
