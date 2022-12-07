@@ -208,22 +208,20 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{-5., -5., -5};
-  std::array<double, 3> rightUpperCorner{5., 5., 5};
-  //std::array<double, 3> leftLowerCorner{-15., -20., -5};
-  //std::array<double, 3> rightUpperCorner{55., 30., 5};
+  std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  std::array<double, 3> rightUpperCorner{55., 30., 5};
 
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};
 
   std::vector<LinkedCellsBoundary> boundaries{};
   LinkedCellsBoundary::setBoundaries({
-          {cubeSide::LEFT, boundaryType::OUTFLOW},
-          {cubeSide::RIGHT, boundaryType::OUTFLOW},
-          {cubeSide::TOP, boundaryType::OUTFLOW},
-          {cubeSide::BOTTOM, boundaryType::OUTFLOW},
-          {cubeSide::FRONT, boundaryType::OUTFLOW},
-          {cubeSide::BACK, boundaryType::OUTFLOW},
+          {cubeSide::LEFT, boundaryType::REFLECT},
+          {cubeSide::RIGHT, boundaryType::REFLECT},
+          {cubeSide::TOP, boundaryType::REFLECT},
+          {cubeSide::BOTTOM, boundaryType::REFLECT},
+          {cubeSide::FRONT, boundaryType::REFLECT},
+          {cubeSide::BACK, boundaryType::REFLECT},
       }, boundaries, linkedCellsContainer);
 
   IContainer *container = &linkedCellsContainer;

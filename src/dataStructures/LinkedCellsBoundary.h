@@ -9,14 +9,14 @@
 
 /// Parameters for reflection boundary.
 namespace ReflectiveBoundary {
-// Initialize LennardJones model for reflective boundary.
-static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
-static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
+  // Initialize LennardJones model for reflective boundary.
+  static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
+  static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
 
-// Parameters for reflection
-constexpr double SIGMA = SIGMA_PLACEHOLDER;
-constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
-constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
+  // Parameters for reflection
+  constexpr double SIGMA = SIGMA_PLACEHOLDER;
+  constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
+  constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
 }  // namespace ReflectiveBoundary
 
 enum class boundaryType {
@@ -88,8 +88,10 @@ class LinkedCellsBoundary {
 
 
  public:
+  /// Pointers to connected boundary cells
   std::vector<cell*> connectedCells;
 
+  /// Pointers to connected halo cells
   std::vector<cell*> connectedHalos;
 
 
@@ -139,9 +141,9 @@ class LinkedCellsBoundary {
    */
    void apply();
 
-   [[nodiscard]] std::vector<cell*> getConnectedCells() const {
-     return connectedCells;
-   }
-
+   /**
+    * @return Side on which the boundary lies. E.g. left side of LinkedCells
+    * container cube.
+    */
    [[maybe_unused]] cubeSide getSide() { return side; }
 };

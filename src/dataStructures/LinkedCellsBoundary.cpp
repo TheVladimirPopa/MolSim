@@ -38,7 +38,6 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
 
     if (!isOnBoundarySide) continue;
 
-
     connectedHalos.push_back(&c);
   }
 
@@ -60,23 +59,6 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
 
   return relativePosition;
 }
-/*
-void LinkedCellsBoundary::linkOutflowNeighbors() {
-  for (auto& cell : connectedCells) {
-    std::vector<size_t> neighbors{};
-    // Add halos reachable with 1 step
-    for (size_t directNeighbor : cell->getDirectNeighbors(container.dimensions)) {
-      if (container.getCellsVector()[directNeighbor].type != cellType::halo)
-        continue;
-
-      neighbors.push_back(directNeighbor);
-    }
-
-
-
-    // Add halos reachable
-  }
-}*/
 
 void LinkedCellsBoundary::deleteOutFlow() {
   for (auto cell : connectedHalos) {

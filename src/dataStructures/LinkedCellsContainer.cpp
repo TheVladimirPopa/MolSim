@@ -153,6 +153,7 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
   size_t index = getCellIndexOfPosition(x_arg);
   cells[index].particles.push_back(particlesVector.size() - 1);
 }
+
 void LinkedCellsContainer::recalculateStructure() {
   for (size_t cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
     auto &particles = cells[cellIndex].particles;
