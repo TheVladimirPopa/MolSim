@@ -25,6 +25,8 @@ IF (BUILD_DOC)
                 ../src/outputWriter/vtk-unstructured.xsd")
         set(DOXYGEN_MAIN_PAGE ../README.md)
 
+        set(DOXYGEN_IMAGES ../images/*.png)
+
         # Write the parameters to the doxygen-file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
         message(STATUS "Writing of doxygen-file done")
