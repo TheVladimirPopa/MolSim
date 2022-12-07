@@ -44,7 +44,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 ```
 Usage
         ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
-                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-v] [-v] [-q]
+                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-r] [-v] [-v] [-q]
 
 OPTIONS:
         -o <filepath>, --output-name=<filepath>
@@ -77,6 +77,9 @@ OPTIONS:
         -p, --performance
                 Takes a performace measurement of the simulation, 
                 implicitly sets the -n flag and deactivates logging entirely.
+                
+        -r, --hit-rate
+               Measures the hit-rate of the pairwise force calculation.
         
         -v, --verbose
                 If specified the log-level is lowered from INFO to DEBUG.
