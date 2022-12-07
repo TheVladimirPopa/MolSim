@@ -13,9 +13,9 @@ using v3d = std::array<double, 3>;
 TEST(LinkedCellsBoundary, SetupDim2D) {
   double const meshWidth = 2.0;
 
-  for (double i = 0.0; i < 10.0; i++) {
-    for (double j = 0.0; j < 10.0; j++) {
-      v3d dimensions{5 + i, 4 + j, 1};
+  for (int i = 0.0; i < 10.0; i++) {
+    for (int j = 0.0; j < 10.0; j++) {
+      v3d dimensions{5 + static_cast<double>(i), 4 + static_cast<double>(j), 1};
 
       v3d leftCorner{0., 0., 0.};
       v3d rightCorner{meshWidth * dimensions};
@@ -60,9 +60,10 @@ TEST(LinkedCellsBoundary, SetupDim2D) {
 }
 
 /**
- * TODO doku
+ * Tests that the outflow boundary deletes particles in the halo area
+ * and only in that area. It also ensures particles are deleted correctly.
  */
-TEST(LinkedCellsBoundary, Outflow2D) {
+TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
   double const meshWidth = 2.0;
 
   v3d dimensions{5, 4, 1};
@@ -141,64 +142,150 @@ TEST(LinkedCellsBoundary, Outflow2D) {
       << "Foreach must not apply to deleted particles.";
 }
 
-TEST(LinkedCellsBoundary, Reflective) {
+TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
+  v3d leftCorner{0., 0., 0.};
+  v3d rightCorner{10, 10, 10.};
+  LinkedCellsContainer container{2., leftCorner, rightCorner};
+
+  // Spawn test particles (clang complains when using for loops)
+  size_t addedCount{};
+  double x{-1.0}, y{-1.0}, z{-1.0};
+  while (x < rightCorner[0] + 2.0) {
+    while (y < rightCorner[1] + 2.0) {
+      while (z < rightCorner[2] + 2.0) {
+        container.emplace_back(v3d{x,y,z}, v3d{0,0,0}, 1, 0);
+        addedCount++;
+        z += 0.6;
+      }
+      y += 0.6;
+    }
+    x += 0.6;
+  }
+
+  // Measure particle counts in halo and within container
+  size_t nonHaloParticlesBefore{};
+  size_t haloParticlesBefore{};
+
+  for (auto cell : container.getCellsVector()) {
+    if (cell.type == cellType::halo) {
+      haloParticlesBefore += cell.particles.size();
+    } else {
+      nonHaloParticlesBefore += cell.particles.size();
+    }
+  }
+
+  EXPECT_NE(nonHaloParticlesBefore, 0)
+      << "For the test, some particles should be in inner/boundary cells.";
+
+  ASSERT_EQ(addedCount, nonHaloParticlesBefore + haloParticlesBefore)
+      << "The container lost particles.";
+
+  ASSERT_NE(haloParticlesBefore, 0)
+      << "To test deletion, ensure halo is not empty.";
+
+  // Spawn and apply boundaries
+  std::vector<LinkedCellsBoundary> boundaries{};
+  LinkedCellsBoundary::setBoundaries(
+      {{cubeSide::LEFT, boundaryType::OUTFLOW},
+       {cubeSide::RIGHT, boundaryType::OUTFLOW},
+       {cubeSide::TOP, boundaryType::OUTFLOW},
+       {cubeSide::BOTTOM, boundaryType::OUTFLOW},
+       {cubeSide::FRONT, boundaryType::OUTFLOW},
+       {cubeSide::BACK, boundaryType::OUTFLOW}},
+      boundaries, container);
+  for (auto &b : boundaries) b.apply();
+  container.recalculateStructure();
+
+  // Check new particle counts
+  size_t nonHaloParticlesAfter{};
+  size_t haloParticlesAfter{};
+
+  for (auto cell : container.getCellsVector()) {
+    if (cell.type == cellType::halo) {
+      nonHaloParticlesAfter += cell.particles.size();
+    } else {
+      haloParticlesAfter += cell.particles.size();
+    }
+  }
+
+  EXPECT_EQ(nonHaloParticlesBefore, nonHaloParticlesAfter)
+      << "Particles that where not in halo cells got deleted.";
+  EXPECT_EQ(haloParticlesAfter, 0)
+      << "Not all particles in halo cells where deleted.";
+}
+
+
+
+class LinkedCellsReflectiveBoundary : public ::testing::Test {
+ protected:
+  double epsilon;
+  double centerOffset;
+  std::vector<v3d> testParticles;
+
+  void SetUp() override {
+    // Avoid reallocating static objects if called in subclasses of FooTest.
+    epsilon = ReflectiveBoundary::reflectDistance / 5.0;
+    centerOffset = 5.0 - epsilon;
+
+    // We check 6 surfaces, 12 edges, 8 corners. Any other case should occur
+    // as a linear combination of these cases.
+    testParticles = {
+        // Particles in center of surface get reflected towards
+        // the center coordinate (0,0,0)
+        {v3d{centerOffset, 0.0, 0.0}},
+        {v3d{-centerOffset, 0.0, 0.0}},
+        {v3d{0.0, centerOffset, 0.0}},
+        {v3d{0.0, -centerOffset, 0.0}},
+        {v3d{0.0, 0.0, centerOffset}},
+        {v3d{0.0, 0.0, -centerOffset}},
+
+        // Particles in edges should be reflected to the center
+        {v3d{centerOffset, centerOffset, 0}},
+        {v3d{-centerOffset, centerOffset, 0}},
+        {v3d{centerOffset, -centerOffset, 0}},
+        {v3d{-centerOffset, -centerOffset, 0}},
+
+        {v3d{0, centerOffset, centerOffset}},
+        {v3d{0, -centerOffset, centerOffset}},
+        {v3d{0, centerOffset, -centerOffset}},
+        {v3d{0, -centerOffset, -centerOffset}},
+
+        {v3d{centerOffset, 0, centerOffset}},
+        {v3d{-centerOffset, 0, centerOffset}},
+        {v3d{centerOffset, 0, -centerOffset}},
+        {v3d{-centerOffset, 0, -centerOffset}},
+
+        // Particle in corners should also be reflected to the center
+        {v3d{centerOffset, centerOffset, centerOffset}},
+        {v3d{-centerOffset, -centerOffset, -centerOffset}},
+        {v3d{centerOffset, centerOffset, -centerOffset}},
+        {v3d{centerOffset, -centerOffset, centerOffset}},
+        {v3d{-centerOffset, centerOffset, centerOffset}},
+        {v3d{-centerOffset, centerOffset, -centerOffset}},
+        {v3d{-centerOffset, -centerOffset, centerOffset}},
+        {v3d{centerOffset, -centerOffset, -centerOffset}}
+    };
+  }
+};
+
+/**
+ * Checks that particles are actually reflected exactly how they are supposed
+ * to be reflected from walls.
+ */
+TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
   v3d leftCorner{-5.0, -5.0, -5.0};
   v3d rightCorner{5.0, 5.0, 5.0};
 
   LinkedCellsContainer container{10.0, leftCorner, rightCorner};
 
   std::vector<LinkedCellsBoundary> boundaries{};
-  LinkedCellsBoundary::setBoundaries(
-      {{cubeSide::LEFT, boundaryType::REFLECT},
-       {cubeSide::RIGHT, boundaryType::REFLECT},
-       {cubeSide::TOP, boundaryType::REFLECT},
-       {cubeSide::BOTTOM, boundaryType::REFLECT},
-       {cubeSide::FRONT, boundaryType::REFLECT},
-       {cubeSide::BACK, boundaryType::REFLECT}},
-      boundaries, container);
-
-  double epsilon = ReflectiveBoundary::reflectDistance / 5.0;
-  double centerOffset = 5.0 - epsilon;
-
-  // We check 6 surfaces, 12 edges, 8 corners. Any other case should occur
-  // as a linear combination of these cases.
-  std::vector<v3d> testParticles = {
-      // Particles in center of surface get reflected towards
-      // the center coordinate (0,0,0)
-      {v3d{centerOffset, 0.0, 0.0}},
-      {v3d{-centerOffset, 0.0, 0.0}},
-      {v3d{0.0, centerOffset, 0.0}},
-      {v3d{0.0, -centerOffset, 0.0}},
-      {v3d{0.0, 0.0, centerOffset}},
-      {v3d{0.0, 0.0, -centerOffset}},
-
-      // Particles in edges should be reflected to the center
-      {v3d{centerOffset, centerOffset, 0}},
-      {v3d{-centerOffset, centerOffset, 0}},
-      {v3d{centerOffset, -centerOffset, 0}},
-      {v3d{-centerOffset, -centerOffset, 0}},
-
-      {v3d{0, centerOffset, centerOffset}},
-      {v3d{0, -centerOffset, centerOffset}},
-      {v3d{0, centerOffset, -centerOffset}},
-      {v3d{0, -centerOffset, -centerOffset}},
-
-      {v3d{centerOffset, 0, centerOffset}},
-      {v3d{-centerOffset, 0, centerOffset}},
-      {v3d{centerOffset, 0, -centerOffset}},
-      {v3d{-centerOffset, 0, -centerOffset}},
-
-      // Particle in corners should also be reflected to the center
-      {v3d{centerOffset, centerOffset, centerOffset}},
-      {v3d{-centerOffset, -centerOffset, -centerOffset}},
-      {v3d{centerOffset, centerOffset, -centerOffset}},
-      {v3d{centerOffset, -centerOffset, centerOffset}},
-      {v3d{-centerOffset, centerOffset, centerOffset}},
-      {v3d{-centerOffset, centerOffset, -centerOffset}},
-      {v3d{-centerOffset, -centerOffset, centerOffset}},
-      {v3d{centerOffset, -centerOffset, -centerOffset}}
-
-  };
+  LinkedCellsBoundary::setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
+                                      {cubeSide::RIGHT, boundaryType::REFLECT},
+                                      {cubeSide::TOP, boundaryType::REFLECT},
+                                      {cubeSide::BOTTOM, boundaryType::REFLECT},
+                                      {cubeSide::FRONT, boundaryType::REFLECT},
+                                      {cubeSide::BACK, boundaryType::REFLECT}},
+                                     boundaries, container);
 
   for (auto particleX : testParticles)
     container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
@@ -219,7 +306,6 @@ TEST(LinkedCellsBoundary, Reflective) {
   // the center coordinate. Thanks to the test setup is suffices to just check
   // whether forces and location share opposite signs.
 
-  // Todo: ARRAYUTILS TEMPLATE
   auto signum = [](double x) {
     if (x > 0) return 1;
     if (x < 0) return -1;
@@ -239,13 +325,56 @@ TEST(LinkedCellsBoundary, Reflective) {
     EXPECT_GT(ArrayUtils::L2Norm(invForceSigns), 0)
         << "No forces where applied onto particle.";
 
-    if (ArrayUtils::L2Norm(invForceSigns)) {
+    if (ArrayUtils::L2Norm(invForceSigns) != 0.0) {
       EXPECT_EQ(positionSigns, invForceSigns)
           << "Particle is not symmetrically reflected from boundaries.";
     }
-  }
 
-  // Do not influence particles that are out of reach
-  // Apply force onto particles very close to the wall
-  // Ensure force direction is correct for all planes (namely away from plane)
+    double const expected = 7932629.5583620192;
+    for (int i = 0; i < 3; i++) {
+      auto const& f = particle.getF()[i];
+      bool correctAmountOfForce = (f == expected || f == -expected || f == 0);
+
+      EXPECT_TRUE(correctAmountOfForce) << "Where force value: " << f << '\n'
+         << "expected values: {" << expected << ", " << (-expected) << ", 0.0}";
+    }
+  }
+}
+
+/**
+ * Ignore particles that are outside of reflection distance.
+ */
+TEST_F(LinkedCellsReflectiveBoundary, IgnoreOutOfRange) {
+  v3d leftCorner{-8.0, -8.0, -8.0};
+  v3d rightCorner{8.0, 8.0, 8.0};
+
+  LinkedCellsContainer container{4.0, leftCorner, rightCorner};
+
+  std::vector<LinkedCellsBoundary> boundaries{};
+  LinkedCellsBoundary::setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
+                                      {cubeSide::RIGHT, boundaryType::REFLECT},
+                                      {cubeSide::TOP, boundaryType::REFLECT},
+                                      {cubeSide::BOTTOM, boundaryType::REFLECT},
+                                      {cubeSide::FRONT, boundaryType::REFLECT},
+                                      {cubeSide::BACK, boundaryType::REFLECT}},
+                                     boundaries, container);
+
+  // Apply boundaries
+  for (auto& boundary : boundaries)
+    boundary.apply();
+
+  // Get particles back
+  std::vector<Particle> transformedParticles;
+  std::function getParticles{[&transformedParticles](Particle& p) {
+    transformedParticles.push_back(p);
+  }};
+
+  // All particles where far away from the boundary. No forces should apply.
+  container.forEach(getParticles);
+
+  for (auto& particle : transformedParticles) {
+    ASSERT_EQ(particle.getF()[0], 0.0);
+    ASSERT_EQ(particle.getF()[1], 0.0);
+    ASSERT_EQ(particle.getF()[2], 0.0);
+  }
 }
