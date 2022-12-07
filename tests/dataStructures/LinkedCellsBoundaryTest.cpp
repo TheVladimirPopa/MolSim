@@ -21,15 +21,13 @@ TEST(LinkedCellsBoundary, SetupStructure) {
       v3d rightCorner{meshWidth * dimensions};
       LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
 
-      std::vector<LinkedCellsBoundary> boundaries{};
-      LinkedCellsBoundary::setBoundaries(
-          {{cubeSide::LEFT, boundaryType::OUTFLOW},
-           {cubeSide::RIGHT, boundaryType::OUTFLOW},
-           {cubeSide::TOP, boundaryType::REFLECT},
-           {cubeSide::BOTTOM, boundaryType::REFLECT}},
-          boundaries, container);
+      container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
+                               {cubeSide::RIGHT, boundaryType::OUTFLOW},
+                               {cubeSide::TOP, boundaryType::REFLECT},
+                               {cubeSide::BOTTOM, boundaryType::REFLECT}});
 
       // Number of generated boundaries is correct
+      auto& boundaries = container.getBoundaries();
       EXPECT_EQ(boundaries.size(), 4);
 
       // Each boundary is linked with the correct number of cells
@@ -57,25 +55,21 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
 
   LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
 
-  std::vector<LinkedCellsBoundary> boundaries{};
-  LinkedCellsBoundary::setBoundaries(
-      {{cubeSide::LEFT, boundaryType::OUTFLOW},
-       {cubeSide::RIGHT, boundaryType::OUTFLOW},
-       {cubeSide::TOP, boundaryType::OUTFLOW},
-       {cubeSide::BOTTOM, boundaryType::OUTFLOW}},
-      boundaries, container);
+  container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
+                           {cubeSide::RIGHT, boundaryType::OUTFLOW},
+                           {cubeSide::TOP, boundaryType::OUTFLOW},
+                           {cubeSide::BOTTOM, boundaryType::OUTFLOW}});
 
   // Uniformly distributed particles; (Clang forced me to write it like this)
   double x{leftCorner[0] - 2};
-  while(x <= rightCorner[0] + 2) {
+  while (x <= rightCorner[0] + 2) {
     double y = leftCorner[1] - 2;
-    while(y <= rightCorner[1] + 2) {
+    while (y <= rightCorner[1] + 2) {
       container.emplace_back(v3d{x, y, 0.5}, v3d{0, 0, 0}, 1, 0);
       y += 0.4;
     }
     x += 0.4;
   }
-
 
   container.recalculateStructure();
 
@@ -109,7 +103,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
          "times.";
 
   // Apply boundaries, which should delete the halo
-  for (auto& boundary : boundaries) boundary.apply();
+  container.applyBoundaries();
   EXPECT_EQ(countParticles().second, 0);
 
   // Ensure that a restructure doesn't let particles reappear
@@ -184,27 +178,22 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
       << "To test deletion, ensure halo is not empty.";
 
   // Spawn and apply boundaries
-  std::vector<LinkedCellsBoundary> boundaries{};
-  LinkedCellsBoundary::setBoundaries(
-      {{cubeSide::LEFT, boundaryType::OUTFLOW},
-       {cubeSide::RIGHT, boundaryType::OUTFLOW},
-       {cubeSide::TOP, boundaryType::OUTFLOW},
-       {cubeSide::BOTTOM, boundaryType::OUTFLOW},
-       {cubeSide::FRONT, boundaryType::OUTFLOW},
-       {cubeSide::BACK, boundaryType::OUTFLOW}},
-      boundaries, container);
+  container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
+                           {cubeSide::RIGHT, boundaryType::OUTFLOW},
+                           {cubeSide::TOP, boundaryType::OUTFLOW},
+                           {cubeSide::BOTTOM, boundaryType::OUTFLOW},
+                           {cubeSide::FRONT, boundaryType::OUTFLOW},
+                           {cubeSide::BACK, boundaryType::OUTFLOW}});
 
-  for (auto &b : boundaries) {
+  for (auto& b : container.getBoundaries()) {
     // Check internal structure is still correct
-    for (auto &cell : b.getConnectedCells())
+    for (auto& cell : b.getConnectedCells())
       EXPECT_EQ(cell->type, cellType::boundary);
 
     EXPECT_EQ(b.getConnectedCells().size(), 25);
-
   }
 
-  for (auto &b : boundaries)
-    b.apply();
+  container.applyBoundaries();
   container.recalculateStructure();
 
   // Check new particle counts
@@ -224,8 +213,6 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   EXPECT_EQ(haloParticlesAfter, 0)
       << "Not all particles in halo cells where deleted.";
 }
-
-
 
 class LinkedCellsReflectiveBoundary : public ::testing::Test {
  protected:
@@ -273,8 +260,7 @@ class LinkedCellsReflectiveBoundary : public ::testing::Test {
         {v3d{-centerOffset, centerOffset, centerOffset}},
         {v3d{-centerOffset, centerOffset, -centerOffset}},
         {v3d{-centerOffset, -centerOffset, centerOffset}},
-        {v3d{centerOffset, -centerOffset, -centerOffset}}
-    };
+        {v3d{centerOffset, -centerOffset, -centerOffset}}};
   }
 };
 
@@ -287,20 +273,17 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
   v3d rightCorner{5.0, 5.0, 5.0};
 
   LinkedCellsContainer container{10.0, leftCorner, rightCorner};
-
-  std::vector<LinkedCellsBoundary> boundaries{};
-  LinkedCellsBoundary::setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
-                                      {cubeSide::RIGHT, boundaryType::REFLECT},
-                                      {cubeSide::TOP, boundaryType::REFLECT},
-                                      {cubeSide::BOTTOM, boundaryType::REFLECT},
-                                      {cubeSide::FRONT, boundaryType::REFLECT},
-                                      {cubeSide::BACK, boundaryType::REFLECT}},
-                                     boundaries, container);
+  container.setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
+                           {cubeSide::RIGHT, boundaryType::REFLECT},
+                           {cubeSide::TOP, boundaryType::REFLECT},
+                           {cubeSide::BOTTOM, boundaryType::REFLECT},
+                           {cubeSide::FRONT, boundaryType::REFLECT},
+                           {cubeSide::BACK, boundaryType::REFLECT}});
 
   for (auto particleX : testParticles)
     container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
 
-  for (auto& boundary : boundaries) boundary.apply();
+  container.applyBoundaries();
 
   std::vector<Particle> transformedParticles{};
   std::function copyParticles{[&transformedParticles](Particle& p) {
@@ -346,7 +329,8 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
       bool correctAmountOfForce = (f == expected || f == -expected || f == 0);
 
       EXPECT_TRUE(correctAmountOfForce) << "Where force value: " << f << '\n'
-         << "expected values: {" << expected << ", " << (-expected) << ", 0.0}";
+                                        << "expected values: {" << expected
+                                        << ", " << (-expected) << ", 0.0}";
     }
   }
 }
@@ -359,19 +343,15 @@ TEST_F(LinkedCellsReflectiveBoundary, IgnoreOutOfRange) {
   v3d rightCorner{8.0, 8.0, 8.0};
 
   LinkedCellsContainer container{4.0, leftCorner, rightCorner};
-
-  std::vector<LinkedCellsBoundary> boundaries{};
-  LinkedCellsBoundary::setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
-                                      {cubeSide::RIGHT, boundaryType::REFLECT},
-                                      {cubeSide::TOP, boundaryType::REFLECT},
-                                      {cubeSide::BOTTOM, boundaryType::REFLECT},
-                                      {cubeSide::FRONT, boundaryType::REFLECT},
-                                      {cubeSide::BACK, boundaryType::REFLECT}},
-                                     boundaries, container);
+  container.setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
+                           {cubeSide::RIGHT, boundaryType::REFLECT},
+                           {cubeSide::TOP, boundaryType::REFLECT},
+                           {cubeSide::BOTTOM, boundaryType::REFLECT},
+                           {cubeSide::FRONT, boundaryType::REFLECT},
+                           {cubeSide::BACK, boundaryType::REFLECT}});
 
   // Apply boundaries
-  for (auto& boundary : boundaries)
-    boundary.apply();
+  container.applyBoundaries();
 
   // Get particles back
   std::vector<Particle> transformedParticles;
