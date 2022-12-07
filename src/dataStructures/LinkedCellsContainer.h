@@ -49,8 +49,11 @@ class LinkedCellsContainer : public IContainer {
    */
   size_t getVectorIndexFromCoord(size_t x, size_t y, size_t z);
 
-  /// All the offsets for adjacent cells which have a greater index than the
-  /// current one
+  /** All the offsets for adjacent cells which have a greater index than the
+   * current one, it has a length of 14 since their are 26 adjacent cells to one
+   * cell and only 13 of them have a greater index. Offset of 0 is also added
+   * because particles obviously affect each other within one cell
+   */
   std::array<size_t, 14> indexOffsetAdjacent{};
 
   // The boundaries need access to dimensions, particles, cells
@@ -86,7 +89,7 @@ class LinkedCellsContainer : public IContainer {
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
-   * cell
+   * cell, is automatically called before each forEachPair call
    */
   void recalculateStructure();
 
