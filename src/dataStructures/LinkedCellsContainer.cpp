@@ -16,7 +16,12 @@ LinkedCellsContainer::LinkedCellsContainer(
   std::array<double, 3> boundingBoxDim{rightUpperCorner - leftLowerCorner};
   size_t numCells{1};
   for (int i = 0; i < 3; ++i) {
-    dimensions[i] = static_cast<size_t>(ceil(boundingBoxDim[i] / gridSize)) + 2;
+    dimensions[i] =
+        static_cast<size_t>(floor(boundingBoxDim[i] / gridSize)) + 2;
+    // Make sure each dimension has at least one boundary cell
+    if (dimensions[i] == 2) {
+      dimensions[i] = 3;
+    }
     numCells *= dimensions[i];
   }
 
@@ -74,8 +79,17 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
     if (indexInBox[i] < 0) {
       indexInBox[i] = 0;
     }
-    if (indexInBox[i] >= static_cast<int>(dimensions[i])) {
-      indexInBox[i] = static_cast<int>(dimensions[i]) - 1;
+    // If the particle is currently placed in a halo cell, it has to be tested
+    // if it is still in the domain box, since the cell size of the last cell
+    // may be bigger
+    if (indexInBox[i] >= static_cast<int>(dimensions[i]) - 2) {
+      if (position[i] > rightUpperCorner[i]) {
+        // Place it in the halo cell
+        indexInBox[i] = static_cast<int>(dimensions[i]) - 1;
+      } else {
+        // Place it in the boundary cell
+        indexInBox[i] = static_cast<int>(dimensions[i]) - 2;
+      }
     }
   }
 
