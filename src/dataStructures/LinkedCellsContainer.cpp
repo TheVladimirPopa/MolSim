@@ -1,5 +1,6 @@
 #include "LinkedCellsContainer.h"
 
+#include "LinkedCellsBoundary.h"
 #include "utils/ArrayUtils.h"
 
 LinkedCellsContainer::LinkedCellsContainer(
@@ -54,20 +55,8 @@ LinkedCellsContainer::LinkedCellsContainer(
 }
 
 size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y,
-                                                    size_t z) {
+                                                     size_t z) {
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
-}
-
-std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndex(
-    size_t index) {
-  unsigned int cellsPerLayer = dimensions[0] * dimensions[1];
-  unsigned int layerCount = index / cellsPerLayer;
-  index -= layerCount * cellsPerLayer;
-
-  unsigned int lineCount = index / dimensions[0];
-  unsigned int cellCount = index - (lineCount * dimensions[0]);
-
-  return {cellCount, lineCount, layerCount};
 }
 
 size_t LinkedCellsContainer::getCellIndexOfPosition(
@@ -97,6 +86,7 @@ void LinkedCellsContainer::forEach(
 void LinkedCellsContainer::forEachPair(
     std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
+  applyBoundaries();
 
   for (size_t index = 0; index < cells.size(); ++index) {
     if (cells[index].type == cellType::halo) {
@@ -132,7 +122,7 @@ size_t LinkedCellsContainer::capacity() { return particlesVector.capacity(); }
 
 size_t LinkedCellsContainer::size() {
   return std::count_if(particlesVector.begin(), particlesVector.end(),
-                [](Particle& p) { return !p.isDeleted(); });
+                       [](Particle &p) { return !p.isDeleted(); });
 }
 
 void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
@@ -156,5 +146,19 @@ void LinkedCellsContainer::recalculateStructure() {
         ++it;
       }
     }
+  }
+}
+
+[[maybe_unused]] void LinkedCellsContainer::setBoundaries(
+    std::vector<std::pair<cubeSide, boundaryType>> sideAndType) {
+  // Ensure that boundary[0] always is the LEFT one, etc.
+  std::sort(sideAndType.begin(), sideAndType.end(),
+            [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
+              return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
+            });
+
+  for (auto [side, type] : sideAndType) {
+    boundaries.emplace_back(side, type, cells, &particlesVector,
+                            dimensions, leftLowerCorner, rightUpperCorner);
   }
 }

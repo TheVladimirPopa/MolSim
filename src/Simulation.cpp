@@ -4,8 +4,6 @@
 
 #include "Simulation.h"
 
-#include "dataStructures/LinkedCellsBoundary.h"
-#include "dataStructures/LinkedCellsContainer.h"
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel const &model, IContainer &particles,
@@ -27,21 +25,12 @@ void Simulation::simulate(IModel const &model, IContainer &particles,
   particles.forEach(updateF);
   particles.forEachPair(addForces);
 
-  auto linkedCellsContainer = dynamic_cast<LinkedCellsContainer*>(&particles);
-  std::vector<LinkedCellsBoundary> boundaries;
-
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
     particles.forEach(updateX);
     particles.forEach(updateF);
     particles.forEachPair(addForces);
     particles.forEach(updateV);
-
-    if (linkedCellsContainer) {
-      for (auto& boundary : *linkedCellsContainer->getBoundaries()) {
-        boundary.apply();
-      }
-    }
 
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);

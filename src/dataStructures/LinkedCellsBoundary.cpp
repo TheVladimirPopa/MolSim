@@ -5,12 +5,21 @@
 #include "spdlog/spdlog.h"
 
 LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
-                                         LinkedCellsContainer& container)
-    : side{side}, type{type}, container{container} {
+                                         std::vector<cell>& cells,
+                                         std::vector<Particle>* particlesVector,
+                                         std::array<unsigned int, 3> dimensions,
+                                         std::array<double, 3> leftLowerCorner,
+                                         std::array<double, 3> rightUpperCorner)
+    : side{side},
+      type{type},
+      cubeDimensions{dimensions},
+      particlesVector{particlesVector},
+      leftLowerCorner{leftLowerCorner},
+      rightUpperCorner{rightUpperCorner} {
   // Add boundary cells
-  for (cell& c : container.cells) {
+  for (cell& c : cells) {
     if (c.type != cellType::boundary) continue;
-    auto position = container.getCoordFromVectorIndex(c.cellVectorIndex);
+    auto position = getCoordFromVectorIndex(c.cellVectorIndex);
 
     auto dimIndex = getDimensionBySide(side);
     auto location = getCellGridLocation(side);
@@ -22,10 +31,10 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
   }
 
   // Add halo cells
-  for (cell& c : container.cells) {
+  for (cell& c : cells) {
     if (c.type != cellType::halo) continue;
 
-    auto position = container.getCoordFromVectorIndex(c.cellVectorIndex);
+    auto position = getCoordFromVectorIndex(c.cellVectorIndex);
     auto dimIndex = getDimensionBySide(side);
 
     // We add both the outermost layer of halos and the layer 1 coordinate
@@ -42,17 +51,11 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
     connectedHalos.push_back(&c);
   }
 
-
   // Sort for better cache usage
   std::sort(connectedCells.begin(), connectedCells.end());
 }
 
-/**
- * Returns distance of a particle to the boundary
- * @param particle Particle for which we measure the distance
- * @return The distance to the wall. The distance can be negative, because
- * a particle being left and right to a boundary is treated separately.
- */
+
 double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   // Assumes particle is linked with the cell it's currently in!
   size_t dimIndex = getDimensionBySide(side);
@@ -60,11 +63,24 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   bool leftRelative = side == cubeSide::LEFT || side == cubeSide::TOP ||
                       side == cubeSide::FRONT;
   double relativePosition =
-      leftRelative
-          ? particle.getX()[dimIndex] - container.leftLowerCorner[dimIndex]
-          : particle.getX()[dimIndex] - container.rightUpperCorner[dimIndex];
+      leftRelative ? particle.getX()[dimIndex] - leftLowerCorner[dimIndex]
+                   : particle.getX()[dimIndex] - rightUpperCorner[dimIndex];
 
+  // can be negative, see header file.
   return relativePosition;
+}
+
+
+std::array<unsigned int, 3> LinkedCellsBoundary::getCoordFromVectorIndex(
+    size_t index) {
+  unsigned int cellsPerLayer = cubeDimensions[0] * cubeDimensions[1];
+  unsigned int layerCount = index / cellsPerLayer;
+  index -= layerCount * cellsPerLayer;
+
+  unsigned int lineCount = index / cubeDimensions[0];
+  unsigned int cellCount = index - (lineCount * cubeDimensions[0]);
+
+  return {cellCount, lineCount, layerCount};
 }
 
 void LinkedCellsBoundary::deleteOutFlow() {
@@ -72,7 +88,7 @@ void LinkedCellsBoundary::deleteOutFlow() {
     if (cell->particles.empty()) continue;
 
     for (auto particleIndex : cell->particles) {
-      container.particlesVector[particleIndex].deleteParticle();
+      (*particlesVector)[particleIndex].deleteParticle();
       spdlog::debug("Deleted particle");
     }
 
@@ -83,8 +99,8 @@ void LinkedCellsBoundary::deleteOutFlow() {
 using namespace ReflectiveBoundary;
 void LinkedCellsBoundary::reflectParticles() {
   for (auto cell : connectedCells) {
-    for (auto particle_index : cell->particles) {
-      auto& particle = container.particlesVector[particle_index];
+    for (auto particleIndex : cell->particles) {
+      auto& particle = (*particlesVector)[particleIndex];
       auto distance = getDistanceToWall(particle);
       if (distance > reflectDistance || distance < -reflectDistance) continue;
 
@@ -97,23 +113,6 @@ void LinkedCellsBoundary::reflectParticles() {
       lennardJones.addForces(particle, ghost);
     }
   }
-}
-
-void LinkedCellsBoundary::setBoundaries(
-    std::vector<std::pair<cubeSide, boundaryType>> sideAndType,
-    std::vector<LinkedCellsBoundary>& output, LinkedCellsContainer& container) {
-  // Ensure that boundary[0] always is the LEFT one, etc.
-  std::sort(sideAndType.begin(), sideAndType.end(),
-            [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
-              return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
-            });
-
-  for (auto [side, type] : sideAndType) {
-    LinkedCellsBoundary boundary{side, type, container};
-    output.push_back(boundary);
-  }
-
-  container.boundaries = &output;
 }
 
 void LinkedCellsBoundary::apply() {
