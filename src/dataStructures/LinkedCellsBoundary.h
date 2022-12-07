@@ -25,7 +25,7 @@ enum class boundaryType {
   /// Boundary is a reflecting boundary
   REFLECT,
   /// Boundary is a periodic boundary
-  PERIODIC
+  PERIODIC [[maybe_unused]]
 };
 
 
@@ -74,22 +74,18 @@ class LinkedCellsBoundary {
   };
 
 
-  inline size_t getDimensionBySide(cubeSide side) {
-    return dimensionTable[static_cast<size_t>(side)];
+  inline size_t getDimensionBySide(cubeSide s) {
+    return dimensionTable[static_cast<size_t>(s)];
   }
 
-  inline unsigned int getCellGridLocation(cubeSide side) {
-    return cellGridLocationTable[static_cast<size_t>(side)];
+  inline unsigned int getCellGridLocation(cubeSide s) {
+    return cellGridLocationTable[static_cast<size_t>(s)];
   }
 
-  inline unsigned int getHaloGridLocation(cubeSide side) {
-    return haloLocationTable[static_cast<size_t>(side)];
+  inline unsigned int getHaloGridLocation(cubeSide s) {
+    return haloLocationTable[static_cast<size_t>(s)];
   }
 
-  /**
-   * Adds halo neighbors to boundary cells for the outflow boundary
-   */
-  void linkOutflowNeighbors();
 
  public:
   std::vector<cell*> connectedCells;
@@ -143,9 +139,9 @@ class LinkedCellsBoundary {
    */
    void apply();
 
-   std::vector<cell*> getConnectedCells() {
+   [[nodiscard]] std::vector<cell*> getConnectedCells() const {
      return connectedCells;
    }
 
-   cubeSide getSide() { return side; }
+   [[maybe_unused]] cubeSide getSide() { return side; }
 };

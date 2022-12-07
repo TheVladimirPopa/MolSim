@@ -65,12 +65,17 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
        {cubeSide::BOTTOM, boundaryType::OUTFLOW}},
       boundaries, container);
 
-  // Uniformly distributed particles;
-  for (double x = leftCorner[0] - 2; x <= rightCorner[0] + 2; x += 0.4) {
-    for (double y = leftCorner[1] - 2; y <= rightCorner[1] + 2; y += 0.4) {
+  // Uniformly distributed particles; (Clang forced me to write it like this)
+  double x{leftCorner[0] - 2};
+  while(x <= rightCorner[0] + 2) {
+    double y = leftCorner[1] - 2;
+    while(y <= rightCorner[1] + 2) {
       container.emplace_back(v3d{x, y, 0.5}, v3d{0, 0, 0}, 1, 0);
+      y += 0.4;
     }
+    x += 0.4;
   }
+
 
   container.recalculateStructure();
 
@@ -161,7 +166,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   size_t nonHaloParticlesBefore{};
   size_t haloParticlesBefore{};
 
-  for (auto cell : container.getCellsVector()) {
+  for (auto& cell : container.getCellsVector()) {
     if (cell.type == cellType::halo) {
       haloParticlesBefore += cell.particles.size();
     } else {
@@ -206,7 +211,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   size_t nonHaloParticlesAfter{};
   size_t haloParticlesAfter{};
 
-  for (auto cell : container.getCellsVector()) {
+  for (auto& cell : container.getCellsVector()) {
     if (cell.type == cellType::halo) {
       haloParticlesAfter += cell.particles.size();
     } else {
@@ -224,8 +229,8 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
 
 class LinkedCellsReflectiveBoundary : public ::testing::Test {
  protected:
-  double epsilon;
-  double centerOffset;
+  double epsilon{};
+  double centerOffset{};
   std::vector<v3d> testParticles;
 
   void SetUp() override {

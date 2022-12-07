@@ -1,6 +1,5 @@
 #include "LinkedCellsBoundary.h"
 
-#include <cmath>
 #include <vector>
 
 #include "spdlog/spdlog.h"
@@ -83,8 +82,10 @@ void LinkedCellsBoundary::deleteOutFlow() {
   for (auto cell : connectedHalos) {
     if (cell->particles.empty()) continue;
 
-    for (auto particleIndex : cell->particles)
+    for (auto particleIndex : cell->particles) {
       container.particlesVector[particleIndex].deleteParticle();
+      spdlog::debug("Deleted particle");
+    }
 
     cell->particles.clear();
   }
