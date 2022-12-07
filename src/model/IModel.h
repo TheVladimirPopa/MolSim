@@ -33,7 +33,7 @@ class IModel {
    * DO NOT FORGET TO RESET THE CURRENT FORCES ON THE PARTICLE AT THE START OF
    * EACH ITERATION.
    */
-  virtual void addForces(Particle &p1, Particle &p2) const = 0;
+  virtual void addForces(Particle &p1, Particle &p2) = 0;
 
   /**
    * Sets the time period for the individual simulation iterations.

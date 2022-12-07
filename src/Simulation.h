@@ -21,8 +21,7 @@ class Simulation {
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
    */
-  void simulate(IModel const &model, IContainer &particles,
-                IWriter &fileWriter);
+  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter);
 
   /**
    * Sets the time until the simulation is run
