@@ -8,8 +8,9 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
                                          LinkedCellsContainer& container)
     : side{side}, type{type}, container{container} {
   // Add boundary cells
-  for (auto& cell : container.boundaryCells) {
-    auto position = container.getCoordFromVectorIndex(cell->cellVectorIndex);
+  for (cell& c : container.cells) {
+    if (c.type != cellType::boundary) continue;
+    auto position = container.getCoordFromVectorIndex(c.cellVectorIndex);
 
     auto dimIndex = getDimensionBySide(side);
     auto location = getCellGridLocation(side);
@@ -17,7 +18,7 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
     bool isOnBoundarySide = position[dimIndex] == location;
     if (!isOnBoundarySide) continue;
 
-    connectedCells.push_back(cell);
+    connectedCells.push_back(&c);
   }
 
   // Add halo cells
@@ -46,6 +47,12 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
   std::sort(connectedCells.begin(), connectedCells.end());
 }
 
+/**
+ * Returns distance of a particle to the boundary
+ * @param particle Particle for which we measure the distance
+ * @return The distance to the wall. The distance can be negative, because
+ * a particle being left and right to a boundary is treated separately.
+ */
 double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   // Assumes particle is linked with the cell it's currently in!
   size_t dimIndex = getDimensionBySide(side);

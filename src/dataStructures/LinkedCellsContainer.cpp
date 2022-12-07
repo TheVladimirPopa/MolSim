@@ -37,13 +37,6 @@ LinkedCellsContainer::LinkedCellsContainer(
     }
   }
 
-  // Store boundary cells separately for easier handling
-  for (auto &cell : cells) {
-    if (cell.type == cellType::boundary) {
-      boundaryCells.push_back(&cell);
-    }
-  }
-
   // Precompute the indexOffsets
   int indexAdjacentArray = 0;
   indexOffsetAdjacent[indexAdjacentArray++] = 0;
@@ -65,20 +58,16 @@ size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y,
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
 }
 
-std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndexStatic(
-    unsigned int index, std::array<unsigned int, 3>& dim) {
-  unsigned int cellsPerLayer = dim[0] * dim[1];
+std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndex(
+    size_t index) {
+  unsigned int cellsPerLayer = dimensions[0] * dimensions[1];
   unsigned int layerCount = index / cellsPerLayer;
   index -= layerCount * cellsPerLayer;
 
-  unsigned int lineCount = index / dim[0];
-  unsigned int cellCount = index - lineCount * dim[0];
+  unsigned int lineCount = index / dimensions[0];
+  unsigned int cellCount = index - (lineCount * dimensions[0]);
 
   return {cellCount, lineCount, layerCount};
-}
-std::array<unsigned int, 3> LinkedCellsContainer::getCoordFromVectorIndex(
-    size_t index) {
-  return LinkedCellsContainer::getCoordFromVectorIndexStatic(index, dimensions);
 }
 
 size_t LinkedCellsContainer::getCellIndexOfPosition(

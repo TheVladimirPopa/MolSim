@@ -66,9 +66,6 @@ class LinkedCellsContainer : public IContainer {
   /// A vector containing all the cells
   std::vector<cell> cells;
 
-  /// The vector
-  std::vector<cell *> boundaryCells;
-
   /// Edge length of a cell
   double gridSize;
 
@@ -106,17 +103,6 @@ class LinkedCellsContainer : public IContainer {
    * @return grid location {x, y, z} of cell
    */
   std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
-
-  /**
-   * Translate cell vector index to grid location specifying the cell grid
-   * dimensions.
-   * @param index the index that gets translated into a grid location
-   * @param dim the dimensions of the grid that gets used as the basis for the
-   *  index to location translation
-   * @return grid location {x, y, z} of cell
-   */
-  static std::array<unsigned int, 3> getCoordFromVectorIndexStatic(
-      unsigned int index, std::array<unsigned int, 3> &dim);
 
   /// All the offsets for adjacent cells which have a greater index than the
   /// current one

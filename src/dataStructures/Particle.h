@@ -98,7 +98,8 @@ class Particle {
   void updateForces();
 
   /**
-   *
+   * true iff a particle no longer is part of the simulation and waits for
+   * cleanup.
    */
   bool isDeleted() { return isDeleted_; }
 

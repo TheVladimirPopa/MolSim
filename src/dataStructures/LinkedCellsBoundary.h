@@ -3,20 +3,18 @@
 #include "LinkedCellsContainer.h"
 #include "model/LennardJonesModel.h"
 
-#define QUASI_INFINITE 1e300
 #define SIGMA_PLACEHOLDER 1.0
-#define SIXTH_RT 1.1224620483093729814335330496791795162324111106139867534404095
+#define SIXTH_RT 1.1224620483093729814335330496791795162324111106
 
 /// Parameters for reflection boundary.
 namespace ReflectiveBoundary {
-  // Initialize LennardJones model for reflective boundary.
-  static constexpr double CUTOFF_RADIUS{QUASI_INFINITE};
-  static const LennardJonesModel lennardJones{CUTOFF_RADIUS};
-
   // Parameters for reflection
   constexpr double SIGMA = SIGMA_PLACEHOLDER;
   constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
   constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
+
+  // Initialize LennardJones model for reflective boundary.
+  static const LennardJonesModel lennardJones{10 * reflectDistance};
 }  // namespace ReflectiveBoundary
 
 enum class boundaryType {
@@ -140,6 +138,12 @@ class LinkedCellsBoundary {
    * Applies the effects of the current boundary
    */
    void apply();
+
+
+   /**
+    * @return Boundary cells on which the boundary operates on.
+    */
+   std::vector<cell*> getConnectedCells() { return connectedCells; }
 
    /**
     * @return Side on which the boundary lies. E.g. left side of LinkedCells
