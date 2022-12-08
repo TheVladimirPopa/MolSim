@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Simulation.h"
+#include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
@@ -216,6 +217,15 @@ int main(int argc, char *argsv[]) {
 
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};
+
+  linkedCellsContainer.setBoundaries({
+      {cubeSide::LEFT, boundaryType::REFLECT},
+      {cubeSide::RIGHT, boundaryType::REFLECT},
+      {cubeSide::TOP, boundaryType::REFLECT},
+      {cubeSide::BOTTOM, boundaryType::REFLECT},
+      {cubeSide::FRONT, boundaryType::REFLECT},
+      {cubeSide::BACK, boundaryType::REFLECT},
+  });
 
   IContainer *container = &linkedCellsContainer;
 

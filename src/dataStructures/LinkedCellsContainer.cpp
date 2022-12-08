@@ -1,9 +1,6 @@
-//
-// Created by leo on 26.11.22.
-//
-
 #include "LinkedCellsContainer.h"
 
+#include "LinkedCellsBoundary.h"
 #include "utils/ArrayUtils.h"
 
 LinkedCellsContainer::LinkedCellsContainer(
@@ -16,7 +13,12 @@ LinkedCellsContainer::LinkedCellsContainer(
   std::array<double, 3> boundingBoxDim{rightUpperCorner - leftLowerCorner};
   size_t numCells{1};
   for (int i = 0; i < 3; ++i) {
-    dimensions[i] = static_cast<size_t>(ceil(boundingBoxDim[i] / gridSize)) + 2;
+    dimensions[i] =
+        static_cast<size_t>(floor(boundingBoxDim[i] / gridSize)) + 2;
+    // Make sure each dimension has at least one boundary cell
+    if (dimensions[i] == 2) {
+      dimensions[i] = 3;
+    }
     numCells *= dimensions[i];
   }
 
@@ -28,13 +30,13 @@ LinkedCellsContainer::LinkedCellsContainer(
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or
             y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace_back(halo);
+          cells.emplace_back(cellType::halo, cells.size());
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or
                    y == dimensions[1] - 2 or z == dimensions[2] - 2) {
-          cells.emplace_back(boundary);
+          cells.emplace_back(cellType::boundary, cells.size());
 
         } else {
-          cells.emplace_back(inner);
+          cells.emplace_back(cellType::inner, cells.size());
         }
       }
     }
@@ -56,10 +58,12 @@ LinkedCellsContainer::LinkedCellsContainer(
     }
   }
 }
-size_t LinkedCellsContainer::getVectorIndexFromCord(size_t x, size_t y,
-                                                    size_t z) {
+
+size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y,
+                                                     size_t z) {
   return x + (y * dimensions[0]) + (z * dimensions[0] * dimensions[1]);
 }
+
 size_t LinkedCellsContainer::getCellIndexOfPosition(
     std::array<double, 3> &position) {
   std::array<double, 3> positionInBox = position - leftLowerCorner;
@@ -74,26 +78,37 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(
     if (indexInBox[i] < 0) {
       indexInBox[i] = 0;
     }
-    if (indexInBox[i] >= static_cast<int>(dimensions[i])) {
-      indexInBox[i] = static_cast<int>(dimensions[i]) - 1;
+    // If the particle is currently placed in a halo cell, it has to be tested
+    // if it is still in the domain box, since the cell size of the last cell
+    // may be bigger
+    if (indexInBox[i] >= static_cast<int>(dimensions[i]) - 2) {
+      if (position[i] > rightUpperCorner[i]) {
+        // Place it in the halo cell
+        indexInBox[i] = static_cast<int>(dimensions[i]) - 1;
+      } else {
+        // Place it in the boundary cell
+        indexInBox[i] = static_cast<int>(dimensions[i]) - 2;
+      }
     }
   }
 
-  return getVectorIndexFromCord(indexInBox[0], indexInBox[1], indexInBox[2]);
+  return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
+
 void LinkedCellsContainer::forEach(
     std::function<void(Particle &)> &unaryFunction) {
   for (auto &p : particlesVector) {
-    unaryFunction(p);
+    if (!p.isDeleted()) unaryFunction(p);
   }
 }
+
 void LinkedCellsContainer::forEachPair(
     std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
+  applyBoundaries();
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    // Don't do anything for particles a halo cell
-    if (cells[index].type == halo) {
+    if (cells[index].type == cellType::halo) {
       continue;
     }
     for (size_t indexOffset : indexOffsetAdjacent) {
@@ -126,7 +141,12 @@ void LinkedCellsContainer::reserve(size_t amount) {
   particlesVector.reserve(amount);
 }
 size_t LinkedCellsContainer::capacity() { return particlesVector.capacity(); }
-size_t LinkedCellsContainer::size() { return particlesVector.size(); }
+
+size_t LinkedCellsContainer::size() {
+  return std::count_if(particlesVector.begin(), particlesVector.end(),
+                       [](Particle &p) { return !p.isDeleted(); });
+}
+
 void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
                                         std::array<double, 3> v_arg,
                                         double m_arg, int type) {
@@ -134,6 +154,7 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg,
   size_t index = getCellIndexOfPosition(x_arg);
   cells[index].particles.push_back(particlesVector.size() - 1);
 }
+
 void LinkedCellsContainer::recalculateStructure() {
   // Loop through each cell
   for (size_t cellIndex = 0; cellIndex < cells.size(); ++cellIndex) {
@@ -151,5 +172,19 @@ void LinkedCellsContainer::recalculateStructure() {
         ++it;
       }
     }
+  }
+}
+
+[[maybe_unused]] void LinkedCellsContainer::setBoundaries(
+    std::vector<std::pair<cubeSide, boundaryType>> sideAndType) {
+  // Ensure that boundary[0] always is the LEFT one, etc.
+  std::sort(sideAndType.begin(), sideAndType.end(),
+            [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
+              return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
+            });
+
+  for (auto [side, type] : sideAndType) {
+    boundaries.emplace_back(side, type, cells, &particlesVector, dimensions,
+                            leftLowerCorner, rightUpperCorner);
   }
 }

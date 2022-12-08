@@ -1,37 +1,22 @@
 #pragma once
 #include <list>
+#include <memory>
+#include <stdexcept>
 
+#include "Cell.h"
 #include "IContainer.h"
+#include "LinkedCellsBoundary.h"
+
 class LinkedCellsContainer : public IContainer {
  private:
-  enum cellType {
-    /// A cell that is inside the domain bounding box but doesn't touch the
-    /// border
-    inner,
-    /// A cell that is inside the domain bounding box but touches the border
-    boundary,
-    /// A cell that lies outside the domain bounding box
-    halo
-  };
-
-  /**
-   * A struct representing a single cell with its type and pointer to the
-   * particles in it
-   */
-  struct cell {
-    /// List of pointers to the particles which are currently inside the cell
-    std::list<size_t> particles{};
-    /// The type of the cell
-    cellType type = inner;
-
-    explicit cell(cellType t) : particles{}, type{t} {}
-  };
-
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
   /// A vector containing all the cells
   std::vector<cell> cells;
+
+  /// The boundaries the container has
+  std::vector<LinkedCellsBoundary> boundaries{};
 
   /// Edge length of a cell
   double gridSize;
@@ -62,7 +47,7 @@ class LinkedCellsContainer : public IContainer {
    * @note Starting with the halo cell, so left lower corner oft the domain
    * bounding box has coordinates (1,1,1)
    */
-  size_t getVectorIndexFromCord(size_t x, size_t y, size_t z);
+  size_t getVectorIndexFromCoord(size_t x, size_t y, size_t z);
 
   /** All the offsets for adjacent cells which have a greater index than the
    * current one, it has a length of 14 since their are 26 adjacent cells to one
@@ -71,11 +56,8 @@ class LinkedCellsContainer : public IContainer {
    */
   std::array<size_t, 14> indexOffsetAdjacent{};
 
-  /**
-   * Reorders the datastructure to make sure all particles are in the correct
-   * cell, is automatically called before each forEachPair call
-   */
-  void recalculateStructure();
+  // The boundaries need access to dimensions, particles, cells
+  friend class LinkedCellsBoundary;
 
  public:
   /**
@@ -83,8 +65,6 @@ class LinkedCellsContainer : public IContainer {
    * @param cellSize The edge length of a cell
    * @param leftLowerBound The left lower corner of the domain bounding box
    * @param rightUpperBound The right upper corner of the domain bounding box
-   * @note This method assumes the boundingBox dimensions are an multiple of the
-   * cell size in each dimension
    */
   LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
                        std::array<double, 3> &rightUpperBound);
@@ -106,8 +86,42 @@ class LinkedCellsContainer : public IContainer {
                     double m_arg, int type) override;
 
   /**
+   * Reorders the datastructure to make sure all particles are in the correct
+   * cell, is automatically called before each forEachPair call
+   */
+  void recalculateStructure();
+
+  /**
+   * Sets boundaries of the chosen type on the chosen side of the container
+   * @param sideAndType Pairs of the side and corresponding boundary type
+   * @note This does not check whether the boundaries are sensible. Do not
+   * apply multiple boundaries on the same side of the container, unless this is
+   * exactly what you want.
+   */
+  [[maybe_unused]] void setBoundaries(
+      std::vector<std::pair<cubeSide, boundaryType>> sideAndType);
+
+  /**
+   * Applies the effects of all boundaries on the container
+   */
+  inline void applyBoundaries() {
+    for (auto &boundary : boundaries) boundary.apply();
+  }
+
+  /**
    * Method returning the cells vector. ONLY USED FOR TESTING
    * @return a const reference to the cells vector
    */
   const std::vector<cell> &getCellsVector() { return cells; }
+
+  /**
+   * Returns the boundaries of the LinkedCells container
+   * @return boundaries
+   */
+  std::vector<LinkedCellsBoundary> &getBoundaries() { return boundaries; }
+
+  /**
+   * @return Cell dimensions in number of cells per dimension
+   */
+  std::array<unsigned int, 3> getDimensions() { return dimensions; }
 };
