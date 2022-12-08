@@ -349,16 +349,16 @@ velocity (::std::unique_ptr< velocity_type > x)
   this->velocity_.set (std::move (x));
 }
 
-const cuboid_t::distance_optional& cuboid_t::
+const cuboid_t::distance_type& cuboid_t::
 distance () const
 {
-  return this->distance_;
+  return this->distance_.get ();
 }
 
-cuboid_t::distance_optional& cuboid_t::
+cuboid_t::distance_type& cuboid_t::
 distance ()
 {
-  return this->distance_;
+  return this->distance_.get ();
 }
 
 void cuboid_t::
@@ -367,22 +367,16 @@ distance (const distance_type& x)
   this->distance_.set (x);
 }
 
-void cuboid_t::
-distance (const distance_optional& x)
-{
-  this->distance_ = x;
-}
-
-const cuboid_t::mass_optional& cuboid_t::
+const cuboid_t::mass_type& cuboid_t::
 mass () const
 {
-  return this->mass_;
+  return this->mass_.get ();
 }
 
-cuboid_t::mass_optional& cuboid_t::
+cuboid_t::mass_type& cuboid_t::
 mass ()
 {
-  return this->mass_;
+  return this->mass_.get ();
 }
 
 void cuboid_t::
@@ -391,34 +385,22 @@ mass (const mass_type& x)
   this->mass_.set (x);
 }
 
-void cuboid_t::
-mass (const mass_optional& x)
-{
-  this->mass_ = x;
-}
-
-const cuboid_t::type_optional& cuboid_t::
+const cuboid_t::type_type& cuboid_t::
 type () const
 {
-  return this->type_;
+  return this->type_.get ();
 }
 
-cuboid_t::type_optional& cuboid_t::
+cuboid_t::type_type& cuboid_t::
 type ()
 {
-  return this->type_;
+  return this->type_.get ();
 }
 
 void cuboid_t::
 type (const type_type& x)
 {
   this->type_.set (x);
-}
-
-void cuboid_t::
-type (const type_optional& x)
-{
-  this->type_ = x;
 }
 
 
@@ -473,16 +455,16 @@ velocity (::std::unique_ptr< velocity_type > x)
   this->velocity_.set (std::move (x));
 }
 
-const sphere_t::radius_optional& sphere_t::
+const sphere_t::radius_type& sphere_t::
 radius () const
 {
-  return this->radius_;
+  return this->radius_.get ();
 }
 
-sphere_t::radius_optional& sphere_t::
+sphere_t::radius_type& sphere_t::
 radius ()
 {
-  return this->radius_;
+  return this->radius_.get ();
 }
 
 void sphere_t::
@@ -491,22 +473,16 @@ radius (const radius_type& x)
   this->radius_.set (x);
 }
 
-void sphere_t::
-radius (const radius_optional& x)
-{
-  this->radius_ = x;
-}
-
-const sphere_t::dimension_optional& sphere_t::
+const sphere_t::dimension_type& sphere_t::
 dimension () const
 {
-  return this->dimension_;
+  return this->dimension_.get ();
 }
 
-sphere_t::dimension_optional& sphere_t::
+sphere_t::dimension_type& sphere_t::
 dimension ()
 {
-  return this->dimension_;
+  return this->dimension_.get ();
 }
 
 void sphere_t::
@@ -515,22 +491,16 @@ dimension (const dimension_type& x)
   this->dimension_.set (x);
 }
 
-void sphere_t::
-dimension (const dimension_optional& x)
-{
-  this->dimension_ = x;
-}
-
-const sphere_t::distance_optional& sphere_t::
+const sphere_t::distance_type& sphere_t::
 distance () const
 {
-  return this->distance_;
+  return this->distance_.get ();
 }
 
-sphere_t::distance_optional& sphere_t::
+sphere_t::distance_type& sphere_t::
 distance ()
 {
-  return this->distance_;
+  return this->distance_.get ();
 }
 
 void sphere_t::
@@ -539,22 +509,16 @@ distance (const distance_type& x)
   this->distance_.set (x);
 }
 
-void sphere_t::
-distance (const distance_optional& x)
-{
-  this->distance_ = x;
-}
-
-const sphere_t::mass_optional& sphere_t::
+const sphere_t::mass_type& sphere_t::
 mass () const
 {
-  return this->mass_;
+  return this->mass_.get ();
 }
 
-sphere_t::mass_optional& sphere_t::
+sphere_t::mass_type& sphere_t::
 mass ()
 {
-  return this->mass_;
+  return this->mass_.get ();
 }
 
 void sphere_t::
@@ -563,34 +527,22 @@ mass (const mass_type& x)
   this->mass_.set (x);
 }
 
-void sphere_t::
-mass (const mass_optional& x)
-{
-  this->mass_ = x;
-}
-
-const sphere_t::type_optional& sphere_t::
+const sphere_t::type_type& sphere_t::
 type () const
 {
-  return this->type_;
+  return this->type_.get ();
 }
 
-sphere_t::type_optional& sphere_t::
+sphere_t::type_type& sphere_t::
 type ()
 {
-  return this->type_;
+  return this->type_.get ();
 }
 
 void sphere_t::
 type (const type_type& x)
 {
   this->type_.set (x);
-}
-
-void sphere_t::
-type (const type_optional& x)
-{
-  this->type_ = x;
 }
 
 
@@ -1081,28 +1033,34 @@ array_d::
 cuboid_t::
 cuboid_t (const position_type& position,
           const dimension_type& dimension,
-          const velocity_type& velocity)
+          const velocity_type& velocity,
+          const distance_type& distance,
+          const mass_type& mass,
+          const type_type& type)
 : ::xml_schema::type (),
   position_ (position, this),
   dimension_ (dimension, this),
   velocity_ (velocity, this),
-  distance_ (this),
-  mass_ (this),
-  type_ (this)
+  distance_ (distance, this),
+  mass_ (mass, this),
+  type_ (type, this)
 {
 }
 
 cuboid_t::
 cuboid_t (::std::unique_ptr< position_type > position,
           ::std::unique_ptr< dimension_type > dimension,
-          ::std::unique_ptr< velocity_type > velocity)
+          ::std::unique_ptr< velocity_type > velocity,
+          const distance_type& distance,
+          const mass_type& mass,
+          const type_type& type)
 : ::xml_schema::type (),
   position_ (std::move (position), this),
   dimension_ (std::move (dimension), this),
   velocity_ (std::move (velocity), this),
-  distance_ (this),
-  mass_ (this),
-  type_ (this)
+  distance_ (distance, this),
+  mass_ (mass, this),
+  type_ (type, this)
 {
 }
 
@@ -1239,6 +1197,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
   }
+
+  if (!distance_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "distance",
+      "");
+  }
+
+  if (!mass_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "mass",
+      "");
+  }
+
+  if (!type_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
+      "");
+  }
 }
 
 cuboid_t* cuboid_t::
@@ -1275,29 +1254,39 @@ cuboid_t::
 
 sphere_t::
 sphere_t (const position_type& position,
-          const velocity_type& velocity)
+          const velocity_type& velocity,
+          const radius_type& radius,
+          const dimension_type& dimension,
+          const distance_type& distance,
+          const mass_type& mass,
+          const type_type& type)
 : ::xml_schema::type (),
   position_ (position, this),
   velocity_ (velocity, this),
-  radius_ (this),
-  dimension_ (this),
-  distance_ (this),
-  mass_ (this),
-  type_ (this)
+  radius_ (radius, this),
+  dimension_ (dimension, this),
+  distance_ (distance, this),
+  mass_ (mass, this),
+  type_ (type, this)
 {
 }
 
 sphere_t::
 sphere_t (::std::unique_ptr< position_type > position,
-          ::std::unique_ptr< velocity_type > velocity)
+          ::std::unique_ptr< velocity_type > velocity,
+          const radius_type& radius,
+          const dimension_type& dimension,
+          const distance_type& distance,
+          const mass_type& mass,
+          const type_type& type)
 : ::xml_schema::type (),
   position_ (std::move (position), this),
   velocity_ (std::move (velocity), this),
-  radius_ (this),
-  dimension_ (this),
-  distance_ (this),
-  mass_ (this),
-  type_ (this)
+  radius_ (radius, this),
+  dimension_ (dimension, this),
+  distance_ (distance, this),
+  mass_ (mass, this),
+  type_ (type, this)
 {
 }
 
@@ -1426,6 +1415,41 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       this->type_.set (type_traits::create (i, f, this));
       continue;
     }
+  }
+
+  if (!radius_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "radius",
+      "");
+  }
+
+  if (!dimension_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "dimension",
+      "");
+  }
+
+  if (!distance_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "distance",
+      "");
+  }
+
+  if (!mass_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "mass",
+      "");
+  }
+
+  if (!type_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "type",
+      "");
   }
 }
 
@@ -1643,9 +1667,9 @@ input_t::
 #include <xsd/cxx/tree/error-handler.hxx>
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& u,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (const ::std::string& u,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
@@ -1660,15 +1684,15 @@ Simulation (const ::std::string& u,
   h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& u,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (const ::std::string& u,
+                ::xml_schema::error_handler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
@@ -1682,15 +1706,15 @@ Simulation (const ::std::string& u,
     throw ::xsd::cxx::tree::parsing< char > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& u,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (const ::std::string& u,
+                ::xercesc::DOMErrorHandler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -1700,91 +1724,91 @@ Simulation (const ::std::string& u,
     throw ::xsd::cxx::tree::parsing< char > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Simulation (isrc, f, p);
+  return ::Simulation_XML (isrc, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                ::xml_schema::error_handler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Simulation (isrc, h, f, p);
+  return ::Simulation_XML (isrc, h, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                ::xercesc::DOMErrorHandler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Simulation (isrc, h, f, p);
+  return ::Simulation_XML (isrc, h, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& sid,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                const ::std::string& sid,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Simulation (isrc, f, p);
+  return ::Simulation_XML (isrc, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& sid,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                const ::std::string& sid,
+                ::xml_schema::error_handler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Simulation (isrc, h, f, p);
+  return ::Simulation_XML (isrc, h, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& sid,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::std::istream& is,
+                const ::std::string& sid,
+                ::xercesc::DOMErrorHandler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Simulation (isrc, h, f, p);
+  return ::Simulation_XML (isrc, h, f, p);
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& i,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::xercesc::InputSource& i,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xsd::cxx::tree::error_handler< char > h;
 
@@ -1795,15 +1819,15 @@ Simulation (::xercesc::InputSource& i,
   h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& i,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::xercesc::InputSource& i,
+                ::xml_schema::error_handler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -1813,15 +1837,15 @@ Simulation (::xercesc::InputSource& i,
     throw ::xsd::cxx::tree::parsing< char > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& i,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (::xercesc::InputSource& i,
+                ::xercesc::DOMErrorHandler& h,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -1831,14 +1855,14 @@ Simulation (::xercesc::InputSource& i,
     throw ::xsd::cxx::tree::parsing< char > ();
 
   return ::std::unique_ptr< ::simulation_t > (
-    ::Simulation (
+    ::Simulation_XML (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::xercesc::DOMDocument& doc,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+Simulation_XML (const ::xercesc::DOMDocument& doc,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties& p)
 {
   if (f & ::xml_schema::flags::keep_dom)
   {
@@ -1846,7 +1870,7 @@ Simulation (const ::xercesc::DOMDocument& doc,
       static_cast< ::xercesc::DOMDocument* > (doc.cloneNode (true)));
 
     return ::std::unique_ptr< ::simulation_t > (
-      ::Simulation (
+      ::Simulation_XML (
         std::move (d), f | ::xml_schema::flags::own_dom, p));
   }
 
@@ -1854,7 +1878,7 @@ Simulation (const ::xercesc::DOMDocument& doc,
   const ::xsd::cxx::xml::qualified_name< char > n (
     ::xsd::cxx::xml::dom::name< char > (e));
 
-  if (n.name () == "Simulation" &&
+  if (n.name () == "Simulation_XML" &&
       n.namespace_ () == "")
   {
     ::std::unique_ptr< ::simulation_t > r (
@@ -1866,14 +1890,14 @@ Simulation (const ::xercesc::DOMDocument& doc,
   throw ::xsd::cxx::tree::unexpected_element < char > (
     n.name (),
     n.namespace_ (),
-    "Simulation",
+    "Simulation_XML",
     "");
 }
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties&)
+Simulation_XML (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
+                ::xml_schema::flags f,
+                const ::xml_schema::properties&)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > c (
     ((f & ::xml_schema::flags::keep_dom) &&
@@ -1892,7 +1916,7 @@ Simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
                      (c.get () ? &c : &d),
                      0);
 
-  if (n.name () == "Simulation" &&
+  if (n.name () == "Simulation_XML" &&
       n.namespace_ () == "")
   {
     ::std::unique_ptr< ::simulation_t > r (
@@ -1904,7 +1928,7 @@ Simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
   throw ::xsd::cxx::tree::unexpected_element < char > (
     n.name (),
     n.namespace_ (),
-    "Simulation",
+    "Simulation_XML",
     "");
 }
 

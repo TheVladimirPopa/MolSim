@@ -14,28 +14,22 @@ class SphereArg {
   int type;
 
  public:
-  SphereArg(std::array<double, 3> position, std::array<double, 3> velocity,
-            double radius, int dimension, double distance, double mass,
-            int type)
-      : position{position},
-        velocity{velocity},
-        radius{radius},
-        dimension{dimension},
-        distance{distance},
-        mass{mass},
-        type{type} {}
+  SphereArg(const std::array<double, 3>& position,
+            const std::array<double, 3>& velocity, double radius, int dimension,
+            double distance, double mass, int type);
 
-  std::array<double, 3> getPosition() { return position; }
+  const std::array<double, 3>& getPosition() const;
 
-  std::array<double, 3> getVelocity() { return velocity; }
+  const std::array<double, 3>& getVelocity() const;
 
-  double getRadius() { return radius; }
+  double getRadius() const;
 
-  int getDimension() { return dimension; }
+  int getDimension() const;
 
-  double getDistance() { return distance; }
+  double getDistance() const;
 
-  double getMass() { return mass; }
+  double getMass() const;
 
-  int getType() { return type; }
+  int getType() const;
+
 };

@@ -12,7 +12,7 @@
         <xsd:attribute name="writeOutFrequency" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="filename" type="xsd:string" use="required"/>
     </xsd:complexType>
-    <xsd:element name="Simulation" type="simulation_t"/>
+    <xsd:element name="Simulation_XML" type="simulation_t"/>
 
     <!--Int Array-->
     <xsd:complexType name="array_i">
@@ -35,9 +35,9 @@
             <xsd:element name="dimension" type="array_i"/>
             <xsd:element name="velocity" type="array_d"/>
         </xsd:sequence>
-        <xsd:attribute name="distance" type="xsd:double"/>
-        <xsd:attribute name="mass" type="xsd:double"/>
-        <xsd:attribute name="type" type="xsd:int"/>
+        <xsd:attribute name="distance" type="xsd:double" use="required"/>
+        <xsd:attribute name="mass" type="xsd:double" use="required"/>
+        <xsd:attribute name="type" type="xsd:int" use="required"/>
 
     </xsd:complexType>
 
@@ -48,11 +48,11 @@
             <xsd:element name="velocity" type="array_d"/>
         </xsd:sequence>
 
-        <xsd:attribute name="radius" type="xsd:unsignedInt"/>
-        <xsd:attribute name="dimension" type="xsd:unsignedInt"/>
-        <xsd:attribute name="distance" type="xsd:double"/>
-        <xsd:attribute name="mass" type="xsd:double"/>
-        <xsd:attribute name="type" type="xsd:int"/>
+        <xsd:attribute name="radius" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="dimension" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="distance" type="xsd:double" use="required"/>
+        <xsd:attribute name="mass" type="xsd:double" use="required"/>
+        <xsd:attribute name="type" type="xsd:int" use="required"/>
     </xsd:complexType>
 
     <!--    SimTypes-->

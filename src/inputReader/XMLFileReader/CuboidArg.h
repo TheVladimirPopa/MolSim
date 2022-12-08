@@ -13,25 +13,20 @@ class CuboidArg {
   int type;
 
  public:
-  CuboidArg(std::array<double, 3> position, std::array<double, 3> velocity,
-            std::array<int, 3> dimension, double distance, double mass,
-            int type)
-      : position{position},
-        velocity{velocity},
-        dimension{dimension},
-        distance{distance},
-        mass{mass},
-        type{type} {}
+  CuboidArg(const std::array<double, 3>& position,
+            const std::array<double, 3>& velocity,
+            const std::array<int, 3>& dimension, double distance, double mass,
+            int type);
 
-  std::array<double, 3> getPosition() { return position; }
+  const std::array<double, 3>& getPosition() const;
 
-  std::array<double, 3> getVelocity() { return velocity; }
+  const std::array<double, 3>& getVelocity() const;
 
-  std::array<int, 3> getDimension() { return dimension; }
+  const std::array<int, 3>& getDimension() const;
 
-  double getDistance() { return distance; }
+  double getDistance() const;
 
-  double getMass() { return mass; }
+  double getMass() const;
 
-  int getType() { return type; }
+  int getType() const;
 };

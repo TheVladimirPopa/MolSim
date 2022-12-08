@@ -24,7 +24,7 @@ class XMLParser {
    * @return
    */
 
-  std::array<double, 3> generate_double_array(const array_d &input) const {
+  static std::array<double, 3> generate_double_array(const array_d &input) {
     return {input.x(), input.y(), input.z()};
   }
 
@@ -34,7 +34,7 @@ class XMLParser {
    * @return
    */
 
-  std::array<int, 3> generate_int_array(const array_i &input) const {
+  static std::array<int, 3> generate_int_array(const array_i &input) {
     return {input.x(), input.y(), input.z()};
   }
 
@@ -62,7 +62,6 @@ class XMLParser {
 
   std::vector<CuboidArg> extractCuboid() const {
     std::vector<CuboidArg> cuboidArgs;
-    CuboidArg arg{};
 
     for (auto &it : simulation->SimTypes()) {
       for (auto &s : it.Cuboid()) {
@@ -73,13 +72,9 @@ class XMLParser {
         auto &mass = s.mass();
         auto &type = s.type();
 
-        //        cuboidArg.emplace_back(generate_double_array(pos),
-        //                               generate_double_array(vel),
-        //                               generate_int_array(dim), dis, mass,
-        //                               dim, type);
-        arg = CuboidArg(generate_double_array(pos), generate_double_array(vel),
-                   generate_int_array(dim), dis, mass, type);
-        cuboidArgs.emplace_back(arg);
+        cuboidArgs.emplace_back(generate_double_array(pos),
+                                generate_double_array(vel),
+                                generate_int_array(dim), dis, mass, type);
       }
     }
 
@@ -87,15 +82,15 @@ class XMLParser {
   }
 
  public:
-  XMLParser(const std::string &path) {
+  explicit XMLParser(const std::string &path) {
     try {
-      simulation = Simulation(path, xml_schema::flags::dont_validate);
+      simulation = Simulation_XML(path, xml_schema::flags::dont_validate);
     } catch (const xml_schema::exception &e) {
       throw std::invalid_argument(std::string{e.what()});
     }
   }
 
-  std::unique_ptr<SimulationArg> parseXMl() {
+  std::unique_ptr<SimulationArg> extractSimulation() {
     std::vector<std::string> files;
 
     for (auto &e : simulation->InputFile()) {
@@ -105,9 +100,23 @@ class XMLParser {
 
     double endTime = simulation->endTime();
     double deltaT = simulation->deltaT();
-    int writeOutFrequency = simulation->writeOutFrequency();
+    unsigned int writeOutFrequency = simulation->writeOutFrequency();
     std::string filename = simulation->filename();
+
+    SimulationArg arg =
+        SimulationArg(endTime, deltaT, writeOutFrequency, filename);
+
+    return std::make_unique<SimulationArg>(arg);
   }
 
-  // return simulation attributes somehow
+
+  //  XMLParser xmlParser =
+  //      XMLParser("inputReader/XMLFileReader/input_xml_example.xml");
+  //
+  //  std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
+  //  simulation.setDeltaT(simArg->getDeltaT());
+  //  simulation.setEndTime(simArg->getEndTime());
+  //  simulation.setIterationsPerWrite(simArg->getWriteOutFrequency());
+  //  simulation.setFilename(simArg->getFilename());
+
 };

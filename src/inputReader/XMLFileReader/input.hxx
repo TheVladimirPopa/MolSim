@@ -606,66 +606,60 @@ class cuboid_t: public ::xml_schema::type
   // distance
   //
   typedef ::xml_schema::double_ distance_type;
-  typedef ::xsd::cxx::tree::optional< distance_type > distance_optional;
   typedef ::xsd::cxx::tree::traits< distance_type, char, ::xsd::cxx::tree::schema_type::double_ > distance_traits;
 
-  const distance_optional&
+  const distance_type&
   distance () const;
 
-  distance_optional&
+  distance_type&
   distance ();
 
   void
   distance (const distance_type& x);
 
-  void
-  distance (const distance_optional& x);
-
   // mass
   //
   typedef ::xml_schema::double_ mass_type;
-  typedef ::xsd::cxx::tree::optional< mass_type > mass_optional;
   typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
 
-  const mass_optional&
+  const mass_type&
   mass () const;
 
-  mass_optional&
+  mass_type&
   mass ();
 
   void
   mass (const mass_type& x);
 
-  void
-  mass (const mass_optional& x);
-
   // type
   //
   typedef ::xml_schema::int_ type_type;
-  typedef ::xsd::cxx::tree::optional< type_type > type_optional;
   typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
 
-  const type_optional&
+  const type_type&
   type () const;
 
-  type_optional&
+  type_type&
   type ();
 
   void
   type (const type_type& x);
 
-  void
-  type (const type_optional& x);
-
   // Constructors.
   //
   cuboid_t (const position_type&,
             const dimension_type&,
-            const velocity_type&);
+            const velocity_type&,
+            const distance_type&,
+            const mass_type&,
+            const type_type&);
 
   cuboid_t (::std::unique_ptr< position_type >,
             ::std::unique_ptr< dimension_type >,
-            ::std::unique_ptr< velocity_type >);
+            ::std::unique_ptr< velocity_type >,
+            const distance_type&,
+            const mass_type&,
+            const type_type&);
 
   cuboid_t (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f = 0,
@@ -696,9 +690,9 @@ class cuboid_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< position_type > position_;
   ::xsd::cxx::tree::one< dimension_type > dimension_;
   ::xsd::cxx::tree::one< velocity_type > velocity_;
-  distance_optional distance_;
-  mass_optional mass_;
-  type_optional type_;
+  ::xsd::cxx::tree::one< distance_type > distance_;
+  ::xsd::cxx::tree::one< mass_type > mass_;
+  ::xsd::cxx::tree::one< type_type > type_;
 };
 
 class sphere_t: public ::xml_schema::type
@@ -741,100 +735,90 @@ class sphere_t: public ::xml_schema::type
   // radius
   //
   typedef ::xml_schema::unsigned_int radius_type;
-  typedef ::xsd::cxx::tree::optional< radius_type > radius_optional;
   typedef ::xsd::cxx::tree::traits< radius_type, char > radius_traits;
 
-  const radius_optional&
+  const radius_type&
   radius () const;
 
-  radius_optional&
+  radius_type&
   radius ();
 
   void
   radius (const radius_type& x);
 
-  void
-  radius (const radius_optional& x);
-
   // dimension
   //
   typedef ::xml_schema::unsigned_int dimension_type;
-  typedef ::xsd::cxx::tree::optional< dimension_type > dimension_optional;
   typedef ::xsd::cxx::tree::traits< dimension_type, char > dimension_traits;
 
-  const dimension_optional&
+  const dimension_type&
   dimension () const;
 
-  dimension_optional&
+  dimension_type&
   dimension ();
 
   void
   dimension (const dimension_type& x);
 
-  void
-  dimension (const dimension_optional& x);
-
   // distance
   //
   typedef ::xml_schema::double_ distance_type;
-  typedef ::xsd::cxx::tree::optional< distance_type > distance_optional;
   typedef ::xsd::cxx::tree::traits< distance_type, char, ::xsd::cxx::tree::schema_type::double_ > distance_traits;
 
-  const distance_optional&
+  const distance_type&
   distance () const;
 
-  distance_optional&
+  distance_type&
   distance ();
 
   void
   distance (const distance_type& x);
 
-  void
-  distance (const distance_optional& x);
-
   // mass
   //
   typedef ::xml_schema::double_ mass_type;
-  typedef ::xsd::cxx::tree::optional< mass_type > mass_optional;
   typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
 
-  const mass_optional&
+  const mass_type&
   mass () const;
 
-  mass_optional&
+  mass_type&
   mass ();
 
   void
   mass (const mass_type& x);
 
-  void
-  mass (const mass_optional& x);
-
   // type
   //
   typedef ::xml_schema::int_ type_type;
-  typedef ::xsd::cxx::tree::optional< type_type > type_optional;
   typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
 
-  const type_optional&
+  const type_type&
   type () const;
 
-  type_optional&
+  type_type&
   type ();
 
   void
   type (const type_type& x);
 
-  void
-  type (const type_optional& x);
-
   // Constructors.
   //
   sphere_t (const position_type&,
-            const velocity_type&);
+            const velocity_type&,
+            const radius_type&,
+            const dimension_type&,
+            const distance_type&,
+            const mass_type&,
+            const type_type&);
 
   sphere_t (::std::unique_ptr< position_type >,
-            ::std::unique_ptr< velocity_type >);
+            ::std::unique_ptr< velocity_type >,
+            const radius_type&,
+            const dimension_type&,
+            const distance_type&,
+            const mass_type&,
+            const type_type&);
 
   sphere_t (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f = 0,
@@ -864,11 +848,11 @@ class sphere_t: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< position_type > position_;
   ::xsd::cxx::tree::one< velocity_type > velocity_;
-  radius_optional radius_;
-  dimension_optional dimension_;
-  distance_optional distance_;
-  mass_optional mass_;
-  type_optional type_;
+  ::xsd::cxx::tree::one< radius_type > radius_;
+  ::xsd::cxx::tree::one< dimension_type > dimension_;
+  ::xsd::cxx::tree::one< distance_type > distance_;
+  ::xsd::cxx::tree::one< mass_type > mass_;
+  ::xsd::cxx::tree::one< type_type > type_;
 };
 
 class simTypes_t: public ::xml_schema::type
@@ -1005,94 +989,94 @@ class input_t: public ::xml_schema::type
 //
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& uri,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (const ::std::string& uri,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& uri,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (const ::std::string& uri,
+                ::xml_schema::error_handler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::std::string& uri,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (const ::std::string& uri,
+                ::xercesc::DOMErrorHandler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse std::istream.
 //
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                ::xml_schema::error_handler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                ::xercesc::DOMErrorHandler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& id,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                const ::std::string& id,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& id,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                const ::std::string& id,
+                ::xml_schema::error_handler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::std::istream& is,
-            const ::std::string& id,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::std::istream& is,
+                const ::std::string& id,
+                ::xercesc::DOMErrorHandler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse xercesc::InputSource.
 //
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& is,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::xercesc::InputSource& is,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& is,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::xercesc::InputSource& is,
+                ::xml_schema::error_handler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xercesc::InputSource& is,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::xercesc::InputSource& is,
+                ::xercesc::DOMErrorHandler& eh,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse xercesc::DOMDocument.
 //
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (const ::xercesc::DOMDocument& d,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (const ::xercesc::DOMDocument& d,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 ::std::unique_ptr< ::simulation_t >
-Simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+Simulation_XML (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
+                ::xml_schema::flags f = 0,
+                const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 #include <xsd/cxx/post.hxx>
 
