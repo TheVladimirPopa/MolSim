@@ -12,8 +12,8 @@
 #include "LineProcessorCuboid.h"
 #include "LineProcessorSingle.h"
 #include "LineProcessorSphere.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 
 class FileReader {
  public:
@@ -27,7 +27,7 @@ class FileReader {
    * @param filename Path to the input file, see single-format specified in
    * README.md
    */
-  static void readFileSingle(ParticleContainer &particles, char *filename) {
+  static void readFileSingle(IContainer &particles, char *filename) {
     LineProcessorSingle lineProcessor{};
     readFile(particles, filename, lineProcessor);
   }
@@ -39,7 +39,7 @@ class FileReader {
    * @param filename Path to the input file, see cuboid-format specified in
    * README.md
    */
-  static void readFileCuboid(ParticleContainer &particles, char *filename) {
+  static void readFileCuboid(IContainer &particles, char *filename) {
     LineProcessorCuboid lineProcessor{};
     readFile(particles, filename, lineProcessor);
   }
@@ -51,7 +51,7 @@ class FileReader {
    * @param filename Path to the input file, see cuboid-format specified in
    * README.md
    */
-  static void readFileSphere(ParticleContainer &particles, char *filename) {
+  static void readFileSphere(IContainer &particles, char *filename) {
     LineProcessorSphere lineProcessor{};
     readFile(particles, filename, lineProcessor);
   }
@@ -65,6 +65,6 @@ class FileReader {
    * which is not a comment and not the line with the number of particles
    * @note This method is only public for testing-reasons
    */
-  static void readFile(ParticleContainer &particles, char *filename,
+  static void readFile(IContainer &particles, char *filename,
                        ILineProcessor &lineProcessor);
 };

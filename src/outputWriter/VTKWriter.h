@@ -10,8 +10,8 @@
 #include <list>
 
 #include "IWriter.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 #include "outputWriter/vtk-unstructured.h"
 
 /**
@@ -25,7 +25,7 @@ class VTKWriter : public IWriter {
   virtual ~VTKWriter();
 
   void writeFile(const std::string &filename, int iteration,
-                 ParticleContainer &particles) override;
+                 IContainer &particles) override;
 
  private:
   /**

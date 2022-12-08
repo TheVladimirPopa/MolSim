@@ -17,7 +17,7 @@ FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
 
-void FileReader::readFile(ParticleContainer &container, char *filename,
+void FileReader::readFile(IContainer &container, char *filename,
                           ILineProcessor &lineProcessor) {
   int num_particles = 0;
 

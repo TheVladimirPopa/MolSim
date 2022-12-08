@@ -6,9 +6,18 @@ class LennardJonesModel : public IModel {
   constexpr static double epsilon = 5.0;
   constexpr static double sigma = 1.0;
 
-  double LennardJonesPotential(Particle const &p1, Particle const &p2) const;
+  /// The max distance between two particles where are force is applied
+  double cutOffRadius;
 
  public:
+  /**
+   * Instantiates a force calculation model based on LennardJonesModel
+   * @param cutOffRadius_ The max distance between two particles where are force
+   * is applied, greater distances between particles the force is considered 0
+   */
+  explicit LennardJonesModel(double cutOffRadius_)
+      : cutOffRadius{cutOffRadius_} {}
+
   virtual ~LennardJonesModel() = default;
 
   /**

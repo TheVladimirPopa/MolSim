@@ -10,8 +10,8 @@
 #include <fstream>
 
 #include "IWriter.h"
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 
 class XYZWriter : public IWriter {
  public:
@@ -20,5 +20,5 @@ class XYZWriter : public IWriter {
   virtual ~XYZWriter();
 
   void writeFile(const std::string &filename, int iteration,
-                 ParticleContainer &particles) override;
+                 IContainer &particles) override;
 };

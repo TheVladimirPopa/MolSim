@@ -1,3 +1,4 @@
+#include "dataStructures/VectorContainer.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "inputReader/FileReader.h"
@@ -6,7 +7,7 @@
 class LineProcessorMock : public ILineProcessor {
  public:
   MOCK_METHOD((void), processLine,
-              (std::istringstream & dataStream, ParticleContainer &container),
+              (std::istringstream & dataStream, IContainer &container),
               (override));
 };
 
@@ -15,7 +16,7 @@ class LineProcessorMock : public ILineProcessor {
  * specified times
  */
 TEST(FileReader, IgnoreComments) {
-  ParticleContainer particleContainer{};
+  VectorContainer particleContainer{};
   const char *file{"../tests/resources/fileReaderTest.txt"};
 
   LineProcessorMock lineProcessorMock{};
@@ -30,14 +31,13 @@ TEST(FileReader, IgnoreComments) {
  * the same object as the one given to the processLine
  */
 TEST(FileReader, RigthParticleContainer) {
-  ParticleContainer particleContainer{};
+  VectorContainer particleContainer{};
   const char *file{"../tests/resources/fileReaderTest.txt"};
 
   LineProcessorMock lineProcessorMock{};
   EXPECT_CALL(
       lineProcessorMock,
-      processLine(testing::_, testing::Truly([&particleContainer](
-                                                 ParticleContainer &p) -> bool {
+      processLine(testing::_, testing::Truly([&particleContainer](IContainer &p) -> bool {
                     // Test that they point to the same memory
                     return &p == &particleContainer;
                   })))
@@ -51,7 +51,7 @@ TEST(FileReader, RigthParticleContainer) {
  * Make sure the lines we read in match the lines in the file
  */
 TEST(FileReader, CorrectLineReading) {
-  ParticleContainer particleContainer{};
+  VectorContainer particleContainer{};
   const char *file{"../tests/resources/fileReaderTest.txt"};
   const std::string firstLine{
       "0.0 0.0 0.0     0.0 0.0 0.0     40 8 1          1.1225          1.0     "

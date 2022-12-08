@@ -15,7 +15,7 @@ XYZWriter::XYZWriter() = default;
 XYZWriter::~XYZWriter() = default;
 
 void XYZWriter::writeFile(const std::string &filename, int iteration,
-                          ParticleContainer &particles) {
+                          IContainer &particles) {
   std::ofstream file;
   std::stringstream strstr;
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
@@ -27,7 +27,7 @@ void XYZWriter::writeFile(const std::string &filename, int iteration,
           "file format doku."
        << std::endl;
 
-  for (auto &p : particles) {
+  std::function<void(Particle &)> plot{[&file](Particle &p) {
     std::array<double, 3> x = p.getX();
     file << "Ar ";
     file.setf(std::ios_base::showpoint);
@@ -37,7 +37,9 @@ void XYZWriter::writeFile(const std::string &filename, int iteration,
     }
 
     file << std::endl;
-  }
+  }};
+
+  particles.forEach(plot);
 
   file.close();
 }

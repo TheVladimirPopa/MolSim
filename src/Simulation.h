@@ -2,8 +2,8 @@
 // Created by leo on 09.11.22.
 //
 #pragma once
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
@@ -21,7 +21,7 @@ class Simulation {
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
    */
-  void simulate(IModel const &model, ParticleContainer &particles,
+  void simulate(IModel const &model, IContainer &particles,
                 IWriter &fileWriter);
 
   /**

@@ -1,18 +1,18 @@
 #pragma once
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/VectorContainer.h"
 
 namespace TestUtils {
 
-  /**
-   * Generates container for the ParticleContainer test suite.
-   */
-  ParticleContainer makeContainer(unsigned size) {
-    ParticleContainer particle_container{};
-    for (unsigned i = 0; i < size; i++) {
-      Particle p{};
-      particle_container.push_back(p);
-    }
-
-    return particle_container;
+/**
+ * Generates container for the ParticleContainer test suite.
+ */
+VectorContainer makeContainer(unsigned size) {
+  VectorContainer particle_container{};
+  for (unsigned i = 0; i < size; i++) {
+    particle_container.emplace_back(std::array<double, 3>{},
+                                    std::array<double, 3>{}, 1.0, 1);
   }
+
+  return particle_container;
+}
 }  // end namespace TestUtils

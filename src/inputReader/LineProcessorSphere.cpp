@@ -3,7 +3,7 @@
 #include "ParticleGenerator.h"
 
 void LineProcessorSphere::processLine(std::istringstream &dataStream,
-                                      ParticleContainer &container) {
+                                      IContainer &container) {
   for (auto &xj : sphere.position) {
     dataStream >> xj;
   }

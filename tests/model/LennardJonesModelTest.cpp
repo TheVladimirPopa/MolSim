@@ -4,14 +4,13 @@
 #include "model/LennardJonesModel.h"
 #include "model/NewtonsLawModel.h"
 using std::pow;
-#include "climits"
 
 /**
  * Worksheet 2 defines epsilon = 5.0 and sigma = 1.0 for the Lennard-Jones
  * potential. (This test might get removed in the future.)
  */
 TEST(LennardJonesModel, WorksheetParameters) {
-  LennardJonesModel model{};
+  LennardJonesModel model{100.};
 
   EXPECT_EQ(model.getEpsilon(), 5.0) << "Worksheet 2 expects epsilon = 5.0";
   EXPECT_EQ(model.getSigma(), 1.0) << "Worksheet 2 expects sigma = 1.0";
@@ -21,7 +20,7 @@ TEST(LennardJonesModel, WorksheetParameters) {
  * Check if the applied forces have the correct sign on each particle.
  */
 TEST(LennardJonesModel, ForceCorrectSign) {
-  LennardJonesModel model{};
+  LennardJonesModel model{100.};
   Particle p1{{0.0, 0.0, 0.0}};
   Particle p2{{1.0, 0.0, 0.0}};
   model.addForces(p1, p2);
@@ -40,7 +39,7 @@ TEST(LennardJonesModel, ForceCorrectSign) {
  * the resulting force is already known.
  */
 TEST(LennardJonesModel, ForcePrecalculatedExample) {
-  ParticleContainer c{};
+  VectorContainer c{};
 
   double distance = 2.0;
   Particle p1{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
@@ -50,7 +49,7 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
   // (-(24 * 5)/2) * ((1/2)^6 - 2(1/2)^12) * {{2}, {0}, {0}}
   std::array<double, 3> expected_force = {465.0 / 512.0, 0.0, 0.0};
 
-  LennardJonesModel model{};
+  LennardJonesModel model{100.};
   model.addForces(p1, p2);
 
   // Check if result is approximately correct

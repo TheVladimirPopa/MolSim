@@ -2,8 +2,8 @@
 // Created by leo on 02.11.22.
 //
 #pragma once
+#include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
 class IWriter {
  public:
   /**
@@ -16,5 +16,5 @@ class IWriter {
    * @param particles The particle container with all particles
    */
   virtual void writeFile(const std::string &filename, int iteration,
-                         ParticleContainer &particles) = 0;
+                         IContainer &particles) = 0;
 };

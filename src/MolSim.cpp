@@ -6,8 +6,10 @@
 #include <iostream>
 
 #include "Simulation.h"
+#include "dataStructures/LinkedCellsBoundary.h"
+#include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/Particle.h"
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
@@ -72,6 +74,7 @@ int main(int argc, char *argsv[]) {
         if (pos == simTypeStrings.end()) {
           std::cout << "Type " << optarg << " is not known" << std::endl;
           printUsage();
+          return 1;
         } else {
           simulationType = pos->second;
         }
@@ -203,23 +206,41 @@ int main(int argc, char *argsv[]) {
   spdlog::set_default_logger(std::make_shared<spdlog::logger>(
       "", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
-  ParticleContainer particleContainer{};
+
+  VectorContainer vectorContainer{};
+  std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  std::array<double, 3> rightUpperCorner{55., 30., 5};
+
+  LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
+                                            rightUpperCorner};
+
+  linkedCellsContainer.setBoundaries({
+      {cubeSide::LEFT, boundaryType::REFLECT},
+      {cubeSide::RIGHT, boundaryType::REFLECT},
+      {cubeSide::TOP, boundaryType::REFLECT},
+      {cubeSide::BOTTOM, boundaryType::REFLECT},
+      {cubeSide::FRONT, boundaryType::REFLECT},
+      {cubeSide::BACK, boundaryType::REFLECT},
+  });
+
+  IContainer *container = &linkedCellsContainer;
+
   switch (simulationType) {
     case simTypes::Single: {
-      FileReader::readFileSingle(particleContainer, inputFile);
+      FileReader::readFileSingle(*container, inputFile);
       break;
     }
     case simTypes::Cuboid: {
-      FileReader::readFileCuboid(particleContainer, inputFile);
+      FileReader::readFileCuboid(*container, inputFile);
       break;
     }
     case simTypes::Sphere: {
-      FileReader::readFileSphere(particleContainer, inputFile);
+      FileReader::readFileSphere(*container, inputFile);
       break;
     }
   }
 
-  LennardJonesModel model{};
+  LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
 
   VTKWriter vtkWriter{};
@@ -243,7 +264,7 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, particleContainer, *selectedWriter);
+  simulation.simulate(model, *container, *selectedWriter);
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();

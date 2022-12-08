@@ -4,7 +4,7 @@
 #pragma once
 #include <sstream>
 
-#include "dataStructures/ParticleContainer.h"
+#include "dataStructures/IContainer.h"
 
 class ILineProcessor {
  public:
@@ -16,5 +16,5 @@ class ILineProcessor {
    * @param container The container where all the particles get placed in
    */
   virtual void processLine(std::istringstream &dataStream,
-                           ParticleContainer &container) = 0;
+                           IContainer &container) = 0;
 };
