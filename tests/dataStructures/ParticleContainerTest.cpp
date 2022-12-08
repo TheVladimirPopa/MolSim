@@ -3,8 +3,6 @@
 using TestUtils::makeContainer;
 #include "gtest/gtest.h"
 
-
-
 /**
  * Tests whether the behaviour of forEach and forEachPair
  * handles the empty container edge case.
@@ -12,11 +10,11 @@ using TestUtils::makeContainer;
 TEST(ParticleContainer, EmptyDoesNothing) {
   VectorContainer particle_container{};
   unsigned ct = 0;
-  std::function<void(Particle &)> count = [&ct](auto& p) { ct++; };
+  std::function<void(Particle &)> count = [&ct](auto &p) { ct++; };
   particle_container.forEach(count);
 
   std::function<void(Particle &, Particle &)> countPair =
-      [&ct](auto& p1, auto& p2) { ct++; };
+      [&ct](auto &p1, auto &p2) { ct++; };
   particle_container.forEachPair(countPair);
 
   EXPECT_EQ(ct, 0);
@@ -36,11 +34,11 @@ TEST(ParticleContainer, ForEachBasic) {
 
   // Check whether a function is truly applied to all elements
   unsigned ct = 0;
-  std::function<void(Particle &)> countAndModify = [&ct](auto& p){
-        std::array<double, 3> test_value = {static_cast<double>(ct), 0.0, 0.0};
-        p.setX(test_value);
-        ct++;
-      };
+  std::function<void(Particle &)> countAndModify = [&ct](auto &p) {
+    std::array<double, 3> test_value = {static_cast<double>(ct), 0.0, 0.0};
+    p.setX(test_value);
+    ct++;
+  };
 
   particle_container.forEach(countAndModify);
 
@@ -65,20 +63,20 @@ TEST(ParticleContainer, ForEachPairBasic) {
 
   unsigned ct = 0;
   std::function<void(Particle &, Particle &)> countPair =
-      [&ct](auto& p1, auto& p2) { ct++; };
+      [&ct](auto &p1, auto &p2) { ct++; };
   particle_container.forEachPair(countPair);
 
-  EXPECT_EQ(ct, size * (size-1) / 2) << "Number of pairs wrong.";
+  EXPECT_EQ(ct, size * (size - 1) / 2) << "Number of pairs wrong.";
 
   // Set all x coordinates with a dummy value
-  std::function<void(Particle &, Particle &)> setDummyX =
-      [](auto& p1, auto& p2) {
-        std::array<double, 3> dummy_x1 = {p1.getX()[0] + 1, 0.0, 0.0};
-        std::array<double, 3> dummy_x2 = {p1.getX()[0] + 1, 0.0, 0.0};
+  std::function<void(Particle &, Particle &)> setDummyX = [](auto &p1,
+                                                             auto &p2) {
+    std::array<double, 3> dummy_x1 = {p1.getX()[0] + 1, 0.0, 0.0};
+    std::array<double, 3> dummy_x2 = {p1.getX()[0] + 1, 0.0, 0.0};
 
-        p1.setX(dummy_x1);
-        p2.setX(dummy_x2);
-      };
+    p1.setX(dummy_x1);
+    p2.setX(dummy_x2);
+  };
 
   particle_container.forEachPair(setDummyX);
 

@@ -9,6 +9,9 @@ class LennardJonesModel : public IModel {
   /// The max distance between two particles where are force is applied
   double cutOffRadius;
 
+  size_t hits{};
+  size_t comparisons{};
+
  public:
   /**
    * Instantiates a force calculation model based on LennardJonesModel
@@ -26,9 +29,13 @@ class LennardJonesModel : public IModel {
    * @param p1 The particle which influences particle p2
    * @param p2 The particle which influences particle p1
    */
-  void addForces(Particle &p1, Particle &p2) const override;
+  void addForces(Particle &p1, Particle &p2) override;
 
   double getEpsilon() const { return epsilon; }
 
   double getSigma() const { return sigma; }
+
+  size_t getHits() const { return hits; };
+
+  size_t getComparisons() const { return comparisons; };
 };
