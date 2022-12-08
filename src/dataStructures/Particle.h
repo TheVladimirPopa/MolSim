@@ -51,7 +51,7 @@ class Particle {
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
    */
-   bool isDeleted_;
+  bool isDeleted_;
 
  public:
   explicit Particle(int type = 0);

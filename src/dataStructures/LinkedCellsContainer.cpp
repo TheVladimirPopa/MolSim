@@ -170,7 +170,7 @@ void LinkedCellsContainer::recalculateStructure() {
             });
 
   for (auto [side, type] : sideAndType) {
-    boundaries.emplace_back(side, type, cells, &particlesVector,
-                            dimensions, leftLowerCorner, rightUpperCorner);
+    boundaries.emplace_back(side, type, cells, &particlesVector, dimensions,
+                            leftLowerCorner, rightUpperCorner);
   }
 }

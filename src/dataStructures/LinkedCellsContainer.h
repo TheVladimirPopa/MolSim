@@ -107,7 +107,7 @@ class LinkedCellsContainer : public IContainer {
    * Applies the effects of all boundaries on the container
    */
   inline void applyBoundaries() {
-    for (auto& boundary : boundaries) boundary.apply();
+    for (auto &boundary : boundaries) boundary.apply();
   }
 
   /**
@@ -120,7 +120,7 @@ class LinkedCellsContainer : public IContainer {
    * Returns the boundaries of the LinkedCells container
    * @return boundaries
    */
-  std::vector<LinkedCellsBoundary>& getBoundaries() { return boundaries; }
+  std::vector<LinkedCellsBoundary> &getBoundaries() { return boundaries; }
 
   /**
    * @return Cell dimensions in number of cells per dimension

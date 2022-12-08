@@ -34,8 +34,8 @@ enum class cellType {
 };
 
 /**
-   * A struct representing a single cell with its type and pointer to the
-   * particles in it
+ * A struct representing a single cell with its type and pointer to the
+ * particles in it
  */
 struct cell {
   /// List of pointers to the particles which are currently inside the cell
@@ -47,5 +47,4 @@ struct cell {
 
   explicit cell(cellType t, size_t index)
       : particles{}, type{t}, cellVectorIndex{index} {}
-
 };
