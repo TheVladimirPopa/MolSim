@@ -65,8 +65,6 @@ class LinkedCellsContainer : public IContainer {
    * @param cellSize The edge length of a cell
    * @param leftLowerBound The left lower corner of the domain bounding box
    * @param rightUpperBound The right upper corner of the domain bounding box
-   * @note This method assumes the boundingBox dimensions are an multiple of the
-   * cell size in each dimension
    */
   LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
                        std::array<double, 3> &rightUpperBound);
