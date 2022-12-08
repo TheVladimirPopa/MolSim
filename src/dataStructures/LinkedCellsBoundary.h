@@ -14,7 +14,7 @@ constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
 constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
 
 // Initialize LennardJones model for reflective boundary.
-static const LennardJonesModel lennardJones{10 * reflectDistance};
+static LennardJonesModel lennardJones{10 * reflectDistance};
 }  // namespace ReflectiveBoundary
 
 enum class boundaryType {
