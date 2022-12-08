@@ -16,13 +16,13 @@ TEST(LinkedCellsContainer, SetupDim) {
 
   EXPECT_EQ(cells.size(), 7 * 6 * 5);
 
-  EXPECT_EQ(cells[0].type, 2);
+  EXPECT_EQ(cells[0].type, cellType::halo);
 
-  EXPECT_EQ(cells[1 + 7 + (7 * 6)].type, 1);
+  EXPECT_EQ(cells[1 + 7 + (7 * 6)].type, cellType::boundary);
 
   int counter = 0;
   for (auto &cell : cells) {
-    if (cell.type != 2) {
+    if (cell.type != cellType::halo) {
       counter++;
     }
   }
