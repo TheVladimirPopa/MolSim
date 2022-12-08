@@ -2,7 +2,9 @@
 #include <functional>
 
 #include "Particle.h"
-
+/**  \image html runtime.png width=900px
+ *    \image latex runtime.png "Runtimes comparison" width = [goodwidth]cm
+ */
 class IContainer {
  public:
   /**

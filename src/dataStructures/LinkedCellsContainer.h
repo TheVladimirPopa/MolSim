@@ -7,6 +7,9 @@
 #include "IContainer.h"
 #include "LinkedCellsBoundary.h"
 
+/**  \image html runtime-linkedcells.png width=900px
+ *    \image latex runtime-linkedcells.png "Runtime" width = [goodwidth]cm
+ */
 class LinkedCellsContainer : public IContainer {
  private:
   /// The vector containing all the particles

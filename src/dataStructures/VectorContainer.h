@@ -8,6 +8,9 @@
 #include "IContainer.h"
 #include "Particle.h"
 
+/**  \image html runtime-directsum.png width=900px
+ *    \image latex runtime-directsum.png "Runtime" width = [goodwidth]cm
+ */
 class VectorContainer : public IContainer {
  public:
   void forEach(std::function<void(Particle &)> &unaryFunction) override {
