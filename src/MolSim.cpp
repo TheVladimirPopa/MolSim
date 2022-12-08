@@ -180,7 +180,7 @@ int main(int argc, char *argsv[]) {
     return 1;
   }
   auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-      "../logs/logger", 1048576 * 5, 5);
+      "../logs/logger", 1048576 * 5, 5, true);
 
   auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
@@ -357,6 +357,11 @@ void printHelp() {
          "        -r, --hit-rate\n"
          "               Measures the hit-rate of the pairwise force "
          "calculation.\n"
+         "               It's defined as the number of pairwise force "
+         "calculations which \n"
+         "               were within the cutoff radius (a hit), divided by the "
+         "total \n"
+         "               number of pairwise force calculations."
          "        \n"
          "        -v, --verbose\n"
          "                If specified the log-level is lowered from INFO to "

@@ -80,6 +80,10 @@ OPTIONS:
                 
         -r, --hit-rate
                Measures the hit-rate of the pairwise force calculation.
+               It's defined as the number of pairwise force calculations which 
+               were within the cutoff radius (a hit), divided by the total 
+               number of pairwise force calculations.
+
         
         -v, --verbose
                 If specified the log-level is lowered from INFO to DEBUG.
