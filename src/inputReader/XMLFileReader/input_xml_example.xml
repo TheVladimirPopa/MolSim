@@ -1,0 +1,19 @@
+<Simulation  endTime="10" deltaT="0.014" writeOutFrequency="20" filename="MD.vtk">
+    <SimTypes>
+        <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
+            <position x="0.0" y="0.0" z="0.0"/>
+            <velocity x="0.0" y="0.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="2">
+            <position x="4.0" y="15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="2">
+            <position x="4.0" y="-15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+    </SimTypes>
+    <InputFile location="./input/eingabe-sonne.txt"/>
+</Simulation>
