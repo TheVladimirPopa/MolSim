@@ -43,11 +43,12 @@ TEST(LinkedCellsContainer, GridNonMultipleOfDomainBox) {
   size_t halo{};
   size_t boundary{};
   for (auto &cell : cells) {
-    EXPECT_NE(cell.type, 0) << "All cells should be boundary or halo cells";
-    if (cell.type == 1) {
+    EXPECT_NE(cell.type, cellType::inner)
+        << "All cells should be boundary or halo cells";
+    if (cell.type == cellType::boundary) {
       boundary++;
     }
-    if (cell.type == 2) {
+    if (cell.type == cellType::halo) {
       halo++;
     }
   }
