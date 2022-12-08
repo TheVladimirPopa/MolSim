@@ -5,6 +5,7 @@
     <xsd:complexType name="simulation_t">
         <xsd:sequence>
             <xsd:element name="SimTypes" type="simTypes_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Container_T" type="containerTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
@@ -68,5 +69,29 @@
         <xsd:attribute name="path" type="xsd:string" use="required"/>
     </xsd:complexType>
 
+    <!-- Container Types -->
+    <xsd:complexType name="containerTypes_t">
+        <xsd:sequence>
+            <xsd:element name="LinkedCell" type="linkedCellContainer_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="VectorCont" type="vectorContainer_t" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Linked Cells Container-->
+    <xsd:complexType name="linkedCellContainer_t">
+        <xsd:sequence>
+            <xsd:element name="leftLowerBound" type="array_d"/>
+            <xsd:element name="rightUpperBound" type="array_d"/>
+        </xsd:sequence>
+        <xsd:attribute name="cellSize" type="xsd:double" use="required"/>
+        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
+    </xsd:complexType>
+
+    <!-- Vector Container-->
+    <xsd:complexType name="vectorContainer_t">
+        <xsd:sequence>
+            <xsd:element name="vector" type="array_d"/>
+        </xsd:sequence>
+    </xsd:complexType>
 
 </xsd:schema>

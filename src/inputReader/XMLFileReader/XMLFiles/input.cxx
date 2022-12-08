@@ -61,6 +61,24 @@ SimTypes (const SimTypes_sequence& s)
   this->SimTypes_ = s;
 }
 
+const simulation_t::Container_T_sequence& simulation_t::
+Container_T () const
+{
+  return this->Container_T_;
+}
+
+simulation_t::Container_T_sequence& simulation_t::
+Container_T ()
+{
+  return this->Container_T_;
+}
+
+void simulation_t::
+Container_T (const Container_T_sequence& s)
+{
+  this->Container_T_ = s;
+}
+
 const simulation_t::InputFile_sequence& simulation_t::
 InputFile () const
 {
@@ -614,6 +632,162 @@ path (::std::unique_ptr< path_type > x)
 }
 
 
+// containerTypes_t
+// 
+
+const containerTypes_t::LinkedCell_sequence& containerTypes_t::
+LinkedCell () const
+{
+  return this->LinkedCell_;
+}
+
+containerTypes_t::LinkedCell_sequence& containerTypes_t::
+LinkedCell ()
+{
+  return this->LinkedCell_;
+}
+
+void containerTypes_t::
+LinkedCell (const LinkedCell_sequence& s)
+{
+  this->LinkedCell_ = s;
+}
+
+const containerTypes_t::VectorCont_sequence& containerTypes_t::
+VectorCont () const
+{
+  return this->VectorCont_;
+}
+
+containerTypes_t::VectorCont_sequence& containerTypes_t::
+VectorCont ()
+{
+  return this->VectorCont_;
+}
+
+void containerTypes_t::
+VectorCont (const VectorCont_sequence& s)
+{
+  this->VectorCont_ = s;
+}
+
+
+// linkedCellContainer_t
+// 
+
+const linkedCellContainer_t::leftLowerBound_type& linkedCellContainer_t::
+leftLowerBound () const
+{
+  return this->leftLowerBound_.get ();
+}
+
+linkedCellContainer_t::leftLowerBound_type& linkedCellContainer_t::
+leftLowerBound ()
+{
+  return this->leftLowerBound_.get ();
+}
+
+void linkedCellContainer_t::
+leftLowerBound (const leftLowerBound_type& x)
+{
+  this->leftLowerBound_.set (x);
+}
+
+void linkedCellContainer_t::
+leftLowerBound (::std::unique_ptr< leftLowerBound_type > x)
+{
+  this->leftLowerBound_.set (std::move (x));
+}
+
+const linkedCellContainer_t::rightUpperBound_type& linkedCellContainer_t::
+rightUpperBound () const
+{
+  return this->rightUpperBound_.get ();
+}
+
+linkedCellContainer_t::rightUpperBound_type& linkedCellContainer_t::
+rightUpperBound ()
+{
+  return this->rightUpperBound_.get ();
+}
+
+void linkedCellContainer_t::
+rightUpperBound (const rightUpperBound_type& x)
+{
+  this->rightUpperBound_.set (x);
+}
+
+void linkedCellContainer_t::
+rightUpperBound (::std::unique_ptr< rightUpperBound_type > x)
+{
+  this->rightUpperBound_.set (std::move (x));
+}
+
+const linkedCellContainer_t::cellSize_type& linkedCellContainer_t::
+cellSize () const
+{
+  return this->cellSize_.get ();
+}
+
+linkedCellContainer_t::cellSize_type& linkedCellContainer_t::
+cellSize ()
+{
+  return this->cellSize_.get ();
+}
+
+void linkedCellContainer_t::
+cellSize (const cellSize_type& x)
+{
+  this->cellSize_.set (x);
+}
+
+const linkedCellContainer_t::cutOffRadius_type& linkedCellContainer_t::
+cutOffRadius () const
+{
+  return this->cutOffRadius_.get ();
+}
+
+linkedCellContainer_t::cutOffRadius_type& linkedCellContainer_t::
+cutOffRadius ()
+{
+  return this->cutOffRadius_.get ();
+}
+
+void linkedCellContainer_t::
+cutOffRadius (const cutOffRadius_type& x)
+{
+  this->cutOffRadius_.set (x);
+}
+
+
+// vectorContainer_t
+// 
+
+const vectorContainer_t::vector_type& vectorContainer_t::
+vector () const
+{
+  return this->vector_.get ();
+}
+
+vectorContainer_t::vector_type& vectorContainer_t::
+vector ()
+{
+  return this->vector_.get ();
+}
+
+void vectorContainer_t::
+vector (const vector_type& x)
+{
+  this->vector_.set (x);
+}
+
+void vectorContainer_t::
+vector (::std::unique_ptr< vector_type > x)
+{
+  this->vector_.set (std::move (x));
+}
+
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // simulation_t
@@ -626,6 +800,7 @@ simulation_t (const endTime_type& endTime,
               const filename_type& filename)
 : ::xml_schema::type (),
   SimTypes_ (this),
+  Container_T_ (this),
   InputFile_ (this),
   endTime_ (endTime, this),
   deltaT_ (deltaT, this),
@@ -640,6 +815,7 @@ simulation_t (const simulation_t& x,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   SimTypes_ (x.SimTypes_, f, this),
+  Container_T_ (x.Container_T_, f, this),
   InputFile_ (x.InputFile_, f, this),
   endTime_ (x.endTime_, f, this),
   deltaT_ (x.deltaT_, f, this),
@@ -654,6 +830,7 @@ simulation_t (const ::xercesc::DOMElement& e,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   SimTypes_ (this),
+  Container_T_ (this),
   InputFile_ (this),
   endTime_ (this),
   deltaT_ (this),
@@ -685,6 +862,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         SimTypes_traits::create (i, f, this));
 
       this->SimTypes_.push_back (::std::move (r));
+      continue;
+    }
+
+    // Container_T
+    //
+    if (n.name () == "Container_T" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Container_T_type > r (
+        Container_T_traits::create (i, f, this));
+
+      this->Container_T_.push_back (::std::move (r));
       continue;
     }
 
@@ -776,6 +964,7 @@ operator= (const simulation_t& x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
     this->SimTypes_ = x.SimTypes_;
+    this->Container_T_ = x.Container_T_;
     this->InputFile_ = x.InputFile_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
@@ -1659,6 +1848,376 @@ operator= (const input_t& x)
 
 input_t::
 ~input_t ()
+{
+}
+
+// containerTypes_t
+//
+
+containerTypes_t::
+containerTypes_t ()
+: ::xml_schema::type (),
+  LinkedCell_ (this),
+  VectorCont_ (this)
+{
+}
+
+containerTypes_t::
+containerTypes_t (const containerTypes_t& x,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  LinkedCell_ (x.LinkedCell_, f, this),
+  VectorCont_ (x.VectorCont_, f, this)
+{
+}
+
+containerTypes_t::
+containerTypes_t (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  LinkedCell_ (this),
+  VectorCont_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void containerTypes_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // LinkedCell
+    //
+    if (n.name () == "LinkedCell" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< LinkedCell_type > r (
+        LinkedCell_traits::create (i, f, this));
+
+      this->LinkedCell_.push_back (::std::move (r));
+      continue;
+    }
+
+    // VectorCont
+    //
+    if (n.name () == "VectorCont" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< VectorCont_type > r (
+        VectorCont_traits::create (i, f, this));
+
+      this->VectorCont_.push_back (::std::move (r));
+      continue;
+    }
+
+    break;
+  }
+}
+
+containerTypes_t* containerTypes_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class containerTypes_t (*this, f, c);
+}
+
+containerTypes_t& containerTypes_t::
+operator= (const containerTypes_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->LinkedCell_ = x.LinkedCell_;
+    this->VectorCont_ = x.VectorCont_;
+  }
+
+  return *this;
+}
+
+containerTypes_t::
+~containerTypes_t ()
+{
+}
+
+// linkedCellContainer_t
+//
+
+linkedCellContainer_t::
+linkedCellContainer_t (const leftLowerBound_type& leftLowerBound,
+                       const rightUpperBound_type& rightUpperBound,
+                       const cellSize_type& cellSize,
+                       const cutOffRadius_type& cutOffRadius)
+: ::xml_schema::type (),
+  leftLowerBound_ (leftLowerBound, this),
+  rightUpperBound_ (rightUpperBound, this),
+  cellSize_ (cellSize, this),
+  cutOffRadius_ (cutOffRadius, this)
+{
+}
+
+linkedCellContainer_t::
+linkedCellContainer_t (::std::unique_ptr< leftLowerBound_type > leftLowerBound,
+                       ::std::unique_ptr< rightUpperBound_type > rightUpperBound,
+                       const cellSize_type& cellSize,
+                       const cutOffRadius_type& cutOffRadius)
+: ::xml_schema::type (),
+  leftLowerBound_ (std::move (leftLowerBound), this),
+  rightUpperBound_ (std::move (rightUpperBound), this),
+  cellSize_ (cellSize, this),
+  cutOffRadius_ (cutOffRadius, this)
+{
+}
+
+linkedCellContainer_t::
+linkedCellContainer_t (const linkedCellContainer_t& x,
+                       ::xml_schema::flags f,
+                       ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  leftLowerBound_ (x.leftLowerBound_, f, this),
+  rightUpperBound_ (x.rightUpperBound_, f, this),
+  cellSize_ (x.cellSize_, f, this),
+  cutOffRadius_ (x.cutOffRadius_, f, this)
+{
+}
+
+linkedCellContainer_t::
+linkedCellContainer_t (const ::xercesc::DOMElement& e,
+                       ::xml_schema::flags f,
+                       ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  leftLowerBound_ (this),
+  rightUpperBound_ (this),
+  cellSize_ (this),
+  cutOffRadius_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
+    this->parse (p, f);
+  }
+}
+
+void linkedCellContainer_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // leftLowerBound
+    //
+    if (n.name () == "leftLowerBound" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< leftLowerBound_type > r (
+        leftLowerBound_traits::create (i, f, this));
+
+      if (!leftLowerBound_.present ())
+      {
+        this->leftLowerBound_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // rightUpperBound
+    //
+    if (n.name () == "rightUpperBound" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< rightUpperBound_type > r (
+        rightUpperBound_traits::create (i, f, this));
+
+      if (!rightUpperBound_.present ())
+      {
+        this->rightUpperBound_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!leftLowerBound_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "leftLowerBound",
+      "");
+  }
+
+  if (!rightUpperBound_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "rightUpperBound",
+      "");
+  }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "cellSize" && n.namespace_ ().empty ())
+    {
+      this->cellSize_.set (cellSize_traits::create (i, f, this));
+      continue;
+    }
+
+    if (n.name () == "cutOffRadius" && n.namespace_ ().empty ())
+    {
+      this->cutOffRadius_.set (cutOffRadius_traits::create (i, f, this));
+      continue;
+    }
+  }
+
+  if (!cellSize_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "cellSize",
+      "");
+  }
+
+  if (!cutOffRadius_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "cutOffRadius",
+      "");
+  }
+}
+
+linkedCellContainer_t* linkedCellContainer_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class linkedCellContainer_t (*this, f, c);
+}
+
+linkedCellContainer_t& linkedCellContainer_t::
+operator= (const linkedCellContainer_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->leftLowerBound_ = x.leftLowerBound_;
+    this->rightUpperBound_ = x.rightUpperBound_;
+    this->cellSize_ = x.cellSize_;
+    this->cutOffRadius_ = x.cutOffRadius_;
+  }
+
+  return *this;
+}
+
+linkedCellContainer_t::
+~linkedCellContainer_t ()
+{
+}
+
+// vectorContainer_t
+//
+
+vectorContainer_t::
+vectorContainer_t (const vector_type& vector)
+: ::xml_schema::type (),
+  vector_ (vector, this)
+{
+}
+
+vectorContainer_t::
+vectorContainer_t (::std::unique_ptr< vector_type > vector)
+: ::xml_schema::type (),
+  vector_ (std::move (vector), this)
+{
+}
+
+vectorContainer_t::
+vectorContainer_t (const vectorContainer_t& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  vector_ (x.vector_, f, this)
+{
+}
+
+vectorContainer_t::
+vectorContainer_t (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  vector_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void vectorContainer_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // vector
+    //
+    if (n.name () == "vector" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< vector_type > r (
+        vector_traits::create (i, f, this));
+
+      if (!vector_.present ())
+      {
+        this->vector_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!vector_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "vector",
+      "");
+  }
+}
+
+vectorContainer_t* vectorContainer_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class vectorContainer_t (*this, f, c);
+}
+
+vectorContainer_t& vectorContainer_t::
+operator= (const vectorContainer_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->vector_ = x.vector_;
+  }
+
+  return *this;
+}
+
+vectorContainer_t::
+~vectorContainer_t ()
 {
 }
 

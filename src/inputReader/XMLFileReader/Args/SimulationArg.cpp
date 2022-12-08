@@ -1,13 +1,6 @@
 #include "SimulationArg.h"
 
 #include <utility>
-SimulationArg::SimulationArg(double endTime, double deltaT,
-                             unsigned int writeOutFrequency,
-                             std::string filename)
-    : endTime(endTime),
-      deltaT(deltaT),
-      writeOutFrequency(writeOutFrequency),
-      filename(std::move(filename)) {}
 
 double SimulationArg::getEndTime() const { return endTime; }
 
@@ -20,3 +13,9 @@ unsigned int SimulationArg::getWriteOutFrequency() const {
 const std::string& SimulationArg::getFilename() const { return filename; }
 
 SimulationArg::~SimulationArg() {}
+
+std::string SimulationArg::getInputFile() const { return inputFile; }
+
+SimulationArg::SimulationArg(double endTime, double deltaT,
+                             unsigned int writeOutFrequency,
+                             std::string filename, std::string inputFile) {}

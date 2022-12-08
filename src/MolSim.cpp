@@ -11,6 +11,7 @@
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
+#include "inputReader/XMLFileReader/XMLParser.h"
 #include "model/LennardJonesModel.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
@@ -45,6 +46,7 @@ int main(int argc, char *argsv[]) {
 
   int opt;
   static struct option long_options[] = {
+      {"xml", required_argument, nullptr, 'x'},
       {"output-file", required_argument, nullptr, 'o'},
       {"no-output", no_argument, nullptr, 'n'},
       {"type", required_argument, nullptr, 't'},
@@ -84,6 +86,41 @@ int main(int argc, char *argsv[]) {
         inputFile = optarg;
         break;
       }
+      case 'x': {
+        XMLParser xmlParser = XMLParser(optarg);
+        std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
+        simulation.setDeltaT(simArg->getDeltaT());
+        simulation.setEndTime(simArg->getEndTime());
+        simulation.setIterationsPerWrite(simArg->getWriteOutFrequency());
+        simulation.setFilename(simArg->getFilename());
+        std::vector<CuboidArg> cuboidArgs = xmlParser.extractCuboid();
+        std::vector<SphereArg> sphereArgs = xmlParser.extractSpheres();
+        std::unique_ptr<LinkedCellArg> linkedCellArg =
+            xmlParser.extractLinkedCell();
+
+        LinkedCellsContainer linkedCellsContainer = LinkedCellsContainer(
+            linkedCellArg->getCellSize(), linkedCellArg->getLeftLowerBound(),
+            &linkedCellArg->getRightUpperBound());
+
+        for (auto &it : cuboidArgs) {
+          ParticleGeneration::cuboid cuboid = {
+              it.getPosition(), it.getDimension(), it.getVelocity(),
+              it.getDistance(), it.getMass(),      it.getType()};
+          ParticleGeneration::addCuboidToParticleContainer(linkedCellsContainer,
+                                                           cuboid);
+        }
+
+        for (auto &it : sphereArgs) {
+          ParticleGeneration::sphere sphere = {
+              it.getPosition(), it.getRadius(),   it.getDimension(),
+              it.getVelocity(), it.getDistance(), it.getMass(),
+              it.getType()};
+          ParticleGeneration::addSphereToParticleContainer(linkedCellsContainer,
+                                                           sphere);
+        }
+        break;
+      }
+
       case 'e': {
         try {
           double end = std::stod(optarg);
@@ -293,7 +330,7 @@ void printUsage() {
          "        ./MolSim -f <input-file> [-t (single|cuboid)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
-         "[-n] [-p] [-v] [-v] [-q]\n"
+         "[-n] [-p] [-v] [-v] [-q] [-x]\n"
          "\n"
          "For more information run ./Molsim -h or ./Molsim --help"
       << std::endl;
@@ -351,6 +388,9 @@ void printHelp() {
          "                \n"
          "        -q, --quiet\n"
          "                Set loglevel to ERROR. Overrites -v.\n"
+         "\n"
+         "        -x <filepath>, --xml=<filepath>\n"
+         "                Use the XML file at the <filepath> as an input\n"
          "\n"
          "        -h, --help\n"
          "                Prints this help screen."

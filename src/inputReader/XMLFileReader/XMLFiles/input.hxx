@@ -233,6 +233,9 @@ class cuboid_t;
 class sphere_t;
 class simTypes_t;
 class input_t;
+class containerTypes_t;
+class linkedCellContainer_t;
+class vectorContainer_t;
 
 #include <memory>    // ::std::unique_ptr
 #include <limits>    // std::numeric_limits
@@ -267,6 +270,23 @@ class simulation_t: public ::xml_schema::type
 
   void
   SimTypes (const SimTypes_sequence& s);
+
+  // Container_T
+  //
+  typedef ::containerTypes_t Container_T_type;
+  typedef ::xsd::cxx::tree::sequence< Container_T_type > Container_T_sequence;
+  typedef Container_T_sequence::iterator Container_T_iterator;
+  typedef Container_T_sequence::const_iterator Container_T_const_iterator;
+  typedef ::xsd::cxx::tree::traits< Container_T_type, char > Container_T_traits;
+
+  const Container_T_sequence&
+  Container_T () const;
+
+  Container_T_sequence&
+  Container_T ();
+
+  void
+  Container_T (const Container_T_sequence& s);
 
   // InputFile
   //
@@ -378,6 +398,7 @@ class simulation_t: public ::xml_schema::type
 
   protected:
   SimTypes_sequence SimTypes_;
+  Container_T_sequence Container_T_;
   InputFile_sequence InputFile_;
   ::xsd::cxx::tree::one< endTime_type > endTime_;
   ::xsd::cxx::tree::one< deltaT_type > deltaT_;
@@ -977,6 +998,241 @@ class input_t: public ::xml_schema::type
 
   protected:
   ::xsd::cxx::tree::one< path_type > path_;
+};
+
+class containerTypes_t: public ::xml_schema::type
+{
+  public:
+  // LinkedCell
+  //
+  typedef ::linkedCellContainer_t LinkedCell_type;
+  typedef ::xsd::cxx::tree::sequence< LinkedCell_type > LinkedCell_sequence;
+  typedef LinkedCell_sequence::iterator LinkedCell_iterator;
+  typedef LinkedCell_sequence::const_iterator LinkedCell_const_iterator;
+  typedef ::xsd::cxx::tree::traits< LinkedCell_type, char > LinkedCell_traits;
+
+  const LinkedCell_sequence&
+  LinkedCell () const;
+
+  LinkedCell_sequence&
+  LinkedCell ();
+
+  void
+  LinkedCell (const LinkedCell_sequence& s);
+
+  // VectorCont
+  //
+  typedef ::vectorContainer_t VectorCont_type;
+  typedef ::xsd::cxx::tree::sequence< VectorCont_type > VectorCont_sequence;
+  typedef VectorCont_sequence::iterator VectorCont_iterator;
+  typedef VectorCont_sequence::const_iterator VectorCont_const_iterator;
+  typedef ::xsd::cxx::tree::traits< VectorCont_type, char > VectorCont_traits;
+
+  const VectorCont_sequence&
+  VectorCont () const;
+
+  VectorCont_sequence&
+  VectorCont ();
+
+  void
+  VectorCont (const VectorCont_sequence& s);
+
+  // Constructors.
+  //
+  containerTypes_t ();
+
+  containerTypes_t (const ::xercesc::DOMElement& e,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  containerTypes_t (const containerTypes_t& x,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  virtual containerTypes_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  containerTypes_t&
+  operator= (const containerTypes_t& x);
+
+  virtual 
+  ~containerTypes_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  LinkedCell_sequence LinkedCell_;
+  VectorCont_sequence VectorCont_;
+};
+
+class linkedCellContainer_t: public ::xml_schema::type
+{
+  public:
+  // leftLowerBound
+  //
+  typedef ::array_d leftLowerBound_type;
+  typedef ::xsd::cxx::tree::traits< leftLowerBound_type, char > leftLowerBound_traits;
+
+  const leftLowerBound_type&
+  leftLowerBound () const;
+
+  leftLowerBound_type&
+  leftLowerBound ();
+
+  void
+  leftLowerBound (const leftLowerBound_type& x);
+
+  void
+  leftLowerBound (::std::unique_ptr< leftLowerBound_type > p);
+
+  // rightUpperBound
+  //
+  typedef ::array_d rightUpperBound_type;
+  typedef ::xsd::cxx::tree::traits< rightUpperBound_type, char > rightUpperBound_traits;
+
+  const rightUpperBound_type&
+  rightUpperBound () const;
+
+  rightUpperBound_type&
+  rightUpperBound ();
+
+  void
+  rightUpperBound (const rightUpperBound_type& x);
+
+  void
+  rightUpperBound (::std::unique_ptr< rightUpperBound_type > p);
+
+  // cellSize
+  //
+  typedef ::xml_schema::double_ cellSize_type;
+  typedef ::xsd::cxx::tree::traits< cellSize_type, char, ::xsd::cxx::tree::schema_type::double_ > cellSize_traits;
+
+  const cellSize_type&
+  cellSize () const;
+
+  cellSize_type&
+  cellSize ();
+
+  void
+  cellSize (const cellSize_type& x);
+
+  // cutOffRadius
+  //
+  typedef ::xml_schema::double_ cutOffRadius_type;
+  typedef ::xsd::cxx::tree::traits< cutOffRadius_type, char, ::xsd::cxx::tree::schema_type::double_ > cutOffRadius_traits;
+
+  const cutOffRadius_type&
+  cutOffRadius () const;
+
+  cutOffRadius_type&
+  cutOffRadius ();
+
+  void
+  cutOffRadius (const cutOffRadius_type& x);
+
+  // Constructors.
+  //
+  linkedCellContainer_t (const leftLowerBound_type&,
+                         const rightUpperBound_type&,
+                         const cellSize_type&,
+                         const cutOffRadius_type&);
+
+  linkedCellContainer_t (::std::unique_ptr< leftLowerBound_type >,
+                         ::std::unique_ptr< rightUpperBound_type >,
+                         const cellSize_type&,
+                         const cutOffRadius_type&);
+
+  linkedCellContainer_t (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  linkedCellContainer_t (const linkedCellContainer_t& x,
+                         ::xml_schema::flags f = 0,
+                         ::xml_schema::container* c = 0);
+
+  virtual linkedCellContainer_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  linkedCellContainer_t&
+  operator= (const linkedCellContainer_t& x);
+
+  virtual 
+  ~linkedCellContainer_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< leftLowerBound_type > leftLowerBound_;
+  ::xsd::cxx::tree::one< rightUpperBound_type > rightUpperBound_;
+  ::xsd::cxx::tree::one< cellSize_type > cellSize_;
+  ::xsd::cxx::tree::one< cutOffRadius_type > cutOffRadius_;
+};
+
+class vectorContainer_t: public ::xml_schema::type
+{
+  public:
+  // vector
+  //
+  typedef ::array_d vector_type;
+  typedef ::xsd::cxx::tree::traits< vector_type, char > vector_traits;
+
+  const vector_type&
+  vector () const;
+
+  vector_type&
+  vector ();
+
+  void
+  vector (const vector_type& x);
+
+  void
+  vector (::std::unique_ptr< vector_type > p);
+
+  // Constructors.
+  //
+  vectorContainer_t (const vector_type&);
+
+  vectorContainer_t (::std::unique_ptr< vector_type >);
+
+  vectorContainer_t (const ::xercesc::DOMElement& e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  vectorContainer_t (const vectorContainer_t& x,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  virtual vectorContainer_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  vectorContainer_t&
+  operator= (const vectorContainer_t& x);
+
+  virtual 
+  ~vectorContainer_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< vector_type > vector_;
 };
 
 #include <iosfwd>
