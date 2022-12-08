@@ -55,7 +55,6 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type,
   std::sort(connectedCells.begin(), connectedCells.end());
 }
 
-
 double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   // Assumes particle is linked with the cell it's currently in!
   size_t dimIndex = getDimensionBySide(side);
@@ -69,7 +68,6 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) {
   // can be negative, see header file.
   return relativePosition;
 }
-
 
 std::array<unsigned int, 3> LinkedCellsBoundary::getCoordFromVectorIndex(
     size_t index) {

@@ -48,7 +48,6 @@ class LinkedCellsBoundary {
   /// Right, upper, back corner of corresponding LinkedCells container in 3d
   std::array<double, 3> rightUpperCorner;
 
-
   // Contains characteristic position parameters for boundary cells based on
   // cube side. This is an array instead of a map for fast lookup times.
   // E.g. access via: dimensionTable[static_cast<size_t>(cubeSide::TOP)]
