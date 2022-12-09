@@ -15,6 +15,8 @@ class LinkedCellsContainer : public IContainer {
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
+  std::vector<Particle> ghostVector;
+
   /// A vector containing all the cells
   std::vector<cell> cells;
 
@@ -39,7 +41,7 @@ class LinkedCellsContainer : public IContainer {
    * @return The index in the cells vector that has the cell in which the
    * position is located
    */
-  size_t getCellIndexOfPosition(std::array<double, 3> &position);
+  size_t getCellIndexOfPosition(std::array<double, 3> const &position);
 
   /**
    * Get the index from a 3d cell coordinate
@@ -59,6 +61,13 @@ class LinkedCellsContainer : public IContainer {
    */
   std::array<size_t, 14> indexOffsetAdjacent{};
 
+  /**
+   * Generates neighbor list for theoretical particle by taking the particles of surrounding cells
+   * @param particle A particle that IS NOT LINKED within the container
+   * @return List of neighboring particles (ignores cutoff distance)
+   */
+  std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
+
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
 
@@ -69,15 +78,22 @@ class LinkedCellsContainer : public IContainer {
    * @param leftLowerBound The left lower corner of the domain bounding box
    * @param rightUpperBound The right upper corner of the domain bounding box
    */
-  LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
-                       std::array<double, 3> &rightUpperBound);
+  LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound, std::array<double, 3> &rightUpperBound);
 
   ~LinkedCellsContainer() override = default;
 
   void forEach(std::function<void(Particle &)> &unaryFunction) override;
 
-  void forEachPair(
-      std::function<void(Particle &, Particle &)> &binaryFunction) override;
+  void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override;
+
+  /**
+   * Applies binaryFunction to all particles within the same cell and surrounding cell of the particle.
+   * Use these function for external, unlinked particles. I. e. for force calculation with ghost particles!
+   * @param particle Particle for which the cell is determined and which will be used to build pairs
+   * @param binaryFunction The function which will be applied to the pairs: binaryFunction(particle, other_particles)
+   * @note If the input particle A is linked in one of the cells, the function will call binaryFunction(A,A)
+   */
+  void forEachNeighbor(Particle &particle, std::function<void(Particle &, Particle &)> &binaryFunction);
 
   void reserve(size_t amount) override;
 
@@ -85,8 +101,7 @@ class LinkedCellsContainer : public IContainer {
 
   size_t size() override;
 
-  void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                    double m_arg, int type) override;
+  void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type) override;
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
@@ -101,8 +116,22 @@ class LinkedCellsContainer : public IContainer {
    * apply multiple boundaries on the same side of the container, unless this is
    * exactly what you want.
    */
-  [[maybe_unused]] void setBoundaries(
-      std::vector<std::pair<cubeSide, boundaryType>> sideAndType);
+  [[maybe_unused]] void setBoundaries(std::vector<std::pair<cubeSide, boundaryType>> sideAndType);
+
+  /**
+   * Applies binary function to ghost and its non ghost neighbors. Required to simulate the periodic boundary.
+   * @param binaryFunction The function applied to both the ghost and its neighbors.
+   */
+  inline void forEachGhostPair(std::function<void(Particle &, Particle &)> &binaryFunction) {
+    for (auto& ghost : ghostVector) {
+      if (ghost.isDeleted()) continue;
+
+      forEachNeighbor(ghost, binaryFunction);
+    }
+
+    ghostVector.clear();
+  }
+
 
   /**
    * Applies the effects of all boundaries on the container
