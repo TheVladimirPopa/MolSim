@@ -212,19 +212,19 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{-15., -20., -5};
-  std::array<double, 3> rightUpperCorner{55., 30., 5};
+  std::array<double, 3> leftLowerCorner{-15., -5., -5};
+  std::array<double, 3> rightUpperCorner{15., 15., 5};
 
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
                                             rightUpperCorner};
 
   linkedCellsContainer.setBoundaries({
-      {cubeSide::LEFT, boundaryType::REFLECT},
-      {cubeSide::RIGHT, boundaryType::REFLECT},
-      {cubeSide::TOP, boundaryType::REFLECT},
-      {cubeSide::BOTTOM, boundaryType::REFLECT},
-      {cubeSide::FRONT, boundaryType::REFLECT},
-      {cubeSide::BACK, boundaryType::REFLECT},
+      {cubeSide::LEFT, boundaryType::PERIODIC},
+      {cubeSide::RIGHT, boundaryType::PERIODIC},
+      {cubeSide::TOP, boundaryType::PERIODIC},
+      {cubeSide::BOTTOM, boundaryType::PERIODIC},
+      {cubeSide::FRONT, boundaryType::PERIODIC},
+      {cubeSide::BACK, boundaryType::PERIODIC},
   });
 
   IContainer *container = &linkedCellsContainer;

@@ -47,4 +47,7 @@ struct cell {
 
   explicit cell(cellType t, size_t index)
       : particles{}, type{t}, cellVectorIndex{index} {}
+
+  /// Returns whether the cell is empty
+  inline bool isEmpty() { return particles.empty(); }
 };
