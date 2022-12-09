@@ -42,6 +42,9 @@ class LinkedCellsBoundary {
   /// A reference to the particles vector of the corresponding container.
   std::vector<Particle>* particlesVector;
 
+  /// Boundaries will store ghost particles here.
+  std::vector<Particle>* ghostParticlesVector;
+
   /// Left, lower, front corner of corresponding LinkedCells container in 3d
   std::array<double, 3> leftLowerCorner;
 
@@ -80,17 +83,15 @@ class LinkedCellsBoundary {
       cubeDimensions[2] - 1,  // Relevant cell location, cubeSide::BACK
   };
 
-  inline size_t getDimensionBySide(cubeSide s) {
-    return dimensionTable[static_cast<size_t>(s)];
-  }
+  inline size_t getDimensionBySide(cubeSide s) const { return dimensionTable[static_cast<size_t>(s)]; }
 
-  inline unsigned int getCellGridLocation(cubeSide s) {
-    return cellGridLocationTable[static_cast<size_t>(s)];
-  }
+  inline unsigned int getCellGridLocation(cubeSide s) const { return cellGridLocationTable[static_cast<size_t>(s)]; }
 
-  inline unsigned int getHaloGridLocation(cubeSide s) {
-    return haloLocationTable[static_cast<size_t>(s)];
-  }
+  inline unsigned int getHaloGridLocation(cubeSide s) const { return haloLocationTable[static_cast<size_t>(s)]; }
+
+  std::array<double, 3> getMirrorLocation(Particle& particle);
+  Particle generateGhost(Particle& particle);
+  void addGhostForces(size_t index);
 
  public:
   /// Pointers to connected boundary cells
@@ -112,11 +113,9 @@ class LinkedCellsBoundary {
    * @param rightUpperCorner The right upper back corner of the 3d container
    * cube
    */
-  LinkedCellsBoundary(cubeSide side, boundaryType type,
-                      std::vector<cell>& cells,
-                      std::vector<Particle>* particlesVector,
-                      std::array<unsigned int, 3> dimensions,
-                      std::array<double, 3> leftLowerCorner,
+  LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
+                      std::vector<Particle>* particlesVector, std::vector<Particle>* ghostVector,
+                      std::array<unsigned int, 3> dimensions, std::array<double, 3> leftLowerCorner,
                       std::array<double, 3> rightUpperCorner);
 
   /**
@@ -125,14 +124,14 @@ class LinkedCellsBoundary {
    * @return The distance to the wall. The distance can be negative, because
    * a particle being left and right to a boundary is treated separately.
    */
-  double getDistanceToWall(Particle const& particle);
+  double getDistanceToWall(Particle const& particle) const;
 
   /**
    * Translate cell vector index to grid location
    * @param index the index that gets translated into a grid location
    * @return grid location {x, y, z} of cell
    */
-  std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index);
+  std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index) const;
 
   /**
    * Deletes particles that have left the boundary and entered a halo cell.
@@ -146,6 +145,12 @@ class LinkedCellsBoundary {
   void reflectParticles();
 
   /**
+   * Implements the periodic boundary. Particles that leaf the domain through a boundary
+   * get mirrored onto the other side of the LinkedCells container cube.
+   */
+  void loopSpace();
+
+  /**
    * Applies the effects of the current boundary
    */
   void apply();
@@ -153,9 +158,7 @@ class LinkedCellsBoundary {
   /**
    * @return Boundary cells on which the boundary operates on.
    */
-  [[nodiscard]] std::vector<cell*> getConnectedCells() const {
-    return connectedCells;
-  }
+  [[nodiscard]] std::vector<cell*> getConnectedCells() const { return connectedCells; }
 
   /**
    * @return Side on which the boundary lies. E.g. left side of LinkedCells
