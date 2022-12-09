@@ -12,14 +12,12 @@ class LinkedCellArg {
 
  public:
   LinkedCellArg(double cellSize, double cutOffRadius,
-                const std::array<double, 3>& leftLowerBound,
-                const std::array<double, 3>& rightUpperBound);
-
+                const std::array<double, 3> &leftLowerBound,
+                const std::array<double, 3> &rightUpperBound);
   double getCellSize() const;
 
   double getCutOffRadius() const;
 
-  const std::array<double, 3>& getLeftLowerBound() const;
-
-  const std::array<double, 3>& getRightUpperBound() const;
+  const std::array<double, 3> &getLeftLowerBound() const;
+  const std::array<double, 3> &getRightUpperBound() const;
 };

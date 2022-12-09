@@ -77,6 +77,9 @@ class XMLParser {
         auto &cs = c.cellSize();
         auto &cut = c.cutOffRadius();
 
+        LinkedCellArg linkedCellArg = LinkedCellArg(
+            cs, cut, generate_double_array(lb), generate_double_array(rb));
+
         arg.emplace_back(cs, cut, generate_double_array(lb),
                          generate_double_array(rb));
       }

@@ -87,6 +87,8 @@ int main(int argc, char *argsv[]) {
         break;
       }
       case 'x': {
+
+        //XML Input
         XMLParser xmlParser = XMLParser(optarg);
         std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
         simulation.setDeltaT(simArg->getDeltaT());
@@ -98,9 +100,12 @@ int main(int argc, char *argsv[]) {
         std::unique_ptr<LinkedCellArg> linkedCellArg =
             xmlParser.extractLinkedCell();
 
+        std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
+        std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
+
         LinkedCellsContainer linkedCellsContainer = LinkedCellsContainer(
-            linkedCellArg->getCellSize(), linkedCellArg->getLeftLowerBound(),
-            &linkedCellArg->getRightUpperBound());
+            linkedCellArg->getCellSize(), lowerBound, upperBound);
+        double cutOffRad = linkedCellArg->getCutOffRadius();
 
         for (auto &it : cuboidArgs) {
           ParticleGeneration::cuboid cuboid = {
