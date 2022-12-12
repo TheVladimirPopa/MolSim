@@ -4,43 +4,11 @@
 #include "dataStructures/LinkedCellsContainer.h"
 #include "gtest/gtest.h"
 #include "utils/ArrayUtils.h"
+#include "utils/TestUtilsBoundaries.h"
+
 
 using v3d = std::array<double, 3>;
 
-/**
- * Ensure internal structure of boundary is consistent with container.
- */
-TEST(LinkedCellsBoundary, SetupStructure) {
-  double const meshWidth = 2.0;
-
-  for (int i = 0.0; i < 10.0; i++) {
-    for (int j = 0.0; j < 10.0; j++) {
-      v3d dimensions{5 + static_cast<double>(i), 4 + static_cast<double>(j), 1};
-
-      v3d leftCorner{0., 0., 0.};
-      v3d rightCorner{meshWidth * dimensions};
-      LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
-
-      container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
-                               {cubeSide::RIGHT, boundaryType::OUTFLOW},
-                               {cubeSide::TOP, boundaryType::REFLECT},
-                               {cubeSide::BOTTOM, boundaryType::REFLECT}});
-
-      // Number of generated boundaries is correct
-      auto& boundaries = container.getBoundaries();
-      EXPECT_EQ(boundaries.size(), 4);
-
-      // Each boundary is linked with the correct number of cells
-      auto widthCellCount = container.getDimensions()[0] - 2;
-      auto heightCellCount = container.getDimensions()[1] - 2;
-
-      EXPECT_EQ(boundaries[0].getConnectedCells().size(), heightCellCount);
-      EXPECT_EQ(boundaries[1].getConnectedCells().size(), heightCellCount);
-      EXPECT_EQ(boundaries[2].getConnectedCells().size(), widthCellCount);
-      EXPECT_EQ(boundaries[3].getConnectedCells().size(), widthCellCount);
-    }
-  }
-}
 
 /**
  * Tests that the outflow boundary deletes particles in the halo area
@@ -98,9 +66,8 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
   size_t forEachCountBefore = foreachCount;
   foreachCount = 0;
 
-  EXPECT_EQ(containerSizeBefore, countedSize)
-      << "It's possible that some particles are not linked or linked multiple "
-         "times.";
+  EXPECT_EQ(containerSizeBefore, countedSize) << "It's possible that some particles are not linked or linked multiple "
+                                                 "times.";
 
   // Apply boundaries, which should delete the halo
   container.applyBoundaries();
@@ -118,14 +85,12 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
   EXPECT_EQ(countedSizeAfter, countedSize - numberOfDeletions);
   EXPECT_EQ(countedHaloSizeAfter, 0);
   EXPECT_EQ(container.size() + numberOfDeletions, containerSizeBefore);
-  EXPECT_NE(container.size(), 0)
-      << "The boundaries deleted everything not just halo cell content.";
+  EXPECT_NE(container.size(), 0) << "The boundaries deleted everything not just halo cell content.";
 
   // Check if .foreach() works correctly
   container.forEach(count);
   size_t forEachCountAfter = foreachCount;
-  EXPECT_GT(forEachCountBefore, forEachCountAfter)
-      << "Foreach must not apply to deleted particles.";
+  EXPECT_GT(forEachCountBefore, forEachCountAfter) << "Foreach must not apply to deleted particles.";
 }
 
 /**
@@ -168,14 +133,11 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
     }
   }
 
-  EXPECT_NE(nonHaloParticlesBefore, 0)
-      << "For the test, some particles should be in inner/boundary cells.";
+  EXPECT_NE(nonHaloParticlesBefore, 0) << "For the test, some particles should be in inner/boundary cells.";
 
-  ASSERT_EQ(addedCount, nonHaloParticlesBefore + haloParticlesBefore)
-      << "The container lost particles.";
+  ASSERT_EQ(addedCount, nonHaloParticlesBefore + haloParticlesBefore) << "The container lost particles.";
 
-  ASSERT_NE(haloParticlesBefore, 0)
-      << "To test deletion, ensure halo is not empty.";
+  ASSERT_NE(haloParticlesBefore, 0) << "To test deletion, ensure halo is not empty.";
 
   // Spawn and apply boundaries
   container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
@@ -187,8 +149,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
 
   for (auto& b : container.getBoundaries()) {
     // Check internal structure is still correct
-    for (auto& cell : b.getConnectedCells())
-      EXPECT_EQ(cell->type, cellType::boundary);
+    for (auto& cell : b.getConnectedCells()) EXPECT_EQ(cell->type, cellType::boundary);
 
     EXPECT_EQ(b.getConnectedCells().size(), 25);
   }
@@ -210,8 +171,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
 
   EXPECT_EQ(nonHaloParticlesBefore, nonHaloParticlesAfter)
       << "Particles that where not in halo cells got deleted/appeared.";
-  EXPECT_EQ(haloParticlesAfter, 0)
-      << "Not all particles in halo cells where deleted.";
+  EXPECT_EQ(haloParticlesAfter, 0) << "Not all particles in halo cells where deleted.";
 }
 
 class LinkedCellsReflectiveBoundary : public ::testing::Test {
@@ -224,43 +184,7 @@ class LinkedCellsReflectiveBoundary : public ::testing::Test {
     epsilon = ReflectiveBoundary::reflectDistance / 5.0;
     centerOffset = 5.0 - epsilon;
 
-    // We check 6 surfaces, 12 edges, 8 corners. Any other case should occur
-    // as a linear combination of these cases.
-    testParticles = {
-        // Particles in center of surface get reflected towards
-        // the center coordinate (0,0,0)
-        {v3d{centerOffset, 0.0, 0.0}},
-        {v3d{-centerOffset, 0.0, 0.0}},
-        {v3d{0.0, centerOffset, 0.0}},
-        {v3d{0.0, -centerOffset, 0.0}},
-        {v3d{0.0, 0.0, centerOffset}},
-        {v3d{0.0, 0.0, -centerOffset}},
-
-        // Particles in edges should be reflected to the center
-        {v3d{centerOffset, centerOffset, 0}},
-        {v3d{-centerOffset, centerOffset, 0}},
-        {v3d{centerOffset, -centerOffset, 0}},
-        {v3d{-centerOffset, -centerOffset, 0}},
-
-        {v3d{0, centerOffset, centerOffset}},
-        {v3d{0, -centerOffset, centerOffset}},
-        {v3d{0, centerOffset, -centerOffset}},
-        {v3d{0, -centerOffset, -centerOffset}},
-
-        {v3d{centerOffset, 0, centerOffset}},
-        {v3d{-centerOffset, 0, centerOffset}},
-        {v3d{centerOffset, 0, -centerOffset}},
-        {v3d{-centerOffset, 0, -centerOffset}},
-
-        // Particle in corners should also be reflected to the center
-        {v3d{centerOffset, centerOffset, centerOffset}},
-        {v3d{-centerOffset, -centerOffset, -centerOffset}},
-        {v3d{centerOffset, centerOffset, -centerOffset}},
-        {v3d{centerOffset, -centerOffset, centerOffset}},
-        {v3d{-centerOffset, centerOffset, centerOffset}},
-        {v3d{-centerOffset, centerOffset, -centerOffset}},
-        {v3d{-centerOffset, -centerOffset, centerOffset}},
-        {v3d{centerOffset, -centerOffset, -centerOffset}}};
+    testParticles = TestUtils::getTestPositions(centerOffset);
   }
 };
 
@@ -280,15 +204,12 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
                            {cubeSide::FRONT, boundaryType::REFLECT},
                            {cubeSide::BACK, boundaryType::REFLECT}});
 
-  for (auto particleX : testParticles)
-    container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
+  for (auto particleX : testParticles) container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
 
   container.applyBoundaries();
 
   std::vector<Particle> transformedParticles{};
-  std::function copyParticles{[&transformedParticles](Particle& p) {
-    transformedParticles.push_back(p);
-  }};
+  std::function copyParticles{[&transformedParticles](Particle& p) { transformedParticles.push_back(p); }};
   container.forEach(copyParticles);
 
   ASSERT_EQ(testParticles.size(), transformedParticles.size())
@@ -315,12 +236,10 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
       invForceSigns[i] = signum(invForceSigns[i]);
     }
 
-    EXPECT_GT(ArrayUtils::L2Norm(invForceSigns), 0)
-        << "No forces where applied onto particle.";
+    EXPECT_GT(ArrayUtils::L2Norm(invForceSigns), 0) << "No forces where applied onto particle.";
 
     if (ArrayUtils::L2Norm(invForceSigns) != 0.0) {
-      EXPECT_EQ(positionSigns, invForceSigns)
-          << "Particle is not symmetrically reflected from boundaries.";
+      EXPECT_EQ(positionSigns, invForceSigns) << "Particle is not symmetrically reflected from boundaries.";
     }
 
     double const expected = 7932629.5583620192;
@@ -329,8 +248,7 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
       bool correctAmountOfForce = (f == expected || f == -expected || f == 0);
 
       EXPECT_TRUE(correctAmountOfForce) << "Where force value: " << f << '\n'
-                                        << "expected values: {" << expected
-                                        << ", " << (-expected) << ", 0.0}";
+                                        << "expected values: {" << expected << ", " << (-expected) << ", 0.0}";
     }
   }
 }
@@ -355,9 +273,7 @@ TEST_F(LinkedCellsReflectiveBoundary, IgnoreOutOfRange) {
 
   // Get particles back
   std::vector<Particle> transformedParticles;
-  std::function getParticles{[&transformedParticles](Particle& p) {
-    transformedParticles.push_back(p);
-  }};
+  std::function getParticles{[&transformedParticles](Particle& p) { transformedParticles.push_back(p); }};
 
   // All particles where far away from the boundary. No forces should apply.
   container.forEach(getParticles);
@@ -367,4 +283,87 @@ TEST_F(LinkedCellsReflectiveBoundary, IgnoreOutOfRange) {
     ASSERT_EQ(particle.getF()[1], 0.0);
     ASSERT_EQ(particle.getF()[2], 0.0);
   }
+}
+
+/**
+ * Holds values for periodic boundary tests
+ */
+class LinkedCellsBoundaryPeriodic : public ::testing::Test {
+ protected:
+  double const centerOffset = 5.0;
+  double const epsilon = 0.05;
+  double const within = centerOffset - epsilon;
+  double const outside = centerOffset + epsilon;
+};
+
+/**
+ * Periodic Boundary: Do not teleport if not in halo area
+ */
+TEST_F(LinkedCellsBoundaryPeriodic, NoTeleportation) {
+  std::vector<v3d> testPositionsNoTeleport = TestUtils::getTestPositions(within);
+
+  // Do not teleport if within boundary cells
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  std::vector<Particle> noTpParticles = TestUtils::applyBoundariesReturnParticles(container, testPositionsNoTeleport);
+
+  for (size_t i = 0; i < testPositionsNoTeleport.size(); i++) {
+    EXPECT_EQ(noTpParticles.at(i).getX(), testPositionsNoTeleport.at(i));
+  }
+}
+
+/**
+ * Periodic Boundary: Do teleport if in halo area
+ */
+TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
+  std::vector<v3d> testPositionsTeleport = TestUtils::getTestPositions(outside);
+
+  // Do teleport if outside boundary cells, in halo cells
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  std::vector<Particle> tpParticles = TestUtils::applyBoundariesReturnParticles(container, testPositionsTeleport);
+
+  for (size_t i = 0; i < testPositionsTeleport.size(); i++) {
+    v3d expectedTpLocation = testPositionsTeleport.at(i);
+    for (size_t j = 0; j < 3; j++) {
+      if (expectedTpLocation[j] == 0.0 || expectedTpLocation[j] == -0.0) {
+        expectedTpLocation[j] = 0.0;
+        continue ;
+      }
+
+      if (expectedTpLocation[j] > 0.0) {
+        expectedTpLocation[j] = -within;
+        continue;
+      }
+
+      expectedTpLocation[j] = within;
+    }
+
+
+    auto actualLocation = tpParticles.at(i).getX();
+    EXPECT_EQ(actualLocation, expectedTpLocation)
+        << "Particle at index " << i << " was not teleported to its correct location.";
+  }
+}
+
+/**
+ * Periodic boundaries project boundary cells into halo cells.
+ */
+TEST_F(LinkedCellsBoundaryPeriodic, GhostForces) {
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  std::vector<v3d> locations {
+      {within, within, within},
+      {-within, -within, -within}
+  };
+  std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, locations);
+
+  ASSERT_NE(particles.size(), 0) << "The container lost the particles we put into it.";
+
+  for (auto& particle : particles) {
+    for (size_t i = 0; i < 3; i++) {
+      EXPECT_NE(particle.getF()[i], 0.0) << "No forces where applied in dimension " << i << ".";
+    }
+  }
+
+  EXPECT_EQ(particles.at(0).getF(), (-1.0) * particles.at(1).getF()) << "Forces where not applied symmetrically";
+
+  // Number of ghosts should be 14
 }
