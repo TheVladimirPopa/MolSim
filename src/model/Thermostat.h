@@ -13,11 +13,9 @@ class Thermostat {
 
   int periodLength;
 
- public:
-  int getPeriodLength() const;
-
- private:
   size_t dimensionCount;
+
+  void setTemperature(double currentTemperature, double newTemperature);
 
  public:
   Thermostat(IContainer &container, double initialTemp, double targetTemp,
@@ -31,4 +29,6 @@ class Thermostat {
   double computeEnergy();
 
   double getCurrentTemperature();
+
+  int getPeriodLength() const;
 };
