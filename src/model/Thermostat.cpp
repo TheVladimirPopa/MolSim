@@ -20,6 +20,8 @@ void Thermostat::applyThermostat() {
   double curTemp = getCurrentTemperature();
   double temperatureDifference = targetTemperature - curTemp;
   double currentTarget = targetTemperature;
+
+  // Make sure the change is smaller the maxTemperatureChange
   if (temperatureDifference > maxTemperatureChange)
     currentTarget = curTemp + maxTemperatureChange;
 
@@ -30,6 +32,7 @@ void Thermostat::applyThermostat() {
 }
 
 void Thermostat::initializeTemperature() {
+  // Test if all velocities are 0
   bool allZero = true;
   std::array<double, 3> zeroVector{0., 0., 0.};
   std::function allVelocitiesZero = [&allZero, &zeroVector](Particle &p) {
@@ -40,6 +43,8 @@ void Thermostat::initializeTemperature() {
   particleContainer.forEach(allVelocitiesZero);
 
   if (allZero) {
+    // If all velocities are zero, initialize the velocities with brownian
+    // motion
     auto initTemp = initialTemperature;
     auto dimCount = dimensionCount;
     std::function applyBrownianMotion = [initTemp, dimCount](Particle &p) {
@@ -48,6 +53,7 @@ void Thermostat::initializeTemperature() {
     };
     particleContainer.forEach(applyBrownianMotion);
   }
+
   setTemperature(getCurrentTemperature(), initialTemperature);
 }
 
@@ -55,8 +61,8 @@ void Thermostat::setTemperature(double currentTemperature,
                                 double newTemperature) {
   spdlog::debug("Set temperature to {} from {}", newTemperature,
                 currentTemperature);
-  double scaleFactor = sqrt(newTemperature / currentTemperature);
 
+  double scaleFactor = sqrt(newTemperature / currentTemperature);
   std::function scaleVelocity = [scaleFactor](Particle &p) {
     p.v = scaleFactor * p.v;
   };
