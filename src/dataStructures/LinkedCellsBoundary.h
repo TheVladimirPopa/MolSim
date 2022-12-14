@@ -42,9 +42,6 @@ class LinkedCellsBoundary {
   /// A reference to the particles vector of the corresponding container.
   std::vector<Particle>* particlesVector;
 
-  /// Boundaries will store ghost particles here.
-  std::vector<Particle>* ghostParticlesVector;
-
   /// Left, lower, front corner of corresponding LinkedCells container in 3d
   std::array<double, 3> leftLowerCorner;
 
@@ -89,9 +86,10 @@ class LinkedCellsBoundary {
 
   inline unsigned int getHaloGridLocation(cubeSide s) const { return haloLocationTable[static_cast<size_t>(s)]; }
 
+  // TODO: documentation
   std::array<double, 3> getMirrorLocation(Particle& particle);
   Particle generateGhost(Particle& particle);
-  void addGhostForces(size_t index);
+  void addGhostForces(Particle& particle);
 
  public:
   /// Pointers to connected boundary cells
@@ -114,9 +112,8 @@ class LinkedCellsBoundary {
    * cube
    */
   LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
-                      std::vector<Particle>* particlesVector, std::vector<Particle>* ghostVector,
-                      std::array<unsigned int, 3> dimensions, std::array<double, 3> leftLowerCorner,
-                      std::array<double, 3> rightUpperCorner);
+                      std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
+                      std::array<double, 3> leftLowerCorner, std::array<double, 3> rightUpperCorner);
 
   /**
    * Returns distance of a particle to the boundary
@@ -131,7 +128,7 @@ class LinkedCellsBoundary {
    * @param index the index that gets translated into a grid location
    * @return grid location {x, y, z} of cell
    */
-  std::array<unsigned int, 3> getCoordFromVectorIndex(size_t index) const;
+  std::array<unsigned int, 3> getCellGridLocation(size_t index) const;
 
   /**
    * Deletes particles that have left the boundary and entered a halo cell.
@@ -165,4 +162,9 @@ class LinkedCellsBoundary {
    * container cube.
    */
   [[maybe_unused]] cubeSide getSide() { return side; }
+
+  /**
+   * @return Type of the boundary. (Outflow, reflective, periodic)
+   */
+  boundaryType getType() { return type; }
 };

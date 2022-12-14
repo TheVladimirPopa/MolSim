@@ -9,20 +9,19 @@
 #define PERIODIC_CUTOFF_PLACEHOLDER 3.0
 
 LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
-                                         std::vector<Particle>* particlesVector, std::vector<Particle>* ghostVector,
-                                         std::array<unsigned int, 3> dimensions, std::array<double, 3> leftLowerCorner,
-                                         std::array<double, 3> rightUpperCorner)
+                                         std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
+                                         std::array<double, 3> leftLowerCorner, std::array<double, 3> rightUpperCorner)
     : side{side},
       type{type},
       cubeDimensions{dimensions},
       particlesVector{particlesVector},
-      ghostParticlesVector{ghostVector},
       leftLowerCorner{leftLowerCorner},
       rightUpperCorner{rightUpperCorner} {
   // Add boundary cells (for periodic boundary this includes halo cells)
+  // todo: Stimmt das noch für PERIODIC?
   for (cell& c : cells) {
     if (type != boundaryType::PERIODIC && c.type != cellType::boundary) continue;
-    auto position = getCoordFromVectorIndex(c.cellVectorIndex);
+    auto position = c.getCellGridLocation();
 
     auto dimIndex = getDimensionBySide(side);
     auto location = getCellGridLocation(side);
@@ -37,16 +36,17 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
   for (cell& c : cells) {
     if (c.type != cellType::halo) continue;
 
-    auto position = getCoordFromVectorIndex(c.cellVectorIndex);
+    auto position = c.getCellGridLocation();
     auto dimIndex = getDimensionBySide(side);
 
     // We add both the outermost layer of halos and the layer 1 coordinate
     // further in. The reason being: otherwise the grid gets holes at its
     // corners and deleteOutflow will not delete Particles in corner Halos.
-    auto location = getCellGridLocation(side);
-    auto locationHalo = getHaloGridLocation(side);
+    auto location = getCellGridLocation(side);      // For outflow boundary
+    auto locationHalo = getHaloGridLocation(side);  // Any other boundary type
 
-    bool isOnBoundarySide = position[dimIndex] == location || position[dimIndex] == locationHalo;
+    bool isOnBoundarySide =
+        (position[dimIndex] == location && type == boundaryType::OUTFLOW) || position[dimIndex] == locationHalo;
 
     if (!isOnBoundarySide) continue;
 
@@ -67,17 +67,6 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) const {
 
   // can be negative, see header file.
   return relativePosition;
-}
-
-std::array<unsigned int, 3> LinkedCellsBoundary::getCoordFromVectorIndex(size_t index) const {
-  unsigned int cellsPerLayer = cubeDimensions[0] * cubeDimensions[1];
-  unsigned int layerCount = index / cellsPerLayer;
-  index -= layerCount * cellsPerLayer;
-
-  unsigned int lineCount = index / cubeDimensions[0];
-  unsigned int cellCount = index - (lineCount * cubeDimensions[0]);
-
-  return {cellCount, lineCount, layerCount};
 }
 
 void LinkedCellsBoundary::deleteOutFlow() {
@@ -129,23 +118,18 @@ std::array<double, 3> LinkedCellsBoundary::getMirrorLocation(Particle& particle)
   return newPos;
 }
 
-void LinkedCellsBoundary::addGhostForces(size_t index) {
-  Particle& particle = (*particlesVector)[index];
-  if (!particle.isDeleted() && getDistanceToWall(particle) > PERIODIC_CUTOFF_PLACEHOLDER) return;
+/* TODO: Reuse this code
+
+void LinkedCellsBoundary::addGhostForces(Particle& particle) {
+  if (!particle.isDeleted() && std::abs(getDistanceToWall(particle)) > PERIODIC_CUTOFF_PLACEHOLDER) return;
 
   Particle ghost{particle};
   ghost.setX(getMirrorLocation(particle));
   ghostParticlesVector->push_back(std::move(ghost));
 }
+ */
 
 void LinkedCellsBoundary::loopSpace() {
-  // Part 1: Simulate loop space by mirroring particles in boundary cells to influence particles on the other side
-  for (cell* bound : connectedCells) {
-    for (auto particleIndex : bound->particles) {
-      addGhostForces(particleIndex);
-    }
-  }
-
   // Part 2: Teleport particles that pass through a boundary cell
   for (cell* halo : connectedHalos) {
     if (halo->isEmpty()) continue;
