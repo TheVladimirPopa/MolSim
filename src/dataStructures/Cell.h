@@ -123,7 +123,7 @@ struct cell {
     cell* ghost = &cells[ghostIndex];
     // push halo once into boundary cell
     auto isLinkPartner = [&ghost](periodicPartner p) { return p.pCell == ghost; };
-    if (std::find_if(periodicPartners.begin(), periodicPartners.end(), isLinkPartner) != periodicPartners.end()) {
+    if (std::find_if(periodicPartners.begin(), periodicPartners.end(), isLinkPartner) == periodicPartners.end()) {
       periodicPartners.push_back({ghost, offset});
 
       // push boundary cell once into halo cell with negated offset
@@ -137,7 +137,7 @@ struct cell {
     auto ghostPos = getCellGridLocation();
     ghostPos = getHaloPos(ghostPos, side);
 
-    std::array<double, 3> offset;
+    std::array<double, 3> offset{};
     offset = getPlaneDistance(side, offset);
 
     linkPartnerUnique(ghostPos, cells, offset);

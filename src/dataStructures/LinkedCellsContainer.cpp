@@ -53,8 +53,6 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
           static_cast<int>(dimensions[1] * dimensions[0]) + x + (y * dimensions[0]);
     }
   }
-
-  linkBoundaryToHaloCells();
 }
 
 size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y, size_t z) {
@@ -100,15 +98,19 @@ std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors
     // Special case to match particles within one cell
     if (indexOffset == 0) {
       for (auto &&particleIndex : cells[gridCell].particles) {
-        neighbors.push_back(particlesVector[particleIndex]);
+        auto& neighborParticle = particlesVector[particleIndex];
+
+        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
       }
     } else {
       // Loop so the particles of each of the two cells and match them
       size_t partnerCellIndex = gridCell + indexOffset;
       if (partnerCellIndex < 0 || partnerCellIndex >= cells.size()) continue;
 
-      for (auto cellBParticle : cells[partnerCellIndex].particles) {
-        neighbors.push_back(particlesVector[cellBParticle]);
+      for (auto&& cellBParticle : cells[partnerCellIndex].particles) {
+        auto& neighborParticle = particlesVector[cellBParticle];
+
+        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
       }
     }
   }
@@ -206,9 +208,10 @@ void LinkedCellsContainer::recalculateStructure() {
   });
 
   for (auto [side, type] : sideAndType) {
-    boundaries.emplace_back(side, type, cells, &particlesVector, dimensions, leftLowerCorner,
-                            rightUpperCorner);
+    boundaries.emplace_back(side, type, cells, &particlesVector, dimensions, leftLowerCorner, rightUpperCorner);
   }
+
+  linkBoundaryToHaloCells();
 }
 
 void LinkedCellsContainer::linkBoundaryToHaloCells() {
@@ -260,27 +263,36 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
     }
   }
 
-  // Special case: Link corners between 2 periodic boundaries
+  // Special case: Link corners between 2 periodic boundaries (2D diagonal partners)
   if (leadingSides.size() >= 2) {
     // Every corner boundary cell is mirrored twice.
     // We have the following possibilities: LR+TD, LR+FB, TD+FB
     for (auto it1 = boundaries.begin(); it1 < boundaries.end(); it1++) {
       if ((*it1).getType() != boundaryType::PERIODIC) continue;
       for (auto it2 = it1 + 1; it2 < boundaries.end(); it2++) {
-        if ((*it2).getType() != boundaryType::PERIODIC) continue;
+        if ((*it2).getType() != boundaryType::PERIODIC or it1 == it2) continue;
+
         cubeSide opSide1 = cell::getOppositeSide((*it1).getSide());
         cubeSide opSide2 = cell::getOppositeSide((*it2).getSide());
 
-        for (cell *boundaryCell : (*it1).getConnectedCells())
-          boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+        if (static_cast<int>(opSide1) > static_cast<int>(opSide2)) std::swap(opSide1, opSide2);
+        bool isParallel = (opSide1 == opSide2) or (static_cast<int>(opSide1) % 2 == 0 and
+                                                   static_cast<cubeSide>(static_cast<int>(opSide1) + 1) == opSide2);
 
-        for (cell *boundaryCell : (*it2).getConnectedCells())
-          boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+        if (isParallel) continue;
+
+        // If and only if a cell boundary cell is shared between 2 periodic boundaries, it has a diagonal halo partner
+        for (cell *boundaryCell : (*it1).getConnectedCells()) {
+          auto const &otherCells = (*it2).getConnectedCells();
+          bool isShared = std::find(otherCells.begin(), otherCells.end(), boundaryCell) != otherCells.end();
+
+          if (isShared) boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+        }
       }
     }
   }
 
-  // Special, special case: 3 pairs of periodic boundaries. Cube corners must be linked.
+  // Special, special case: 3 pairs of periodic boundaries. Cube corners must be linked. (3d diagonal partners)
   if (leadingSides.size() == 3) {
     // 3 pairs of boundaries => cube with periodic borders surrounding it => 8 corner boundary cells.
     // There are 8 cases and we simply iterate over each of them.

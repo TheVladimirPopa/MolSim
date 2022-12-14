@@ -17,10 +17,9 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
       particlesVector{particlesVector},
       leftLowerCorner{leftLowerCorner},
       rightUpperCorner{rightUpperCorner} {
-  // Add boundary cells (for periodic boundary this includes halo cells)
-  // todo: Stimmt das noch für PERIODIC?
+  // Add boundary cells
   for (cell& c : cells) {
-    if (type != boundaryType::PERIODIC && c.type != cellType::boundary) continue;
+    if (c.type != cellType::boundary) continue;
     auto position = c.getCellGridLocation();
 
     auto dimIndex = getDimensionBySide(side);
