@@ -102,3 +102,29 @@ TEST(Thermostat, StepwiseCoolingAndHeating) {
   thermostat40.applyThermostat();
   EXPECT_DOUBLE_EQ(thermostat40.getCurrentTemperature(), 40);
 }
+
+TEST(Thermostat, InitialTemperature) {
+  VectorContainer container{};
+  container.emplace_back(v3d{0., 0., 0.}, v3d{0., 1., 0.}, 2.0, 1);
+  container.emplace_back(v3d{0., 3., 0.}, v3d{0., 1., 0.}, 1.0, 1);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{-1., 0., 6.}, 5.0, 2);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{-1., 0., 0.}, 3., 3);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{0, 3., 4.}, 6.0, 4);
+  Thermostat thermostat{container, 50., 0., 0., 10, 3};
+
+  thermostat.initializeTemperature();
+  EXPECT_DOUBLE_EQ(thermostat.getCurrentTemperature(), 50.);
+}
+
+TEST(Thermostat, InitialTemperatureBrownian) {
+  VectorContainer container{};
+  container.emplace_back(v3d{0., 0., 0.}, v3d{0., 0., 0.}, 2.0, 1);
+  container.emplace_back(v3d{0., 3., 0.}, v3d{0., 0., 0.}, 1.0, 1);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{0., 0., 0.}, 5.0, 2);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{0., 0., 0.}, 3., 3);
+  container.emplace_back(v3d{0., 5., 0.}, v3d{0, 0., 0.}, 6.0, 4);
+  Thermostat thermostat{container, 50., 0., 0., 10, 3};
+
+  thermostat.initializeTemperature();
+  EXPECT_DOUBLE_EQ(thermostat.getCurrentTemperature(), 50.);
+}
