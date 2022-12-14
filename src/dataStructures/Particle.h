@@ -13,6 +13,7 @@
 class IModel;
 class NewtonsLawModel;
 class LennardJonesModel;
+class Thermostat;
 
 class Particle {
  private:
@@ -90,6 +91,7 @@ class Particle {
   friend class IModel;
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
+  friend class Thermostat;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can
