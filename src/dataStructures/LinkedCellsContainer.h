@@ -33,9 +33,6 @@ class LinkedCellsContainer : public IContainer {
   /// The count of cells in each direction, halo cells are included
   std::array<unsigned int, 3> dimensions{};
 
-  /// todo:
-  std::array<double, 3> cubeSize;
-
   /**
    * Compute the index of the cell containing the given position
    * @param position A 3d array containing the position
@@ -69,7 +66,9 @@ class LinkedCellsContainer : public IContainer {
    */
   std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
 
-  /// todo: doc
+  /**
+   * Links up boundary cells and halo cells depending on the configuration of periodic boundaries that was applied.
+   */
   void linkBoundaryToHaloCells();
 
   // The boundaries need access to dimensions, particles, cells
@@ -129,8 +128,11 @@ class LinkedCellsContainer : public IContainer {
     for (auto &boundary : boundaries) boundary.apply();
   }
 
-  /// todo: doc
-  void applyGhostForces(std::function<void(Particle &, Particle &)> &binaryFunction);
+  /**
+   * Applies function to particle pairs through periodic boundaries.
+   * @param binaryFunction The function that gets applied onto each particle pair
+   */
+  void applyPeriodicForces(std::function<void(Particle &, Particle &)> &binaryFunction);
 
   /**
    * Method returning the cells vector. ONLY USED FOR TESTING

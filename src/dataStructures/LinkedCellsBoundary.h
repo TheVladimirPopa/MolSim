@@ -43,10 +43,10 @@ class LinkedCellsBoundary {
   std::vector<Particle>* particlesVector;
 
   /// Left, lower, front corner of corresponding LinkedCells container in 3d
-  std::array<double, 3> leftLowerCorner;
+  std::array<double, 3>* leftLowerCorner;
 
   /// Right, upper, back corner of corresponding LinkedCells container in 3d
-  std::array<double, 3> rightUpperCorner;
+  std::array<double, 3>* rightUpperCorner;
 
   // Contains characteristic position parameters for boundary cells based on
   // cube side. This is an array instead of a map for fast lookup times.
@@ -86,10 +86,13 @@ class LinkedCellsBoundary {
 
   inline unsigned int getHaloGridLocation(cubeSide s) const { return haloLocationTable[static_cast<size_t>(s)]; }
 
-  // TODO: documentation
+  /**
+   * Takes particle and returns a location moved along the LinkedCells container cube backwards, to simulate a periodic
+   * boundary. (It can be thought of being similar to a modulo operation applied to the location of the particle)
+   * @param particle The particle for which we update the location
+   * @return The new location
+   */
   std::array<double, 3> getMirrorLocation(Particle& particle);
-  Particle generateGhost(Particle& particle);
-  void addGhostForces(Particle& particle);
 
  public:
   /// Pointers to connected boundary cells
@@ -113,7 +116,7 @@ class LinkedCellsBoundary {
    */
   LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
                       std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
-                      std::array<double, 3> leftLowerCorner, std::array<double, 3> rightUpperCorner);
+                      std::array<double, 3>* leftLowerCorner, std::array<double, 3>* rightUpperCorner);
 
   /**
    * Returns distance of a particle to the boundary

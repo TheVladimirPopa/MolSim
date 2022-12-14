@@ -5,12 +5,10 @@
 
 #include "spdlog/spdlog.h"
 
-// todo:
-#define PERIODIC_CUTOFF_PLACEHOLDER 3.0
-
 LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
                                          std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
-                                         std::array<double, 3> leftLowerCorner, std::array<double, 3> rightUpperCorner)
+                                         std::array<double, 3>* leftLowerCorner,
+                                         std::array<double, 3>* rightUpperCorner)
     : side{side},
       type{type},
       cubeDimensions{dimensions},
@@ -52,7 +50,7 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
     connectedHalos.push_back(&c);
   }
 
-  // Sort for better cache usage
+  // Sort for better cache availability
   std::sort(connectedCells.begin(), connectedCells.end());
 }
 
@@ -61,8 +59,8 @@ double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) const {
   size_t dimIndex = getDimensionBySide(side);
 
   bool leftRelative = side == cubeSide::LEFT || side == cubeSide::TOP || side == cubeSide::FRONT;
-  double relativePosition = leftRelative ? particle.getX()[dimIndex] - leftLowerCorner[dimIndex]
-                                         : particle.getX()[dimIndex] - rightUpperCorner[dimIndex];
+  double relativePosition = leftRelative ? particle.getX()[dimIndex] - (*leftLowerCorner)[dimIndex]
+                                         : particle.getX()[dimIndex] - (*rightUpperCorner)[dimIndex];
 
   // can be negative, see header file.
   return relativePosition;
@@ -109,27 +107,16 @@ std::array<double, 3> LinkedCellsBoundary::getMirrorLocation(Particle& particle)
   // to find the new location we then must use the right corner and place the particle with the same offset
   double boundaryOffset = getDistanceToWall(particle);
   double newLocation =
-      leftRelative ? rightUpperCorner[dimIndex] + boundaryOffset : leftLowerCorner[dimIndex] + boundaryOffset;
+      leftRelative ? (*rightUpperCorner)[dimIndex] + boundaryOffset : (*leftLowerCorner)[dimIndex] + boundaryOffset;
 
-  // todo: inefficient for not good reason
+  // Note: this can be optimized
   auto newPos = particle.getX();
   newPos[dimIndex] = newLocation;
   return newPos;
 }
 
-/* TODO: Reuse this code
-
-void LinkedCellsBoundary::addGhostForces(Particle& particle) {
-  if (!particle.isDeleted() && std::abs(getDistanceToWall(particle)) > PERIODIC_CUTOFF_PLACEHOLDER) return;
-
-  Particle ghost{particle};
-  ghost.setX(getMirrorLocation(particle));
-  ghostParticlesVector->push_back(std::move(ghost));
-}
- */
-
 void LinkedCellsBoundary::loopSpace() {
-  // Part 2: Teleport particles that pass through a boundary cell
+  // Teleport particles to opposite side of linked cells container
   for (cell* halo : connectedHalos) {
     if (halo->isEmpty()) continue;
 

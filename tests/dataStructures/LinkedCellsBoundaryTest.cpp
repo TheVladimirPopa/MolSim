@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 #include "utils/ArrayUtils.h"
 #include "utils/TestUtilsBoundaries.h"
+using TestUtils::signum;
 
 using v3d = std::array<double, 3>;
 
@@ -253,12 +254,6 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
   // the center coordinate. Thanks to the test setup is suffices to just check
   // whether forces and location share opposite signs.
 
-  auto signum = [](double x) {
-    if (x > 0) return 1;
-    if (x < 0) return -1;
-    return 0;
-  };
-
   for (auto& particle : transformedParticles) {
     // Figure out signs of forces + location per dimension
     v3d positionSigns = particle.getX();
@@ -330,7 +325,7 @@ class LinkedCellsBoundaryPeriodic : public ::testing::Test {
 };
 
 /**
- * Periodic Boundary: Do not teleport if not in halo area
+ * Periodic Boundary: Do not teleport particles that are inside the LinkedCells container (not in the halo area)
  */
 TEST_F(LinkedCellsBoundaryPeriodic, NoTeleportation) {
   std::vector<v3d> testPositionsNoTeleport = TestUtils::getTestPositions(within);
@@ -345,7 +340,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, NoTeleportation) {
 }
 
 /**
- * Periodic Boundary: Do teleport if in halo area
+ * Periodic Boundary: Do teleport particles that are outside the LinkedCells container (in the halo area) back inside
  */
 TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
   std::vector<v3d> testPositionsTeleport = TestUtils::getTestPositions(outside);
@@ -379,7 +374,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
 /**
  * Periodic boundaries project boundary cells into halo cells.
  */
-TEST_F(LinkedCellsBoundaryPeriodic, GhostForces) {
+TEST_F(LinkedCellsBoundaryPeriodic, ForcesThrough3DCorner) {
   LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
   std::vector<v3d> locations{{within, within, within}, {-within, -within, -within}};
   std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, locations);
@@ -393,6 +388,30 @@ TEST_F(LinkedCellsBoundaryPeriodic, GhostForces) {
   }
 
   EXPECT_EQ(particles.at(0).getF(), (-1.0) * particles.at(1).getF()) << "Forces where not applied symmetrically";
+  EXPECT_EQ(particles.at(0).getF(), (v3d{-1097378875171.5172, -1097378875171.5172, -1097378875171.5172}));
+}
 
-  // Number of ghosts should be 14
+/**
+ * Checks 26 base cases where forces are applied through periodic boundaries.
+ */
+TEST_F(LinkedCellsBoundaryPeriodic, ForceBigCube) {
+  // Get test cube with all test cases. Care: The test positions must not be too close to the border of the LinkedCells
+  // container or the particles will repell each other.
+  std::vector<v3d> testParticles = TestUtils::getTestPositions(centerOffset * 10 - 1.2);
+  LinkedCellsContainer container =
+      TestUtils::getBoundaryTestContainer(centerOffset * 10, 2 * centerOffset, boundaryType::PERIODIC);
+  std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, testParticles);
+
+  // If the periodic boundary works, all forces point outwards and on each dimension have the same magnitude or 0.
+  for (auto& particle : particles) {
+    // Because the sample cube is symmetric and centered at (0,0,0) we can translate positions to forces easily
+    double const expectedMagnitude = 0.25890084470184332;
+    auto const expectedForce = expectedMagnitude * signum(particle.getX());
+
+    // Corner particles have 8 neighbors. Normally this means that the forces on them differ from the expectedMagnitude
+    // above, as in these corner diagonal forces start to appear. In this test however, the test positions are chosen
+    // in a way, where those diagonal particles, are beyond the cutoff limit and thus can be ignored, which means the
+    // magnitude above is still valid for corner particles.
+    EXPECT_EQ(particle.getF(), expectedForce);
+  }
 }
