@@ -6,9 +6,42 @@
 #include "utils/ArrayUtils.h"
 #include "utils/TestUtilsBoundaries.h"
 
-
 using v3d = std::array<double, 3>;
 
+/**
+ * Ensure internal structure of boundary is consistent with container.
+ */
+TEST(LinkedCellsBoundary, SetupStructure) {
+  double const meshWidth = 2.0;
+
+  for (int i = 0.0; i < 10.0; i++) {
+    for (int j = 0.0; j < 10.0; j++) {
+      v3d dimensions{5 + static_cast<double>(i), 4 + static_cast<double>(j), 1};
+
+      v3d leftCorner{0., 0., 0.};
+      v3d rightCorner{meshWidth * dimensions};
+      LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
+
+      container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
+                               {cubeSide::RIGHT, boundaryType::OUTFLOW},
+                               {cubeSide::TOP, boundaryType::REFLECT},
+                               {cubeSide::BOTTOM, boundaryType::REFLECT}});
+
+      // Number of generated boundaries is correct
+      auto& boundaries = container.getBoundaries();
+      EXPECT_EQ(boundaries.size(), 4);
+
+      // Each boundary is linked with the correct number of cells
+      auto widthCellCount = container.getDimensions()[0] - 2;
+      auto heightCellCount = container.getDimensions()[1] - 2;
+
+      EXPECT_EQ(boundaries[0].getConnectedCells().size(), heightCellCount);
+      EXPECT_EQ(boundaries[1].getConnectedCells().size(), heightCellCount);
+      EXPECT_EQ(boundaries[2].getConnectedCells().size(), widthCellCount);
+      EXPECT_EQ(boundaries[3].getConnectedCells().size(), widthCellCount);
+    }
+  }
+}
 
 /**
  * Tests that the outflow boundary deletes particles in the halo area
@@ -326,7 +359,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
     for (size_t j = 0; j < 3; j++) {
       if (expectedTpLocation[j] == 0.0 || expectedTpLocation[j] == -0.0) {
         expectedTpLocation[j] = 0.0;
-        continue ;
+        continue;
       }
 
       if (expectedTpLocation[j] > 0.0) {
@@ -336,7 +369,6 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
 
       expectedTpLocation[j] = within;
     }
-
 
     auto actualLocation = tpParticles.at(i).getX();
     EXPECT_EQ(actualLocation, expectedTpLocation)
@@ -349,10 +381,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
  */
 TEST_F(LinkedCellsBoundaryPeriodic, GhostForces) {
   LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
-  std::vector<v3d> locations {
-      {within, within, within},
-      {-within, -within, -within}
-  };
+  std::vector<v3d> locations{{within, within, within}, {-within, -within, -within}};
   std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, locations);
 
   ASSERT_NE(particles.size(), 0) << "The container lost the particles we put into it.";
