@@ -12,6 +12,7 @@
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
 #include "model/LennardJonesModel.h"
+#include "model/Thermostat.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -247,6 +248,8 @@ int main(int argc, char *argsv[]) {
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
 
+  Thermostat thermostat{*container, 10., 20., 5., 1000, 3};
+
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
 
@@ -268,7 +271,7 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, *container, *selectedWriter);
+  simulation.simulate(model, *container, *selectedWriter, thermostat);
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();

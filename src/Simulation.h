@@ -7,6 +7,7 @@
 #include "inputReader/FileReader.h"
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
+#include "model/Thermostat.h"
 #include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
@@ -20,8 +21,10 @@ class Simulation {
    * @param particles All the particles that take part in the simulation
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
+   * @param thermostat The thermostat that controls the temperature
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter);
+  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter,
+                Thermostat &thermostat);
 
   /**
    * Sets the time until the simulation is run

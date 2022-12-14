@@ -7,7 +7,7 @@
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel &model, IContainer &particles,
-                          IWriter &fileWriter) {
+                          IWriter &fileWriter, Thermostat &thermostat) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
@@ -21,6 +21,9 @@ void Simulation::simulate(IModel &model, IContainer &particles,
     model.addForces(std::forward<P>(p1), std::forward<P>(p2));
   }};
 
+  // Initialize the container to the temperature
+  thermostat.initializeTemperature();
+
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
   particles.forEachPair(addForces);
@@ -31,6 +34,10 @@ void Simulation::simulate(IModel &model, IContainer &particles,
     particles.forEach(updateF);
     particles.forEachPair(addForces);
     particles.forEach(updateV);
+
+    if (iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
+      thermostat.applyThermostat();
+    }
 
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
