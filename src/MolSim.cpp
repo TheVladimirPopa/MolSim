@@ -43,9 +43,11 @@ int main(int argc, char *argsv[]) {
   int loglevel = 0;
   bool quietLog = false;
   bool performanceMeasure = false;
-  bool xmlinput = false;
+  bool xmlInput = false;
   IContainer *contain;
   double cutOffRadius;
+  std::array<double, 3> zeroBound={0,0,0};
+  LinkedCellsContainer linkedCellsContainer{0,zeroBound,zeroBound};
 
   int opt;
   static struct option long_options[] = {
@@ -91,7 +93,7 @@ int main(int argc, char *argsv[]) {
       }
       case 'i': {
         // XML Input
-        xmlinput = true;
+        xmlInput = true;
         XMLParser xmlParser = XMLParser(optarg);
         std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
         simulation.setDeltaT(simArg->getDeltaT());
@@ -106,9 +108,12 @@ int main(int argc, char *argsv[]) {
         std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
         std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
 
-        LinkedCellsContainer linkedCellsContainer = LinkedCellsContainer(
-            linkedCellArg->getCellSize(), lowerBound, upperBound);
+//        linkedCellsContainer = LinkedCellsContainer(
+//            linkedCellArg->getCellSize(), lowerBound, upperBound);
         cutOffRadius = linkedCellArg->getCutOffRadius();
+        linkedCellsContainer.setGridSize(linkedCellArg->getCellSize());
+        linkedCellsContainer.setLeftLowerCorner(lowerBound);
+        linkedCellsContainer.setRightUpperCorner(upperBound);
 
         for (auto &it : cuboidArgs) {
           ParticleGeneration::cuboid cuboid;
@@ -152,7 +157,6 @@ int main(int argc, char *argsv[]) {
         contain = &linkedCellsContainer;
         break;
       }
-
       case 'e': {
         try {
           double end = std::stod(optarg);
@@ -240,7 +244,7 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  if (inputFile == nullptr && !xmlinput) {
+  if (inputFile == nullptr && !xmlInput) {
     std::cout << "You have to specify an input file with -f flag" << std::endl;
     printUsage();
     return 1;
@@ -278,15 +282,15 @@ int main(int argc, char *argsv[]) {
 
   IContainer *container;
 
-  if (!xmlinput) {
+  if (!xmlInput) {
     VectorContainer vectorContainer{};
     std::array<double, 3> leftLowerCorner{-15., -20., -5};
     std::array<double, 3> rightUpperCorner{55., 30., 5};
 
-    LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
-                                              rightUpperCorner};
+    LinkedCellsContainer linkedContainer{10., leftLowerCorner,
+                                         rightUpperCorner};
 
-    linkedCellsContainer.setBoundaries({
+    linkedContainer.setBoundaries({
         {cubeSide::LEFT, boundaryType::REFLECT},
         {cubeSide::RIGHT, boundaryType::REFLECT},
         {cubeSide::TOP, boundaryType::REFLECT},
@@ -295,7 +299,7 @@ int main(int argc, char *argsv[]) {
         {cubeSide::BACK, boundaryType::REFLECT},
     });
 
-    container = &linkedCellsContainer;
+    container = &linkedContainer;
 
     switch (simulationType) {
       case simTypes::Single: {
@@ -318,7 +322,7 @@ int main(int argc, char *argsv[]) {
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
 
-  if (xmlinput) {
+  if (xmlInput) {
     model.setCutOffRadius(cutOffRadius);
   }
 
@@ -381,7 +385,8 @@ void printUsage() {
 void printHelp() {
   std::cout
       << "Usage\n"
-         "        ./MolSim -i <xml-file> [-f <input-file>] [-t (single|cuboid)] [-o "
+         "        ./MolSim -i <xml-file> [-f <input-file>] [-t "
+         "(single|cuboid)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
          "[-n] [-p] [-v] [-v] [-q]\n"

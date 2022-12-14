@@ -92,6 +92,9 @@ class LinkedCellsContainer : public IContainer {
    * cell, is automatically called before each forEachPair call
    */
   void recalculateStructure();
+  void setGridSize(double gridSize);
+  void setLeftLowerCorner(const std::array<double, 3> &leftLowerCorner);
+  void setRightUpperCorner(const std::array<double, 3> &rightUpperCorner);
 
   /**
    * Sets boundaries of the chosen type on the chosen side of the container
@@ -121,7 +124,6 @@ class LinkedCellsContainer : public IContainer {
    * @return boundaries
    */
   std::vector<LinkedCellsBoundary> &getBoundaries() { return boundaries; }
-
   /**
    * @return Cell dimensions in number of cells per dimension
    */
