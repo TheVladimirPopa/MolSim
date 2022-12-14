@@ -7,7 +7,9 @@ std::vector<Particle> getNeighbors(Particle &particle);
 LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
                                            std::array<double, 3> &rightUpperBound)
     : cells{}, gridSize{cellSize}, leftLowerCorner{leftLowerBound}, rightUpperCorner{rightUpperBound} {
-  std::array<double, 3> boundingBoxDim{rightUpperCorner - leftLowerCorner};
+  cubeSize = rightUpperCorner - leftLowerCorner;
+
+  std::array<double, 3> boundingBoxDim{cubeSize};
   size_t numCells{1};
   for (int i = 0; i < 3; ++i) {
     dimensions[i] = static_cast<size_t>(floor(boundingBoxDim[i] / gridSize)) + 2;
@@ -25,13 +27,13 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace_back(cellType::halo, cells.size(), dimensions);
+          cells.emplace_back(cellType::halo, cells.size(), dimensions, cubeSize);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or y == dimensions[1] - 2 or
                    z == dimensions[2] - 2) {
-          cells.emplace_back(cellType::boundary, cells.size(), dimensions);
+          cells.emplace_back(cellType::boundary, cells.size(), dimensions, cubeSize);
 
         } else {
-          cells.emplace_back(cellType::inner, cells.size(), dimensions);
+          cells.emplace_back(cellType::inner, cells.size(), dimensions, cubeSize);
         }
       }
     }
@@ -51,6 +53,8 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
           static_cast<int>(dimensions[1] * dimensions[0]) + x + (y * dimensions[0]);
     }
   }
+
+  linkBoundaryToHaloCells();
 }
 
 size_t LinkedCellsContainer::getVectorIndexFromCoord(size_t x, size_t y, size_t z) {
@@ -128,8 +132,10 @@ void LinkedCellsContainer::forEach(std::function<void(Particle &)> &unaryFunctio
 void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
   applyBoundaries();
+
+  // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
   recalculateStructure();  // todo: only needed when periodic boundary
-  forEachGhostPair(binaryFunction);
+  applyGhostForces(binaryFunction);
 
   for (size_t index = 0; index < cells.size(); ++index) {
     if (cells[index].type == cellType::halo) {
@@ -200,13 +206,9 @@ void LinkedCellsContainer::recalculateStructure() {
   });
 
   for (auto [side, type] : sideAndType) {
-    boundaries.emplace_back(side, type, cells, &particlesVector, &ghostVector, dimensions, leftLowerCorner,
+    boundaries.emplace_back(side, type, cells, &particlesVector, dimensions, leftLowerCorner,
                             rightUpperCorner);
   }
-}
-
-void findPeriodicBoundaryPairs() {
-  // Todo, unten das Lambda hier rein ziehen
 }
 
 void LinkedCellsContainer::linkBoundaryToHaloCells() {
@@ -225,7 +227,7 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
     if (boundary.getType() != boundaryType::PERIODIC) return;
 
     // Map LEFT -> RIGHT, RIGHT -> LEFT, TOP -> BOTTOM, ...
-    cubeSide matchSide = CellUtils::getOppositeSide(boundary.getSide());
+    cubeSide matchSide = cell::getOppositeSide(boundary.getSide());
 
     auto matchBoundaryIt = std::find_if(boundaries.begin(), boundaries.end(), [&matchSide](LinkedCellsBoundary bound) {
       return bound.getSide() == matchSide && bound.getType() == boundaryType::PERIODIC;
@@ -254,7 +256,7 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
 
     for (cell *boundaryCell : boundary.getConnectedCells()) {
       // Link cell to ghost partner
-      boundaryCell->linkHaloSidePartner(CellUtils::getOppositeSide(boundary.getSide()), cells);
+      boundaryCell->linkHaloSidePartner(cell::getOppositeSide(boundary.getSide()), cells);
     }
   }
 
@@ -266,8 +268,8 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
       if ((*it1).getType() != boundaryType::PERIODIC) continue;
       for (auto it2 = it1 + 1; it2 < boundaries.end(); it2++) {
         if ((*it2).getType() != boundaryType::PERIODIC) continue;
-        cubeSide opSide1 = CellUtils::getOppositeSide((*it1).getSide());
-        cubeSide opSide2 = CellUtils::getOppositeSide((*it2).getSide());
+        cubeSide opSide1 = cell::getOppositeSide((*it1).getSide());
+        cubeSide opSide2 = cell::getOppositeSide((*it2).getSide());
 
         for (cell *boundaryCell : (*it1).getConnectedCells())
           boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
@@ -295,8 +297,39 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
           (i & 0b100) == 0 ? dimensions[2] - 1 : 0,
       };
 
-      cells[getVectorIndexFromCoord(boundaryCellPos[0], boundaryCellPos[1], boundaryCellPos[2])]
-          .linkHaloUnique(oppositeHaloPos, cells);
+      std::array<double, 3> offset = {
+          (i & 0b001) == 0 ? cubeSize[0] : -cubeSize[0],
+          (i & 0b010) == 0 ? cubeSize[1] : -cubeSize[1],
+          (i & 0b100) == 0 ? cubeSize[2] : -cubeSize[2],
+      };
+
+      cells[getVectorIndexFromCoord(boundaryCellPos[0], boundaryCellPos[1], boundaryCellPos[2])].linkPartnerUnique(
+          oppositeHaloPos, cells, offset);
+    }
+  }
+}
+
+// TODO: ONLY DO IF WITHIN CUTOFF DISTANCE! AND ONLY APPLY IF GHOST BOUNDARIES
+void LinkedCellsContainer::applyGhostForces(std::function<void(Particle &, Particle &)> &binaryFunction) {
+  for (cell &halo : cells) {
+    if (halo.type != cellType::halo) continue;
+
+    // Foreach linked particle: move particle temporary over into ghost area, then apply forces to it and all its
+    // neighbors.
+    for (cell::periodicPartner &partner : halo.periodicPartners) {
+      for (size_t pIndex : partner.pCell->particles) {
+        auto &particle = particlesVector[pIndex];
+
+        // Offset location
+        auto originalLocation = particle.getX();
+        particle.setX(originalLocation + partner.offset);
+
+        // Apply forces
+        forEachNeighbor(particle, binaryFunction);
+
+        // Revert location
+        particle.setX(originalLocation);
+      }
     }
   }
 }

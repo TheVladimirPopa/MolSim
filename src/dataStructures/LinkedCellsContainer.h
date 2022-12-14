@@ -1,6 +1,6 @@
 #pragma once
-#include <list>
 #include <memory>
+#include <list>
 #include <stdexcept>
 
 #include "Cell.h"
@@ -14,8 +14,6 @@ class LinkedCellsContainer : public IContainer {
  private:
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
-
-  std::vector<Particle> ghostVector;
 
   /// A vector containing all the cells
   std::vector<cell> cells;
@@ -34,6 +32,9 @@ class LinkedCellsContainer : public IContainer {
 
   /// The count of cells in each direction, halo cells are included
   std::array<unsigned int, 3> dimensions{};
+
+  /// todo:
+  std::array<double, 3> cubeSize;
 
   /**
    * Compute the index of the cell containing the given position
@@ -68,9 +69,11 @@ class LinkedCellsContainer : public IContainer {
    */
   std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
 
+  /// todo: doc
+  void linkBoundaryToHaloCells();
+
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
-
  public:
   /**
    * Instantiating a LinkedCells Container
@@ -118,20 +121,6 @@ class LinkedCellsContainer : public IContainer {
    */
   [[maybe_unused]] void setBoundaries(std::vector<std::pair<cubeSide, boundaryType>> sideAndType);
 
-  /**
-   * Applies binary function to ghost and its non ghost neighbors. Required to simulate the periodic boundary.
-   * @param binaryFunction The function applied to both the ghost and its neighbors.
-   */
-  inline void forEachGhostPair(std::function<void(Particle &, Particle &)> &binaryFunction) {
-    for (auto& ghost : ghostVector) {
-      if (ghost.isDeleted()) continue;
-
-      forEachNeighbor(ghost, binaryFunction);
-    }
-
-    ghostVector.clear();
-  }
-
 
   /**
    * Applies the effects of all boundaries on the container
@@ -139,6 +128,9 @@ class LinkedCellsContainer : public IContainer {
   inline void applyBoundaries() {
     for (auto &boundary : boundaries) boundary.apply();
   }
+
+  /// todo: doc
+  void applyGhostForces(std::function<void(Particle &, Particle &)> &binaryFunction);
 
   /**
    * Method returning the cells vector. ONLY USED FOR TESTING
