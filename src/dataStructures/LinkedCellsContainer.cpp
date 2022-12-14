@@ -25,13 +25,13 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace_back(cellType::halo, cells.size());
+          cells.emplace_back(cellType::halo, cells.size(), dimensions);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or y == dimensions[1] - 2 or
                    z == dimensions[2] - 2) {
-          cells.emplace_back(cellType::boundary, cells.size());
+          cells.emplace_back(cellType::boundary, cells.size(), dimensions);
 
         } else {
-          cells.emplace_back(cellType::inner, cells.size());
+          cells.emplace_back(cellType::inner, cells.size(), dimensions);
         }
       }
     }
@@ -128,6 +128,7 @@ void LinkedCellsContainer::forEach(std::function<void(Particle &)> &unaryFunctio
 void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) {
   recalculateStructure();
   applyBoundaries();
+  recalculateStructure();  // todo: only needed when periodic boundary
   forEachGhostPair(binaryFunction);
 
   for (size_t index = 0; index < cells.size(); ++index) {
@@ -162,8 +163,7 @@ void LinkedCellsContainer::reserve(size_t amount) { particlesVector.reserve(amou
 size_t LinkedCellsContainer::capacity() { return particlesVector.capacity(); }
 
 size_t LinkedCellsContainer::size() {
-  return std::count_if(particlesVector.begin(), particlesVector.end(),
-                       [](Particle &p) { return !p.isDeleted(); });
+  return std::count_if(particlesVector.begin(), particlesVector.end(), [](Particle &p) { return !p.isDeleted(); });
 }
 
 void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
@@ -202,5 +202,101 @@ void LinkedCellsContainer::recalculateStructure() {
   for (auto [side, type] : sideAndType) {
     boundaries.emplace_back(side, type, cells, &particlesVector, &ghostVector, dimensions, leftLowerCorner,
                             rightUpperCorner);
+  }
+}
+
+void findPeriodicBoundaryPairs() {
+  // Todo, unten das Lambda hier rein ziehen
+}
+
+void LinkedCellsContainer::linkBoundaryToHaloCells() {
+  // Periodic boundaries only make sense when they have a partner.
+  // There can be 2, 4 or 6 periodic boundaries. They need different handling of the corner halo cells.
+
+  // First check if every periodic boundary is matched correctly
+
+  // Do this by finding matching boundaries. If we match e.g. {LEFT, RIGHT}, we always store the side, with the lower
+  // integer casted integer value, to represent the pair. E.g. LEFT represents {LEFT, RIGHT}.
+  auto &boundaries = this->boundaries;
+
+  // Todo: In eigene Function
+  std::vector<cubeSide> leadingSides;
+  auto matchSides = [&leadingSides, &boundaries](LinkedCellsBoundary boundary) {
+    if (boundary.getType() != boundaryType::PERIODIC) return;
+
+    // Map LEFT -> RIGHT, RIGHT -> LEFT, TOP -> BOTTOM, ...
+    cubeSide matchSide = CellUtils::getOppositeSide(boundary.getSide());
+
+    auto matchBoundaryIt = std::find_if(boundaries.begin(), boundaries.end(), [&matchSide](LinkedCellsBoundary bound) {
+      return bound.getSide() == matchSide && bound.getType() == boundaryType::PERIODIC;
+    });
+
+    // If e.g. for the LEFT periodic boundary, RIGHT is missing, we throw.
+    if (matchBoundaryIt == boundaries.end()) throw std::invalid_argument("Periodic boundaries miss-matched.");
+
+    // If we match LEFT and RIGHT, we store LEFT as representative for the pair.
+    int tmpSideInt = static_cast<int>(boundary.getSide()) % 2;
+    cubeSide leadingSide = (tmpSideInt == 0) ? boundary.getSide() : static_cast<cubeSide>(tmpSideInt - 1);
+
+    if (std::find(leadingSides.begin(), leadingSides.end(), leadingSide) == leadingSides.end())
+      leadingSides.push_back(leadingSide);
+  };
+
+  for (auto &boundary : boundaries) matchSides(boundary);
+
+  if (leadingSides.size() == 0) return;
+  if (leadingSides.size() > 3)
+    throw std::logic_error("There are more than 3 pairs of periodic boundaries on container.");
+
+  // Link Boundary Cells to Halo Cells (simple case)
+  for (auto &boundary : boundaries) {
+    if (boundary.getType() != boundaryType::PERIODIC) continue;
+
+    for (cell *boundaryCell : boundary.getConnectedCells()) {
+      // Link cell to ghost partner
+      boundaryCell->linkHaloSidePartner(CellUtils::getOppositeSide(boundary.getSide()), cells);
+    }
+  }
+
+  // Special case: Link corners between 2 periodic boundaries
+  if (leadingSides.size() >= 2) {
+    // Every corner boundary cell is mirrored twice.
+    // We have the following possibilities: LR+TD, LR+FB, TD+FB
+    for (auto it1 = boundaries.begin(); it1 < boundaries.end(); it1++) {
+      if ((*it1).getType() != boundaryType::PERIODIC) continue;
+      for (auto it2 = it1 + 1; it2 < boundaries.end(); it2++) {
+        if ((*it2).getType() != boundaryType::PERIODIC) continue;
+        cubeSide opSide1 = CellUtils::getOppositeSide((*it1).getSide());
+        cubeSide opSide2 = CellUtils::getOppositeSide((*it2).getSide());
+
+        for (cell *boundaryCell : (*it1).getConnectedCells())
+          boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+
+        for (cell *boundaryCell : (*it2).getConnectedCells())
+          boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+      }
+    }
+  }
+
+  // Special, special case: 3 pairs of periodic boundaries. Cube corners must be linked.
+  if (leadingSides.size() == 3) {
+    // 3 pairs of boundaries => cube with periodic borders surrounding it => 8 corner boundary cells.
+    // There are 8 cases and we simply iterate over each of them.
+    for (int i = 0b000; i <= 0b111; i++) {
+      std::array<unsigned int, 3> boundaryCellPos = {
+          (i & 0b001) == 0 ? 1 : dimensions[0] - 2,
+          (i & 0b010) == 0 ? 1 : dimensions[1] - 2,
+          (i & 0b100) == 0 ? 1 : dimensions[2] - 2,
+      };
+
+      std::array<unsigned int, 3> oppositeHaloPos = {
+          (i & 0b001) == 0 ? dimensions[0] - 1 : 0,
+          (i & 0b010) == 0 ? dimensions[1] - 1 : 0,
+          (i & 0b100) == 0 ? dimensions[2] - 1 : 0,
+      };
+
+      cells[getVectorIndexFromCoord(boundaryCellPos[0], boundaryCellPos[1], boundaryCellPos[2])]
+          .linkHaloUnique(oppositeHaloPos, cells);
+    }
   }
 }
