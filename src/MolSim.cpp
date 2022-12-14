@@ -43,10 +43,13 @@ int main(int argc, char *argsv[]) {
   int loglevel = 0;
   bool quietLog = false;
   bool performanceMeasure = false;
+  bool xmlinput = false;
+  IContainer *contain;
+  double cutOffRadius;
 
   int opt;
   static struct option long_options[] = {
-      {"xml", required_argument, nullptr, 'x'},
+      {"xml", required_argument, nullptr, 'i'},
       {"output-file", required_argument, nullptr, 'o'},
       {"no-output", no_argument, nullptr, 'n'},
       {"type", required_argument, nullptr, 't'},
@@ -60,7 +63,7 @@ int main(int argc, char *argsv[]) {
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:pvqh", long_options,
+  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:pvqh", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -86,9 +89,9 @@ int main(int argc, char *argsv[]) {
         inputFile = optarg;
         break;
       }
-      case 'x': {
-
-        //XML Input
+      case 'i': {
+        // XML Input
+        xmlinput = true;
         XMLParser xmlParser = XMLParser(optarg);
         std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
         simulation.setDeltaT(simArg->getDeltaT());
@@ -105,24 +108,48 @@ int main(int argc, char *argsv[]) {
 
         LinkedCellsContainer linkedCellsContainer = LinkedCellsContainer(
             linkedCellArg->getCellSize(), lowerBound, upperBound);
-        double cutOffRad = linkedCellArg->getCutOffRadius();
+        cutOffRadius = linkedCellArg->getCutOffRadius();
 
         for (auto &it : cuboidArgs) {
-          ParticleGeneration::cuboid cuboid = {
-              it.getPosition(), it.getDimension(), it.getVelocity(),
-              it.getDistance(), it.getMass(),      it.getType()};
+          ParticleGeneration::cuboid cuboid;
+          cuboid.position = it.getPosition();
+          cuboid.dimension = it.getDimension();
+          cuboid.velocity = it.getVelocity();
+          cuboid.distance = it.getDistance();
+          cuboid.mass = it.getMass();
+          cuboid.type = it.getType();
           ParticleGeneration::addCuboidToParticleContainer(linkedCellsContainer,
                                                            cuboid);
         }
 
         for (auto &it : sphereArgs) {
-          ParticleGeneration::sphere sphere = {
-              it.getPosition(), it.getRadius(),   it.getDimension(),
-              it.getVelocity(), it.getDistance(), it.getMass(),
-              it.getType()};
+          ParticleGeneration::sphere sphere;
+          sphere.position = it.getPosition();
+          sphere.radius = it.getRadius();
+          sphere.dimension = it.getDimension();
+          sphere.velocity = it.getVelocity();
+          sphere.distance = it.getDistance();
+          sphere.mass = it.getMass();
+          sphere.type = it.getType();
           ParticleGeneration::addSphereToParticleContainer(linkedCellsContainer,
                                                            sphere);
         }
+        linkedCellsContainer.setBoundaries({
+            {cubeSide::LEFT,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundLeft())},
+            {cubeSide::RIGHT,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundRight())},
+            {cubeSide::TOP,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundTop())},
+            {cubeSide::BOTTOM,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundBottom())},
+            {cubeSide::FRONT,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundFront())},
+            {cubeSide::BACK,
+             XMLParser::strToEnumBoundary(linkedCellArg->getBoundBack())},
+        });
+
+        contain = &linkedCellsContainer;
         break;
       }
 
@@ -213,7 +240,7 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  if (inputFile == nullptr) {
+  if (inputFile == nullptr && !xmlinput) {
     std::cout << "You have to specify an input file with -f flag" << std::endl;
     printUsage();
     return 1;
@@ -249,41 +276,51 @@ int main(int argc, char *argsv[]) {
       "", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
 
-  VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{-15., -20., -5};
-  std::array<double, 3> rightUpperCorner{55., 30., 5};
+  IContainer *container;
 
-  LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
-                                            rightUpperCorner};
+  if (!xmlinput) {
+    VectorContainer vectorContainer{};
+    std::array<double, 3> leftLowerCorner{-15., -20., -5};
+    std::array<double, 3> rightUpperCorner{55., 30., 5};
 
-  linkedCellsContainer.setBoundaries({
-      {cubeSide::LEFT, boundaryType::REFLECT},
-      {cubeSide::RIGHT, boundaryType::REFLECT},
-      {cubeSide::TOP, boundaryType::REFLECT},
-      {cubeSide::BOTTOM, boundaryType::REFLECT},
-      {cubeSide::FRONT, boundaryType::REFLECT},
-      {cubeSide::BACK, boundaryType::REFLECT},
-  });
+    LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
+                                              rightUpperCorner};
 
-  IContainer *container = &linkedCellsContainer;
+    linkedCellsContainer.setBoundaries({
+        {cubeSide::LEFT, boundaryType::REFLECT},
+        {cubeSide::RIGHT, boundaryType::REFLECT},
+        {cubeSide::TOP, boundaryType::REFLECT},
+        {cubeSide::BOTTOM, boundaryType::REFLECT},
+        {cubeSide::FRONT, boundaryType::REFLECT},
+        {cubeSide::BACK, boundaryType::REFLECT},
+    });
 
-  switch (simulationType) {
-    case simTypes::Single: {
-      FileReader::readFileSingle(*container, inputFile);
-      break;
+    container = &linkedCellsContainer;
+
+    switch (simulationType) {
+      case simTypes::Single: {
+        FileReader::readFileSingle(*container, inputFile);
+        break;
+      }
+      case simTypes::Cuboid: {
+        FileReader::readFileCuboid(*container, inputFile);
+        break;
+      }
+      case simTypes::Sphere: {
+        FileReader::readFileSphere(*container, inputFile);
+        break;
+      }
     }
-    case simTypes::Cuboid: {
-      FileReader::readFileCuboid(*container, inputFile);
-      break;
-    }
-    case simTypes::Sphere: {
-      FileReader::readFileSphere(*container, inputFile);
-      break;
-    }
+  } else {
+    container = contain;
   }
 
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
+
+  if (xmlinput) {
+    model.setCutOffRadius(cutOffRadius);
+  }
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
@@ -344,7 +381,7 @@ void printUsage() {
 void printHelp() {
   std::cout
       << "Usage\n"
-         "        ./MolSim -f <input-file> [-t (single|cuboid)] [-o "
+         "        ./MolSim -i <xml-file> [-f <input-file>] [-t (single|cuboid)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
          "[-n] [-p] [-v] [-v] [-q]\n"
@@ -394,7 +431,7 @@ void printHelp() {
          "        -q, --quiet\n"
          "                Set loglevel to ERROR. Overrites -v.\n"
          "\n"
-         "        -x <filepath>, --xml=<filepath>\n"
+         "        -i <filepath>, --xml=<filepath>\n"
          "                Use the XML file at the <filepath> as an input\n"
          "\n"
          "        -h, --help\n"

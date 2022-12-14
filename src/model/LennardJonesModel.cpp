@@ -20,3 +20,6 @@ void LennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   p1.f = p1.f + force;
   p2.f = p2.f - force;
 }
+void LennardJonesModel::setCutOffRadius(double cutOffRadius) {
+  LennardJonesModel::cutOffRadius = cutOffRadius;
+}

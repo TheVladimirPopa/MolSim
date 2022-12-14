@@ -20,6 +20,12 @@
         <LinkedCell cellSize="10.0" cutOffRadius="2.0">
             <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
             <rightUpperBound x="55.0" y="30.0" z="5"/>
+            <left>REFLECT</left>
+            <right>REFLECT</right>
+            <top>REFLECT</top>
+            <bottom>REFLECT</bottom>
+            <front>REFLECT</front>
+            <back>REFLECT</back>
         </LinkedCell>
     </Container_T>
 

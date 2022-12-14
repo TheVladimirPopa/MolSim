@@ -67,6 +67,17 @@ class XMLParser {
     return std::make_unique<SimulationArg>(arg);
   }
 
+  static boundaryType strToEnumBoundary(const std::string& str){
+    if(str=="OUTFLOW"){
+      return boundaryType::OUTFLOW;
+    }else if(str=="REFLECT"){
+      return boundaryType::REFLECT;
+    }else if(str=="PERIODIC"){
+      return boundaryType::PERIODIC;
+    }
+    throw std::errc::invalid_argument;
+  }
+
   std::unique_ptr<LinkedCellArg> extractLinkedCell() {
     std::vector<LinkedCellArg> arg;
 
@@ -76,12 +87,22 @@ class XMLParser {
         auto &rb = c.rightUpperBound();
         auto &cs = c.cellSize();
         auto &cut = c.cutOffRadius();
+        auto &left = c.left();
+        auto &right = c.right();
+        auto &top = c.top();
+        auto &bottom = c.bottom();
+        auto &front = c.front();
+        auto &back = c.back();
 
         LinkedCellArg linkedCellArg = LinkedCellArg(
             cs, cut, generate_double_array(lb), generate_double_array(rb));
-
-        arg.emplace_back(cs, cut, generate_double_array(lb),
-                         generate_double_array(rb));
+        linkedCellArg.setBoundLeft(left);
+        linkedCellArg.setBoundRight(right);
+        linkedCellArg.setBoundTop(top);
+        linkedCellArg.setBoundBottom(bottom);
+        linkedCellArg.setBoundFront(front);
+        linkedCellArg.setBoundBack(back);
+        arg.emplace_back(linkedCellArg);
       }
     }
 

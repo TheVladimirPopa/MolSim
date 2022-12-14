@@ -82,6 +82,12 @@
         <xsd:sequence>
             <xsd:element name="leftLowerBound" type="array_d"/>
             <xsd:element name="rightUpperBound" type="array_d"/>
+            <xsd:element name="left" type="boundary_t"/>
+            <xsd:element name="right" type="boundary_t"/>
+            <xsd:element name="top" type="boundary_t"/>
+            <xsd:element name="bottom" type="boundary_t"/>
+            <xsd:element name="front" type="boundary_t"/>
+            <xsd:element name="back" type="boundary_t"/>
         </xsd:sequence>
         <xsd:attribute name="cellSize" type="xsd:double" use="required"/>
         <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
@@ -93,5 +99,14 @@
             <xsd:element name="vector" type="array_d"/>
         </xsd:sequence>
     </xsd:complexType>
+
+    <!--  Boundary Type  -->
+    <xsd:simpleType name="boundary_t">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OUTFLOW"/>
+            <xsd:enumeration value="REFLECT"/>
+            <xsd:enumeration value="PERIODIC"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef INPUT_HXX
+#define INPUT_HXX
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -236,6 +236,7 @@ class input_t;
 class containerTypes_t;
 class linkedCellContainer_t;
 class vectorContainer_t;
+class boundary_t;
 
 #include <memory>    // ::std::unique_ptr
 #include <limits>    // std::numeric_limits
@@ -1108,6 +1109,108 @@ class linkedCellContainer_t: public ::xml_schema::type
   void
   rightUpperBound (::std::unique_ptr< rightUpperBound_type > p);
 
+  // left
+  //
+  typedef ::boundary_t left_type;
+  typedef ::xsd::cxx::tree::traits< left_type, char > left_traits;
+
+  const left_type&
+  left () const;
+
+  left_type&
+  left ();
+
+  void
+  left (const left_type& x);
+
+  void
+  left (::std::unique_ptr< left_type > p);
+
+  // right
+  //
+  typedef ::boundary_t right_type;
+  typedef ::xsd::cxx::tree::traits< right_type, char > right_traits;
+
+  const right_type&
+  right () const;
+
+  right_type&
+  right ();
+
+  void
+  right (const right_type& x);
+
+  void
+  right (::std::unique_ptr< right_type > p);
+
+  // top
+  //
+  typedef ::boundary_t top_type;
+  typedef ::xsd::cxx::tree::traits< top_type, char > top_traits;
+
+  const top_type&
+  top () const;
+
+  top_type&
+  top ();
+
+  void
+  top (const top_type& x);
+
+  void
+  top (::std::unique_ptr< top_type > p);
+
+  // bottom
+  //
+  typedef ::boundary_t bottom_type;
+  typedef ::xsd::cxx::tree::traits< bottom_type, char > bottom_traits;
+
+  const bottom_type&
+  bottom () const;
+
+  bottom_type&
+  bottom ();
+
+  void
+  bottom (const bottom_type& x);
+
+  void
+  bottom (::std::unique_ptr< bottom_type > p);
+
+  // front
+  //
+  typedef ::boundary_t front_type;
+  typedef ::xsd::cxx::tree::traits< front_type, char > front_traits;
+
+  const front_type&
+  front () const;
+
+  front_type&
+  front ();
+
+  void
+  front (const front_type& x);
+
+  void
+  front (::std::unique_ptr< front_type > p);
+
+  // back
+  //
+  typedef ::boundary_t back_type;
+  typedef ::xsd::cxx::tree::traits< back_type, char > back_traits;
+
+  const back_type&
+  back () const;
+
+  back_type&
+  back ();
+
+  void
+  back (const back_type& x);
+
+  void
+  back (::std::unique_ptr< back_type > p);
+
   // cellSize
   //
   typedef ::xml_schema::double_ cellSize_type;
@@ -1140,11 +1243,23 @@ class linkedCellContainer_t: public ::xml_schema::type
   //
   linkedCellContainer_t (const leftLowerBound_type&,
                         const rightUpperBound_type&,
+                        const left_type&,
+                        const right_type&,
+                        const top_type&,
+                        const bottom_type&,
+                        const front_type&,
+                        const back_type&,
                         const cellSize_type&,
                         const cutOffRadius_type&);
 
   linkedCellContainer_t (::std::unique_ptr< leftLowerBound_type >,
                         ::std::unique_ptr< rightUpperBound_type >,
+                        const left_type&,
+                        const right_type&,
+                        const top_type&,
+                        const bottom_type&,
+                        const front_type&,
+                        const back_type&,
                         const cellSize_type&,
                         const cutOffRadius_type&);
 
@@ -1176,6 +1291,12 @@ class linkedCellContainer_t: public ::xml_schema::type
  protected:
   ::xsd::cxx::tree::one< leftLowerBound_type > leftLowerBound_;
   ::xsd::cxx::tree::one< rightUpperBound_type > rightUpperBound_;
+  ::xsd::cxx::tree::one< left_type > left_;
+  ::xsd::cxx::tree::one< right_type > right_;
+  ::xsd::cxx::tree::one< top_type > top_;
+  ::xsd::cxx::tree::one< bottom_type > bottom_;
+  ::xsd::cxx::tree::one< front_type > front_;
+  ::xsd::cxx::tree::one< back_type > back_;
   ::xsd::cxx::tree::one< cellSize_type > cellSize_;
   ::xsd::cxx::tree::one< cutOffRadius_type > cutOffRadius_;
 };
@@ -1233,6 +1354,63 @@ class vectorContainer_t: public ::xml_schema::type
 
  protected:
   ::xsd::cxx::tree::one< vector_type > vector_;
+};
+
+class boundary_t: public ::xml_schema::string
+{
+ public:
+  enum value
+  {
+    OUTFLOW,
+    REFLECT,
+    PERIODIC
+  };
+
+  boundary_t (value v);
+
+  boundary_t (const char* v);
+
+  boundary_t (const ::std::string& v);
+
+  boundary_t (const ::xml_schema::string& v);
+
+  boundary_t (const ::xercesc::DOMElement& e,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  boundary_t (const ::xercesc::DOMAttr& a,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  boundary_t (const ::std::string& s,
+             const ::xercesc::DOMElement* e,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  boundary_t (const boundary_t& x,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  virtual boundary_t*
+  _clone (::xml_schema::flags f = 0,
+         ::xml_schema::container* c = 0) const;
+
+  boundary_t&
+  operator= (value v);
+
+  virtual
+  operator value () const
+  {
+    return _xsd_boundary_t_convert ();
+  }
+
+ protected:
+  value
+  _xsd_boundary_t_convert () const;
+
+ public:
+  static const char* const _xsd_boundary_t_literals_[3];
+  static const value _xsd_boundary_t_indexes_[3];
 };
 
 #include <iosfwd>

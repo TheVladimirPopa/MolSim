@@ -18,4 +18,9 @@ std::string SimulationArg::getInputFile() const { return inputFile; }
 
 SimulationArg::SimulationArg(double endTime, double deltaT,
                              unsigned int writeOutFrequency,
-                             std::string filename, std::string inputFile) {}
+                             std::string filename, std::string inputFile)
+    : endTime(endTime),
+      deltaT(deltaT),
+      writeOutFrequency(writeOutFrequency),
+      filename(std::move(filename)),
+      inputFile(std::move(inputFile)) {}

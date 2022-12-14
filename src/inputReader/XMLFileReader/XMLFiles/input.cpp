@@ -38,7 +38,7 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "input.h"
+#include "input.hxx"
 
 // simulation_t
 //
@@ -723,6 +723,150 @@ void linkedCellContainer_t::
   this->rightUpperBound_.set (std::move (x));
 }
 
+const linkedCellContainer_t::left_type& linkedCellContainer_t::
+    left () const
+{
+  return this->left_.get ();
+}
+
+linkedCellContainer_t::left_type& linkedCellContainer_t::
+    left ()
+{
+  return this->left_.get ();
+}
+
+void linkedCellContainer_t::
+    left (const left_type& x)
+{
+  this->left_.set (x);
+}
+
+void linkedCellContainer_t::
+    left (::std::unique_ptr< left_type > x)
+{
+  this->left_.set (std::move (x));
+}
+
+const linkedCellContainer_t::right_type& linkedCellContainer_t::
+    right () const
+{
+  return this->right_.get ();
+}
+
+linkedCellContainer_t::right_type& linkedCellContainer_t::
+    right ()
+{
+  return this->right_.get ();
+}
+
+void linkedCellContainer_t::
+    right (const right_type& x)
+{
+  this->right_.set (x);
+}
+
+void linkedCellContainer_t::
+    right (::std::unique_ptr< right_type > x)
+{
+  this->right_.set (std::move (x));
+}
+
+const linkedCellContainer_t::top_type& linkedCellContainer_t::
+    top () const
+{
+  return this->top_.get ();
+}
+
+linkedCellContainer_t::top_type& linkedCellContainer_t::
+    top ()
+{
+  return this->top_.get ();
+}
+
+void linkedCellContainer_t::
+    top (const top_type& x)
+{
+  this->top_.set (x);
+}
+
+void linkedCellContainer_t::
+    top (::std::unique_ptr< top_type > x)
+{
+  this->top_.set (std::move (x));
+}
+
+const linkedCellContainer_t::bottom_type& linkedCellContainer_t::
+    bottom () const
+{
+  return this->bottom_.get ();
+}
+
+linkedCellContainer_t::bottom_type& linkedCellContainer_t::
+    bottom ()
+{
+  return this->bottom_.get ();
+}
+
+void linkedCellContainer_t::
+    bottom (const bottom_type& x)
+{
+  this->bottom_.set (x);
+}
+
+void linkedCellContainer_t::
+    bottom (::std::unique_ptr< bottom_type > x)
+{
+  this->bottom_.set (std::move (x));
+}
+
+const linkedCellContainer_t::front_type& linkedCellContainer_t::
+    front () const
+{
+  return this->front_.get ();
+}
+
+linkedCellContainer_t::front_type& linkedCellContainer_t::
+    front ()
+{
+  return this->front_.get ();
+}
+
+void linkedCellContainer_t::
+    front (const front_type& x)
+{
+  this->front_.set (x);
+}
+
+void linkedCellContainer_t::
+    front (::std::unique_ptr< front_type > x)
+{
+  this->front_.set (std::move (x));
+}
+
+const linkedCellContainer_t::back_type& linkedCellContainer_t::
+    back () const
+{
+  return this->back_.get ();
+}
+
+linkedCellContainer_t::back_type& linkedCellContainer_t::
+    back ()
+{
+  return this->back_.get ();
+}
+
+void linkedCellContainer_t::
+    back (const back_type& x)
+{
+  this->back_.set (x);
+}
+
+void linkedCellContainer_t::
+    back (::std::unique_ptr< back_type > x)
+{
+  this->back_.set (std::move (x));
+}
+
 const linkedCellContainer_t::cellSize_type& linkedCellContainer_t::
     cellSize () const
 {
@@ -785,6 +929,51 @@ void vectorContainer_t::
     vector (::std::unique_ptr< vector_type > x)
 {
   this->vector_.set (std::move (x));
+}
+
+
+// boundary_t
+//
+
+boundary_t::
+    boundary_t (value v)
+    : ::xml_schema::string (_xsd_boundary_t_literals_[v])
+{
+}
+
+boundary_t::
+    boundary_t (const char* v)
+    : ::xml_schema::string (v)
+{
+}
+
+boundary_t::
+    boundary_t (const ::std::string& v)
+    : ::xml_schema::string (v)
+{
+}
+
+boundary_t::
+    boundary_t (const ::xml_schema::string& v)
+    : ::xml_schema::string (v)
+{
+}
+
+boundary_t::
+    boundary_t (const boundary_t& v,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+    : ::xml_schema::string (v, f, c)
+{
+}
+
+boundary_t& boundary_t::
+operator= (value v)
+{
+  static_cast< ::xml_schema::string& > (*this) =
+      ::xml_schema::string (_xsd_boundary_t_literals_[v]);
+
+  return *this;
 }
 
 
@@ -1954,11 +2143,23 @@ containerTypes_t::
 linkedCellContainer_t::
     linkedCellContainer_t (const leftLowerBound_type& leftLowerBound,
                           const rightUpperBound_type& rightUpperBound,
+                          const left_type& left,
+                          const right_type& right,
+                          const top_type& top,
+                          const bottom_type& bottom,
+                          const front_type& front,
+                          const back_type& back,
                           const cellSize_type& cellSize,
                           const cutOffRadius_type& cutOffRadius)
     : ::xml_schema::type (),
       leftLowerBound_ (leftLowerBound, this),
       rightUpperBound_ (rightUpperBound, this),
+      left_ (left, this),
+      right_ (right, this),
+      top_ (top, this),
+      bottom_ (bottom, this),
+      front_ (front, this),
+      back_ (back, this),
       cellSize_ (cellSize, this),
       cutOffRadius_ (cutOffRadius, this)
 {
@@ -1967,11 +2168,23 @@ linkedCellContainer_t::
 linkedCellContainer_t::
     linkedCellContainer_t (::std::unique_ptr< leftLowerBound_type > leftLowerBound,
                           ::std::unique_ptr< rightUpperBound_type > rightUpperBound,
+                          const left_type& left,
+                          const right_type& right,
+                          const top_type& top,
+                          const bottom_type& bottom,
+                          const front_type& front,
+                          const back_type& back,
                           const cellSize_type& cellSize,
                           const cutOffRadius_type& cutOffRadius)
     : ::xml_schema::type (),
       leftLowerBound_ (std::move (leftLowerBound), this),
       rightUpperBound_ (std::move (rightUpperBound), this),
+      left_ (left, this),
+      right_ (right, this),
+      top_ (top, this),
+      bottom_ (bottom, this),
+      front_ (front, this),
+      back_ (back, this),
       cellSize_ (cellSize, this),
       cutOffRadius_ (cutOffRadius, this)
 {
@@ -1984,6 +2197,12 @@ linkedCellContainer_t::
     : ::xml_schema::type (x, f, c),
       leftLowerBound_ (x.leftLowerBound_, f, this),
       rightUpperBound_ (x.rightUpperBound_, f, this),
+      left_ (x.left_, f, this),
+      right_ (x.right_, f, this),
+      top_ (x.top_, f, this),
+      bottom_ (x.bottom_, f, this),
+      front_ (x.front_, f, this),
+      back_ (x.back_, f, this),
       cellSize_ (x.cellSize_, f, this),
       cutOffRadius_ (x.cutOffRadius_, f, this)
 {
@@ -1996,6 +2215,12 @@ linkedCellContainer_t::
     : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
       leftLowerBound_ (this),
       rightUpperBound_ (this),
+      left_ (this),
+      right_ (this),
+      top_ (this),
+      bottom_ (this),
+      front_ (this),
+      back_ (this),
       cellSize_ (this),
       cutOffRadius_ (this)
 {
@@ -2044,6 +2269,90 @@ void linkedCellContainer_t::
       }
     }
 
+    // left
+    //
+    if (n.name () == "left" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< left_type > r (
+          left_traits::create (i, f, this));
+
+      if (!left_.present ())
+      {
+        this->left_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // right
+    //
+    if (n.name () == "right" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< right_type > r (
+          right_traits::create (i, f, this));
+
+      if (!right_.present ())
+      {
+        this->right_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // top
+    //
+    if (n.name () == "top" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< top_type > r (
+          top_traits::create (i, f, this));
+
+      if (!top_.present ())
+      {
+        this->top_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // bottom
+    //
+    if (n.name () == "bottom" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< bottom_type > r (
+          bottom_traits::create (i, f, this));
+
+      if (!bottom_.present ())
+      {
+        this->bottom_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // front
+    //
+    if (n.name () == "front" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< front_type > r (
+          front_traits::create (i, f, this));
+
+      if (!front_.present ())
+      {
+        this->front_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // back
+    //
+    if (n.name () == "back" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< back_type > r (
+          back_traits::create (i, f, this));
+
+      if (!back_.present ())
+      {
+        this->back_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -2058,6 +2367,48 @@ void linkedCellContainer_t::
   {
     throw ::xsd::cxx::tree::expected_element< char > (
         "rightUpperBound",
+        "");
+  }
+
+  if (!left_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "left",
+        "");
+  }
+
+  if (!right_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "right",
+        "");
+  }
+
+  if (!top_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "top",
+        "");
+  }
+
+  if (!bottom_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "bottom",
+        "");
+  }
+
+  if (!front_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "front",
+        "");
+  }
+
+  if (!back_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+        "back",
         "");
   }
 
@@ -2110,6 +2461,12 @@ operator= (const linkedCellContainer_t& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->leftLowerBound_ = x.leftLowerBound_;
     this->rightUpperBound_ = x.rightUpperBound_;
+    this->left_ = x.left_;
+    this->right_ = x.right_;
+    this->top_ = x.top_;
+    this->bottom_ = x.bottom_;
+    this->front_ = x.front_;
+    this->back_ = x.back_;
     this->cellSize_ = x.cellSize_;
     this->cutOffRadius_ = x.cutOffRadius_;
   }
@@ -2220,6 +2577,78 @@ vectorContainer_t::
     ~vectorContainer_t ()
 {
 }
+
+// boundary_t
+//
+
+boundary_t::
+    boundary_t (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+    : ::xml_schema::string (e, f, c)
+{
+  _xsd_boundary_t_convert ();
+}
+
+boundary_t::
+    boundary_t (const ::xercesc::DOMAttr& a,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+    : ::xml_schema::string (a, f, c)
+{
+  _xsd_boundary_t_convert ();
+}
+
+boundary_t::
+    boundary_t (const ::std::string& s,
+               const ::xercesc::DOMElement* e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+    : ::xml_schema::string (s, e, f, c)
+{
+  _xsd_boundary_t_convert ();
+}
+
+boundary_t* boundary_t::
+    _clone (::xml_schema::flags f,
+           ::xml_schema::container* c) const
+{
+  return new class boundary_t (*this, f, c);
+}
+
+boundary_t::value boundary_t::
+    _xsd_boundary_t_convert () const
+{
+  ::xsd::cxx::tree::enum_comparator< char > c (_xsd_boundary_t_literals_);
+  const value* i (::std::lower_bound (
+      _xsd_boundary_t_indexes_,
+      _xsd_boundary_t_indexes_ + 3,
+      *this,
+      c));
+
+  if (i == _xsd_boundary_t_indexes_ + 3 || _xsd_boundary_t_literals_[*i] != *this)
+  {
+    throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
+  }
+
+  return *i;
+}
+
+const char* const boundary_t::
+    _xsd_boundary_t_literals_[3] =
+        {
+            "OUTFLOW",
+            "REFLECT",
+            "PERIODIC"
+};
+
+const boundary_t::value boundary_t::
+    _xsd_boundary_t_indexes_[3] =
+        {
+            ::boundary_t::OUTFLOW,
+            ::boundary_t::PERIODIC,
+            ::boundary_t::REFLECT
+};
 
 #include <istream>
 #include <xsd/cxx/xml/sax/std-input-source.hxx>

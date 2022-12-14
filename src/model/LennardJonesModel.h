@@ -10,6 +10,9 @@ class LennardJonesModel : public IModel {
   double cutOffRadius;
 
  public:
+  void setCutOffRadius(double cutOffRadius);
+
+ public:
   /**
    * Instantiates a force calculation model based on LennardJonesModel
    * @param cutOffRadius_ The max distance between two particles where are force
