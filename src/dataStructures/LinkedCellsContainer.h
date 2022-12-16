@@ -1,6 +1,6 @@
 #pragma once
-#include <memory>
 #include <list>
+#include <memory>
 #include <stdexcept>
 
 #include "Cell.h"
@@ -20,6 +20,9 @@ class LinkedCellsContainer : public IContainer {
 
   /// The boundaries the container has
   std::vector<LinkedCellsBoundary> boundaries{};
+
+  /// Whether the container uses periodic boundaries
+  bool hasPeriodicBoundaries;
 
   /// Edge length of a cell
   double gridSize;
@@ -61,7 +64,7 @@ class LinkedCellsContainer : public IContainer {
 
   /**
    * Generates neighbor list for theoretical particle by taking the particles of surrounding cells
-   * @param particle A particle that IS NOT LINKED within the container
+   * @param particle A particle for which the neighboring particles will be determined
    * @return List of neighboring particles (ignores cutoff distance)
    */
   std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
@@ -71,8 +74,14 @@ class LinkedCellsContainer : public IContainer {
    */
   void linkBoundaryToHaloCells();
 
+  /**
+   * Links all corner boundary cells to their halo cells on the opposite side on the cube.
+   */
+  void linkCornerBoundaryCells();
+
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
+
  public:
   /**
    * Instantiating a LinkedCells Container
@@ -118,8 +127,7 @@ class LinkedCellsContainer : public IContainer {
    * apply multiple boundaries on the same side of the container, unless this is
    * exactly what you want.
    */
-  [[maybe_unused]] void setBoundaries(std::vector<std::pair<cubeSide, boundaryType>> sideAndType);
-
+  [[maybe_unused]] void setBoundaries(std::vector<std::pair<CubeSide, BoundaryType>> sideAndType);
 
   /**
    * Applies the effects of all boundaries on the container

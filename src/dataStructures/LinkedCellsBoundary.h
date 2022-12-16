@@ -17,7 +17,7 @@ constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
 static LennardJonesModel lennardJones{10 * reflectDistance};
 }  // namespace ReflectiveBoundary
 
-enum class boundaryType {
+enum class BoundaryType {
   /// Boundary is an outflow boundary
   OUTFLOW,
   /// Boundary is a reflecting boundary
@@ -29,10 +29,10 @@ enum class boundaryType {
 class LinkedCellsBoundary {
  private:
   /// The side of the linkedCellsContainer where the boundary lies on
-  cubeSide side;
+  CubeSide side;
 
   /// The type of the boundary which defines how it behaves
-  boundaryType type;
+  BoundaryType type;
 
   /// Reference to LinkedCellsContainer to set up structure of boundary
 
@@ -80,11 +80,11 @@ class LinkedCellsBoundary {
       cubeDimensions[2] - 1,  // Relevant cell location, cubeSide::BACK
   };
 
-  inline size_t getDimensionBySide(cubeSide s) const { return dimensionTable[static_cast<size_t>(s)]; }
+  inline size_t getDimensionBySide(CubeSide s) const { return dimensionTable[static_cast<size_t>(s)]; }
 
-  inline unsigned int getCellGridLocation(cubeSide s) const { return cellGridLocationTable[static_cast<size_t>(s)]; }
+  inline unsigned int getCellGridLocation(CubeSide s) const { return cellGridLocationTable[static_cast<size_t>(s)]; }
 
-  inline unsigned int getHaloGridLocation(cubeSide s) const { return haloLocationTable[static_cast<size_t>(s)]; }
+  inline unsigned int getHaloGridLocation(CubeSide s) const { return haloLocationTable[static_cast<size_t>(s)]; }
 
   /**
    * Takes particle and returns a location moved along the LinkedCells container cube backwards, to simulate a periodic
@@ -92,7 +92,7 @@ class LinkedCellsBoundary {
    * @param particle The particle for which we update the location
    * @return The new location
    */
-  std::array<double, 3> getMirrorLocation(Particle& particle);
+  std::array<double, 3> getPeriodicLocation(Particle& particle);
 
  public:
   /// Pointers to connected boundary cells
@@ -114,7 +114,7 @@ class LinkedCellsBoundary {
    * @param rightUpperCorner The right upper back corner of the 3d container
    * cube
    */
-  LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
+  LinkedCellsBoundary(CubeSide side, BoundaryType type, std::vector<cell>& cells,
                       std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
                       std::array<double, 3>* leftLowerCorner, std::array<double, 3>* rightUpperCorner);
 
@@ -124,7 +124,7 @@ class LinkedCellsBoundary {
    * @return The distance to the wall. The distance can be negative, because
    * a particle being left and right to a boundary is treated separately.
    */
-  double getDistanceToWall(Particle const& particle) const;
+  double getDistanceToBoundary(Particle const& particle) const;
 
   /**
    * Translate cell vector index to grid location
@@ -145,10 +145,10 @@ class LinkedCellsBoundary {
   void reflectParticles();
 
   /**
-   * Implements the periodic boundary. Particles that leaf the domain through a boundary
-   * get mirrored onto the other side of the LinkedCells container cube.
+   * Implements the periodic boundary. Particles that leave the domain through a periodic boundary
+   * get teleported to the other side of the LinkedCells container cube.
    */
-  void loopSpace();
+  void teleportParticles();
 
   /**
    * Applies the effects of the current boundary
@@ -164,10 +164,10 @@ class LinkedCellsBoundary {
    * @return Side on which the boundary lies. E.g. left side of LinkedCells
    * container cube.
    */
-  [[maybe_unused]] cubeSide getSide() { return side; }
+  [[maybe_unused]] CubeSide getSide() { return side; }
 
   /**
    * @return Type of the boundary. (Outflow, reflective, periodic)
    */
-  boundaryType getType() { return type; }
+  BoundaryType getType() { return type; }
 };

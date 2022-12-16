@@ -26,13 +26,13 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace_back(cellType::halo, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::halo, cells.size(), dimensions, cubeSize);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or y == dimensions[1] - 2 or
                    z == dimensions[2] - 2) {
-          cells.emplace_back(cellType::boundary, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::boundary, cells.size(), dimensions, cubeSize);
 
         } else {
-          cells.emplace_back(cellType::inner, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::inner, cells.size(), dimensions, cubeSize);
         }
       }
     }
@@ -88,7 +88,6 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(std::array<double, 3> const 
   return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
 
-// This function can be modified to implement neighbor lists.
 std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors(Particle &particle) {
   std::vector<std::reference_wrapper<Particle>> neighbors;
 
@@ -134,12 +133,14 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   recalculateStructure();
   applyBoundaries();
 
-  // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
-  recalculateStructure();  // todo: only needed when periodic boundary
-  applyPeriodicForces(binaryFunction);
+  if (hasPeriodicBoundaries) {
+    // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
+    recalculateStructure();
+    applyPeriodicForces(binaryFunction);
+  }
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == cellType::halo) {
+    if (cells[index].type == CellType::halo) {
       continue;
     }
     for (size_t indexOffset : indexOffsetAdjacent) {
@@ -200,14 +201,21 @@ void LinkedCellsContainer::recalculateStructure() {
   }
 }
 
-[[maybe_unused]] void LinkedCellsContainer::setBoundaries(std::vector<std::pair<cubeSide, boundaryType>> sideAndType) {
+[[maybe_unused]] void LinkedCellsContainer::setBoundaries(std::vector<std::pair<CubeSide, BoundaryType>> sideAndType) {
   // Ensure that boundary[0] always is the LEFT one, etc.
-  std::sort(sideAndType.begin(), sideAndType.end(), [](std::pair<cubeSide, boundaryType> lhs, auto rhs) {
+  std::sort(sideAndType.begin(), sideAndType.end(), [](std::pair<CubeSide, BoundaryType> lhs, auto rhs) {
     return static_cast<int>(lhs.first) < static_cast<int>(rhs.first);
   });
 
   for (auto [side, type] : sideAndType) {
     boundaries.emplace_back(side, type, cells, &particlesVector, dimensions, &leftLowerCorner, &rightUpperCorner);
+  }
+
+  for (auto &boundary : boundaries) {
+    if (boundary.getType() == BoundaryType::PERIODIC) {
+      hasPeriodicBoundaries = true;
+      break;
+    }
   }
 
   linkBoundaryToHaloCells();
@@ -221,25 +229,25 @@ void LinkedCellsContainer::recalculateStructure() {
  * @param boundaries Boundaries to check, though only periodic boundaries are considered
  * @return Leading sides, representing periodic boundary pairs as defined above
  */
-std::vector<cubeSide> getLeadingSides(std::vector<LinkedCellsBoundary> boundaries) {
-  std::vector<cubeSide> leadingSides;
+std::vector<CubeSide> getLeadingSides(std::vector<LinkedCellsBoundary> boundaries) {
+  std::vector<CubeSide> leadingSides;
 
   for (auto &boundary : boundaries) {
-    if (boundary.getType() != boundaryType::PERIODIC) continue;
+    if (boundary.getType() != BoundaryType::PERIODIC) continue;
 
-    // Map LEFT -> RIGHT, RIGHT -> LEFT, TOP -> BOTTOM, ...
-    cubeSide matchSide = cell::getOppositeSide(boundary.getSide());
+    CubeSide oppositeSide = cell::getOppositeSide(boundary.getSide());
 
-    auto matchBoundaryIt = std::find_if(boundaries.begin(), boundaries.end(), [&matchSide](LinkedCellsBoundary bound) {
-      return bound.getSide() == matchSide && bound.getType() == boundaryType::PERIODIC;
-    });
+    auto matchBoundaryIt =
+        std::find_if(boundaries.begin(), boundaries.end(), [&oppositeSide](LinkedCellsBoundary bound) {
+          return bound.getSide() == oppositeSide && bound.getType() == BoundaryType::PERIODIC;
+        });
 
     // If e.g. for the LEFT periodic boundary, RIGHT is missing, we throw.
     if (matchBoundaryIt == boundaries.end()) throw std::invalid_argument("Periodic boundaries miss-matched.");
 
     // If we match LEFT and RIGHT, we store LEFT as representative for the pair.
     int tmpSideInt = static_cast<int>(boundary.getSide()) % 2;
-    cubeSide leadingSide = (tmpSideInt == 0) ? boundary.getSide() : static_cast<cubeSide>(tmpSideInt - 1);
+    CubeSide leadingSide = (tmpSideInt == 0) ? boundary.getSide() : static_cast<CubeSide>(tmpSideInt - 1);
 
     if (std::find(leadingSides.begin(), leadingSides.end(), leadingSide) == leadingSides.end())
       leadingSides.push_back(leadingSide);
@@ -252,7 +260,7 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
   // Periodic boundaries musst occur in pairs. E.g. a LEFT + RIGHT periodic boundary.
 
   auto &boundaries = this->boundaries;
-  std::vector<cubeSide> leadingSides = getLeadingSides(boundaries);
+  std::vector<CubeSide> leadingSides = getLeadingSides(boundaries);
 
   // No pair of periodic boundaries. Don't link anything.
   if (leadingSides.size() == 0) return;
@@ -263,11 +271,10 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
 
   // Simple case: Per periodic boundary: Link boundary cells to the halo cells on the opposite side of the container.
   for (auto &boundary : boundaries) {
-    if (boundary.getType() != boundaryType::PERIODIC) continue;
+    if (boundary.getType() != BoundaryType::PERIODIC) continue;
 
     for (cell *boundaryCell : boundary.getConnectedCells()) {
-      // Link cell to ghost partner
-      boundaryCell->linkHaloSidePartner(cell::getOppositeSide(boundary.getSide()), cells);
+      boundaryCell->linkParallelPeriodicPartner(cell::getOppositeSide(boundary.getSide()), cells);
     }
   }
 
@@ -275,26 +282,19 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
   if (leadingSides.size() >= 2) {
     // Iterate over every pair of boundaries
     for (auto it1 = boundaries.begin(); it1 < boundaries.end(); it1++) {
-      if ((*it1).getType() != boundaryType::PERIODIC) continue;
+      if ((*it1).getType() != BoundaryType::PERIODIC) continue;
       for (auto it2 = it1 + 1; it2 < boundaries.end(); it2++) {
-        if ((*it2).getType() != boundaryType::PERIODIC or it1 == it2) continue;
+        if ((*it2).getType() != BoundaryType::PERIODIC or it1 == it2) continue;
 
-        cubeSide opSide1 = cell::getOppositeSide((*it1).getSide());
-        cubeSide opSide2 = cell::getOppositeSide((*it2).getSide());
-        if (static_cast<int>(opSide1) > static_cast<int>(opSide2)) std::swap(opSide1, opSide2);
-
-        bool boundariesAreParallel =
-            (opSide1 == opSide2) or
-            (static_cast<int>(opSide1) % 2 == 0 and static_cast<cubeSide>(static_cast<int>(opSide1) + 1) == opSide2);
-
-        if (boundariesAreParallel) continue;
+        CubeSide opSide1 = cell::getOppositeSide((*it1).getSide());
+        CubeSide opSide2 = cell::getOppositeSide((*it2).getSide());
 
         // If and only if a cell boundary cell is shared between 2 periodic boundaries, it has a diagonal halo partner
         for (cell *boundaryCell : (*it1).getConnectedCells()) {
           auto const &otherCells = (*it2).getConnectedCells();
           bool isShared = std::find(otherCells.begin(), otherCells.end(), boundaryCell) != otherCells.end();
 
-          if (isShared) boundaryCell->linkHaloDiagonalPartner(opSide1, opSide2, cells);
+          if (isShared) boundaryCell->linkDiagonalPeriodicPartner(opSide1, opSide2, cells);
         }
       }
     }
@@ -302,41 +302,45 @@ void LinkedCellsContainer::linkBoundaryToHaloCells() {
 
   // Special, special case: 3 pairs of periodic boundaries. Cube corners must be linked. (3d diagonal partners)
   if (leadingSides.size() == 3) {
-    // If the cube is surrounded by periodic boundaries, we must also link the 8 inner corners with the 8 outer halo
-    // cells
-    auto cubeSize = rightUpperCorner - leftLowerCorner;
+    linkCornerBoundaryCells();
+  }
+}
 
-    for (int i = 0b000; i <= 0b111; i++) {
-      std::array<unsigned int, 3> boundaryCellPos = {
-          (i & 0b001) == 0 ? 1 : dimensions[0] - 2,
-          (i & 0b010) == 0 ? 1 : dimensions[1] - 2,
-          (i & 0b100) == 0 ? 1 : dimensions[2] - 2,
-      };
+void LinkedCellsContainer::linkCornerBoundaryCells() {
+  // If the cube is surrounded by periodic boundaries, we must also link the 8 inner corners with the 8 outer halo
+  // cells
+  auto cubeSize = rightUpperCorner - leftLowerCorner;
 
-      std::array<unsigned int, 3> oppositeHaloPos = {
-          (i & 0b001) == 0 ? dimensions[0] - 1 : 0,
-          (i & 0b010) == 0 ? dimensions[1] - 1 : 0,
-          (i & 0b100) == 0 ? dimensions[2] - 1 : 0,
-      };
+  for (int i = 0b000; i <= 0b111; i++) {
+    std::array<unsigned int, 3> boundaryCellPos = {
+        (i & 0b001) == 0 ? 1 : dimensions[0] - 2,
+        (i & 0b010) == 0 ? 1 : dimensions[1] - 2,
+        (i & 0b100) == 0 ? 1 : dimensions[2] - 2,
+    };
 
-      std::array<double, 3> offset = {
-          (i & 0b001) == 0 ? cubeSize[0] : -cubeSize[0],
-          (i & 0b010) == 0 ? cubeSize[1] : -cubeSize[1],
-          (i & 0b100) == 0 ? cubeSize[2] : -cubeSize[2],
-      };
+    std::array<unsigned int, 3> oppositeHaloPos = {
+        (i & 0b001) == 0 ? dimensions[0] - 1 : 0,
+        (i & 0b010) == 0 ? dimensions[1] - 1 : 0,
+        (i & 0b100) == 0 ? dimensions[2] - 1 : 0,
+    };
 
-      cells[getVectorIndexFromCoord(boundaryCellPos[0], boundaryCellPos[1], boundaryCellPos[2])].linkPartnerUnique(
-          oppositeHaloPos, cells, offset);
-    }
+    std::array<double, 3> offset = {
+        (i & 0b001) == 0 ? cubeSize[0] : -cubeSize[0],
+        (i & 0b010) == 0 ? cubeSize[1] : -cubeSize[1],
+        (i & 0b100) == 0 ? cubeSize[2] : -cubeSize[2],
+    };
+
+    cells[getVectorIndexFromCoord(boundaryCellPos[0], boundaryCellPos[1], boundaryCellPos[2])].linkPartnerUnique(
+        oppositeHaloPos, cells, offset);
   }
 }
 
 void LinkedCellsContainer::applyPeriodicForces(std::function<void(Particle &, Particle &)> &binaryFunction) {
   for (cell &halo : cells) {
-    if (halo.type != cellType::halo) continue;
+    if (halo.type != CellType::halo) continue;
 
     // For each halo cell: move connected boundary cell particles into halo cells, apply function, move back
-    for (cell::periodicPartner &partner : halo.periodicPartners) {
+    for (cell::PeriodicPartner &partner : halo.periodicPartners) {
       for (size_t pIndex : partner.pCell->particles) {
         auto &particle = particlesVector[pIndex];
 
@@ -348,7 +352,7 @@ void LinkedCellsContainer::applyPeriodicForces(std::function<void(Particle &, Pa
         forEachNeighbor(particle, binaryFunction);
 
         // Revert location of particle
-        // (Copy, not subtract, to avoid numerical problems (bad conditioning of subtraction))
+        // (Copy, not subtract, to avoid bad conditioning of subtraction)
         particle.setX(originalLocation);
       }
     }

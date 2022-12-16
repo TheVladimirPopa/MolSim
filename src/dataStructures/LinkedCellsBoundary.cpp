@@ -5,7 +5,7 @@
 
 #include "spdlog/spdlog.h"
 
-LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::vector<cell>& cells,
+LinkedCellsBoundary::LinkedCellsBoundary(CubeSide side, BoundaryType type, std::vector<cell>& cells,
                                          std::vector<Particle>* particlesVector, std::array<unsigned int, 3> dimensions,
                                          std::array<double, 3>* leftLowerCorner,
                                          std::array<double, 3>* rightUpperCorner)
@@ -17,7 +17,7 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
       rightUpperCorner{rightUpperCorner} {
   // Add boundary cells
   for (cell& c : cells) {
-    if (c.type != cellType::boundary) continue;
+    if (c.type != CellType::boundary) continue;
     auto position = c.getCellGridLocation();
 
     auto dimIndex = getDimensionBySide(side);
@@ -31,7 +31,7 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
 
   // Add halo cells
   for (cell& c : cells) {
-    if (c.type != cellType::halo) continue;
+    if (c.type != CellType::halo) continue;
 
     auto position = c.getCellGridLocation();
     auto dimIndex = getDimensionBySide(side);
@@ -43,7 +43,7 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
     auto locationHalo = getHaloGridLocation(side);  // Any other boundary type
 
     bool isOnBoundarySide =
-        (position[dimIndex] == location && type == boundaryType::OUTFLOW) || position[dimIndex] == locationHalo;
+        (position[dimIndex] == location && type == BoundaryType::OUTFLOW) || position[dimIndex] == locationHalo;
 
     if (!isOnBoundarySide) continue;
 
@@ -54,11 +54,11 @@ LinkedCellsBoundary::LinkedCellsBoundary(cubeSide side, boundaryType type, std::
   std::sort(connectedCells.begin(), connectedCells.end());
 }
 
-double LinkedCellsBoundary::getDistanceToWall(Particle const& particle) const {
+double LinkedCellsBoundary::getDistanceToBoundary(Particle const& particle) const {
   // Assumes particle is linked with the cell it's currently in!
   size_t dimIndex = getDimensionBySide(side);
 
-  bool leftRelative = side == cubeSide::LEFT || side == cubeSide::TOP || side == cubeSide::FRONT;
+  bool leftRelative = side == CubeSide::LEFT || side == CubeSide::TOP || side == CubeSide::FRONT;
   double relativePosition = leftRelative ? particle.getX()[dimIndex] - (*leftLowerCorner)[dimIndex]
                                          : particle.getX()[dimIndex] - (*rightUpperCorner)[dimIndex];
 
@@ -84,7 +84,7 @@ void LinkedCellsBoundary::reflectParticles() {
   for (cell* cell : connectedCells) {
     for (auto particleIndex : cell->particles) {
       auto& particle = (*particlesVector)[particleIndex];
-      auto distance = getDistanceToWall(particle);
+      auto distance = getDistanceToBoundary(particle);
       if (distance > reflectDistance || distance < -reflectDistance) continue;
 
       auto dimIndex = getDimensionBySide(side);
@@ -98,42 +98,38 @@ void LinkedCellsBoundary::reflectParticles() {
   }
 }
 
-std::array<double, 3> LinkedCellsBoundary::getMirrorLocation(Particle& particle) {
+std::array<double, 3> LinkedCellsBoundary::getPeriodicLocation(Particle& particle) {
   size_t dimIndex = getDimensionBySide(side);
 
-  // leftRelative means the boundary location depends on the left corner of the counter
-  bool leftRelative = side == cubeSide::LEFT || side == cubeSide::TOP || side == cubeSide::FRONT;
+  // Choose either left or right corner as anker point
+  bool leftRelative = side == CubeSide::LEFT || side == CubeSide::TOP || side == CubeSide::FRONT;
+  double newLocation = leftRelative ? (*rightUpperCorner)[dimIndex] : (*leftLowerCorner)[dimIndex];
+  newLocation += getDistanceToBoundary(particle);
 
-  // to find the new location we then must use the right corner and place the particle with the same offset
-  double boundaryOffset = getDistanceToWall(particle);
-  double newLocation =
-      leftRelative ? (*rightUpperCorner)[dimIndex] + boundaryOffset : (*leftLowerCorner)[dimIndex] + boundaryOffset;
-
-  // Note: this can be optimized
   auto newPos = particle.getX();
   newPos[dimIndex] = newLocation;
+
   return newPos;
 }
 
-void LinkedCellsBoundary::loopSpace() {
-  // Teleport particles to opposite side of linked cells container
+void LinkedCellsBoundary::teleportParticles() {
   for (cell* halo : connectedHalos) {
     if (halo->isEmpty()) continue;
 
     for (auto particleIndex : halo->particles) {
       Particle& particle = (*particlesVector)[particleIndex];
 
-      if (!particle.isDeleted()) particle.setX(getMirrorLocation(particle));
+      if (!particle.isDeleted()) particle.setX(getPeriodicLocation(particle));
     }
   }
 }
 
 void LinkedCellsBoundary::apply() {
-  if (type == boundaryType::OUTFLOW)
+  if (type == BoundaryType::OUTFLOW)
     deleteOutFlow();
-  else if (type == boundaryType::REFLECT) {
+  else if (type == BoundaryType::REFLECT) {
     reflectParticles();
   } else {
-    loopSpace();
+    teleportParticles();
   }
 }

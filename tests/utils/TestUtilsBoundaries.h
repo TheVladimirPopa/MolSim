@@ -67,17 +67,17 @@ std::vector<Particle> applyBoundariesReturnParticles(LinkedCellsContainer& conta
  * @param type Type of boundary that gets generated. E. g. PERIODIC or REFLECTIVE
  * @return The created LinkedCells container
  */
-LinkedCellsContainer getBoundaryTestContainer(double halfSize, double gridSize, boundaryType type) {
+LinkedCellsContainer getBoundaryTestContainer(double halfSize, double gridSize, BoundaryType type) {
   v3d leftCorner{-halfSize, -halfSize, -halfSize};
   v3d rightCorner{halfSize, halfSize, halfSize};
 
   LinkedCellsContainer container{gridSize, leftCorner, rightCorner};
-  container.setBoundaries({{cubeSide::LEFT, type},
-                           {cubeSide::RIGHT, type},
-                           {cubeSide::TOP, type},
-                           {cubeSide::BOTTOM, type},
-                           {cubeSide::FRONT, type},
-                           {cubeSide::BACK, type}});
+  container.setBoundaries({{CubeSide::LEFT, type},
+                           {CubeSide::RIGHT, type},
+                           {CubeSide::TOP, type},
+                           {CubeSide::BOTTOM, type},
+                           {CubeSide::FRONT, type},
+                           {CubeSide::BACK, type}});
 
   return container;
 }
@@ -88,7 +88,7 @@ LinkedCellsContainer getBoundaryTestContainer(double halfSize, double gridSize, 
  * @param type Analogously
  * @return Analogously
  */
-LinkedCellsContainer getBoundaryTestContainer(double halfSize, boundaryType type) {
+LinkedCellsContainer getBoundaryTestContainer(double halfSize, BoundaryType type) {
   return getBoundaryTestContainer(halfSize, 2 * halfSize, type);
 }
 

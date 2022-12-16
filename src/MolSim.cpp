@@ -219,12 +219,12 @@ int main(int argc, char *argsv[]) {
 
 
   linkedCellsContainer.setBoundaries({
-      {cubeSide::LEFT, boundaryType::PERIODIC},
-      {cubeSide::RIGHT, boundaryType::PERIODIC},
-      {cubeSide::TOP, boundaryType::REFLECT},
-      {cubeSide::BOTTOM, boundaryType::REFLECT},
-      {cubeSide::FRONT, boundaryType::PERIODIC},
-      {cubeSide::BACK, boundaryType::PERIODIC},
+      {CubeSide::LEFT, BoundaryType::PERIODIC},
+      {CubeSide::RIGHT, BoundaryType::PERIODIC},
+      {CubeSide::TOP, BoundaryType::REFLECT},
+      {CubeSide::BOTTOM, BoundaryType::REFLECT},
+      {CubeSide::FRONT, BoundaryType::PERIODIC},
+      {CubeSide::BACK, BoundaryType::PERIODIC},
   });
 
   IContainer *container = &linkedCellsContainer;

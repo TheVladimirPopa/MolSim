@@ -23,10 +23,10 @@ TEST(LinkedCellsBoundary, SetupStructure) {
       v3d rightCorner{meshWidth * dimensions};
       LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
 
-      container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
-                               {cubeSide::RIGHT, boundaryType::OUTFLOW},
-                               {cubeSide::TOP, boundaryType::REFLECT},
-                               {cubeSide::BOTTOM, boundaryType::REFLECT}});
+      container.setBoundaries({{CubeSide::LEFT, BoundaryType::OUTFLOW},
+                               {CubeSide::RIGHT, BoundaryType::OUTFLOW},
+                               {CubeSide::TOP, BoundaryType::REFLECT},
+                               {CubeSide::BOTTOM, BoundaryType::REFLECT}});
 
       // Number of generated boundaries is correct
       auto& boundaries = container.getBoundaries();
@@ -57,10 +57,10 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
 
   LinkedCellsContainer container{meshWidth, leftCorner, rightCorner};
 
-  container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
-                           {cubeSide::RIGHT, boundaryType::OUTFLOW},
-                           {cubeSide::TOP, boundaryType::OUTFLOW},
-                           {cubeSide::BOTTOM, boundaryType::OUTFLOW}});
+  container.setBoundaries({{CubeSide::LEFT, BoundaryType::OUTFLOW},
+                           {CubeSide::RIGHT, BoundaryType::OUTFLOW},
+                           {CubeSide::TOP, BoundaryType::OUTFLOW},
+                           {CubeSide::BOTTOM, BoundaryType::OUTFLOW}});
 
   // Uniformly distributed particles; (Clang forced me to write it like this)
   double x{leftCorner[0] - 2};
@@ -80,7 +80,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion2D) {
     size_t countedSize{};
     size_t countedHaloSize{};
     for (auto& cell : container.getCellsVector()) {
-      if (cell.type == cellType::halo) countedHaloSize += cell.particles.size();
+      if (cell.type == CellType::halo) countedHaloSize += cell.particles.size();
 
       countedSize += cell.particles.size();
     }
@@ -160,7 +160,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   size_t haloParticlesBefore{};
 
   for (auto& cell : container.getCellsVector()) {
-    if (cell.type == cellType::halo) {
+    if (cell.type == CellType::halo) {
       haloParticlesBefore += cell.particles.size();
     } else {
       nonHaloParticlesBefore += cell.particles.size();
@@ -174,16 +174,16 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   ASSERT_NE(haloParticlesBefore, 0) << "To test deletion, ensure halo is not empty.";
 
   // Spawn and apply boundaries
-  container.setBoundaries({{cubeSide::LEFT, boundaryType::OUTFLOW},
-                           {cubeSide::RIGHT, boundaryType::OUTFLOW},
-                           {cubeSide::TOP, boundaryType::OUTFLOW},
-                           {cubeSide::BOTTOM, boundaryType::OUTFLOW},
-                           {cubeSide::FRONT, boundaryType::OUTFLOW},
-                           {cubeSide::BACK, boundaryType::OUTFLOW}});
+  container.setBoundaries({{CubeSide::LEFT, BoundaryType::OUTFLOW},
+                           {CubeSide::RIGHT, BoundaryType::OUTFLOW},
+                           {CubeSide::TOP, BoundaryType::OUTFLOW},
+                           {CubeSide::BOTTOM, BoundaryType::OUTFLOW},
+                           {CubeSide::FRONT, BoundaryType::OUTFLOW},
+                           {CubeSide::BACK, BoundaryType::OUTFLOW}});
 
   for (auto& b : container.getBoundaries()) {
     // Check internal structure is still correct
-    for (auto& cell : b.getConnectedCells()) EXPECT_EQ(cell->type, cellType::boundary);
+    for (auto& cell : b.getConnectedCells()) EXPECT_EQ(cell->type, CellType::boundary);
 
     EXPECT_EQ(b.getConnectedCells().size(), 25);
   }
@@ -196,7 +196,7 @@ TEST(LinkedCellsBoundaryOutflow, Deletion3D) {
   size_t haloParticlesAfter{};
 
   for (auto& cell : container.getCellsVector()) {
-    if (cell.type == cellType::halo) {
+    if (cell.type == CellType::halo) {
       haloParticlesAfter += cell.particles.size();
     } else {
       nonHaloParticlesAfter += cell.particles.size();
@@ -231,12 +231,12 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
   v3d rightCorner{5.0, 5.0, 5.0};
 
   LinkedCellsContainer container{10.0, leftCorner, rightCorner};
-  container.setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
-                           {cubeSide::RIGHT, boundaryType::REFLECT},
-                           {cubeSide::TOP, boundaryType::REFLECT},
-                           {cubeSide::BOTTOM, boundaryType::REFLECT},
-                           {cubeSide::FRONT, boundaryType::REFLECT},
-                           {cubeSide::BACK, boundaryType::REFLECT}});
+  container.setBoundaries({{CubeSide::LEFT, BoundaryType::REFLECT},
+                           {CubeSide::RIGHT, BoundaryType::REFLECT},
+                           {CubeSide::TOP, BoundaryType::REFLECT},
+                           {CubeSide::BOTTOM, BoundaryType::REFLECT},
+                           {CubeSide::FRONT, BoundaryType::REFLECT},
+                           {CubeSide::BACK, BoundaryType::REFLECT}});
 
   for (auto particleX : testParticles) container.emplace_back(particleX, {0.0, 0.0, 0.0}, 1.0, 0.0);
 
@@ -289,12 +289,12 @@ TEST_F(LinkedCellsReflectiveBoundary, IgnoreOutOfRange) {
   v3d rightCorner{8.0, 8.0, 8.0};
 
   LinkedCellsContainer container{4.0, leftCorner, rightCorner};
-  container.setBoundaries({{cubeSide::LEFT, boundaryType::REFLECT},
-                           {cubeSide::RIGHT, boundaryType::REFLECT},
-                           {cubeSide::TOP, boundaryType::REFLECT},
-                           {cubeSide::BOTTOM, boundaryType::REFLECT},
-                           {cubeSide::FRONT, boundaryType::REFLECT},
-                           {cubeSide::BACK, boundaryType::REFLECT}});
+  container.setBoundaries({{CubeSide::LEFT, BoundaryType::REFLECT},
+                           {CubeSide::RIGHT, BoundaryType::REFLECT},
+                           {CubeSide::TOP, BoundaryType::REFLECT},
+                           {CubeSide::BOTTOM, BoundaryType::REFLECT},
+                           {CubeSide::FRONT, BoundaryType::REFLECT},
+                           {CubeSide::BACK, BoundaryType::REFLECT}});
 
   // Apply boundaries
   container.applyBoundaries();
@@ -331,7 +331,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, NoTeleportation) {
   std::vector<v3d> testPositionsNoTeleport = TestUtils::getTestPositions(within);
 
   // Do not teleport if within boundary cells
-  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, BoundaryType::PERIODIC);
   std::vector<Particle> noTpParticles = TestUtils::applyBoundariesReturnParticles(container, testPositionsNoTeleport);
 
   for (size_t i = 0; i < testPositionsNoTeleport.size(); i++) {
@@ -346,7 +346,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
   std::vector<v3d> testPositionsTeleport = TestUtils::getTestPositions(outside);
 
   // Do teleport if outside boundary cells, in halo cells
-  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, BoundaryType::PERIODIC);
   std::vector<Particle> tpParticles = TestUtils::applyBoundariesReturnParticles(container, testPositionsTeleport);
 
   for (size_t i = 0; i < testPositionsTeleport.size(); i++) {
@@ -375,7 +375,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, Teleportation) {
  * Periodic boundaries project boundary cells into halo cells.
  */
 TEST_F(LinkedCellsBoundaryPeriodic, ForcesThrough3DCorner) {
-  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, boundaryType::PERIODIC);
+  LinkedCellsContainer container = TestUtils::getBoundaryTestContainer(centerOffset, BoundaryType::PERIODIC);
   std::vector<v3d> locations{{within, within, within}, {-within, -within, -within}};
   std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, locations);
 
@@ -399,7 +399,7 @@ TEST_F(LinkedCellsBoundaryPeriodic, ForceBigCube) {
   // container or the particles will repell each other.
   std::vector<v3d> testParticles = TestUtils::getTestPositions(centerOffset * 10 - 1.2);
   LinkedCellsContainer container =
-      TestUtils::getBoundaryTestContainer(centerOffset * 10, 2 * centerOffset, boundaryType::PERIODIC);
+      TestUtils::getBoundaryTestContainer(centerOffset * 10, 2 * centerOffset, BoundaryType::PERIODIC);
   std::vector<Particle> particles = TestUtils::applyBoundariesReturnParticles(container, testParticles);
 
   // If the periodic boundary works, all forces point outwards and on each dimension have the same magnitude or 0.
