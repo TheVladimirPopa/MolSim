@@ -90,10 +90,10 @@ class LinkedCellsContainer : public IContainer {
                     double m_arg, int type) override;
 
   void checkpoint() override {
-    std::ofstream checkpointFile;
-    checkpointFile.open("checkpoint.txt");
+    std::fstream checkpointFile;
+    checkpointFile.open("../input/checkpoint.txt", std::ios::out);
     for (const Particle &p : particlesVector) {
-      checkpointFile << p.toString() << "\n";
+      if (checkpointFile.is_open()) checkpointFile << p.toString() << "\n";
     }
     checkpointFile.flush();
     checkpointFile.close();

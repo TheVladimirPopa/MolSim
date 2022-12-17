@@ -27,11 +27,10 @@ class VectorContainer : public IContainer {
   }
 
   void checkpoint() override {
-    std::ofstream checkpointFile;
-    checkpointFile.open("checkpoint.txt");
+    std::fstream checkpointFile;
+    checkpointFile.open("../input/checkpoint.txt", std::ios::out);
     for (const Particle &p : vector) {
-      checkpointFile << &p.getX() << "\t" << &p.getV() << "\t" << &p.getOldF()
-                     << "\t" << p.getM() << "\t" << p.getType() << "\n";
+      if (checkpointFile.is_open()) checkpointFile << p.toString() << "\n";
     }
     checkpointFile.flush();
     checkpointFile.close();
