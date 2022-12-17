@@ -2,6 +2,7 @@
 // Created by leo on 01.11.22.
 //
 #pragma once
+#include <fstream>
 #include <functional>
 #include <vector>
 
@@ -23,6 +24,16 @@ class VectorContainer : public IContainer {
         binaryFunction(vector[i], vector[j]);
       }
     }
+  }
+
+  void checkpoint() override {
+    std::ofstream checkpointFile;
+    checkpointFile.open("checkpoint.txt");
+    for (const Particle &p : vector) {
+      checkpointFile << &p.getX() << "\t" << &p.getV() << "\t" << &p.getOldF()
+                     << "\t" << p.getM() << "\t" << p.getType() << "\n";
+    }
+    checkpointFile.close();
   }
 
   size_t size() override { return vector.size(); }

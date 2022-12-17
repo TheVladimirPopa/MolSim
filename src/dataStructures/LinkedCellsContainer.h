@@ -1,4 +1,6 @@
 #pragma once
+#include <fstream>
+#include <iostream>
 #include <list>
 #include <memory>
 #include <stdexcept>
@@ -86,6 +88,16 @@ class LinkedCellsContainer : public IContainer {
 
   void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
                     double m_arg, int type) override;
+
+  void checkpoint() override {
+    std::ofstream checkpointFile;
+    checkpointFile.open("checkpoint.txt");
+    for (const Particle &p : particlesVector) {
+      checkpointFile << p.getX() << "\t" << p.getV() << "\t" << p.getOldF()
+                     << "\t" << p.getM() << "\t" << p.getType() << "\n";
+    }
+    checkpointFile.close();
+  }
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct

@@ -4,6 +4,8 @@
 
 #include "Simulation.h"
 
+#include <fstream>
+
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel const &model, IContainer &particles,
@@ -17,7 +19,7 @@ void Simulation::simulate(IModel const &model, IContainer &particles,
   std::function<void(P)> updateX{[&model](P p) { model.updateX(std::forward<P>(p)); }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
   std::function<void(P)> updateF{[](P p) { p.updateForces(); }};
-  std::function<void(P,P)> addForces{[&model](P p1, P p2) {
+  std::function<void(P, P)> addForces{[&model](P p1, P p2) {
     model.addForces(std::forward<P>(p1), std::forward<P>(p2));
   }};
 
@@ -39,4 +41,8 @@ void Simulation::simulate(IModel const &model, IContainer &particles,
     current_time += deltaT;
     iteration++;
   }
+
+  //Checkpoint after simulation
+  particles.checkpoint();
+
 }

@@ -108,8 +108,6 @@ int main(int argc, char *argsv[]) {
         std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
         std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
 
-//        linkedCellsContainer = LinkedCellsContainer(
-//            linkedCellArg->getCellSize(), lowerBound, upperBound);
         cutOffRadius = linkedCellArg->getCutOffRadius();
         linkedCellsContainer.setGridSize(linkedCellArg->getCellSize());
         linkedCellsContainer.setLeftLowerCorner(lowerBound);

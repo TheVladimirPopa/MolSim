@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <functional>
 
 #include "Particle.h"
@@ -55,6 +56,8 @@ class IContainer {
    * @return the number of particles
    */
   virtual size_t size() = 0;
+
+  virtual void checkpoint() = 0;
 
   virtual ~IContainer() = default;
 };
