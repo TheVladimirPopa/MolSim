@@ -13,7 +13,6 @@ using ArrayUtils::L2Norm;
 
 void ParticleGeneration::addCuboidToParticleContainer(
     IContainer &container, ParticleGeneration::cuboid const &data) {
-
   int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
   if (container.size() + numParticles > container.capacity()) {
     // Reserve so much that this cuboid would fit in twice to reduce
@@ -74,7 +73,6 @@ void addParticlesIfInSphere(IContainer &container,
 
 void ParticleGeneration::addSphereToParticleContainer(
     IContainer &container, ParticleGeneration::sphere const &data) {
-
   size_t numParticles = data.radius * data.radius;
   numParticles =
       (data.dimension == 3 ? numParticles * data.radius : numParticles);
