@@ -29,5 +29,5 @@
         </LinkedCell>
     </Container_T>
 
-    <InputFile path="./input/eingabe-sonne.txt"/>
+    <InputFile path="../input/eingabe-sonne.txt"/>
 </Simulation_XML>

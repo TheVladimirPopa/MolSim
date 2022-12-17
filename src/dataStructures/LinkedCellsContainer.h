@@ -93,9 +93,9 @@ class LinkedCellsContainer : public IContainer {
     std::ofstream checkpointFile;
     checkpointFile.open("checkpoint.txt");
     for (const Particle &p : particlesVector) {
-      checkpointFile << p.getX() << "\t" << p.getV() << "\t" << p.getOldF()
-                     << "\t" << p.getM() << "\t" << p.getType() << "\n";
+      checkpointFile << p.toString() << "\n";
     }
+    checkpointFile.flush();
     checkpointFile.close();
   }
 

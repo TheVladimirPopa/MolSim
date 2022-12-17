@@ -33,6 +33,7 @@ class VectorContainer : public IContainer {
       checkpointFile << &p.getX() << "\t" << &p.getV() << "\t" << &p.getOldF()
                      << "\t" << p.getM() << "\t" << p.getType() << "\n";
     }
+    checkpointFile.flush();
     checkpointFile.close();
   }
 

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 #include "Simulation.h"
 #include "dataStructures/LinkedCellsBoundary.h"
@@ -46,11 +47,14 @@ int main(int argc, char *argsv[]) {
   bool xmlInput = false;
   IContainer *contain;
   double cutOffRadius;
-  std::array<double, 3> zeroBound={0,0,0};
-  LinkedCellsContainer linkedCellsContainer{0,zeroBound,zeroBound};
+  std::array<double, 3> zeroBound = {0, 0, 0};
+  LinkedCellsContainer linkedCellsContainer{0, zeroBound, zeroBound};
+  std::string checkpoint;
+  bool cp_present = false;
 
   int opt;
   static struct option long_options[] = {
+      {"checkpoint", no_argument, nullptr, 'c'},
       {"xml", required_argument, nullptr, 'i'},
       {"output-file", required_argument, nullptr, 'o'},
       {"no-output", no_argument, nullptr, 'n'},
@@ -65,7 +69,7 @@ int main(int argc, char *argsv[]) {
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:pvqh", long_options,
+  while ((opt = getopt_long(argc, argsv, "ci:o:nt:f:e:d:w:pvqh", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -91,11 +95,16 @@ int main(int argc, char *argsv[]) {
         inputFile = optarg;
         break;
       }
+      case 'c': {
+        cp_present = true;
+        break;
+      }
       case 'i': {
         // XML Input
         xmlInput = true;
         XMLParser xmlParser = XMLParser(optarg);
         std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
+        checkpoint = simArg->getInputFile();
         simulation.setDeltaT(simArg->getDeltaT());
         simulation.setEndTime(simArg->getEndTime());
         simulation.setIterationsPerWrite(simArg->getWriteOutFrequency());
@@ -322,6 +331,10 @@ int main(int argc, char *argsv[]) {
 
   if (xmlInput) {
     model.setCutOffRadius(cutOffRadius);
+    if (cp_present) {
+      char *cp_input = const_cast<char*>(checkpoint.c_str());
+      FileReader::readFileSingle(*container, cp_input);
+    }
   }
 
   VTKWriter vtkWriter{};
