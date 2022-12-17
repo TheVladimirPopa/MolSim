@@ -1,0 +1,10 @@
+//
+// Created by vladi on 12/17/2022.
+//
+
+#ifndef PSEMOLDYN_GROUPD_XMLREADERTEST_H
+#define PSEMOLDYN_GROUPD_XMLREADERTEST_H
+
+class XMLReaderTest {};
+
+#endif  // PSEMOLDYN_GROUPD_XMLREADERTEST_H

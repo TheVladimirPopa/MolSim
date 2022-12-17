@@ -62,6 +62,17 @@ class Simulation {
    */
   double getEndTime() const { return endTime; };
 
+  /**
+   * Returns how often the particles get written to a file
+   * @return How often the particles get written to a file
+   */
+  unsigned int getWriteOutFrequency() { return writeOutFrequency; }
+  /**
+   * Returns the path to the output file
+   * @return The path to the output file
+   */
+  std::string getFilename() { return filename; }
+
  private:
   /**
    * The starttime where the simulation begins

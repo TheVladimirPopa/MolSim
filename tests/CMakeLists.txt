@@ -4,7 +4,7 @@ file(GLOB_RECURSE MY_TESTS
   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
   )
 
-add_executable(MolSimTests ${MY_TESTS})
+add_executable(MolSimTests ${MY_TESTS} inputReader/XMLReaderTest.cpp inputReader/XMLReaderTest.cpp inputReader/XMLReaderTest.h)
 
 target_link_libraries(MolSimTests
   PRIVATE
