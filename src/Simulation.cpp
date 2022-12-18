@@ -7,7 +7,7 @@
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel &model, IContainer &particles,
-                          IWriter &fileWriter) {
+                          IWriter &fileWriter, double gravitationalConstant) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
@@ -20,16 +20,21 @@ void Simulation::simulate(IModel &model, IContainer &particles,
   std::function addForces{[&model](P p1, P p2) {
     model.addForces(std::forward<P>(p1), std::forward<P>(p2));
   }};
+  std::function applyGravity{[&gravitationalConstant](P p){
+    p.f[1] += p.m * gravitationalConstant;
+  }};
 
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
   particles.forEachPair(addForces);
+  if (gravitationalConstant != 0.0) particles.forEach(applyGravity);
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
     particles.forEach(updateX);
     particles.forEach(updateF);
     particles.forEachPair(addForces);
+    if (gravitationalConstant != 0.0) particles.forEach(applyGravity);
     particles.forEach(updateV);
 
     if (iteration % writeOutFrequency == 0) {
