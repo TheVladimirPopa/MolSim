@@ -208,12 +208,12 @@ int main(int argc, char *argsv[]) {
   LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner, rightUpperCorner};
 
   linkedCellsContainer.setBoundaries({
-      {CubeSide::LEFT, BoundaryType::PERIODIC},
-      {CubeSide::RIGHT, BoundaryType::PERIODIC},
+      {CubeSide::LEFT, BoundaryType::REFLECT},
+      {CubeSide::RIGHT, BoundaryType::REFLECT},
       {CubeSide::TOP, BoundaryType::REFLECT},
       {CubeSide::BOTTOM, BoundaryType::REFLECT},
-      {CubeSide::FRONT, BoundaryType::PERIODIC},
-      {CubeSide::BACK, BoundaryType::PERIODIC},
+      {CubeSide::FRONT, BoundaryType::REFLECT},
+      {CubeSide::BACK, BoundaryType::REFLECT},
   });
 
   IContainer *container = &linkedCellsContainer;

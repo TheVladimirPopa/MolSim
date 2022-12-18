@@ -74,7 +74,7 @@ class Particle {
 
   const std::array<double, 3> &getOldF() const { return old_f; }
 
-  void setX(std::array<double, 3> const&x_arg) { x = x_arg; }
+  void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 
   double getM() const;
 

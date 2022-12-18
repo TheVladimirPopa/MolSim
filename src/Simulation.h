@@ -23,8 +23,7 @@ class Simulation {
    * file
    * @param thermostat The thermostat that controls the temperature
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter,
-                Thermostat &thermostat);
+  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat);
 
   /**
    * Sets the time until the simulation is run

@@ -43,8 +43,7 @@ class Thermostat {
    * periodically applied
    * @param dimensionCount_ How many dimensions the simulation has
    */
-  Thermostat(IContainer &container, double initialTemp, double targetTemp,
-             double maxTempChange, int periodLength_,
+  Thermostat(IContainer &container, double initialTemp, double targetTemp, double maxTempChange, int periodLength_,
              size_t dimensionCount_ = 3);
 
   /**

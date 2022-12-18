@@ -6,8 +6,7 @@
 #include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
-Thermostat::Thermostat(IContainer &container, double initialTemp,
-                       double targetTemp, double maxTempChange,
+Thermostat::Thermostat(IContainer &container, double initialTemp, double targetTemp, double maxTempChange,
                        int periodLength_, size_t dimensionCount_)
     : particleContainer{container},
       initialTemperature{initialTemp},
@@ -22,11 +21,9 @@ void Thermostat::applyThermostat() {
   double currentTarget = targetTemperature;
 
   // Make sure the change is smaller the maxTemperatureChange
-  if (temperatureDifference > maxTemperatureChange)
-    currentTarget = curTemp + maxTemperatureChange;
+  if (temperatureDifference > maxTemperatureChange) currentTarget = curTemp + maxTemperatureChange;
 
-  if (temperatureDifference < -maxTemperatureChange)
-    currentTarget = curTemp - maxTemperatureChange;
+  if (temperatureDifference < -maxTemperatureChange) currentTarget = curTemp - maxTemperatureChange;
 
   setTemperature(curTemp, currentTarget);
 }
@@ -57,32 +54,25 @@ void Thermostat::initializeTemperature() {
   setTemperature(getCurrentTemperature(), initialTemperature);
 }
 
-void Thermostat::setTemperature(double currentTemperature,
-                                double newTemperature) {
-  spdlog::debug("Set temperature to {} from {}", newTemperature,
-                currentTemperature);
+void Thermostat::setTemperature(double currentTemperature, double newTemperature) {
+  spdlog::debug("Set temperature to {} from {}", newTemperature, currentTemperature);
 
   double scaleFactor = sqrt(newTemperature / currentTemperature);
-  std::function scaleVelocity = [scaleFactor](Particle &p) {
-    p.v = scaleFactor * p.v;
-  };
+  std::function scaleVelocity = [scaleFactor](Particle &p) { p.v = scaleFactor * p.v; };
 
   particleContainer.forEach(scaleVelocity);
 }
 
 double Thermostat::computeEnergy() {
   double energy{0.};
-  std::function energyCalc = [&energy](Particle &p) {
-    energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.;
-  };
+  std::function energyCalc = [&energy](Particle &p) { energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.; };
   particleContainer.forEach(energyCalc);
 
   return energy;
 }
 
 double Thermostat::getCurrentTemperature() {
-  return (computeEnergy() * 2.) /
-         static_cast<double>(particleContainer.size() * dimensionCount);
+  return (computeEnergy() * 2.) / static_cast<double>(particleContainer.size() * dimensionCount);
 }
 
 int Thermostat::getPeriodLength() const { return periodLength; }

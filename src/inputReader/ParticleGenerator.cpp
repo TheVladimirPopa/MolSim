@@ -11,8 +11,7 @@ using vec3d = std::array<double, 3>;
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
 
-void ParticleGeneration::addCuboidToParticleContainer(
-    IContainer &container, ParticleGeneration::cuboid const &data) {
+void ParticleGeneration::addCuboidToParticleContainer(IContainer &container, ParticleGeneration::cuboid const &data) {
   int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
   if (container.size() + numParticles > container.capacity()) {
     // Reserve so much that this cuboid would fit in twice to reduce
@@ -45,12 +44,8 @@ void ParticleGeneration::addCuboidToParticleContainer(
  * @param dimension Dimension of the sphere
  * @param bolzmann_v The Bolzmann velocity
  */
-void addParticlesIfInSphere(IContainer &container,
-                            ParticleGeneration::sphere const &data, vec3d delta,
-                            int dimension) {
-  auto is_in_sphere = [&data](vec3d pos) {
-    return L2Norm(pos - data.position) <= (data.radius * data.distance);
-  };
+void addParticlesIfInSphere(IContainer &container, ParticleGeneration::sphere const &data, vec3d delta, int dimension) {
+  auto is_in_sphere = [&data](vec3d pos) { return L2Norm(pos - data.position) <= (data.radius * data.distance); };
 
   // Iterate binary vector over all 4 or 8 possible configurations for signs
   bool checked = false;
@@ -70,8 +65,7 @@ void addParticlesIfInSphere(IContainer &container,
   }
 }
 
-void ParticleGeneration::addSphereToParticleContainer(
-    IContainer &container, ParticleGeneration::sphere const &data) {
+void ParticleGeneration::addSphereToParticleContainer(IContainer &container, ParticleGeneration::sphere const &data) {
   size_t numParticles = data.radius * data.radius;
   numParticles = (data.dimension == 3 ? numParticles * data.radius : numParticles);
 
