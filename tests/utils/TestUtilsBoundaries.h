@@ -20,14 +20,7 @@ auto signum(double x) {
  * @return Vector of size 3 with the respective sign as its components
  */
 auto signum(v3d x) {
-  for (int i = 0; i < 3; i++) {
-    if (x[i] > 0)
-      x[i] = 1.0;
-    else if (x[i] < 0)
-      x[i] = -1.0;
-    else
-      x[i] = 0.0;
-  }
+  for (int i = 0; i < 3; i++) x[i] = signum(x[i]);
 
   return x;
 };
