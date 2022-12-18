@@ -7,6 +7,5 @@ class LineProcessorSphere : public ILineProcessor {
   ParticleGeneration::sphere sphere{};
 
  public:
-  void processLine(std::istringstream &dataStream,
-                   IContainer &container) override;
+  void processLine(std::istringstream &dataStream, IContainer &container) override;
 };

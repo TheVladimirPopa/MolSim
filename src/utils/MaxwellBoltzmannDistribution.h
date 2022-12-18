@@ -20,8 +20,7 @@
  * generated. Set this to 2 or 3.
  * @return Array containing the generated velocity vector.
  */
-std::array<double, 3> maxwellBoltzmannDistributedVelocity(
-    double averageVelocity, size_t dimensions) {
+std::array<double, 3> maxwellBoltzmannDistributedVelocity(double averageVelocity, size_t dimensions) {
   // we use a constant seed for repeatability.
   // random engine needs static lifetime otherwise it would be recreated for
   // every call.

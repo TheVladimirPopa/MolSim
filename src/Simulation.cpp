@@ -6,8 +6,7 @@
 
 #include "spdlog/spdlog.h"
 
-void Simulation::simulate(IModel &model, IContainer &particles,
-                          IWriter &fileWriter) {
+void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
@@ -17,9 +16,7 @@ void Simulation::simulate(IModel &model, IContainer &particles,
   std::function updateX{[&model](P p) { model.updateX(std::forward<P>(p)); }};
   std::function updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
   std::function updateF{[](P p) { p.updateForces(); }};
-  std::function addForces{[&model](P p1, P p2) {
-    model.addForces(std::forward<P>(p1), std::forward<P>(p2));
-  }};
+  std::function addForces{[&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
 
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);

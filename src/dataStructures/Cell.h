@@ -3,6 +3,7 @@
 #include <array>
 #include <list>
 #include <vector>
+
 #include "utils/ArrayUtils.h"
 
 using std::size_t;
@@ -155,7 +156,7 @@ struct cell {
 
       // push boundary cell once into halo cell with negated offset
       offset = (-1.0) * offset;
-      
+
       (*ghost).periodicPartners.push_back({this, offset});
     }
   }
