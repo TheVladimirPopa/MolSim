@@ -5,9 +5,11 @@
 
 LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
                                            std::array<double, 3> &rightUpperBound)
-    : cells{}, gridSize{cellSize}, leftLowerCorner{leftLowerBound}, rightUpperCorner{rightUpperBound} {
-  auto cubeSize = rightUpperCorner - leftLowerCorner;
-
+    : cells{},
+      gridSize{cellSize},
+      leftLowerCorner{leftLowerBound},
+      rightUpperCorner{rightUpperBound},
+      cubeSize{rightUpperCorner - leftLowerCorner} {
   std::array<double, 3> boundingBoxDim{cubeSize};
   size_t numCells{1};
   for (int i = 0; i < 3; ++i) {
@@ -26,13 +28,13 @@ LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3
     for (size_t y = 0; y < dimensions[1]; ++y) {
       for (size_t x = 0; x < dimensions[0]; ++x) {
         if (x == 0 or y == 0 or z == 0 or x == dimensions[0] - 1 or y == dimensions[1] - 1 or z == dimensions[2] - 1) {
-          cells.emplace_back(CellType::halo, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::halo, cells.size(), &dimensions, &cubeSize);
         } else if (x == 1 or y == 1 or z == 1 or x == dimensions[0] - 2 or y == dimensions[1] - 2 or
                    z == dimensions[2] - 2) {
-          cells.emplace_back(CellType::boundary, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::boundary, cells.size(), &dimensions, &cubeSize);
 
         } else {
-          cells.emplace_back(CellType::inner, cells.size(), dimensions, cubeSize);
+          cells.emplace_back(CellType::inner, cells.size(), &dimensions, &cubeSize);
         }
       }
     }

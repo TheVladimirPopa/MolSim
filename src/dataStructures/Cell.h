@@ -49,10 +49,10 @@ struct cell {
   size_t cellVectorIndex;
 
   /// Dimensions of the grid the cell is part of. This is used to calculate e.g. the position of periodic halo neighbor
-  std::array<unsigned int, 3> gridDimensions;  // TODO: REFERENCE
+  std::array<unsigned int, 3>* gridDimensions;
 
   /// A reference to the 3D size of the LinkedCells container
-  std::array<double, 3> cubeSize;
+  std::array<double, 3>* cubeSize;
 
   /// A struct describing a link partner and the offset that must be applied for particles to move into the linkpartner
   struct PeriodicPartner {
@@ -63,7 +63,7 @@ struct cell {
   /// Periodic partners of cell. Halo cells will take the particles of their partner and simulate their forces.
   std::vector<PeriodicPartner> periodicPartners;
 
-  explicit cell(CellType t, size_t index, std::array<unsigned int, 3>& dimensions, std::array<double, 3>& cubeSize)
+  explicit cell(CellType t, size_t index, std::array<unsigned int, 3>* dimensions, std::array<double, 3>* cubeSize)
       : particles{}, type{t}, cellVectorIndex{index}, gridDimensions{dimensions}, cubeSize{cubeSize} {}
 
   /// Returns whether the cell is empty
@@ -78,12 +78,12 @@ struct cell {
    */
   std::array<unsigned int, 3> getCellGridLocation() const {
     unsigned int index(cellVectorIndex);
-    unsigned int cellsPerLayer = gridDimensions[0] * gridDimensions[1];
+    unsigned int cellsPerLayer = (*gridDimensions)[0] * (*gridDimensions)[1];
     unsigned int layerCount = index / cellsPerLayer;
     index -= layerCount * cellsPerLayer;
 
-    unsigned int lineCount = index / gridDimensions[0];
-    unsigned int cellCount = index - (lineCount * gridDimensions[0]);
+    unsigned int lineCount = index / (*gridDimensions)[0];
+    unsigned int cellCount = index - (lineCount * (*gridDimensions)[0]);
 
     return {cellCount, lineCount, layerCount};
   }
@@ -98,7 +98,7 @@ struct cell {
    */
   std::array<double, 3> getCubeSizeBySide(CubeSide plane, std::array<double, 3> offset) {
     size_t dimIndex = static_cast<size_t>(plane) / 2;
-    offset[dimIndex] = cubeSize[dimIndex];
+    offset[dimIndex] = (*cubeSize)[dimIndex];
     if (static_cast<size_t>(plane) % 2 == 1) offset[dimIndex] *= (-1.0);
     return offset;
   }
@@ -114,7 +114,7 @@ struct cell {
   std::array<unsigned int, 3> getNextHaloPosition(std::array<unsigned int, 3> pos, CubeSide side) {
     size_t dimIndex = static_cast<size_t>(side) / 2;
     bool isLeftRelative = (side == CubeSide::LEFT || side == CubeSide::TOP || side == CubeSide::FRONT);
-    pos[dimIndex] = isLeftRelative ? 0 : gridDimensions[dimIndex] - 1;
+    pos[dimIndex] = isLeftRelative ? 0 : (*gridDimensions)[dimIndex] - 1;
     return pos;
   }
 
@@ -142,7 +142,8 @@ struct cell {
    * when applying forces through a periodic boundary.
    */
   void linkPartnerUnique(std::array<unsigned int, 3> pos, std::vector<cell>& cells, std::array<double, 3> offset) {
-    size_t ghostIndex = pos[0] + (pos[1] * gridDimensions[0]) + (pos[2] * gridDimensions[0] * gridDimensions[1]);
+    size_t ghostIndex =
+        pos[0] + (pos[1] * (*gridDimensions)[0]) + (pos[2] * (*gridDimensions)[0] * (*gridDimensions)[1]);
 
     cell* ghost = &cells[ghostIndex];
     // push halo once into boundary cell

@@ -36,6 +36,9 @@ class LinkedCellsContainer : public IContainer {
   /// The count of cells in each direction, halo cells are included
   std::array<unsigned int, 3> dimensions{};
 
+  /// The geometrical size of the LinkedCells container cube
+  std::array<double, 3> cubeSize;
+
   /**
    * Compute the index of the cell containing the given position
    * @param position A 3d array containing the position
