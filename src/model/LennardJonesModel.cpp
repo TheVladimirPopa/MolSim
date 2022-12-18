@@ -16,8 +16,7 @@ void LennardJonesModel::addForces(Particle &p1, Particle &p2) {
 
   // This is the force formula from worksheet 2 slightly reformulated for better
   // numerical accuracy.
-  auto force = ((-24 * epsilon) / (length * length)) *
-               (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
+  auto force = ((-24 * epsilon) / (length * length)) * (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
 
   p1.f = p1.f + force;
   p2.f = p2.f - force;

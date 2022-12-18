@@ -17,8 +17,7 @@ FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
 
-void FileReader::readFile(IContainer &container, char *filename,
-                          ILineProcessor &lineProcessor) {
+void FileReader::readFile(IContainer &container, char *filename, ILineProcessor &lineProcessor) {
   int num_particles = 0;
 
   std::ifstream input_file(filename);

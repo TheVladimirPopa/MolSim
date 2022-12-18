@@ -19,6 +19,5 @@ class XYZWriter : public IWriter {
 
   virtual ~XYZWriter();
 
-  void writeFile(const std::string &filename, int iteration,
-                 IContainer &particles) override;
+  void writeFile(const std::string &filename, int iteration, IContainer &particles) override;
 };

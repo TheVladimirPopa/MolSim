@@ -10,6 +10,5 @@ class LineProcessorCuboid : public ILineProcessor {
   ParticleGeneration::cuboid cuboid{};
 
  public:
-  void processLine(std::istringstream &dataStream,
-                   IContainer &container) override;
+  void processLine(std::istringstream &dataStream, IContainer &container) override;
 };

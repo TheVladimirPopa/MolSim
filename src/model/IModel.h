@@ -21,9 +21,7 @@ class IModel {
    * Calculate velocity of particle
    * @param p The particle that gets its velocity changed
    */
-  virtual void updateV(Particle &p) const {
-    p.v = p.v + (delta_t * ((1 / (2 * p.m)) * (p.f + p.old_f)));
-  }
+  virtual void updateV(Particle &p) const { p.v = p.v + (delta_t * ((1 / (2 * p.m)) * (p.f + p.old_f))); }
 
   /**
    * Let the forces of two particles interact. Forces simply add up on both

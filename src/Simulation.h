@@ -40,17 +40,13 @@ class Simulation {
    * Sets how often the particles get written to a file (every nth iteration)
    * @param writeOutFrequency the new frequency for the writer
    */
-  void setIterationsPerWrite(unsigned int writeOutFrequency) {
-    Simulation::writeOutFrequency = writeOutFrequency;
-  }
+  void setIterationsPerWrite(unsigned int writeOutFrequency) { Simulation::writeOutFrequency = writeOutFrequency; }
   /**
    * Sets the path to the output files(iteration number and file-ending are
    * added automatically)
    * @param filename the new path
    */
-  void setFilename(const std::string &filename) {
-    Simulation::filename = filename;
-  }
+  void setFilename(const std::string &filename) { Simulation::filename = filename; }
 
   /**
    * Returns the timestep by which the time gets increased in every iteration

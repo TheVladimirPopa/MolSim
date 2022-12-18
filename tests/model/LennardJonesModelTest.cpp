@@ -28,10 +28,8 @@ TEST(LennardJonesModel, ForceCorrectSign) {
   EXPECT_NE(p1.getF()[0], 0.0) << "Applied force is zero.";
   EXPECT_NE(p2.getF()[0], 0.0) << "Applied force is zero.";
 
-  EXPECT_LT(p1.getF()[0], 0.0)
-      << "Force on particle 1 points in wrong direction on the x0 axis.";
-  EXPECT_GT(p2.getF()[0], 0.0)
-      << "Force on particle 2 points in wrong direction on the x0 axis of.";
+  EXPECT_LT(p1.getF()[0], 0.0) << "Force on particle 1 points in wrong direction on the x0 axis.";
+  EXPECT_GT(p2.getF()[0], 0.0) << "Force on particle 2 points in wrong direction on the x0 axis of.";
 }
 
 /**
@@ -63,7 +61,6 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
   // Check if result is correct enough for our purposes
   EXPECT_NEAR(p1.getF()[0], expected_force[0], 0.000001);
   EXPECT_NEAR(p1.getF()[0], expected_force[0], 0.00000000000001);
-  EXPECT_NEAR(p1.getF()[0], expected_force[0],
-              std::numeric_limits<double>::epsilon())
+  EXPECT_NEAR(p1.getF()[0], expected_force[0], std::numeric_limits<double>::epsilon())
       << "Note: this last expect might assume unreasonable precision.";
 }

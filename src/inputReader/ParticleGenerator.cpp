@@ -59,8 +59,7 @@ void addParticlesIfInSphere(IContainer &container,
 
     vec3d pos = data.position;
 
-    vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0),
-                   ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
+    vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0), ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
                    ((sign_bin & 0b100) == 0 ? 1.0 : -1.0)};
 
     pos = pos + signs * delta;
@@ -74,8 +73,7 @@ void addParticlesIfInSphere(IContainer &container,
 void ParticleGeneration::addSphereToParticleContainer(
     IContainer &container, ParticleGeneration::sphere const &data) {
   size_t numParticles = data.radius * data.radius;
-  numParticles =
-      (data.dimension == 3 ? numParticles * data.radius : numParticles);
+  numParticles = (data.dimension == 3 ? numParticles * data.radius : numParticles);
 
   if (container.size() + numParticles > container.capacity()) {
     spdlog::debug("Resizing the particle container");
@@ -92,8 +90,7 @@ void ParticleGeneration::addSphereToParticleContainer(
     for (unsigned int y = 1; y <= data.radius; ++y) {
       for (unsigned int z = 1; z <= data.radius; ++z) {
         // delta describes offset of a particle from center point
-        vec3d delta = {(x - 1) * data.distance + 0.5 * data.distance,
-                       (y - 1) * data.distance + 0.5 * data.distance,
+        vec3d delta = {(x - 1) * data.distance + 0.5 * data.distance, (y - 1) * data.distance + 0.5 * data.distance,
                        (z - 1) * data.distance + 0.5 * data.distance};
         if (data.dimension == 2) delta[2] = 0.0;
 
