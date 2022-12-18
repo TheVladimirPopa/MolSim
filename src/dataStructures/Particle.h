@@ -9,6 +9,8 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
+
 
 class IModel;
 class NewtonsLawModel;
@@ -42,6 +44,16 @@ class Particle {
   double m;
 
   /**
+   * Lennard Jones depth of potential well
+   */
+  double epsilon;
+
+  /**
+   * Lennard Jones distance at which particle-particle potential energy is 0 / size of the particle
+   */
+  double sigma;
+
+  /**
    * Type of the particle. Use it for whatever you want (e.g. to separate
    * molecules belonging to different bodies, matters, and so on)
    */
@@ -53,6 +65,19 @@ class Particle {
    */
   bool isDeleted_;
 
+  struct ParticleType {
+    double const mass;
+    double const epsilon;
+    double const sigma;
+  };
+
+  static std::unordered_map<int, ParticleType> typeToParametersMap;
+
+  /**
+   * Sets mass and Lennard-Jones parameters epsilon and sigma
+   */
+  void setLennardJonesParameters(int type);
+
  public:
   explicit Particle(int type = 0);
 
@@ -61,7 +86,7 @@ class Particle {
   Particle(
       // for visualization, we need always 3 coordinates
       // -> in case of 2d, we use only the first and the second
-      std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0}, double m_arg = 1.0, int type = 0);
+      std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0}, int type = 0);
 
   virtual ~Particle();
 
@@ -88,6 +113,7 @@ class Particle {
   friend class IModel;
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
+  friend class Simulation;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can
@@ -105,6 +131,8 @@ class Particle {
    * Deleted particle by setting it's deletion state.
    */
   void deleteParticle() { isDeleted_ = true; }
+
+  static void registerParticleType(int type, double mass, double epsilon, double sigma);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
