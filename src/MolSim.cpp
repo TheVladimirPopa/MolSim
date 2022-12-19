@@ -205,9 +205,7 @@ int main(int argc, char *argsv[]) {
   std::array<double, 3> leftLowerCorner{0., 0., -5.};
   std::array<double, 3> rightUpperCorner{300., 54., 5.};
 
-  LinkedCellsContainer linkedCellsContainer{4.5, leftLowerCorner,
-                                            rightUpperCorner};
-
+  LinkedCellsContainer linkedCellsContainer{4.5, leftLowerCorner, rightUpperCorner};
 
   linkedCellsContainer.setBoundaries({
       {CubeSide::LEFT, BoundaryType::PERIODIC},
