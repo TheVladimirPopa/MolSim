@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "dataStructures/Cell.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/XMLParser.h"
@@ -7,27 +8,20 @@
  * Test missing deltaT parameter
  */
 TEST(XMLParser, missinDeltaT) {
-  EXPECT_THROW(
-      XMLParser parser("../tests/resources/XMLTestCases/missingDeltaT.xml"),
-      std::invalid_argument);
+  EXPECT_THROW(XMLParser parser("../tests/resources/XMLTestCases/missingDeltaT.xml"), std::invalid_argument);
 }
 /**
  * Test missing endTime
  */
 TEST(XMLParser, missingEndTime) {
-  EXPECT_THROW(
-      XMLParser parser("../tests/resources/XMLTestCases/missingEndTime.xml"),
-      std::invalid_argument);
+  EXPECT_THROW(XMLParser parser("../tests/resources/XMLTestCases/missingEndTime.xml"), std::invalid_argument);
 }
 
 /**
  * Test missing writeOutFrequency
  */
 TEST(XMLParser, missingWriteOutFrequency) {
-  EXPECT_THROW(
-      XMLParser parser(
-          "../tests/resources/XMLTestCases/missingWriteOutFrequency.xml"),
-      std::invalid_argument);
+  EXPECT_THROW(XMLParser parser("../tests/resources/XMLTestCases/missingWriteOutFrequency.xml"), std::invalid_argument);
 }
 
 /**
@@ -35,8 +29,7 @@ TEST(XMLParser, missingWriteOutFrequency) {
  */
 TEST(XMLParser, initSimulation) {
   Simulation simulation{};
-  XMLParser xmlParser =
-      XMLParser("../tests/resources/XMLTestCases/Initialization1.xml");
+  XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization1.xml");
   xmlParser.initialiseSimulationFromXML(simulation);
 
   EXPECT_EQ(simulation.getEndTime(), 10.0);
@@ -50,31 +43,29 @@ TEST(XMLParser, initSimulation) {
  * boundary types
  */
 TEST(XMLParser, initLinkedCellContainerBoundary) {
-  XMLParser xmlParser =
-      XMLParser("../tests/resources/XMLTestCases/Initialization2.xml");
+  XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization2.xml");
 
-  LinkedCellsContainer linkedCellsContainer =
-      xmlParser.initialiseLinkedCellContainerFromXML();
+  LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
   xmlParser.XMLLinkedCellBoundaries(linkedCellsContainer);
 
   for (auto it : linkedCellsContainer.getBoundaries()) {
     switch (it.getSide()) {
-      case cubeSide::LEFT:
-        EXPECT_EQ(it.getType(), boundaryType::REFLECT);
-      case cubeSide::RIGHT:
-        EXPECT_EQ(it.getType(), boundaryType::REFLECT);
+      case CubeSide::LEFT:
+        EXPECT_EQ(it.getType(), BoundaryType::REFLECT);
+      case CubeSide::RIGHT:
+        EXPECT_EQ(it.getType(), BoundaryType::REFLECT);
         break;
-      case cubeSide::TOP:
-        EXPECT_EQ(it.getType(), boundaryType::OUTFLOW);
+      case CubeSide::TOP:
+        EXPECT_EQ(it.getType(), BoundaryType::OUTFLOW);
         break;
-      case cubeSide::BOTTOM:
-        EXPECT_EQ(it.getType(), boundaryType::OUTFLOW);
+      case CubeSide::BOTTOM:
+        EXPECT_EQ(it.getType(), BoundaryType::OUTFLOW);
         break;
-      case cubeSide::FRONT:
-        EXPECT_EQ(it.getType(), boundaryType::REFLECT);
+      case CubeSide::FRONT:
+        EXPECT_EQ(it.getType(), BoundaryType::REFLECT);
         break;
-      case cubeSide::BACK:
-        EXPECT_EQ(it.getType(), boundaryType::OUTFLOW);
+      case CubeSide::BACK:
+        EXPECT_EQ(it.getType(), BoundaryType::OUTFLOW);
         break;
     }
   }
@@ -89,8 +80,7 @@ TEST(XMLParser, initLinkedCellContainerBoundary) {
  * Test Sphere Input
  */
 TEST(XMLParser, testSphereInput) {
-  XMLParser xmlParser =
-      XMLParser("../tests/resources/XMLTestCases/sphereTest.xml");
+  XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/sphereTest.xml");
   std::vector<SphereArg> sphereArgs = xmlParser.extractSpheres();
 
   std::vector<ParticleGeneration::sphere> spheres;
@@ -170,8 +160,7 @@ TEST(XMLParser, testSphereInput) {
  * Test Cuboid Input
  */
 TEST(XMLParser, testCuboidInput) {
-  XMLParser xmlParser =
-      XMLParser("../tests/resources/XMLTestCases/cuboidTest.xml");
+  XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/cuboidTest.xml");
   std::vector<CuboidArg> cuboidArgs = xmlParser.extractCuboid();
 
   std::vector<ParticleGeneration::cuboid> cuboids;

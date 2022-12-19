@@ -5,7 +5,6 @@
 #include "model/NewtonsLawModel.h"
 using std::pow;
 
-
 /**
  * Check if the applied forces have the correct sign on each particle.
  */

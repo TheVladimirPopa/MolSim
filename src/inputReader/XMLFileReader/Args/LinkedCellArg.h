@@ -17,8 +17,7 @@ class LinkedCellArg {
   std::string bound_back;
 
  public:
-  LinkedCellArg(double cellSize, double cutOffRadius,
-                const std::array<double, 3> &leftLowerBound,
+  LinkedCellArg(double cellSize, double cutOffRadius, const std::array<double, 3> &leftLowerBound,
                 const std::array<double, 3> &rightUpperBound);
   [[nodiscard]] double getCellSize() const;
 

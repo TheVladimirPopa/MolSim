@@ -65,9 +65,7 @@ class Simulation {
    *
    * @return
    */
-  unsigned int getWriteOutFrequency() const {
-    return writeOutFrequency;
-  }
+  unsigned int getWriteOutFrequency() const { return writeOutFrequency; }
   /**
    *
    * @return

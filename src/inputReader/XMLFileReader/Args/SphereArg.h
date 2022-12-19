@@ -14,8 +14,7 @@ class SphereArg {
   int type;
 
  public:
-  SphereArg(const std::array<double, 3>& position,
-            const std::array<double, 3>& velocity, unsigned int radius,
+  SphereArg(const std::array<double, 3>& position, const std::array<double, 3>& velocity, unsigned int radius,
             unsigned int dimension, double distance, double mass, int type);
 
   [[nodiscard]] const std::array<double, 3>& getPosition() const;

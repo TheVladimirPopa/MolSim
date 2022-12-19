@@ -173,14 +173,10 @@ class LinkedCellsContainer : public IContainer {
    * Returns the left lower corner bound of the LinkedCells container
    * @return the leftLowerCorner
    */
-  [[nodiscard]] std::array<double, 3> getLeftLowerCorner() const {
-    return leftLowerCorner;
-  }
+  [[nodiscard]] std::array<double, 3> getLeftLowerCorner() const { return leftLowerCorner; }
   /**
    * Returns the right upper corner bound of the LinkedCells container
    * @return the rightUpperCorner
    */
-  [[nodiscard]] std::array<double, 3> getRightUpperCorner() const {
-    return rightUpperCorner;
-  }
+  [[nodiscard]] std::array<double, 3> getRightUpperCorner() const { return rightUpperCorner; }
 };

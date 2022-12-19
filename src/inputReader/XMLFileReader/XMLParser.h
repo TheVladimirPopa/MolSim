@@ -23,17 +23,13 @@ class XMLParser {
    * @param input
    * @return
    */
-  static std::array<double, 3> generate_double_array(const array_d &input) {
-    return {input.x(), input.y(), input.z()};
-  }
+  static std::array<double, 3> generate_double_array(const array_d &input) { return {input.x(), input.y(), input.z()}; }
   /**
    * Generates an array of type int from the xml input
    * @param input
    * @return
    */
-  static std::array<int, 3> generate_int_array(const array_i &input) {
-    return {input.x(), input.y(), input.z()};
-  }
+  static std::array<int, 3> generate_int_array(const array_i &input) { return {input.x(), input.y(), input.z()}; }
 
  public:
   /**
@@ -66,23 +62,22 @@ class XMLParser {
     unsigned int writeOutFrequency = simulation->writeOutFrequency();
     std::string filename = simulation->filename();
 
-    SimulationArg arg =
-        SimulationArg(endTime, deltaT, writeOutFrequency, filename, files.at(0));
+    SimulationArg arg = SimulationArg(endTime, deltaT, writeOutFrequency, filename, files.at(0));
 
     return arg;
   }
   /**
-   * Converts boundaryType string str to proper boundaryType enum
+   * Converts BoundaryType string str to proper BoundaryType enum
    * @param str
-   * @return Returns a boundaryType corresponding to the string
+   * @return Returns a BoundaryType corresponding to the string
    */
-  static boundaryType strToEnumBoundary(const std::string &str) {
+  static BoundaryType strToEnumBoundary(const std::string &str) {
     if (str == "OUTFLOW") {
-      return boundaryType::OUTFLOW;
+      return BoundaryType::OUTFLOW;
     } else if (str == "REFLECT") {
-      return boundaryType::REFLECT;
+      return BoundaryType::REFLECT;
     } else if (str == "PERIODIC") {
-      return boundaryType::PERIODIC;
+      return BoundaryType::PERIODIC;
     }
     throw std::invalid_argument("Invalid boundary string");
   }
@@ -115,8 +110,7 @@ class XMLParser {
         auto front = c.front();
         auto back = c.back();
 
-        LinkedCellArg linkedCellArg = LinkedCellArg(
-            cs, cut, generate_double_array(lb), generate_double_array(rb));
+        LinkedCellArg linkedCellArg = LinkedCellArg(cs, cut, generate_double_array(lb), generate_double_array(rb));
         linkedCellArg.setBoundLeft(left);
         linkedCellArg.setBoundRight(right);
         linkedCellArg.setBoundTop(top);
@@ -146,9 +140,8 @@ class XMLParser {
         auto mass = s.mass();
         auto type = s.type();
 
-        cuboidArgs.emplace_back(generate_double_array(pos),
-                                generate_double_array(vel),
-                                generate_int_array(dim), dis, mass, type);
+        cuboidArgs.emplace_back(generate_double_array(pos), generate_double_array(vel), generate_int_array(dim), dis,
+                                mass, type);
       }
     }
 
@@ -172,9 +165,7 @@ class XMLParser {
         auto dim = s.dimension();
         auto type = s.type();
 
-        sphereArgs.emplace_back(generate_double_array(pos),
-                                generate_double_array(vel), rad, dim, dis, mass,
-                                type);
+        sphereArgs.emplace_back(generate_double_array(pos), generate_double_array(vel), rad, dim, dis, mass, type);
       }
     }
 
@@ -237,8 +228,7 @@ class XMLParser {
     std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
     std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
 
-    return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound,
-                                upperBound};
+    return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
   }
   /**
    * Initialises a cutOffRadius from the path file
@@ -255,18 +245,12 @@ class XMLParser {
   void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
     LinkedCellArg linkedCellArg = extractLinkedCell();
     linkedCellsContainer.setBoundaries({
-        {cubeSide::LEFT,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundLeft())},
-        {cubeSide::RIGHT,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundRight())},
-        {cubeSide::TOP,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundTop())},
-        {cubeSide::BOTTOM,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundBottom())},
-        {cubeSide::FRONT,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundFront())},
-        {cubeSide::BACK,
-         XMLParser::strToEnumBoundary(linkedCellArg.getBoundBack())},
+        {CubeSide::LEFT, XMLParser::strToEnumBoundary(linkedCellArg.getBoundLeft())},
+        {CubeSide::RIGHT, XMLParser::strToEnumBoundary(linkedCellArg.getBoundRight())},
+        {CubeSide::TOP, XMLParser::strToEnumBoundary(linkedCellArg.getBoundTop())},
+        {CubeSide::BOTTOM, XMLParser::strToEnumBoundary(linkedCellArg.getBoundBottom())},
+        {CubeSide::FRONT, XMLParser::strToEnumBoundary(linkedCellArg.getBoundFront())},
+        {CubeSide::BACK, XMLParser::strToEnumBoundary(linkedCellArg.getBoundBack())},
     });
   }
 };

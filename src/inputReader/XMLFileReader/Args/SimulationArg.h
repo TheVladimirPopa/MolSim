@@ -11,8 +11,8 @@ class SimulationArg {
   std::string inputFile;
 
  public:
-  SimulationArg(double endTime, double deltaT, unsigned int writeOutFrequency,
-                std::string  filename, std::string inputFile);
+  SimulationArg(double endTime, double deltaT, unsigned int writeOutFrequency, std::string filename,
+                std::string inputFile);
 
   [[nodiscard]] double getEndTime() const;
 

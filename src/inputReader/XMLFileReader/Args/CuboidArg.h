@@ -13,10 +13,8 @@ class CuboidArg {
   int type;
 
  public:
-  CuboidArg(const std::array<double, 3>& position,
-            const std::array<double, 3>& velocity,
-            const std::array<int, 3>& dimension, double distance, double mass,
-            int type);
+  CuboidArg(const std::array<double, 3>& position, const std::array<double, 3>& velocity,
+            const std::array<int, 3>& dimension, double distance, double mass, int type);
 
   [[nodiscard]] const std::array<double, 3>& getPosition() const;
 

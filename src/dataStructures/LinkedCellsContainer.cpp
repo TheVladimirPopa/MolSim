@@ -360,4 +360,3 @@ void LinkedCellsContainer::applyPeriodicForces(std::function<void(Particle &, Pa
     }
   }
 }
-

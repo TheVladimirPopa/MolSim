@@ -44,24 +44,22 @@ int main(int argc, char *argsv[]) {
   std::string xmlPath;
 
   int opt;
-  static struct option long_options[] = {
-      {"xml", required_argument, nullptr, 'i'},
-      {"output-file", required_argument, nullptr, 'o'},
-      {"no-output", no_argument, nullptr, 'n'},
-      {"type", required_argument, nullptr, 't'},
-      {"input-file", required_argument, nullptr, 'f'},
-      {"end-time", required_argument, nullptr, 'e'},
-      {"delta-t", required_argument, nullptr, 'd'},
-      {"write-frequency", required_argument, nullptr, 'w'},
-      {"performance", no_argument, nullptr, 'p'},
-      {"hit-rate", no_argument, nullptr, 'r'},
-      {"verbose", no_argument, nullptr, 'v'},
-      {"quiet", no_argument, nullptr, 'q'},
-      {"help", no_argument, nullptr, 'h'},
-      {nullptr, 0, nullptr, 0}};
+  static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
+                                         {"output-file", required_argument, nullptr, 'o'},
+                                         {"no-output", no_argument, nullptr, 'n'},
+                                         {"type", required_argument, nullptr, 't'},
+                                         {"input-file", required_argument, nullptr, 'f'},
+                                         {"end-time", required_argument, nullptr, 'e'},
+                                         {"delta-t", required_argument, nullptr, 'd'},
+                                         {"write-frequency", required_argument, nullptr, 'w'},
+                                         {"performance", no_argument, nullptr, 'p'},
+                                         {"hit-rate", no_argument, nullptr, 'r'},
+                                         {"verbose", no_argument, nullptr, 'v'},
+                                         {"quiet", no_argument, nullptr, 'q'},
+                                         {"help", no_argument, nullptr, 'h'},
+                                         {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options,
-                            nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
@@ -223,13 +221,13 @@ int main(int argc, char *argsv[]) {
     VectorContainer vectorContainer{};
 
     linkedContainer.setBoundaries({
-      {CubeSide::LEFT, BoundaryType::PERIODIC},
-      {CubeSide::RIGHT, BoundaryType::PERIODIC},
-      {CubeSide::TOP, BoundaryType::REFLECT},
-      {CubeSide::BOTTOM, BoundaryType::REFLECT},
-      {CubeSide::FRONT, BoundaryType::PERIODIC},
-      {CubeSide::BACK, BoundaryType::PERIODIC},
-  });
+        {CubeSide::LEFT, BoundaryType::PERIODIC},
+        {CubeSide::RIGHT, BoundaryType::PERIODIC},
+        {CubeSide::TOP, BoundaryType::REFLECT},
+        {CubeSide::BOTTOM, BoundaryType::REFLECT},
+        {CubeSide::FRONT, BoundaryType::PERIODIC},
+        {CubeSide::BACK, BoundaryType::PERIODIC},
+    });
 
     container = &linkedContainer;
 
@@ -282,8 +280,7 @@ int main(int argc, char *argsv[]) {
 
     parser.initialiseSimulationFromXML(simulation);
 
-    LinkedCellsContainer linkedCellsContainer =
-        parser.initialiseLinkedCellContainerFromXML();
+    LinkedCellsContainer linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
 
     if (linkedCellsStrategy) {
       model.setCutOffRadius(parser.initCutOffRadiusXML());
@@ -336,15 +333,14 @@ int main(int argc, char *argsv[]) {
 }
 
 void printUsage() {
-  std::cout
-      << " Usage\n"
-         "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
-         "<output-file>] [-e <endtime>]\n"
-         "                                [-d <deltaT>] [-w <iteration-count>] "
-         "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
-         "\n"
-         "For more information run ./Molsim -h or ./Molsim --help"
-      << std::endl;
+  std::cout << " Usage\n"
+               "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
+               "<output-file>] [-e <endtime>]\n"
+               "                                [-d <deltaT>] [-w <iteration-count>] "
+               "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
+               "\n"
+               "For more information run ./Molsim -h or ./Molsim --help"
+            << std::endl;
 }
 
 void printHelp() {
