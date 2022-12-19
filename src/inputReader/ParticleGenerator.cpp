@@ -10,13 +10,8 @@ using vec3d = std::array<double, 3>;
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
-#include "utils/MaxwellBoltzmannDistribution.h"
 
-void ParticleGeneration::addCuboidToParticleContainer(
-    IContainer &container, ParticleGeneration::cuboid const &data) {
-  size_t dimension = (data.dimension[2] == 1 ? 2 : 3);
-  constexpr double meanVel = 0.1;
-
+void ParticleGeneration::addCuboidToParticleContainer(IContainer &container, ParticleGeneration::cuboid const &data) {
   int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
   if (container.size() + numParticles > container.capacity()) {
     // Reserve so much that this cuboid would fit in twice to reduce
@@ -26,7 +21,6 @@ void ParticleGeneration::addCuboidToParticleContainer(
   }
 
   std::array<double, 3> position{};
-  std::array<double, 3> velocity{};
   for (int x = 0; x < data.dimension[0]; ++x) {
     for (int y = 0; y < data.dimension[1]; ++y) {
       for (int z = 0; z < data.dimension[2]; ++z) {
@@ -34,9 +28,7 @@ void ParticleGeneration::addCuboidToParticleContainer(
         position[0] += x * data.distance;
         position[1] += y * data.distance;
         position[2] += z * data.distance;
-        velocity = maxwellBoltzmannDistributedVelocity(meanVel, dimension);
-        container.emplace_back(position, velocity + data.velocity, data.mass,
-                               data.type);
+        container.emplace_back(position, data.velocity, data.mass, data.type);
       }
     }
   }
@@ -52,12 +44,8 @@ void ParticleGeneration::addCuboidToParticleContainer(
  * @param dimension Dimension of the sphere
  * @param bolzmann_v The Bolzmann velocity
  */
-void addParticlesIfInSphere(IContainer &container,
-                            ParticleGeneration::sphere const &data, vec3d delta,
-                            int dimension, double bolzmann_v) {
-  auto is_in_sphere = [&data](vec3d pos) {
-    return L2Norm(pos - data.position) <= (data.radius * data.distance);
-  };
+void addParticlesIfInSphere(IContainer &container, ParticleGeneration::sphere const &data, vec3d delta, int dimension) {
+  auto is_in_sphere = [&data](vec3d pos) { return L2Norm(pos - data.position) <= (data.radius * data.distance); };
 
   // Iterate binary vector over all 4 or 8 possible configurations for signs
   bool checked = false;
@@ -66,27 +54,20 @@ void addParticlesIfInSphere(IContainer &container,
 
     vec3d pos = data.position;
 
-    vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0),
-                   ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
+    vec3d signs = {((sign_bin & 0b001) == 0 ? 1.0 : -1.0), ((sign_bin & 0b010) == 0 ? 1.0 : -1.0),
                    ((sign_bin & 0b100) == 0 ? 1.0 : -1.0)};
 
     pos = pos + signs * delta;
 
     if (!checked && !is_in_sphere(pos)) break;
     checked = true;
-
-    vec3d bolz_v = maxwellBoltzmannDistributedVelocity(bolzmann_v, dimension);
-    container.emplace_back(pos, bolz_v + data.velocity, data.mass, data.type);
+    container.emplace_back(pos, data.velocity, data.mass, data.type);
   }
 }
 
-void ParticleGeneration::addSphereToParticleContainer(
-    IContainer &container, ParticleGeneration::sphere const &data) {
-  constexpr double meanVel = 0.1;
-
+void ParticleGeneration::addSphereToParticleContainer(IContainer &container, ParticleGeneration::sphere const &data) {
   size_t numParticles = data.radius * data.radius;
-  numParticles =
-      (data.dimension == 3 ? numParticles * data.radius : numParticles);
+  numParticles = (data.dimension == 3 ? numParticles * data.radius : numParticles);
 
   if (container.size() + numParticles > container.capacity()) {
     spdlog::debug("Resizing the particle container");
@@ -103,12 +84,11 @@ void ParticleGeneration::addSphereToParticleContainer(
     for (unsigned int y = 1; y <= data.radius; ++y) {
       for (unsigned int z = 1; z <= data.radius; ++z) {
         // delta describes offset of a particle from center point
-        vec3d delta = {(x - 1) * data.distance + 0.5 * data.distance,
-                       (y - 1) * data.distance + 0.5 * data.distance,
+        vec3d delta = {(x - 1) * data.distance + 0.5 * data.distance, (y - 1) * data.distance + 0.5 * data.distance,
                        (z - 1) * data.distance + 0.5 * data.distance};
         if (data.dimension == 2) delta[2] = 0.0;
 
-        addParticlesIfInSphere(container, data, delta, data.dimension, meanVel);
+        addParticlesIfInSphere(container, data, delta, data.dimension);
         if (data.dimension == 2) break;
       }
     }

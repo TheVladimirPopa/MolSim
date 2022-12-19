@@ -3,6 +3,5 @@
 //
 #include "IWriter.h"
 class NoWriter : public IWriter {
-  void writeFile(const std::string &filename, int iteration,
-                 IContainer &particles) override {}
+  void writeFile(const std::string &filename, int iteration, IContainer &particles) override {}
 };

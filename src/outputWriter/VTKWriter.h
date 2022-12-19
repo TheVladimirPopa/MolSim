@@ -24,8 +24,7 @@ class VTKWriter : public IWriter {
 
   virtual ~VTKWriter();
 
-  void writeFile(const std::string &filename, int iteration,
-                 IContainer &particles) override;
+  void writeFile(const std::string &filename, int iteration, IContainer &particles) override;
 
  private:
   /**

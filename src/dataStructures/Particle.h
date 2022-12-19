@@ -14,6 +14,7 @@
 class IModel;
 class NewtonsLawModel;
 class LennardJonesModel;
+class Thermostat;
 
 class Particle {
  private:
@@ -121,7 +122,6 @@ class Particle {
 
   double getSigma() const { return sigma; };
 
-
   bool operator==(Particle &other);
 
   std::string toString() const;
@@ -131,6 +131,7 @@ class Particle {
   friend class IModel;
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
+  friend class Thermostat;
   friend class Simulation;
 
   /**
@@ -150,6 +151,13 @@ class Particle {
    */
   void deleteParticle() { isDeleted_ = true; }
 
+  /**
+   * Registers a new particle type. This is used to ensure that each particle of the same type, gets the same
+   * Lennard-Jones parameters.
+   * @param type Type for which Lennard-Jones parameters get registered
+   * @param epsilon Lennard-Jones epsilon parameter
+   * @param sigma Lennard-Jones sigma parameter
+   */
   static void registerParticleType(int type, double epsilon, double sigma);
 };
 

@@ -65,6 +65,5 @@ class FileReader {
    * which is not a comment and not the line with the number of particles
    * @note This method is only public for testing-reasons
    */
-  static void readFile(IContainer &particles, char *filename,
-                       ILineProcessor &lineProcessor);
+  static void readFile(IContainer &particles, char *filename, ILineProcessor &lineProcessor);
 };

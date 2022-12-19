@@ -44,73 +44,47 @@
 //
 
 DataArrayList_t::DataArrayList_t()
-    : ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(this) {}
+    : ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(this) {}
 
 DataArrayList_t::DataArrayList_t(size_type n, const ::xml_schema::decimal& x)
-    : ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(n, x,
-                                                                      this) {}
+    : ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(n, x, this) {}
 
-DataArrayList_t::DataArrayList_t(const DataArrayList_t& o,
-                                 ::xml_schema::flags f,
-                                 ::xml_schema::container* c)
+DataArrayList_t::DataArrayList_t(const DataArrayList_t& o, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::simple_type(o, f, c),
-      ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(o, f,
-                                                                      this) {}
+      ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(o, f, this) {}
 
 // DataArray_t
 //
 
-const DataArray_t::type_type& DataArray_t::type() const {
-  return this->type_.get();
-}
+const DataArray_t::type_type& DataArray_t::type() const { return this->type_.get(); }
 
 DataArray_t::type_type& DataArray_t::type() { return this->type_.get(); }
 
 void DataArray_t::type(const type_type& x) { this->type_.set(x); }
 
-void DataArray_t::type(::std::unique_ptr<type_type> x) {
-  this->type_.set(std::move(x));
-}
+void DataArray_t::type(::std::unique_ptr<type_type> x) { this->type_.set(std::move(x)); }
 
-const DataArray_t::Name_type& DataArray_t::Name() const {
-  return this->Name_.get();
-}
+const DataArray_t::Name_type& DataArray_t::Name() const { return this->Name_.get(); }
 
 DataArray_t::Name_type& DataArray_t::Name() { return this->Name_.get(); }
 
 void DataArray_t::Name(const Name_type& x) { this->Name_.set(x); }
 
-void DataArray_t::Name(::std::unique_ptr<Name_type> x) {
-  this->Name_.set(std::move(x));
-}
+void DataArray_t::Name(::std::unique_ptr<Name_type> x) { this->Name_.set(std::move(x)); }
 
-const DataArray_t::NumberOfComponents_type& DataArray_t::NumberOfComponents()
-    const {
+const DataArray_t::NumberOfComponents_type& DataArray_t::NumberOfComponents() const {
   return this->NumberOfComponents_.get();
 }
 
-DataArray_t::NumberOfComponents_type& DataArray_t::NumberOfComponents() {
-  return this->NumberOfComponents_.get();
-}
+DataArray_t::NumberOfComponents_type& DataArray_t::NumberOfComponents() { return this->NumberOfComponents_.get(); }
 
-void DataArray_t::NumberOfComponents(const NumberOfComponents_type& x) {
-  this->NumberOfComponents_.set(x);
-}
+void DataArray_t::NumberOfComponents(const NumberOfComponents_type& x) { this->NumberOfComponents_.set(x); }
 
-const DataArray_t::format_type& DataArray_t::format() const {
-  return this->format_.get();
-}
+const DataArray_t::format_type& DataArray_t::format() const { return this->format_.get(); }
 
-const DataArray_t::format_type& DataArray_t::format_default_value() {
-  return format_default_value_;
-}
+const DataArray_t::format_type& DataArray_t::format_default_value() { return format_default_value_; }
 
-const DataArray_t::offset_optional& DataArray_t::offset() const {
-  return this->offset_;
-}
+const DataArray_t::offset_optional& DataArray_t::offset() const { return this->offset_; }
 
 DataArray_t::offset_optional& DataArray_t::offset() { return this->offset_; }
 
@@ -121,163 +95,100 @@ void DataArray_t::offset(const offset_optional& x) { this->offset_ = x; }
 // PieceUnstructuredGrid_t
 //
 
-const PieceUnstructuredGrid_t::PointData_type&
-PieceUnstructuredGrid_t::PointData() const {
+const PieceUnstructuredGrid_t::PointData_type& PieceUnstructuredGrid_t::PointData() const {
   return this->PointData_.get();
 }
 
-PieceUnstructuredGrid_t::PointData_type& PieceUnstructuredGrid_t::PointData() {
-  return this->PointData_.get();
-}
+PieceUnstructuredGrid_t::PointData_type& PieceUnstructuredGrid_t::PointData() { return this->PointData_.get(); }
 
-void PieceUnstructuredGrid_t::PointData(const PointData_type& x) {
-  this->PointData_.set(x);
-}
+void PieceUnstructuredGrid_t::PointData(const PointData_type& x) { this->PointData_.set(x); }
 
-void PieceUnstructuredGrid_t::PointData(::std::unique_ptr<PointData_type> x) {
-  this->PointData_.set(std::move(x));
-}
+void PieceUnstructuredGrid_t::PointData(::std::unique_ptr<PointData_type> x) { this->PointData_.set(std::move(x)); }
 
-const PieceUnstructuredGrid_t::CellData_type&
-PieceUnstructuredGrid_t::CellData() const {
+const PieceUnstructuredGrid_t::CellData_type& PieceUnstructuredGrid_t::CellData() const {
   return this->CellData_.get();
 }
 
-PieceUnstructuredGrid_t::CellData_type& PieceUnstructuredGrid_t::CellData() {
-  return this->CellData_.get();
-}
+PieceUnstructuredGrid_t::CellData_type& PieceUnstructuredGrid_t::CellData() { return this->CellData_.get(); }
 
-void PieceUnstructuredGrid_t::CellData(const CellData_type& x) {
-  this->CellData_.set(x);
-}
+void PieceUnstructuredGrid_t::CellData(const CellData_type& x) { this->CellData_.set(x); }
 
-void PieceUnstructuredGrid_t::CellData(::std::unique_ptr<CellData_type> x) {
-  this->CellData_.set(std::move(x));
-}
+void PieceUnstructuredGrid_t::CellData(::std::unique_ptr<CellData_type> x) { this->CellData_.set(std::move(x)); }
 
-const PieceUnstructuredGrid_t::Points_type& PieceUnstructuredGrid_t::Points()
-    const {
-  return this->Points_.get();
-}
+const PieceUnstructuredGrid_t::Points_type& PieceUnstructuredGrid_t::Points() const { return this->Points_.get(); }
 
-PieceUnstructuredGrid_t::Points_type& PieceUnstructuredGrid_t::Points() {
-  return this->Points_.get();
-}
+PieceUnstructuredGrid_t::Points_type& PieceUnstructuredGrid_t::Points() { return this->Points_.get(); }
 
-void PieceUnstructuredGrid_t::Points(const Points_type& x) {
-  this->Points_.set(x);
-}
+void PieceUnstructuredGrid_t::Points(const Points_type& x) { this->Points_.set(x); }
 
-void PieceUnstructuredGrid_t::Points(::std::unique_ptr<Points_type> x) {
-  this->Points_.set(std::move(x));
-}
+void PieceUnstructuredGrid_t::Points(::std::unique_ptr<Points_type> x) { this->Points_.set(std::move(x)); }
 
-const PieceUnstructuredGrid_t::Cells_type& PieceUnstructuredGrid_t::Cells()
-    const {
-  return this->Cells_.get();
-}
+const PieceUnstructuredGrid_t::Cells_type& PieceUnstructuredGrid_t::Cells() const { return this->Cells_.get(); }
 
-PieceUnstructuredGrid_t::Cells_type& PieceUnstructuredGrid_t::Cells() {
-  return this->Cells_.get();
-}
+PieceUnstructuredGrid_t::Cells_type& PieceUnstructuredGrid_t::Cells() { return this->Cells_.get(); }
 
-void PieceUnstructuredGrid_t::Cells(const Cells_type& x) {
-  this->Cells_.set(x);
-}
+void PieceUnstructuredGrid_t::Cells(const Cells_type& x) { this->Cells_.set(x); }
 
-void PieceUnstructuredGrid_t::Cells(::std::unique_ptr<Cells_type> x) {
-  this->Cells_.set(std::move(x));
-}
+void PieceUnstructuredGrid_t::Cells(::std::unique_ptr<Cells_type> x) { this->Cells_.set(std::move(x)); }
 
-const PieceUnstructuredGrid_t::NumberOfPoints_type&
-PieceUnstructuredGrid_t::NumberOfPoints() const {
+const PieceUnstructuredGrid_t::NumberOfPoints_type& PieceUnstructuredGrid_t::NumberOfPoints() const {
   return this->NumberOfPoints_.get();
 }
 
-PieceUnstructuredGrid_t::NumberOfPoints_type&
-PieceUnstructuredGrid_t::NumberOfPoints() {
+PieceUnstructuredGrid_t::NumberOfPoints_type& PieceUnstructuredGrid_t::NumberOfPoints() {
   return this->NumberOfPoints_.get();
 }
 
-void PieceUnstructuredGrid_t::NumberOfPoints(const NumberOfPoints_type& x) {
-  this->NumberOfPoints_.set(x);
-}
+void PieceUnstructuredGrid_t::NumberOfPoints(const NumberOfPoints_type& x) { this->NumberOfPoints_.set(x); }
 
-const PieceUnstructuredGrid_t::NumberOfCells_type&
-PieceUnstructuredGrid_t::NumberOfCells() const {
+const PieceUnstructuredGrid_t::NumberOfCells_type& PieceUnstructuredGrid_t::NumberOfCells() const {
   return this->NumberOfCells_.get();
 }
 
-PieceUnstructuredGrid_t::NumberOfCells_type&
-PieceUnstructuredGrid_t::NumberOfCells() {
+PieceUnstructuredGrid_t::NumberOfCells_type& PieceUnstructuredGrid_t::NumberOfCells() {
   return this->NumberOfCells_.get();
 }
 
-void PieceUnstructuredGrid_t::NumberOfCells(const NumberOfCells_type& x) {
-  this->NumberOfCells_.set(x);
-}
+void PieceUnstructuredGrid_t::NumberOfCells(const NumberOfCells_type& x) { this->NumberOfCells_.set(x); }
 
 // UnstructuredGrid_t
 //
 
-const UnstructuredGrid_t::Piece_type& UnstructuredGrid_t::Piece() const {
-  return this->Piece_.get();
-}
+const UnstructuredGrid_t::Piece_type& UnstructuredGrid_t::Piece() const { return this->Piece_.get(); }
 
-UnstructuredGrid_t::Piece_type& UnstructuredGrid_t::Piece() {
-  return this->Piece_.get();
-}
+UnstructuredGrid_t::Piece_type& UnstructuredGrid_t::Piece() { return this->Piece_.get(); }
 
 void UnstructuredGrid_t::Piece(const Piece_type& x) { this->Piece_.set(x); }
 
-void UnstructuredGrid_t::Piece(::std::unique_ptr<Piece_type> x) {
-  this->Piece_.set(std::move(x));
-}
+void UnstructuredGrid_t::Piece(::std::unique_ptr<Piece_type> x) { this->Piece_.set(std::move(x)); }
 
 // PolyData_t
 //
 
-const PolyData_t::greeting_type& PolyData_t::greeting() const {
-  return this->greeting_.get();
-}
+const PolyData_t::greeting_type& PolyData_t::greeting() const { return this->greeting_.get(); }
 
-PolyData_t::greeting_type& PolyData_t::greeting() {
-  return this->greeting_.get();
-}
+PolyData_t::greeting_type& PolyData_t::greeting() { return this->greeting_.get(); }
 
 void PolyData_t::greeting(const greeting_type& x) { this->greeting_.set(x); }
 
-void PolyData_t::greeting(::std::unique_ptr<greeting_type> x) {
-  this->greeting_.set(std::move(x));
-}
+void PolyData_t::greeting(::std::unique_ptr<greeting_type> x) { this->greeting_.set(std::move(x)); }
 
 // VTKFile_t
 //
 
-const VTKFile_t::UnstructuredGrid_optional& VTKFile_t::UnstructuredGrid()
-    const {
-  return this->UnstructuredGrid_;
-}
+const VTKFile_t::UnstructuredGrid_optional& VTKFile_t::UnstructuredGrid() const { return this->UnstructuredGrid_; }
 
-VTKFile_t::UnstructuredGrid_optional& VTKFile_t::UnstructuredGrid() {
-  return this->UnstructuredGrid_;
-}
+VTKFile_t::UnstructuredGrid_optional& VTKFile_t::UnstructuredGrid() { return this->UnstructuredGrid_; }
 
-void VTKFile_t::UnstructuredGrid(const UnstructuredGrid_type& x) {
-  this->UnstructuredGrid_.set(x);
-}
+void VTKFile_t::UnstructuredGrid(const UnstructuredGrid_type& x) { this->UnstructuredGrid_.set(x); }
 
-void VTKFile_t::UnstructuredGrid(const UnstructuredGrid_optional& x) {
-  this->UnstructuredGrid_ = x;
-}
+void VTKFile_t::UnstructuredGrid(const UnstructuredGrid_optional& x) { this->UnstructuredGrid_ = x; }
 
 void VTKFile_t::UnstructuredGrid(::std::unique_ptr<UnstructuredGrid_type> x) {
   this->UnstructuredGrid_.set(std::move(x));
 }
 
-const VTKFile_t::PolyData_optional& VTKFile_t::PolyData() const {
-  return this->PolyData_;
-}
+const VTKFile_t::PolyData_optional& VTKFile_t::PolyData() const { return this->PolyData_; }
 
 VTKFile_t::PolyData_optional& VTKFile_t::PolyData() { return this->PolyData_; }
 
@@ -285,37 +196,23 @@ void VTKFile_t::PolyData(const PolyData_type& x) { this->PolyData_.set(x); }
 
 void VTKFile_t::PolyData(const PolyData_optional& x) { this->PolyData_ = x; }
 
-void VTKFile_t::PolyData(::std::unique_ptr<PolyData_type> x) {
-  this->PolyData_.set(std::move(x));
-}
+void VTKFile_t::PolyData(::std::unique_ptr<PolyData_type> x) { this->PolyData_.set(std::move(x)); }
 
-const VTKFile_t::type_type& VTKFile_t::type() const {
-  return this->type_.get();
-}
+const VTKFile_t::type_type& VTKFile_t::type() const { return this->type_.get(); }
 
 VTKFile_t::type_type& VTKFile_t::type() { return this->type_.get(); }
 
 void VTKFile_t::type(const type_type& x) { this->type_.set(x); }
 
-void VTKFile_t::type(::std::unique_ptr<type_type> x) {
-  this->type_.set(std::move(x));
-}
+void VTKFile_t::type(::std::unique_ptr<type_type> x) { this->type_.set(std::move(x)); }
 
-const VTKFile_t::version_type& VTKFile_t::version() const {
-  return this->version_.get();
-}
+const VTKFile_t::version_type& VTKFile_t::version() const { return this->version_.get(); }
 
-const VTKFile_t::version_type& VTKFile_t::version_default_value() {
-  return version_default_value_;
-}
+const VTKFile_t::version_type& VTKFile_t::version_default_value() { return version_default_value_; }
 
-const VTKFile_t::byte_order_type& VTKFile_t::byte_order() const {
-  return this->byte_order_.get();
-}
+const VTKFile_t::byte_order_type& VTKFile_t::byte_order() const { return this->byte_order_.get(); }
 
-const VTKFile_t::byte_order_type& VTKFile_t::byte_order_default_value() {
-  return byte_order_default_value_;
-}
+const VTKFile_t::byte_order_type& VTKFile_t::byte_order_default_value() { return byte_order_default_value_; }
 
 // type
 //
@@ -328,12 +225,10 @@ type::type(const ::std::string& v) : ::xml_schema::string(v) {}
 
 type::type(const ::xml_schema::string& v) : ::xml_schema::string(v) {}
 
-type::type(const type& v, ::xml_schema::flags f, ::xml_schema::container* c)
-    : ::xml_schema::string(v, f, c) {}
+type::type(const type& v, ::xml_schema::flags f, ::xml_schema::container* c) : ::xml_schema::string(v, f, c) {}
 
 type& type::operator=(value v) {
-  static_cast< ::xml_schema::string&>(*this) =
-      ::xml_schema::string(_xsd_type_literals_[v]);
+  static_cast< ::xml_schema::string&>(*this) = ::xml_schema::string(_xsd_type_literals_[v]);
 
   return *this;
 }
@@ -341,22 +236,16 @@ type& type::operator=(value v) {
 // PointData
 //
 
-const PointData::DataArray_sequence& PointData::DataArray() const {
-  return this->DataArray_;
-}
+const PointData::DataArray_sequence& PointData::DataArray() const { return this->DataArray_; }
 
-PointData::DataArray_sequence& PointData::DataArray() {
-  return this->DataArray_;
-}
+PointData::DataArray_sequence& PointData::DataArray() { return this->DataArray_; }
 
 void PointData::DataArray(const DataArray_sequence& s) { this->DataArray_ = s; }
 
 // CellData
 //
 
-const CellData::DataArray_sequence& CellData::DataArray() const {
-  return this->DataArray_;
-}
+const CellData::DataArray_sequence& CellData::DataArray() const { return this->DataArray_; }
 
 CellData::DataArray_sequence& CellData::DataArray() { return this->DataArray_; }
 
@@ -365,9 +254,7 @@ void CellData::DataArray(const DataArray_sequence& s) { this->DataArray_ = s; }
 // Points
 //
 
-const Points::DataArray_sequence& Points::DataArray() const {
-  return this->DataArray_;
-}
+const Points::DataArray_sequence& Points::DataArray() const { return this->DataArray_; }
 
 Points::DataArray_sequence& Points::DataArray() { return this->DataArray_; }
 
@@ -376,9 +263,7 @@ void Points::DataArray(const DataArray_sequence& s) { this->DataArray_ = s; }
 // Cells
 //
 
-const Cells::DataArray_sequence& Cells::DataArray() const {
-  return this->DataArray_;
-}
+const Cells::DataArray_sequence& Cells::DataArray() const { return this->DataArray_; }
 
 Cells::DataArray_sequence& Cells::DataArray() { return this->DataArray_; }
 
@@ -389,33 +274,20 @@ void Cells::DataArray(const DataArray_sequence& s) { this->DataArray_ = s; }
 // DataArrayList_t
 //
 
-DataArrayList_t::DataArrayList_t(const ::xercesc::DOMElement& e,
-                                 ::xml_schema::flags f,
-                                 ::xml_schema::container* c)
+DataArrayList_t::DataArrayList_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::simple_type(e, f, c),
-      ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(e, f,
-                                                                      this) {}
+      ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(e, f, this) {}
 
-DataArrayList_t::DataArrayList_t(const ::xercesc::DOMAttr& a,
-                                 ::xml_schema::flags f,
-                                 ::xml_schema::container* c)
+DataArrayList_t::DataArrayList_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::simple_type(a, f, c),
-      ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(a, f,
-                                                                      this) {}
+      ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(a, f, this) {}
 
-DataArrayList_t::DataArrayList_t(const ::std::string& s,
-                                 const ::xercesc::DOMElement* e,
-                                 ::xml_schema::flags f,
+DataArrayList_t::DataArrayList_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f,
                                  ::xml_schema::container* c)
     : ::xml_schema::simple_type(s, e, f, c),
-      ::xsd::cxx::tree::list< ::xml_schema::decimal, char,
-                              ::xsd::cxx::tree::schema_type::decimal>(s, e, f,
-                                                                      this) {}
+      ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>(s, e, f, this) {}
 
-DataArrayList_t* DataArrayList_t::_clone(::xml_schema::flags f,
-                                         ::xml_schema::container* c) const {
+DataArrayList_t* DataArrayList_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class DataArrayList_t(*this, f, c);
 }
 
@@ -435,9 +307,8 @@ DataArray_t::DataArray_t(const type_type& type, const Name_type& Name,
       format_(format_default_value(), this),
       offset_(this) {}
 
-DataArray_t::DataArray_t(const ::DataArrayList_t& _xsd_DataArrayList_t_base,
-                         const type_type& type, const Name_type& Name,
-                         const NumberOfComponents_type& NumberOfComponents)
+DataArray_t::DataArray_t(const ::DataArrayList_t& _xsd_DataArrayList_t_base, const type_type& type,
+                         const Name_type& Name, const NumberOfComponents_type& NumberOfComponents)
     : ::DataArrayList_t(_xsd_DataArrayList_t_base),
       type_(type, this),
       Name_(Name, this),
@@ -445,8 +316,7 @@ DataArray_t::DataArray_t(const ::DataArrayList_t& _xsd_DataArrayList_t_base,
       format_(format_default_value(), this),
       offset_(this) {}
 
-DataArray_t::DataArray_t(const DataArray_t& x, ::xml_schema::flags f,
-                         ::xml_schema::container* c)
+DataArray_t::DataArray_t(const DataArray_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::DataArrayList_t(x, f, c),
       type_(x.type_, f, this),
       Name_(x.Name_, f, this),
@@ -454,8 +324,7 @@ DataArray_t::DataArray_t(const DataArray_t& x, ::xml_schema::flags f,
       format_(x.format_, f, this),
       offset_(x.offset_, f, this) {}
 
-DataArray_t::DataArray_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                         ::xml_schema::container* c)
+DataArray_t::DataArray_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::DataArrayList_t(e, f | ::xml_schema::flags::base, c),
       type_(this),
       Name_(this),
@@ -468,12 +337,10 @@ DataArray_t::DataArray_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
   }
 }
 
-void DataArray_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                        ::xml_schema::flags f) {
+void DataArray_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   while (p.more_attributes()) {
     const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     if (n.name() == "type" && n.namespace_().empty()) {
       this->type_.set(type_traits::create(i, f, this));
@@ -486,8 +353,7 @@ void DataArray_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
     }
 
     if (n.name() == "NumberOfComponents" && n.namespace_().empty()) {
-      this->NumberOfComponents_.set(
-          NumberOfComponents_traits::create(i, f, this));
+      this->NumberOfComponents_.set(NumberOfComponents_traits::create(i, f, this));
       continue;
     }
 
@@ -519,8 +385,7 @@ void DataArray_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-DataArray_t* DataArray_t::_clone(::xml_schema::flags f,
-                                 ::xml_schema::container* c) const {
+DataArray_t* DataArray_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class DataArray_t(*this, f, c);
 }
 
@@ -542,11 +407,10 @@ DataArray_t::~DataArray_t() {}
 // PieceUnstructuredGrid_t
 //
 
-PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
-    const PointData_type& PointData, const CellData_type& CellData,
-    const Points_type& Points, const Cells_type& Cells,
-    const NumberOfPoints_type& NumberOfPoints,
-    const NumberOfCells_type& NumberOfCells)
+PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(const PointData_type& PointData, const CellData_type& CellData,
+                                                 const Points_type& Points, const Cells_type& Cells,
+                                                 const NumberOfPoints_type& NumberOfPoints,
+                                                 const NumberOfCells_type& NumberOfCells)
     : ::xml_schema::type(),
       PointData_(PointData, this),
       CellData_(CellData, this),
@@ -555,12 +419,12 @@ PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
       NumberOfPoints_(NumberOfPoints, this),
       NumberOfCells_(NumberOfCells, this) {}
 
-PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
-    ::std::unique_ptr<PointData_type> PointData,
-    ::std::unique_ptr<CellData_type> CellData,
-    ::std::unique_ptr<Points_type> Points, ::std::unique_ptr<Cells_type> Cells,
-    const NumberOfPoints_type& NumberOfPoints,
-    const NumberOfCells_type& NumberOfCells)
+PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(::std::unique_ptr<PointData_type> PointData,
+                                                 ::std::unique_ptr<CellData_type> CellData,
+                                                 ::std::unique_ptr<Points_type> Points,
+                                                 ::std::unique_ptr<Cells_type> Cells,
+                                                 const NumberOfPoints_type& NumberOfPoints,
+                                                 const NumberOfCells_type& NumberOfCells)
     : ::xml_schema::type(),
       PointData_(std::move(PointData), this),
       CellData_(std::move(CellData), this),
@@ -569,9 +433,8 @@ PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
       NumberOfPoints_(NumberOfPoints, this),
       NumberOfCells_(NumberOfCells, this) {}
 
-PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
-    const PieceUnstructuredGrid_t& x, ::xml_schema::flags f,
-    ::xml_schema::container* c)
+PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(const PieceUnstructuredGrid_t& x, ::xml_schema::flags f,
+                                                 ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c),
       PointData_(x.PointData_, f, this),
       CellData_(x.CellData_, f, this),
@@ -580,8 +443,7 @@ PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(
       NumberOfPoints_(x.NumberOfPoints_, f, this),
       NumberOfCells_(x.NumberOfCells_, f, this) {}
 
-PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(const ::xercesc::DOMElement& e,
-                                                 ::xml_schema::flags f,
+PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
                                                  ::xml_schema::container* c)
     : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
       PointData_(this),
@@ -596,12 +458,10 @@ PieceUnstructuredGrid_t::PieceUnstructuredGrid_t(const ::xercesc::DOMElement& e,
   }
 }
 
-void PieceUnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                                    ::xml_schema::flags f) {
+void PieceUnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // PointData
     //
@@ -668,8 +528,7 @@ void PieceUnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
 
   while (p.more_attributes()) {
     const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     if (n.name() == "NumberOfPoints" && n.namespace_().empty()) {
       this->NumberOfPoints_.set(NumberOfPoints_traits::create(i, f, this));
@@ -691,13 +550,11 @@ void PieceUnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-PieceUnstructuredGrid_t* PieceUnstructuredGrid_t::_clone(
-    ::xml_schema::flags f, ::xml_schema::container* c) const {
+PieceUnstructuredGrid_t* PieceUnstructuredGrid_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class PieceUnstructuredGrid_t(*this, f, c);
 }
 
-PieceUnstructuredGrid_t& PieceUnstructuredGrid_t::operator=(
-    const PieceUnstructuredGrid_t& x) {
+PieceUnstructuredGrid_t& PieceUnstructuredGrid_t::operator=(const PieceUnstructuredGrid_t& x) {
   if (this != &x) {
     static_cast< ::xml_schema::type&>(*this) = x;
     this->PointData_ = x.PointData_;
@@ -716,19 +573,15 @@ PieceUnstructuredGrid_t::~PieceUnstructuredGrid_t() {}
 // UnstructuredGrid_t
 //
 
-UnstructuredGrid_t::UnstructuredGrid_t(const Piece_type& Piece)
-    : ::xml_schema::type(), Piece_(Piece, this) {}
+UnstructuredGrid_t::UnstructuredGrid_t(const Piece_type& Piece) : ::xml_schema::type(), Piece_(Piece, this) {}
 
 UnstructuredGrid_t::UnstructuredGrid_t(::std::unique_ptr<Piece_type> Piece)
     : ::xml_schema::type(), Piece_(std::move(Piece), this) {}
 
-UnstructuredGrid_t::UnstructuredGrid_t(const UnstructuredGrid_t& x,
-                                       ::xml_schema::flags f,
-                                       ::xml_schema::container* c)
+UnstructuredGrid_t::UnstructuredGrid_t(const UnstructuredGrid_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), Piece_(x.Piece_, f, this) {}
 
-UnstructuredGrid_t::UnstructuredGrid_t(const ::xercesc::DOMElement& e,
-                                       ::xml_schema::flags f,
+UnstructuredGrid_t::UnstructuredGrid_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
                                        ::xml_schema::container* c)
     : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), Piece_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
@@ -737,12 +590,10 @@ UnstructuredGrid_t::UnstructuredGrid_t(const ::xercesc::DOMElement& e,
   }
 }
 
-void UnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                               ::xml_schema::flags f) {
+void UnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // Piece
     //
@@ -763,8 +614,7 @@ void UnstructuredGrid_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-UnstructuredGrid_t* UnstructuredGrid_t::_clone(
-    ::xml_schema::flags f, ::xml_schema::container* c) const {
+UnstructuredGrid_t* UnstructuredGrid_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class UnstructuredGrid_t(*this, f, c);
 }
 
@@ -782,15 +632,12 @@ UnstructuredGrid_t::~UnstructuredGrid_t() {}
 // PolyData_t
 //
 
-PolyData_t::PolyData_t(const greeting_type& greeting)
-    : ::xml_schema::type(), greeting_(greeting, this) {}
+PolyData_t::PolyData_t(const greeting_type& greeting) : ::xml_schema::type(), greeting_(greeting, this) {}
 
-PolyData_t::PolyData_t(const PolyData_t& x, ::xml_schema::flags f,
-                       ::xml_schema::container* c)
+PolyData_t::PolyData_t(const PolyData_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), greeting_(x.greeting_, f, this) {}
 
-PolyData_t::PolyData_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                       ::xml_schema::container* c)
+PolyData_t::PolyData_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), greeting_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
@@ -798,12 +645,10 @@ PolyData_t::PolyData_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
   }
 }
 
-void PolyData_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                       ::xml_schema::flags f) {
+void PolyData_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // greeting
     //
@@ -824,8 +669,7 @@ void PolyData_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-PolyData_t* PolyData_t::_clone(::xml_schema::flags f,
-                               ::xml_schema::container* c) const {
+PolyData_t* PolyData_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class PolyData_t(*this, f, c);
 }
 
@@ -845,8 +689,7 @@ PolyData_t::~PolyData_t() {}
 
 const VTKFile_t::version_type VTKFile_t::version_default_value_("0.1");
 
-const VTKFile_t::byte_order_type VTKFile_t::byte_order_default_value_(
-    "LittleEndian");
+const VTKFile_t::byte_order_type VTKFile_t::byte_order_default_value_("LittleEndian");
 
 VTKFile_t::VTKFile_t(const type_type& type)
     : ::xml_schema::type(),
@@ -856,8 +699,7 @@ VTKFile_t::VTKFile_t(const type_type& type)
       version_(version_default_value(), this),
       byte_order_(byte_order_default_value(), this) {}
 
-VTKFile_t::VTKFile_t(const VTKFile_t& x, ::xml_schema::flags f,
-                     ::xml_schema::container* c)
+VTKFile_t::VTKFile_t(const VTKFile_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c),
       UnstructuredGrid_(x.UnstructuredGrid_, f, this),
       PolyData_(x.PolyData_, f, this),
@@ -865,8 +707,7 @@ VTKFile_t::VTKFile_t(const VTKFile_t& x, ::xml_schema::flags f,
       version_(x.version_, f, this),
       byte_order_(x.byte_order_, f, this) {}
 
-VTKFile_t::VTKFile_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                     ::xml_schema::container* c)
+VTKFile_t::VTKFile_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
       UnstructuredGrid_(this),
       PolyData_(this),
@@ -879,18 +720,15 @@ VTKFile_t::VTKFile_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
   }
 }
 
-void VTKFile_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                      ::xml_schema::flags f) {
+void VTKFile_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // UnstructuredGrid
     //
     if (n.name() == "UnstructuredGrid" && n.namespace_().empty()) {
-      ::std::unique_ptr<UnstructuredGrid_type> r(
-          UnstructuredGrid_traits::create(i, f, this));
+      ::std::unique_ptr<UnstructuredGrid_type> r(UnstructuredGrid_traits::create(i, f, this));
 
       if (!this->UnstructuredGrid_) {
         this->UnstructuredGrid_.set(::std::move(r));
@@ -914,8 +752,7 @@ void VTKFile_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
 
   while (p.more_attributes()) {
     const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     if (n.name() == "type" && n.namespace_().empty()) {
       this->type_.set(type_traits::create(i, f, this));
@@ -946,8 +783,7 @@ void VTKFile_t::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-VTKFile_t* VTKFile_t::_clone(::xml_schema::flags f,
-                             ::xml_schema::container* c) const {
+VTKFile_t* VTKFile_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class VTKFile_t(*this, f, c);
 }
 
@@ -969,32 +805,26 @@ VTKFile_t::~VTKFile_t() {}
 // type
 //
 
-type::type(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-           ::xml_schema::container* c)
+type::type(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::string(e, f, c) {
   _xsd_type_convert();
 }
 
-type::type(const ::xercesc::DOMAttr& a, ::xml_schema::flags f,
-           ::xml_schema::container* c)
+type::type(const ::xercesc::DOMAttr& a, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::string(a, f, c) {
   _xsd_type_convert();
 }
 
-type::type(const ::std::string& s, const ::xercesc::DOMElement* e,
-           ::xml_schema::flags f, ::xml_schema::container* c)
+type::type(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::string(s, e, f, c) {
   _xsd_type_convert();
 }
 
-type* type::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
-  return new class type(*this, f, c);
-}
+type* type::_clone(::xml_schema::flags f, ::xml_schema::container* c) const { return new class type(*this, f, c); }
 
 type::value type::_xsd_type_convert() const {
   ::xsd::cxx::tree::enum_comparator<char> c(_xsd_type_literals_);
-  const value* i(::std::lower_bound(_xsd_type_indexes_, _xsd_type_indexes_ + 10,
-                                    *this, c));
+  const value* i(::std::lower_bound(_xsd_type_indexes_, _xsd_type_indexes_ + 10, *this, c));
 
   if (i == _xsd_type_indexes_ + 10 || _xsd_type_literals_[*i] != *this) {
     throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
@@ -1003,40 +833,33 @@ type::value type::_xsd_type_convert() const {
   return *i;
 }
 
-const char* const type::_xsd_type_literals_[10] = {
-    "Int8",   "UInt8", "Int16",  "UInt16",  "Int32",
-    "UInt32", "Int64", "UInt64", "Float32", "Float64"};
+const char* const type::_xsd_type_literals_[10] = {"Int8",   "UInt8", "Int16",  "UInt16",  "Int32",
+                                                   "UInt32", "Int64", "UInt64", "Float32", "Float64"};
 
-const type::value type::_xsd_type_indexes_[10] = {
-    ::type::Float32, ::type::Float64, ::type::Int16,  ::type::Int32,
-    ::type::Int64,   ::type::Int8,    ::type::UInt16, ::type::UInt32,
-    ::type::UInt64,  ::type::UInt8};
+const type::value type::_xsd_type_indexes_[10] = {::type::Float32, ::type::Float64, ::type::Int16,  ::type::Int32,
+                                                  ::type::Int64,   ::type::Int8,    ::type::UInt16, ::type::UInt32,
+                                                  ::type::UInt64,  ::type::UInt8};
 
 // PointData
 //
 
 PointData::PointData() : ::xml_schema::type(), DataArray_(this) {}
 
-PointData::PointData(const PointData& x, ::xml_schema::flags f,
-                     ::xml_schema::container* c)
+PointData::PointData(const PointData& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), DataArray_(x.DataArray_, f, this) {}
 
-PointData::PointData(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                     ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      DataArray_(this) {
+PointData::PointData(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), DataArray_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
     this->parse(p, f);
   }
 }
 
-void PointData::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                      ::xml_schema::flags f) {
+void PointData::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // DataArray
     //
@@ -1051,8 +874,7 @@ void PointData::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-PointData* PointData::_clone(::xml_schema::flags f,
-                             ::xml_schema::container* c) const {
+PointData* PointData::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class PointData(*this, f, c);
 }
 
@@ -1072,26 +894,21 @@ PointData::~PointData() {}
 
 CellData::CellData() : ::xml_schema::type(), DataArray_(this) {}
 
-CellData::CellData(const CellData& x, ::xml_schema::flags f,
-                   ::xml_schema::container* c)
+CellData::CellData(const CellData& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), DataArray_(x.DataArray_, f, this) {}
 
-CellData::CellData(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                   ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      DataArray_(this) {
+CellData::CellData(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), DataArray_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
     this->parse(p, f);
   }
 }
 
-void CellData::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                     ::xml_schema::flags f) {
+void CellData::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // DataArray
     //
@@ -1106,8 +923,7 @@ void CellData::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-CellData* CellData::_clone(::xml_schema::flags f,
-                           ::xml_schema::container* c) const {
+CellData* CellData::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class CellData(*this, f, c);
 }
 
@@ -1127,26 +943,21 @@ CellData::~CellData() {}
 
 Points::Points() : ::xml_schema::type(), DataArray_(this) {}
 
-Points::Points(const Points& x, ::xml_schema::flags f,
-               ::xml_schema::container* c)
+Points::Points(const Points& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), DataArray_(x.DataArray_, f, this) {}
 
-Points::Points(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-               ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      DataArray_(this) {
+Points::Points(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), DataArray_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
     this->parse(p, f);
   }
 }
 
-void Points::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                   ::xml_schema::flags f) {
+void Points::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // DataArray
     //
@@ -1161,8 +972,7 @@ void Points::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-Points* Points::_clone(::xml_schema::flags f,
-                       ::xml_schema::container* c) const {
+Points* Points::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
   return new class Points(*this, f, c);
 }
 
@@ -1185,22 +995,18 @@ Cells::Cells() : ::xml_schema::type(), DataArray_(this) {}
 Cells::Cells(const Cells& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), DataArray_(x.DataArray_, f, this) {}
 
-Cells::Cells(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-             ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      DataArray_(this) {
+Cells::Cells(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), DataArray_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
     this->parse(p, f);
   }
 }
 
-void Cells::parse(::xsd::cxx::xml::dom::parser<char>& p,
-                  ::xml_schema::flags f) {
+void Cells::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
   for (; p.more_content(); p.next_content(false)) {
     const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(
-        ::xsd::cxx::xml::dom::name<char>(i));
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
 
     // DataArray
     //
@@ -1215,9 +1021,7 @@ void Cells::parse(::xsd::cxx::xml::dom::parser<char>& p,
   }
 }
 
-Cells* Cells::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
-  return new class Cells(*this, f, c);
-}
+Cells* Cells::_clone(::xml_schema::flags f, ::xml_schema::container* c) const { return new class Cells(*this, f, c); }
 
 Cells& Cells::operator=(const Cells& x) {
   if (this != &x) {
@@ -1234,210 +1038,157 @@ Cells::~Cells() {}
 #include <xsd/cxx/tree/error-handler.hxx>
 #include <xsd/cxx/xml/sax/std-input-source.hxx>
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::tree::error_handler<char> h;
 
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
 
   h.throw_if_failed< ::xsd::cxx::tree::parsing<char> >();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u,
-                                        ::xml_schema::error_handler& h,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u, ::xml_schema::error_handler& h, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
 
   if (!d.get()) throw ::xsd::cxx::tree::parsing<char>();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u,
-                                        ::xercesc::DOMErrorHandler& h,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(const ::std::string& u, ::xercesc::DOMErrorHandler& h, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(u, h, p, f));
 
   if (!d.get()) throw ::xsd::cxx::tree::parsing<char>();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        ::xml_schema::flags f,
-                                        const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, ::xml_schema::flags f, const ::xml_schema::properties& p) {
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc(is);
   return ::VTKFile(isrc, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        ::xml_schema::error_handler& h,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, ::xml_schema::error_handler& h, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc(is);
   return ::VTKFile(isrc, h, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        ::xercesc::DOMErrorHandler& h,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, ::xercesc::DOMErrorHandler& h, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
   ::xsd::cxx::xml::sax::std_input_source isrc(is);
   return ::VTKFile(isrc, h, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        const ::std::string& sid,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, const ::std::string& sid, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc(is, sid);
   return ::VTKFile(isrc, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        const ::std::string& sid,
-                                        ::xml_schema::error_handler& h,
-                                        ::xml_schema::flags f,
-                                        const ::xml_schema::properties& p) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0,
-      (f & ::xml_schema::flags::keep_dom) == 0);
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, const ::std::string& sid, ::xml_schema::error_handler& h,
+                                        ::xml_schema::flags f, const ::xml_schema::properties& p) {
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0,
+                                      (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc(is, sid);
   return ::VTKFile(isrc, h, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is,
-                                        const ::std::string& sid,
-                                        ::xercesc::DOMErrorHandler& h,
-                                        ::xml_schema::flags f,
-                                        const ::xml_schema::properties& p) {
+::std::unique_ptr< ::VTKFile_t> VTKFile(::std::istream& is, const ::std::string& sid, ::xercesc::DOMErrorHandler& h,
+                                        ::xml_schema::flags f, const ::xml_schema::properties& p) {
   ::xsd::cxx::xml::sax::std_input_source isrc(is, sid);
   return ::VTKFile(isrc, h, f, p);
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
   ::xsd::cxx::tree::error_handler<char> h;
 
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
 
   h.throw_if_failed< ::xsd::cxx::tree::parsing<char> >();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i,
-                                        ::xml_schema::error_handler& h,
-                                        ::xml_schema::flags f,
-                                        const ::xml_schema::properties& p) {
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
+::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i, ::xml_schema::error_handler& h,
+                                        ::xml_schema::flags f, const ::xml_schema::properties& p) {
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
 
   if (!d.get()) throw ::xsd::cxx::tree::parsing<char>();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i,
-                                        ::xercesc::DOMErrorHandler& h,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(::xercesc::InputSource& i, ::xercesc::DOMErrorHandler& h, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::parse<char>(i, h, p, f));
 
   if (!d.get()) throw ::xsd::cxx::tree::parsing<char>();
 
-  return ::std::unique_ptr< ::VTKFile_t>(
-      ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+  return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(const ::xercesc::DOMDocument& doc,
-                                        ::xml_schema::flags f,
+::std::unique_ptr< ::VTKFile_t> VTKFile(const ::xercesc::DOMDocument& doc, ::xml_schema::flags f,
                                         const ::xml_schema::properties& p) {
   if (f & ::xml_schema::flags::keep_dom) {
     ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
         static_cast< ::xercesc::DOMDocument*>(doc.cloneNode(true)));
 
-    return ::std::unique_ptr< ::VTKFile_t>(
-        ::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
+    return ::std::unique_ptr< ::VTKFile_t>(::VTKFile(std::move(d), f | ::xml_schema::flags::own_dom, p));
   }
 
   const ::xercesc::DOMElement& e(*doc.getDocumentElement());
-  const ::xsd::cxx::xml::qualified_name<char> n(
-      ::xsd::cxx::xml::dom::name<char>(e));
+  const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(e));
 
   if (n.name() == "VTKFile" && n.namespace_() == "") {
-    ::std::unique_ptr< ::VTKFile_t> r(
-        ::xsd::cxx::tree::traits< ::VTKFile_t, char>::create(e, f, 0));
+    ::std::unique_ptr< ::VTKFile_t> r(::xsd::cxx::tree::traits< ::VTKFile_t, char>::create(e, f, 0));
     return r;
   }
 
-  throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(),
-                                                   "VTKFile", "");
+  throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(), "VTKFile", "");
 }
 
-::std::unique_ptr< ::VTKFile_t> VTKFile(
-    ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d,
-    ::xml_schema::flags f, const ::xml_schema::properties&) {
+::std::unique_ptr< ::VTKFile_t> VTKFile(::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d, ::xml_schema::flags f,
+                                        const ::xml_schema::properties&) {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> c(
-      ((f & ::xml_schema::flags::keep_dom) &&
-       !(f & ::xml_schema::flags::own_dom))
+      ((f & ::xml_schema::flags::keep_dom) && !(f & ::xml_schema::flags::own_dom))
           ? static_cast< ::xercesc::DOMDocument*>(d->cloneNode(true))
           : 0);
 
   ::xercesc::DOMDocument& doc(c.get() ? *c : *d);
   const ::xercesc::DOMElement& e(*doc.getDocumentElement());
 
-  const ::xsd::cxx::xml::qualified_name<char> n(
-      ::xsd::cxx::xml::dom::name<char>(e));
+  const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(e));
 
-  if (f & ::xml_schema::flags::keep_dom)
-    doc.setUserData(::xml_schema::dom::tree_node_key, (c.get() ? &c : &d), 0);
+  if (f & ::xml_schema::flags::keep_dom) doc.setUserData(::xml_schema::dom::tree_node_key, (c.get() ? &c : &d), 0);
 
   if (n.name() == "VTKFile" && n.namespace_() == "") {
-    ::std::unique_ptr< ::VTKFile_t> r(
-        ::xsd::cxx::tree::traits< ::VTKFile_t, char>::create(e, f, 0));
+    ::std::unique_ptr< ::VTKFile_t> r(::xsd::cxx::tree::traits< ::VTKFile_t, char>::create(e, f, 0));
     return r;
   }
 
-  throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(),
-                                                   "VTKFile", "");
+  throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(), "VTKFile", "");
 }
 
 #include <ostream>
@@ -1445,18 +1196,18 @@ Cells::~Cells() {}
 #include <xsd/cxx/xml/dom/serialization-source.hxx>
 
 void operator<<(::xercesc::DOMElement& e, const DataArrayList_t& i) {
-  e << static_cast<const ::xsd::cxx::tree::list<
-      ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(i);
+  e << static_cast<const ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(
+      i);
 }
 
 void operator<<(::xercesc::DOMAttr& a, const DataArrayList_t& i) {
-  a << static_cast<const ::xsd::cxx::tree::list<
-      ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(i);
+  a << static_cast<const ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(
+      i);
 }
 
 void operator<<(::xml_schema::list_stream& l, const DataArrayList_t& i) {
-  l << static_cast<const ::xsd::cxx::tree::list<
-      ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(i);
+  l << static_cast<const ::xsd::cxx::tree::list< ::xml_schema::decimal, char, ::xsd::cxx::tree::schema_type::decimal>&>(
+      i);
 }
 
 void operator<<(::xercesc::DOMElement& e, const DataArray_t& i) {
@@ -1481,8 +1232,7 @@ void operator<<(::xercesc::DOMElement& e, const DataArray_t& i) {
   // NumberOfComponents
   //
   {
-    ::xercesc::DOMAttr& a(
-        ::xsd::cxx::xml::dom::create_attribute("NumberOfComponents", e));
+    ::xercesc::DOMAttr& a(::xsd::cxx::xml::dom::create_attribute("NumberOfComponents", e));
 
     a << i.NumberOfComponents();
   }
@@ -1510,8 +1260,7 @@ void operator<<(::xercesc::DOMElement& e, const PieceUnstructuredGrid_t& i) {
   // PointData
   //
   {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("PointData", e));
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("PointData", e));
 
     s << i.PointData();
   }
@@ -1519,8 +1268,7 @@ void operator<<(::xercesc::DOMElement& e, const PieceUnstructuredGrid_t& i) {
   // CellData
   //
   {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("CellData", e));
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("CellData", e));
 
     s << i.CellData();
   }
@@ -1544,8 +1292,7 @@ void operator<<(::xercesc::DOMElement& e, const PieceUnstructuredGrid_t& i) {
   // NumberOfPoints
   //
   {
-    ::xercesc::DOMAttr& a(
-        ::xsd::cxx::xml::dom::create_attribute("NumberOfPoints", e));
+    ::xercesc::DOMAttr& a(::xsd::cxx::xml::dom::create_attribute("NumberOfPoints", e));
 
     a << i.NumberOfPoints();
   }
@@ -1553,8 +1300,7 @@ void operator<<(::xercesc::DOMElement& e, const PieceUnstructuredGrid_t& i) {
   // NumberOfCells
   //
   {
-    ::xercesc::DOMAttr& a(
-        ::xsd::cxx::xml::dom::create_attribute("NumberOfCells", e));
+    ::xercesc::DOMAttr& a(::xsd::cxx::xml::dom::create_attribute("NumberOfCells", e));
 
     a << i.NumberOfCells();
   }
@@ -1578,8 +1324,7 @@ void operator<<(::xercesc::DOMElement& e, const PolyData_t& i) {
   // greeting
   //
   {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("greeting", e));
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("greeting", e));
 
     s << i.greeting();
   }
@@ -1591,8 +1336,7 @@ void operator<<(::xercesc::DOMElement& e, const VTKFile_t& i) {
   // UnstructuredGrid
   //
   if (i.UnstructuredGrid()) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("UnstructuredGrid", e));
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("UnstructuredGrid", e));
 
     s << *i.UnstructuredGrid();
   }
@@ -1600,8 +1344,7 @@ void operator<<(::xercesc::DOMElement& e, const VTKFile_t& i) {
   // PolyData
   //
   if (i.PolyData()) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("PolyData", e));
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("PolyData", e));
 
     s << *i.PolyData();
   }
@@ -1625,18 +1368,15 @@ void operator<<(::xercesc::DOMElement& e, const VTKFile_t& i) {
   // byte_order
   //
   {
-    ::xercesc::DOMAttr& a(
-        ::xsd::cxx::xml::dom::create_attribute("byte_order", e));
+    ::xercesc::DOMAttr& a(::xsd::cxx::xml::dom::create_attribute("byte_order", e));
 
     a << i.byte_order();
   }
 }
 
-void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
+void VTKFile(::std::ostream& o, const ::VTKFile_t& s, const ::xml_schema::namespace_infomap& m, const ::std::string& e,
              ::xml_schema::flags f) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0);
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0);
 
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
 
@@ -1648,12 +1388,9 @@ void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
   }
 }
 
-void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
-             ::xml_schema::error_handler& h,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
-             ::xml_schema::flags f) {
-  ::xsd::cxx::xml::auto_initializer i(
-      (f & ::xml_schema::flags::dont_initialize) == 0);
+void VTKFile(::std::ostream& o, const ::VTKFile_t& s, ::xml_schema::error_handler& h,
+             const ::xml_schema::namespace_infomap& m, const ::std::string& e, ::xml_schema::flags f) {
+  ::xsd::cxx::xml::auto_initializer i((f & ::xml_schema::flags::dont_initialize) == 0);
 
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
   ::xsd::cxx::xml::dom::ostream_format_target t(o);
@@ -1662,10 +1399,8 @@ void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
   }
 }
 
-void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
-             ::xercesc::DOMErrorHandler& h,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
-             ::xml_schema::flags f) {
+void VTKFile(::std::ostream& o, const ::VTKFile_t& s, ::xercesc::DOMErrorHandler& h,
+             const ::xml_schema::namespace_infomap& m, const ::std::string& e, ::xml_schema::flags f) {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
   ::xsd::cxx::xml::dom::ostream_format_target t(o);
   if (!::xsd::cxx::xml::dom::serialize(t, *d, e, h, f)) {
@@ -1673,9 +1408,8 @@ void VTKFile(::std::ostream& o, const ::VTKFile_t& s,
   }
 }
 
-void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
-             ::xml_schema::flags f) {
+void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s, const ::xml_schema::namespace_infomap& m,
+             const ::std::string& e, ::xml_schema::flags f) {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
 
   ::xsd::cxx::tree::error_handler<char> h;
@@ -1685,72 +1419,55 @@ void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s,
   }
 }
 
-void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s,
-             ::xml_schema::error_handler& h,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
-             ::xml_schema::flags f) {
+void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s, ::xml_schema::error_handler& h,
+             const ::xml_schema::namespace_infomap& m, const ::std::string& e, ::xml_schema::flags f) {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
   if (!::xsd::cxx::xml::dom::serialize(t, *d, e, h, f)) {
     throw ::xsd::cxx::tree::serialization<char>();
   }
 }
 
-void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s,
-             ::xercesc::DOMErrorHandler& h,
-             const ::xml_schema::namespace_infomap& m, const ::std::string& e,
-             ::xml_schema::flags f) {
+void VTKFile(::xercesc::XMLFormatTarget& t, const ::VTKFile_t& s, ::xercesc::DOMErrorHandler& h,
+             const ::xml_schema::namespace_infomap& m, const ::std::string& e, ::xml_schema::flags f) {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::VTKFile(s, m, f));
   if (!::xsd::cxx::xml::dom::serialize(t, *d, e, h, f)) {
     throw ::xsd::cxx::tree::serialization<char>();
   }
 }
 
-void VTKFile(::xercesc::DOMDocument& d, const ::VTKFile_t& s,
-             ::xml_schema::flags) {
+void VTKFile(::xercesc::DOMDocument& d, const ::VTKFile_t& s, ::xml_schema::flags) {
   ::xercesc::DOMElement& e(*d.getDocumentElement());
-  const ::xsd::cxx::xml::qualified_name<char> n(
-      ::xsd::cxx::xml::dom::name<char>(e));
+  const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(e));
 
   if (n.name() == "VTKFile" && n.namespace_() == "") {
     e << s;
   } else {
-    throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(),
-                                                     "VTKFile", "");
+    throw ::xsd::cxx::tree::unexpected_element<char>(n.name(), n.namespace_(), "VTKFile", "");
   }
 }
 
-::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> VTKFile(
-    const ::VTKFile_t& s, const ::xml_schema::namespace_infomap& m,
-    ::xml_schema::flags f) {
-  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(
-      ::xsd::cxx::xml::dom::serialize<char>("VTKFile", "", m, f));
+::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> VTKFile(const ::VTKFile_t& s,
+                                                               const ::xml_schema::namespace_infomap& m,
+                                                               ::xml_schema::flags f) {
+  ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d(::xsd::cxx::xml::dom::serialize<char>("VTKFile", "", m, f));
 
   ::VTKFile(*d, s, f);
   return d;
 }
 
-void operator<<(::xercesc::DOMElement& e, const type& i) {
-  e << static_cast<const ::xml_schema::string&>(i);
-}
+void operator<<(::xercesc::DOMElement& e, const type& i) { e << static_cast<const ::xml_schema::string&>(i); }
 
-void operator<<(::xercesc::DOMAttr& a, const type& i) {
-  a << static_cast<const ::xml_schema::string&>(i);
-}
+void operator<<(::xercesc::DOMAttr& a, const type& i) { a << static_cast<const ::xml_schema::string&>(i); }
 
-void operator<<(::xml_schema::list_stream& l, const type& i) {
-  l << static_cast<const ::xml_schema::string&>(i);
-}
+void operator<<(::xml_schema::list_stream& l, const type& i) { l << static_cast<const ::xml_schema::string&>(i); }
 
 void operator<<(::xercesc::DOMElement& e, const PointData& i) {
   e << static_cast<const ::xml_schema::type&>(i);
 
   // DataArray
   //
-  for (PointData::DataArray_const_iterator b(i.DataArray().begin()),
-       n(i.DataArray().end());
-       b != n; ++b) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("DataArray", e));
+  for (PointData::DataArray_const_iterator b(i.DataArray().begin()), n(i.DataArray().end()); b != n; ++b) {
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("DataArray", e));
 
     s << *b;
   }
@@ -1761,11 +1478,8 @@ void operator<<(::xercesc::DOMElement& e, const CellData& i) {
 
   // DataArray
   //
-  for (CellData::DataArray_const_iterator b(i.DataArray().begin()),
-       n(i.DataArray().end());
-       b != n; ++b) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("DataArray", e));
+  for (CellData::DataArray_const_iterator b(i.DataArray().begin()), n(i.DataArray().end()); b != n; ++b) {
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("DataArray", e));
 
     s << *b;
   }
@@ -1776,11 +1490,8 @@ void operator<<(::xercesc::DOMElement& e, const Points& i) {
 
   // DataArray
   //
-  for (Points::DataArray_const_iterator b(i.DataArray().begin()),
-       n(i.DataArray().end());
-       b != n; ++b) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("DataArray", e));
+  for (Points::DataArray_const_iterator b(i.DataArray().begin()), n(i.DataArray().end()); b != n; ++b) {
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("DataArray", e));
 
     s << *b;
   }
@@ -1791,11 +1502,8 @@ void operator<<(::xercesc::DOMElement& e, const Cells& i) {
 
   // DataArray
   //
-  for (Cells::DataArray_const_iterator b(i.DataArray().begin()),
-       n(i.DataArray().end());
-       b != n; ++b) {
-    ::xercesc::DOMElement& s(
-        ::xsd::cxx::xml::dom::create_element("DataArray", e));
+  for (Cells::DataArray_const_iterator b(i.DataArray().begin()), n(i.DataArray().end()); b != n; ++b) {
+    ::xercesc::DOMElement& s(::xsd::cxx::xml::dom::create_element("DataArray", e));
 
     s << *b;
   }

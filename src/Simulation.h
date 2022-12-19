@@ -7,6 +7,7 @@
 #include "inputReader/FileReader.h"
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
+#include "model/Thermostat.h"
 #include "outputWriter/IWriter.h"
 #include "outputWriter/VTKWriter.h"
 
@@ -20,10 +21,12 @@ class Simulation {
    * @param particles All the particles that take part in the simulation
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
+   * @param thermostat The thermostat that controls the temperature
    * @param gravitationalConstant The factor of the gravitational force that gets applied
    * to a particle every iteration
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, double gravitationalConstant = 0.0);
+  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
+                double gravitationalConstant = 0.0);
 
   /**
    * Sets the time until the simulation is run
@@ -39,17 +42,13 @@ class Simulation {
    * Sets how often the particles get written to a file (every nth iteration)
    * @param writeOutFrequency the new frequency for the writer
    */
-  void setIterationsPerWrite(unsigned int writeOutFrequency) {
-    Simulation::writeOutFrequency = writeOutFrequency;
-  }
+  void setIterationsPerWrite(unsigned int writeOutFrequency) { Simulation::writeOutFrequency = writeOutFrequency; }
   /**
    * Sets the path to the output files(iteration number and file-ending are
    * added automatically)
    * @param filename the new path
    */
-  void setFilename(const std::string &filename) {
-    Simulation::filename = filename;
-  }
+  void setFilename(const std::string &filename) { Simulation::filename = filename; }
 
   /**
    * Returns the timestep by which the time gets increased in every iteration

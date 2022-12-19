@@ -6,8 +6,7 @@
 
 class LineProcessorSingle : public ILineProcessor {
  public:
-  void processLine(std::istringstream &dataStream,
-                   IContainer &container) override;
+  void processLine(std::istringstream &dataStream, IContainer &container) override;
 
  private:
   /**

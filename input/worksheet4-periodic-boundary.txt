@@ -15,4 +15,4 @@
 #
 # xyz-coord      velocity        radius    dimension    distance        mass        type
 1
-60.0 25.0 0.0     0.0 -10.0 0.0      8     3           1.1225          1.0         1
+60.0 25.0 0.0     0.0 -10.0 0.0      3     3           1.1225          1.0         1

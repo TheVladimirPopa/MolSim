@@ -15,6 +15,5 @@ class ILineProcessor {
    * not the line specifying the number of entries
    * @param container The container where all the particles get placed in
    */
-  virtual void processLine(std::istringstream &dataStream,
-                           IContainer &container) = 0;
+  virtual void processLine(std::istringstream &dataStream, IContainer &container) = 0;
 };

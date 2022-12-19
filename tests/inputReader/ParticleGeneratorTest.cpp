@@ -15,8 +15,7 @@ TEST(ParticleGenerationCuboid, Position) {
 
   addCuboidToParticleContainer(container, test);
 
-  std::vector<std::array<double, 3>> expected{
-      {0., 0., 0.}, {5., 0., 0.}, {0., 0., 5.}, {5., 0., 5.}};
+  std::vector<std::array<double, 3>> expected{{0., 0., 0.}, {5., 0., 0.}, {0., 0., 5.}, {5., 0., 5.}};
 
   for (auto &expectedPos : expected) {
     bool found = false;
@@ -39,8 +38,7 @@ TEST(ParticleGenerationCuboid, ParticleCount) {
 
   addCuboidToParticleContainer(container, test);
 
-  EXPECT_EQ(container.size(), 3 * 4 * 5)
-      << "Particle count is not according to position";
+  EXPECT_EQ(container.size(), 3 * 4 * 5) << "Particle count is not according to position";
 }
 
 /**
@@ -65,10 +63,9 @@ TEST(ParticleGenerationSphere, Position) {
 
   addSphereToParticleContainer(container, test);
 
-  std::vector<std::array<double, 3>> expected{
-      {2.0, 2.0, 0.0}, {-2.0, 2.0, 0.0}, {2.0, -2.0, 0.0}, {-2.0, -2.0, 0.0},
-      {2.0, 6.0, 0.0}, {-2.0, 6.0, 0.0}, {2.0, -6.0, 0.0}, {-2.0, -6.0, 0.0},
-      {6.0, 2.0, 0.0}, {-6.0, 2.0, 0.0}, {6.0, -2.0, 0.0}, {-6.0, -2.0, 0.0}};
+  std::vector<std::array<double, 3>> expected{{2.0, 2.0, 0.0}, {-2.0, 2.0, 0.0}, {2.0, -2.0, 0.0}, {-2.0, -2.0, 0.0},
+                                              {2.0, 6.0, 0.0}, {-2.0, 6.0, 0.0}, {2.0, -6.0, 0.0}, {-2.0, -6.0, 0.0},
+                                              {6.0, 2.0, 0.0}, {-6.0, 2.0, 0.0}, {6.0, -2.0, 0.0}, {-6.0, -2.0, 0.0}};
 
   for (auto &expectedPos : expected) {
     bool found = false;
@@ -96,8 +93,7 @@ TEST(ParticleGenerationSphere, ParticleCount) {
   sphere test_3d{{0., 0., 0.}, 2, 3, {-10., -20., -30.}, 4, 42, 0};
   VectorContainer container_3d{};
   addSphereToParticleContainer(container_3d, test_3d);
-  EXPECT_EQ(container_3d.size(), 4 + 12 + 12 + 4)
-      << "Particle count of 3d sphere is wrong";
+  EXPECT_EQ(container_3d.size(), 4 + 12 + 12 + 4) << "Particle count of 3d sphere is wrong";
 }
 
 /**

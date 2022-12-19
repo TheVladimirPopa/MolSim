@@ -15,8 +15,7 @@ class LennardJonesModel : public IModel {
    * @param cutOffRadius_ The max distance between two particles where are force
    * is applied, greater distances between particles the force is considered 0
    */
-  explicit LennardJonesModel(double cutOffRadius_)
-      : cutOffRadius{cutOffRadius_} {}
+  explicit LennardJonesModel(double cutOffRadius_) : cutOffRadius{cutOffRadius_} {}
 
   virtual ~LennardJonesModel() = default;
 
