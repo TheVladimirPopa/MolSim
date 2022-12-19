@@ -108,16 +108,16 @@ class XMLParser {
 
     for (auto &it : simulation->Container_T()) {
       for (auto &c : it.LinkedCell()) {
-        auto &lb = c.leftLowerBound();
-        auto &rb = c.rightUpperBound();
-        auto &cs = c.cellSize();
-        auto &cut = c.cutOffRadius();
-        auto &left = c.left();
-        auto &right = c.right();
-        auto &top = c.top();
-        auto &bottom = c.bottom();
-        auto &front = c.front();
-        auto &back = c.back();
+        auto lb = c.leftLowerBound();
+        auto rb = c.rightUpperBound();
+        auto cs = c.cellSize();
+        auto cut = c.cutOffRadius();
+        auto left = c.left();
+        auto right = c.right();
+        auto top = c.top();
+        auto bottom = c.bottom();
+        auto front = c.front();
+        auto back = c.back();
 
         LinkedCellArg linkedCellArg = LinkedCellArg(
             cs, cut, generate_double_array(lb), generate_double_array(rb));
@@ -130,8 +130,9 @@ class XMLParser {
         arg.emplace_back(linkedCellArg);
       }
     }
+    LinkedCellArg linkedCellArg = LinkedCellArg(arg[0]);
 
-    return std::make_unique<LinkedCellArg>(arg[0]);
+    return std::make_unique<LinkedCellArg>(linkedCellArg);
   }
   /**
    * Extracts the arguments (position, velocity, dimension, distance, mass,
@@ -143,12 +144,12 @@ class XMLParser {
 
     for (auto &it : simulation->SimTypes()) {
       for (auto &s : it.Cuboid()) {
-        auto &pos = s.position();
-        auto &vel = s.velocity();
-        auto &dim = s.dimension();
-        auto &dis = s.distance();
-        auto &mass = s.mass();
-        auto &type = s.type();
+        auto pos = s.position();
+        auto vel = s.velocity();
+        auto dim = s.dimension();
+        auto dis = s.distance();
+        auto mass = s.mass();
+        auto type = s.type();
 
         cuboidArgs.emplace_back(generate_double_array(pos),
                                 generate_double_array(vel),
@@ -168,13 +169,13 @@ class XMLParser {
 
     for (auto &it : simulation->SimTypes()) {
       for (auto &s : it.Sphere()) {
-        auto &pos = s.position();
-        auto &vel = s.velocity();
-        auto &rad = s.radius();
-        auto &dis = s.distance();
-        auto &mass = s.mass();
-        auto &dim = s.dimension();
-        auto &type = s.type();
+        auto pos = s.position();
+        auto vel = s.velocity();
+        auto rad = s.radius();
+        auto dis = s.distance();
+        auto mass = s.mass();
+        auto dim = s.dimension();
+        auto type = s.type();
 
         sphereArgs.emplace_back(generate_double_array(pos),
                                 generate_double_array(vel), rad, dim, dis, mass,
