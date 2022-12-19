@@ -51,9 +51,9 @@ class XMLParser {
   /**
    * Extracts the arguments (endTime, deltaT, writeOutFrequency and filename)
    * used for a simulation from the XML file
-   * @return Returns a pointer to the SimulationArgs
+   * @return Returns a SimulationArg
    */
-  std::unique_ptr<SimulationArg> extractSimulation() {
+  SimulationArg extractSimulation() {
     std::vector<std::string> files;
 
     for (auto &e : simulation->InputFile()) {
@@ -67,9 +67,9 @@ class XMLParser {
     std::string filename = simulation->filename();
 
     SimulationArg arg =
-        SimulationArg(endTime, deltaT, writeOutFrequency, filename, files[0]);
+        SimulationArg(endTime, deltaT, writeOutFrequency, filename, files.at(0));
 
-    return std::make_unique<SimulationArg>(arg);
+    return arg;
   }
   /**
    * Converts boundaryType string str to proper boundaryType enum
@@ -92,20 +92,16 @@ class XMLParser {
    */
   bool chooseStrategy() {
     for (auto &it : simulation->Container_T()) {
-      for (auto &c : it.LinkedCell()) {
-        return true;
-      }
+      if (it.LinkedCell().empty()) return true;
     }
     return false;
   }
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
    * LinkedCellContainer from the XML file
-   * @return Returns a pointer to LinkedCellArgs
+   * @return Returns a LinkedCellArg
    */
-  std::unique_ptr<LinkedCellArg> extractLinkedCell() {
-    std::vector<LinkedCellArg> arg;
-
+  LinkedCellArg extractLinkedCell() {
     for (auto &it : simulation->Container_T()) {
       for (auto &c : it.LinkedCell()) {
         auto lb = c.leftLowerBound();
@@ -127,12 +123,11 @@ class XMLParser {
         linkedCellArg.setBoundBottom(bottom);
         linkedCellArg.setBoundFront(front);
         linkedCellArg.setBoundBack(back);
-        arg.emplace_back(linkedCellArg);
+        return linkedCellArg;
       }
     }
-    LinkedCellArg linkedCellArg = LinkedCellArg(arg[0]);
 
-    return std::make_unique<LinkedCellArg>(linkedCellArg);
+    throw std::invalid_argument("XML Parser found no linked cells container");
   }
   /**
    * Extracts the arguments (position, velocity, dimension, distance, mass,
@@ -191,11 +186,11 @@ class XMLParser {
    * @param sim
    */
   void initialiseSimulationFromXML(Simulation &sim) {
-    std::unique_ptr<SimulationArg> args = this->extractSimulation();
-    sim.setDeltaT(args->getDeltaT());
-    sim.setEndTime(args->getEndTime());
-    sim.setIterationsPerWrite(args->getWriteOutFrequency());
-    sim.setFilename(args->getFilename());
+    SimulationArg args = extractSimulation();
+    sim.setDeltaT(args.getDeltaT());
+    sim.setEndTime(args.getEndTime());
+    sim.setIterationsPerWrite(args.getWriteOutFrequency());
+    sim.setFilename(args.getFilename());
   }
   /**
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
@@ -220,7 +215,7 @@ class XMLParser {
    * @param linkedCellsContainer
    */
   void initialiseSpheresFromXML(IContainer &container) const {
-    std::vector<SphereArg> sphereArgs = this->extractSpheres();
+    std::vector<SphereArg> sphereArgs = extractSpheres();
     for (auto &it : sphereArgs) {
       ParticleGeneration::sphere sphere;
       sphere.position = it.getPosition();
@@ -238,11 +233,11 @@ class XMLParser {
    * @return Returns a LinkedCellsContainer
    */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
-    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
-    std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
-    std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
+    LinkedCellArg linkedCellArg = extractLinkedCell();
+    std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
+    std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
 
-    return LinkedCellsContainer{linkedCellArg->getCellSize(), lowerBound,
+    return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound,
                                 upperBound};
   }
   /**
@@ -250,28 +245,28 @@ class XMLParser {
    * @return
    */
   double initCutOffRadiusXML() {
-    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
-    return linkedCellArg->getCutOffRadius();
+    LinkedCellArg linkedCellArg = extractLinkedCell();
+    return linkedCellArg.getCutOffRadius();
   }
   /**
    *  Sets boundaries read from the path file to a given LinkedCellContainer
    * @param linkedCellsContainer
    */
   void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
-    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
+    LinkedCellArg linkedCellArg = extractLinkedCell();
     linkedCellsContainer.setBoundaries({
         {cubeSide::LEFT,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundLeft())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundLeft())},
         {cubeSide::RIGHT,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundRight())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundRight())},
         {cubeSide::TOP,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundTop())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundTop())},
         {cubeSide::BOTTOM,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundBottom())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundBottom())},
         {cubeSide::FRONT,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundFront())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundFront())},
         {cubeSide::BACK,
-         XMLParser::strToEnumBoundary(linkedCellArg->getBoundBack())},
+         XMLParser::strToEnumBoundary(linkedCellArg.getBoundBack())},
     });
   }
 };
