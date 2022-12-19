@@ -6,13 +6,13 @@
 #include <iostream>
 
 #include "Simulation.h"
-#include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
 #include "inputReader/XMLFileReader/XMLParser.h"
 #include "model/LennardJonesModel.h"
+#include "model/Thermostat.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -23,13 +23,9 @@ void printHelp();
 void printUsage();
 enum simTypes { Single, Cuboid, Sphere };
 const std::map<std::string, simTypes> simTypeStrings{
-    {"single", simTypes::Single},
-    {"cuboid", simTypes::Cuboid},
-    {"sphere", simTypes::Sphere}};
+    {"single", simTypes::Single}, {"cuboid", simTypes::Cuboid}, {"sphere", simTypes::Sphere}};
 
 int main(int argc, char *argsv[]) {
-  std::cout << "Hello from MolSim for PSE!" << std::endl;
-
   // Print help when no arguments or options are present
   if (argc == 1) {
     printUsage();
@@ -43,6 +39,7 @@ int main(int argc, char *argsv[]) {
   int loglevel = 0;
   bool quietLog = false;
   bool performanceMeasure = false;
+  bool hitRateMeasure = false;
   bool xmlInput = false;
   std::string xmlPath;
 
@@ -57,12 +54,13 @@ int main(int argc, char *argsv[]) {
       {"delta-t", required_argument, nullptr, 'd'},
       {"write-frequency", required_argument, nullptr, 'w'},
       {"performance", no_argument, nullptr, 'p'},
+      {"hit-rate", no_argument, nullptr, 'r'},
       {"verbose", no_argument, nullptr, 'v'},
       {"quiet", no_argument, nullptr, 'q'},
       {"help", no_argument, nullptr, 'h'},
       {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:pvqh", long_options,
+  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options,
                             nullptr)) != -1) {
     switch (opt) {
       case 'o': {
@@ -97,16 +95,14 @@ int main(int argc, char *argsv[]) {
         try {
           double end = std::stod(optarg);
           if (end <= 0) {
-            std::cout << "End-time has to be positive but is " << end
-                      << std::endl;
+            std::cout << "End-time has to be positive but is " << end << std::endl;
             printUsage();
             return 1;
           } else {
             simulation.setEndTime(end);
           }
         } catch (std::invalid_argument &e) {
-          std::cout << "End-time has to be double, but failed to convert "
-                    << optarg << std::endl;
+          std::cout << "End-time has to be double, but failed to convert " << optarg << std::endl;
           printUsage();
           return 1;
         }
@@ -118,16 +114,14 @@ int main(int argc, char *argsv[]) {
         try {
           double delta = std::stod(optarg);
           if (delta <= 0) {
-            std::cout << "DeltaT has to be positive but is " << delta
-                      << std::endl;
+            std::cout << "DeltaT has to be positive but is " << delta << std::endl;
             printUsage();
             return 1;
           } else {
             simulation.setDeltaT(delta);
           }
         } catch (std::invalid_argument &e) {
-          std::cout << "DeltaT has to be double, but failed to convert "
-                    << optarg << std::endl;
+          std::cout << "DeltaT has to be double, but failed to convert " << optarg << std::endl;
           printUsage();
           return 1;
         }
@@ -138,8 +132,8 @@ int main(int argc, char *argsv[]) {
         try {
           int frequency = std::stoi(optarg);
           if (frequency <= 0) {
-            std::cout << "WriteOutFrequency has to be positive integer but "
-                      << frequency << " is negative" << std::endl;
+            std::cout << "WriteOutFrequency has to be positive integer but " << frequency << " is negative"
+                      << std::endl;
             printUsage();
             return 1;
           } else {
@@ -157,6 +151,10 @@ int main(int argc, char *argsv[]) {
       }
       case 'p': {
         performanceMeasure = true;
+        break;
+      }
+      case 'r': {
+        hitRateMeasure = true;
         break;
       }
       case 'v': {
@@ -187,8 +185,7 @@ int main(int argc, char *argsv[]) {
     printUsage();
     return 1;
   }
-  auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-      "../logs/logger", 1048576 * 5, 5);
+  auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);
 
   auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
@@ -214,8 +211,7 @@ int main(int argc, char *argsv[]) {
         break;
     }
   }
-  spdlog::set_default_logger(std::make_shared<spdlog::logger>(
-      "", spdlog::sinks_init_list({console_sink, file_sink})));
+  spdlog::set_default_logger(std::make_shared<spdlog::logger>("", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
 
   IContainer *container;
@@ -227,13 +223,13 @@ int main(int argc, char *argsv[]) {
     VectorContainer vectorContainer{};
 
     linkedContainer.setBoundaries({
-        {cubeSide::LEFT, boundaryType::REFLECT},
-        {cubeSide::RIGHT, boundaryType::REFLECT},
-        {cubeSide::TOP, boundaryType::REFLECT},
-        {cubeSide::BOTTOM, boundaryType::REFLECT},
-        {cubeSide::FRONT, boundaryType::REFLECT},
-        {cubeSide::BACK, boundaryType::REFLECT},
-    });
+      {CubeSide::LEFT, BoundaryType::PERIODIC},
+      {CubeSide::RIGHT, BoundaryType::PERIODIC},
+      {CubeSide::TOP, BoundaryType::REFLECT},
+      {CubeSide::BOTTOM, BoundaryType::REFLECT},
+      {CubeSide::FRONT, BoundaryType::PERIODIC},
+      {CubeSide::BACK, BoundaryType::PERIODIC},
+  });
 
     container = &linkedContainer;
 
@@ -255,6 +251,8 @@ int main(int argc, char *argsv[]) {
 
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
+
+  Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
@@ -299,17 +297,16 @@ int main(int argc, char *argsv[]) {
       container = &vectorContainer;
     }
 
-    simulation.simulate(model, *container, *selectedWriter);
+    // TODO: XML INPUT FOR GRAVITY AND THERMOSTAT
+    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
   } else {
-    simulation.simulate(model, *container, *selectedWriter);
+    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
   }
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();
-    auto durationSec =
-        std::chrono::duration<double>{endTime - startTime}.count();
-    auto iterationCount =
-        std::ceil(simulation.getEndTime() / simulation.getDeltaT());
+    auto durationSec = std::chrono::duration<double>{endTime - startTime}.count();
+    auto iterationCount = std::ceil(simulation.getEndTime() / simulation.getDeltaT());
     std::cout << "Results of performance measurement\n"
                  "Execution time       : "
               << durationSec
@@ -320,6 +317,19 @@ int main(int argc, char *argsv[]) {
                  "Time per iteration   : "
               << (durationSec / iterationCount) << "s" << std::endl;
   }
+  if (hitRateMeasure) {
+    std::cout << "########################################################\n"
+                 "Results of hit-rate measurement\n"
+                 "Number of hits          : "
+              << model.getHits()
+              << "\n"
+                 "Number of comparisons   : "
+              << model.getComparisons()
+              << "\n"
+                 "Hit rate                : "
+              << (static_cast<double>(model.getHits()) * 100. / static_cast<double>(model.getComparisons())) << "%"
+              << std::endl;
+  }
 
   spdlog::info("Terminating...");
   return 0;
@@ -328,73 +338,83 @@ int main(int argc, char *argsv[]) {
 void printUsage() {
   std::cout
       << " Usage\n"
-         "        ./MolSim -f <input-file> [-t (single|cuboid)] [-o "
+         "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
          "<output-file>] [-e <endtime>]\n"
          "                                [-d <deltaT>] [-w <iteration-count>] "
-         "[-n] [-p] [-v] [-v] [-q] [-x]\n"
+         "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
          "\n"
          "For more information run ./Molsim -h or ./Molsim --help"
       << std::endl;
 }
 
 void printHelp() {
-  std::cout
-      << "Usage\n"
-         "        ./MolSim -i <xml-file> [-f <input-file>] [-t "
-         "(single|cuboid)] [-o "
-         "<output-file>] [-e <endtime>]\n"
-         "                                [-d <deltaT>] [-w <iteration-count>] "
-         "[-n] [-p] [-v] [-v] [-q]\n"
-         "\n"
-         "OPTIONS:\n"
-         "        -o <filepath>, --output-name=<filepath>\n"
-         "                Use the given <filepath> as the path for the "
-         "outputfiles(iteration number and file-ending are added "
-         "automatically)\n"
-         "                If not specified \"MD_vtk\" is used\n"
-         "                \n"
-         "        -n, --no-output\n"
-         "                If active no files will be written, even overwrites "
-         "-o.\n"
-         "\n"
-         "        -t (single|cuboid), --type=(single|cuboid)\n"
-         "                Specifies the way to set up particles (default is "
-         "single).\n"
-         "                Use single if you want particles on their own and "
-         "use cuboid if you want the particles to spawn in cuboids.\n"
-         "\n"
-         "        -f <filepath>, --input-file=<filepath>\n"
-         "                Use the file at the <filepath> as an input.\n"
-         "\n"
-         "        -e <endtime>, --end-time=<endtime>\n"
-         "                The time until the simulation is run (default is "
-         "1000).\n"
-         "\n"
-         "        -d <deltaT>, --delta-t=<deltaT>\n"
-         "                The timestep by which the time gets increased in "
-         "every iteration (default is 0.014).\n"
-         "\n"
-         "        -w <iteration-count>, --write-frequency=<iteration-count>\n"
-         "                Every <iteration-count>nth iteration the particles "
-         "get written to a file (default is 10).\n"
-         "        \n"
-         "        -p, --performance\n"
-         "                Takes a performace measurement of the simulation, "
-         "implicitly sets the -n flag and deactivates logging entirely.\n"
-         "        \n"
-         "        -v, --verbose\n"
-         "                If specified the log-level is lowered from INFO to "
-         "DEBUG.\n"
-         "                If specified twice the log-level is even lowered to "
-         "TRACE.\n"
-         "                \n"
-         "        -q, --quiet\n"
-         "                Set loglevel to ERROR. Overrites -v.\n"
-         "\n"
-         "        -i <filepath>, --xml=<filepath>\n"
-         "                Use the XML file at the <filepath> as an input\n"
-         "\n"
-         "        -h, --help\n"
-         "                Prints this help screen."
-      << std::endl;
+  std::cout << "Usage\n"
+               "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
+               "<output-file>] [-e <endtime>]\n"
+               "                                [-d <deltaT>] [-w <iteration-count>] "
+               "[-n] [-p] [-r] [-v] [-v] [-q]\n"
+               "\n"
+               "OPTIONS:\n"
+               "        -o <filepath>, --output-name=<filepath>\n"
+               "                Use the given <filepath> as the path for \n"
+               "                the outputfiles(iteration number and file-ending are "
+               "added automatically)\n"
+               "                If not specified \"MD_vtk\" is used\n"
+               "                \n"
+               "        -n, --no-output\n"
+               "                If active no files will be written, even overwrites "
+               "-o.\n"
+               "\n"
+               "        -t (single|cuboid|sphere), --type=(single|cuboid|sphere)\n"
+               "                Specifies the way to set up particles (default is "
+               "single).\n"
+               "                Use single if you want particles on their own and "
+               "use \n"
+               "                cuboid if you want the particles to spawn in "
+               "cuboids.\n"
+               "\n"
+               "        -f <filepath>, --input-file=<filepath>\n"
+               "                Use the file at the <filepath> as an input.\n"
+               "\n"
+               "        -e <endtime>, --end-time=<endtime>\n"
+               "                The time until the simulation is run (default is "
+               "1000).\n"
+               "\n"
+               "        -d <deltaT>, --delta-t=<deltaT>\n"
+               "                The timestep by which the time gets increased \n"
+               "                in every iteration (default is 0.014).\n"
+               "\n"
+               "        -w <iteration-count>, --write-frequency=<iteration-count>\n"
+               "                Every <iteration-count>nth iteration the particles \n"
+               "                get written to a file (default is 10).\n"
+               "        \n"
+               "        -p, --performance\n"
+               "                Takes a performace measurement of the simulation, \n"
+               "                implicitly sets the -n flag and deactivates logging "
+               "entirely.\n"
+               "                \n"
+               "        -r, --hit-rate\n"
+               "               Measures the hit-rate of the pairwise force "
+               "calculation.\n"
+               "               It's defined as the number of pairwise force "
+               "calculations which \n"
+               "               were within the cutoff radius (a hit), divided by the "
+               "total \n"
+               "               number of pairwise force calculations."
+               "        \n"
+               "        -v, --verbose\n"
+               "                If specified the log-level is lowered from INFO to "
+               "DEBUG.\n"
+               "                If specified twice the log-level is even lowered to "
+               "TRACE.\n"
+               "                \n"
+               "        -q, --quiet\n"
+               "                Set loglevel to ERROR. Overrites -v.\n"
+               "\n"
+               "        -i <filepath>, --xml=<filepath>\n"
+               "                Use the XML file at the <filepath> as an input\n"
+               "\n"
+               "        -h, --help\n"
+               "                Prints this help screen."
+            << std::endl;
 }

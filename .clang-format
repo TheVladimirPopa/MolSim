@@ -1,7 +1,7 @@
 # base is Google style guide
 
 BasedOnStyle: Google
-
 Language: Cpp
+ColumnLimit: 120
 
 

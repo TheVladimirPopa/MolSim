@@ -14,12 +14,10 @@ XYZWriter::XYZWriter() = default;
 
 XYZWriter::~XYZWriter() = default;
 
-void XYZWriter::writeFile(const std::string &filename, int iteration,
-                          IContainer &particles) {
+void XYZWriter::writeFile(const std::string &filename, int iteration, IContainer &particles) {
   std::ofstream file;
   std::stringstream strstr;
-  strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration
-         << ".xyz";
+  strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
 
   file.open(strstr.str().c_str());
   file << particles.size() << std::endl;

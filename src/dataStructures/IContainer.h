@@ -2,7 +2,9 @@
 #include <functional>
 
 #include "Particle.h"
-
+/**  \image html runtime.png width=900px
+ *    \image latex runtime.png "Runtimes comparison" width = [goodwidth]cm
+ */
 class IContainer {
  public:
   /**
@@ -20,8 +22,7 @@ class IContainer {
    * (p1,p2), it won't get applied to (p2,p1). Also pairs with the same particle
    * are not considered
    */
-  virtual void forEachPair(
-      std::function<void(Particle &, Particle &)> &binaryFunction) = 0;
+  virtual void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) = 0;
 
   /**
    * Reserves storage and resizes the underlying datastructures
@@ -39,8 +40,7 @@ class IContainer {
    * @param m_arg The mass of the particle
    * @param type The type of the particle
    */
-  virtual void emplace_back(std::array<double, 3> x_arg,
-                            std::array<double, 3> v_arg = {0.0, 0.0, 0.0},
+  virtual void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0},
                             double m_arg = 1.0, int type = 0) = 0;
   /**
    * Returns the number of particles that can be held in currently allocated

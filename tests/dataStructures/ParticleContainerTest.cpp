@@ -13,8 +13,7 @@ TEST(ParticleContainer, EmptyDoesNothing) {
   std::function<void(Particle &)> count = [&ct](auto &p) { ct++; };
   particle_container.forEach(count);
 
-  std::function<void(Particle &, Particle &)> countPair =
-      [&ct](auto &p1, auto &p2) { ct++; };
+  std::function<void(Particle &, Particle &)> countPair = [&ct](auto &p1, auto &p2) { ct++; };
   particle_container.forEachPair(countPair);
 
   EXPECT_EQ(ct, 0);
@@ -46,8 +45,7 @@ TEST(ParticleContainer, ForEachBasic) {
 
   for (unsigned i = 0; i < size; i++) {
     // Check whether the correct particles where modified
-    EXPECT_EQ(particle_container.getVector()[i].getX()[0],
-              static_cast<double>(i));
+    EXPECT_EQ(particle_container.getVector()[i].getX()[0], static_cast<double>(i));
   }
 }
 
@@ -62,15 +60,13 @@ TEST(ParticleContainer, ForEachPairBasic) {
   ASSERT_GE(size, 1) << "To test pairs we need at least 2 particles.";
 
   unsigned ct = 0;
-  std::function<void(Particle &, Particle &)> countPair =
-      [&ct](auto &p1, auto &p2) { ct++; };
+  std::function<void(Particle &, Particle &)> countPair = [&ct](auto &p1, auto &p2) { ct++; };
   particle_container.forEachPair(countPair);
 
   EXPECT_EQ(ct, size * (size - 1) / 2) << "Number of pairs wrong.";
 
   // Set all x coordinates with a dummy value
-  std::function<void(Particle &, Particle &)> setDummyX = [](auto &p1,
-                                                             auto &p2) {
+  std::function<void(Particle &, Particle &)> setDummyX = [](auto &p1, auto &p2) {
     std::array<double, 3> dummy_x1 = {p1.getX()[0] + 1, 0.0, 0.0};
     std::array<double, 3> dummy_x2 = {p1.getX()[0] + 1, 0.0, 0.0};
 
@@ -81,6 +77,5 @@ TEST(ParticleContainer, ForEachPairBasic) {
   particle_container.forEachPair(setDummyX);
 
   for (const auto &p : particle_container.getVector())
-    ASSERT_EQ(p.getX()[0], size - 1)
-        << "ForEachPair did not process each pair exactly once.";
+    ASSERT_EQ(p.getX()[0], size - 1) << "ForEachPair did not process each pair exactly once.";
 }
