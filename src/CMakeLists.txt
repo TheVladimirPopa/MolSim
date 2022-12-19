@@ -26,7 +26,7 @@ target_link_libraries(MolSimLib
   )
 
 # create make target
-add_executable(MolSim "${CMAKE_CURRENT_SOURCE_DIR}/MolSim.cpp" inputReader/XMLFileReader/Args/SimulationArg.cpp inputReader/XMLFileReader/Args/SimulationArg.h inputReader/XMLFileReader/XMLFiles/input.cpp inputReader/XMLFileReader/XMLFiles/input.h inputReader/XMLFileReader/Args/LinkedCellArg.cpp inputReader/XMLFileReader/Args/LinkedCellArg.h)
+add_executable(MolSim "${CMAKE_CURRENT_SOURCE_DIR}/MolSim.cpp")
 
 # set cxx standard. You may raise this if you want.
 target_compile_features(MolSim

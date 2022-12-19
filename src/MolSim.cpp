@@ -44,10 +44,7 @@ int main(int argc, char *argsv[]) {
   bool quietLog = false;
   bool performanceMeasure = false;
   bool xmlInput = false;
-  IContainer *contain;
-  double cutOffRadius;
-  std::array<double, 3> zeroBound={0,0,0};
-  LinkedCellsContainer linkedCellsContainer{0,zeroBound,zeroBound};
+  std::string xmlPath;
 
   int opt;
   static struct option long_options[] = {
@@ -92,69 +89,8 @@ int main(int argc, char *argsv[]) {
         break;
       }
       case 'i': {
-        // XML Input
         xmlInput = true;
-        XMLParser xmlParser = XMLParser(optarg);
-        std::unique_ptr<SimulationArg> simArg = xmlParser.extractSimulation();
-        simulation.setDeltaT(simArg->getDeltaT());
-        simulation.setEndTime(simArg->getEndTime());
-        simulation.setIterationsPerWrite(simArg->getWriteOutFrequency());
-        simulation.setFilename(simArg->getFilename());
-        std::vector<CuboidArg> cuboidArgs = xmlParser.extractCuboid();
-        std::vector<SphereArg> sphereArgs = xmlParser.extractSpheres();
-        std::unique_ptr<LinkedCellArg> linkedCellArg =
-            xmlParser.extractLinkedCell();
-
-        std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
-        std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
-
-//        linkedCellsContainer = LinkedCellsContainer(
-//            linkedCellArg->getCellSize(), lowerBound, upperBound);
-        cutOffRadius = linkedCellArg->getCutOffRadius();
-        linkedCellsContainer.setGridSize(linkedCellArg->getCellSize());
-        linkedCellsContainer.setLeftLowerCorner(lowerBound);
-        linkedCellsContainer.setRightUpperCorner(upperBound);
-
-        for (auto &it : cuboidArgs) {
-          ParticleGeneration::cuboid cuboid;
-          cuboid.position = it.getPosition();
-          cuboid.dimension = it.getDimension();
-          cuboid.velocity = it.getVelocity();
-          cuboid.distance = it.getDistance();
-          cuboid.mass = it.getMass();
-          cuboid.type = it.getType();
-          ParticleGeneration::addCuboidToParticleContainer(linkedCellsContainer,
-                                                           cuboid);
-        }
-
-        for (auto &it : sphereArgs) {
-          ParticleGeneration::sphere sphere;
-          sphere.position = it.getPosition();
-          sphere.radius = it.getRadius();
-          sphere.dimension = it.getDimension();
-          sphere.velocity = it.getVelocity();
-          sphere.distance = it.getDistance();
-          sphere.mass = it.getMass();
-          sphere.type = it.getType();
-          ParticleGeneration::addSphereToParticleContainer(linkedCellsContainer,
-                                                           sphere);
-        }
-        linkedCellsContainer.setBoundaries({
-            {cubeSide::LEFT,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundLeft())},
-            {cubeSide::RIGHT,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundRight())},
-            {cubeSide::TOP,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundTop())},
-            {cubeSide::BOTTOM,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundBottom())},
-            {cubeSide::FRONT,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundFront())},
-            {cubeSide::BACK,
-             XMLParser::strToEnumBoundary(linkedCellArg->getBoundBack())},
-        });
-
-        contain = &linkedCellsContainer;
+        xmlPath = optarg;
         break;
       }
       case 'e': {
@@ -245,7 +181,9 @@ int main(int argc, char *argsv[]) {
   }
 
   if (inputFile == nullptr && !xmlInput) {
-    std::cout << "You have to specify an input file with -f flag" << std::endl;
+    std::cout << "You have to specify an input file with -f flag or an xml "
+                 "file with the -i flag"
+              << std::endl;
     printUsage();
     return 1;
   }
@@ -281,14 +219,14 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   IContainer *container;
+  std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  std::array<double, 3> rightUpperCorner{55., 30., 5};
+  LinkedCellsContainer linkedContainer{10., leftLowerCorner,
+                                       rightUpperCorner};
 
   if (!xmlInput) {
     VectorContainer vectorContainer{};
-    std::array<double, 3> leftLowerCorner{-15., -20., -5};
-    std::array<double, 3> rightUpperCorner{55., 30., 5};
 
-    LinkedCellsContainer linkedContainer{10., leftLowerCorner,
-                                         rightUpperCorner};
 
     linkedContainer.setBoundaries({
         {cubeSide::LEFT, boundaryType::REFLECT},
@@ -315,16 +253,10 @@ int main(int argc, char *argsv[]) {
         break;
       }
     }
-  } else {
-    container = contain;
   }
 
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
-
-  if (xmlInput) {
-    model.setCutOffRadius(cutOffRadius);
-  }
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
@@ -347,7 +279,20 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, *container, *selectedWriter);
+  if (xmlInput) {
+    XMLParser parser = XMLParser(xmlPath);
+    parser.initialiseSimulationFromXML(simulation);
+    LinkedCellsContainer linkedCellsContainer =
+        parser.initialiseLinkedCellContainerFromXML();
+    parser.XMLLinkedCellBoundaries(linkedCellsContainer);
+    model.setCutOffRadius(parser.initCutOffRadiusXML());
+    parser.initialiseSpheresFromXML(linkedCellsContainer);
+    parser.initialiseCuboidsFromXML(linkedCellsContainer);
+    container = &linkedCellsContainer;
+    simulation.simulate(model, *container, *selectedWriter);
+  } else {
+    simulation.simulate(model, *container, *selectedWriter);
+  }
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();

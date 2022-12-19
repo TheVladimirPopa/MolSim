@@ -174,15 +174,4 @@ void LinkedCellsContainer::recalculateStructure() {
                             leftLowerCorner, rightUpperCorner);
   }
 }
-void LinkedCellsContainer::setGridSize(double gridSize) {
-  LinkedCellsContainer::gridSize = gridSize;
-}
 
-void LinkedCellsContainer::setLeftLowerCorner(
-    const std::array<double, 3> &leftLowerCorner) {
-  LinkedCellsContainer::leftLowerCorner = leftLowerCorner;
-}
-void LinkedCellsContainer::setRightUpperCorner(
-    const std::array<double, 3> &rightUpperCorner) {
-  LinkedCellsContainer::rightUpperCorner = rightUpperCorner;
-}

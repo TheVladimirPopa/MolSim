@@ -67,12 +67,12 @@ class XMLParser {
     return std::make_unique<SimulationArg>(arg);
   }
 
-  static boundaryType strToEnumBoundary(const std::string& str){
-    if(str=="OUTFLOW"){
+  static boundaryType strToEnumBoundary(const std::string &str) {
+    if (str == "OUTFLOW") {
       return boundaryType::OUTFLOW;
-    }else if(str=="REFLECT"){
+    } else if (str == "REFLECT") {
       return boundaryType::REFLECT;
-    }else if(str=="PERIODIC"){
+    } else if (str == "PERIODIC") {
       return boundaryType::PERIODIC;
     }
     throw std::errc::invalid_argument;
@@ -150,5 +150,79 @@ class XMLParser {
     }
 
     return sphereArgs;
+  }
+
+  void initialiseSimulationFromXML(Simulation &sim) {
+    std::unique_ptr<SimulationArg> args = this->extractSimulation();
+    sim.setDeltaT(args->getDeltaT());
+    sim.setEndTime(args->getEndTime());
+    sim.setIterationsPerWrite(args->getWriteOutFrequency());
+    sim.setFilename(args->getFilename());
+  }
+
+  void initialiseCuboidsFromXML(
+      LinkedCellsContainer &linkedCellsContainer) const {
+    std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
+
+    for (auto &it : cuboidArgs) {
+      ParticleGeneration::cuboid cuboid;
+      cuboid.position = it.getPosition();
+      cuboid.dimension = it.getDimension();
+      cuboid.velocity = it.getVelocity();
+      cuboid.distance = it.getDistance();
+      cuboid.mass = it.getMass();
+      cuboid.type = it.getType();
+      ParticleGeneration::addCuboidToParticleContainer(linkedCellsContainer,
+                                                       cuboid);
+    }
+  }
+
+  void initialiseSpheresFromXML(
+      LinkedCellsContainer &linkedCellsContainer) const {
+    std::vector<SphereArg> sphereArgs = this->extractSpheres();
+    for (auto &it : sphereArgs) {
+      ParticleGeneration::sphere sphere;
+      sphere.position = it.getPosition();
+      sphere.radius = it.getRadius();
+      sphere.dimension = it.getDimension();
+      sphere.velocity = it.getVelocity();
+      sphere.distance = it.getDistance();
+      sphere.mass = it.getMass();
+      sphere.type = it.getType();
+      ParticleGeneration::addSphereToParticleContainer(linkedCellsContainer,
+                                                       sphere);
+    }
+  }
+
+  LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
+    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
+    std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
+    std::array<double, 3> upperBound = linkedCellArg->getRightUpperBound();
+
+    return LinkedCellsContainer{linkedCellArg->getCellSize(), lowerBound,
+                                upperBound};
+  }
+
+  double initCutOffRadiusXML() {
+    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
+    return linkedCellArg->getCutOffRadius();
+  }
+
+  void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
+    std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
+    linkedCellsContainer.setBoundaries({
+        {cubeSide::LEFT,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundLeft())},
+        {cubeSide::RIGHT,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundRight())},
+        {cubeSide::TOP,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundTop())},
+        {cubeSide::BOTTOM,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundBottom())},
+        {cubeSide::FRONT,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundFront())},
+        {cubeSide::BACK,
+         XMLParser::strToEnumBoundary(linkedCellArg->getBoundBack())},
+    });
   }
 };
