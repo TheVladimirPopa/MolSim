@@ -18,28 +18,29 @@ class XMLParser {
    * XML file simulation
    */
   std::unique_ptr<simulation_t> simulation;
-
   /**
    * Generates an array of type double from the xml input
    * @param input
    * @return
    */
-
   static std::array<double, 3> generate_double_array(const array_d &input) {
     return {input.x(), input.y(), input.z()};
   }
-
   /**
    * Generates an array of type int from the xml input
    * @param input
    * @return
    */
-
   static std::array<int, 3> generate_int_array(const array_i &input) {
     return {input.x(), input.y(), input.z()};
   }
 
  public:
+  /**
+   * Generates an XMLParser from a given path. If the path is not valid, an
+   * error is thrown
+   * @param path
+   */
   explicit XMLParser(const std::string &path) {
     try {
       simulation = Simulation_XML(path, xml_schema::flags::dont_validate);
@@ -47,7 +48,11 @@ class XMLParser {
       throw std::invalid_argument(std::string{e.what()});
     }
   }
-
+  /**
+   * Extracts the arguments (endTime, deltaT, writeOutFrequency and filename)
+   * used for a simulation from the XML file
+   * @return Returns a pointer to the SimulationArgs
+   */
   std::unique_ptr<SimulationArg> extractSimulation() {
     std::vector<std::string> files;
 
@@ -66,7 +71,11 @@ class XMLParser {
 
     return std::make_unique<SimulationArg>(arg);
   }
-
+  /**
+   * Converts boundaryType string str to proper boundaryType enum
+   * @param str
+   * @return Returns a boundaryType corresponding to the string
+   */
   static boundaryType strToEnumBoundary(const std::string &str) {
     if (str == "OUTFLOW") {
       return boundaryType::OUTFLOW;
@@ -75,9 +84,13 @@ class XMLParser {
     } else if (str == "PERIODIC") {
       return boundaryType::PERIODIC;
     }
-    throw std::errc::invalid_argument;
+    throw std::invalid_argument("Invalid boundary string");
   }
-
+  /**
+   * Extracts the arguments (boundaries, cellSize) used to initialise a
+   * LinkedCellContainer from the XML file
+   * @return Returns a pointer to LinkedCellArgs
+   */
   std::unique_ptr<LinkedCellArg> extractLinkedCell() {
     std::vector<LinkedCellArg> arg;
 
@@ -108,7 +121,11 @@ class XMLParser {
 
     return std::make_unique<LinkedCellArg>(arg[0]);
   }
-
+  /**
+   * Extracts the arguments (position, velocity, dimension, distance, mass,
+   * type) used to initialise a cuboid from the XML file
+   * @return Returns a pointer to CuboidArgs
+   */
   [[nodiscard]] std::vector<CuboidArg> extractCuboid() const {
     std::vector<CuboidArg> cuboidArgs;
 
@@ -129,7 +146,11 @@ class XMLParser {
 
     return cuboidArgs;
   }
-
+  /**
+   * Extracts the arguments (position, velocity, radius, distance, mass,
+   * dimension, type) used to initialise a sphere from the XML file
+   * @return Returns a pointer to SphereArgs
+   */
   [[nodiscard]] std::vector<SphereArg> extractSpheres() const {
     std::vector<SphereArg> sphereArgs;
 
@@ -151,7 +172,11 @@ class XMLParser {
 
     return sphereArgs;
   }
-
+  /**
+   * Initialises the given simulation sim with the corresponding arguments from
+   * the path file
+   * @param sim
+   */
   void initialiseSimulationFromXML(Simulation &sim) {
     std::unique_ptr<SimulationArg> args = this->extractSimulation();
     sim.setDeltaT(args->getDeltaT());
@@ -159,7 +184,10 @@ class XMLParser {
     sim.setIterationsPerWrite(args->getWriteOutFrequency());
     sim.setFilename(args->getFilename());
   }
-
+  /**
+   * Adds all cuboids read from the path file to a given LinkedCellsContainer
+   * @param linkedCellsContainer
+   */
   void initialiseCuboidsFromXML(
       LinkedCellsContainer &linkedCellsContainer) const {
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
@@ -176,7 +204,10 @@ class XMLParser {
                                                        cuboid);
     }
   }
-
+  /**
+   * Adds all spheres read from the path file to a given LinkedCellsContainer
+   * @param linkedCellsContainer
+   */
   void initialiseSpheresFromXML(
       LinkedCellsContainer &linkedCellsContainer) const {
     std::vector<SphereArg> sphereArgs = this->extractSpheres();
@@ -193,7 +224,10 @@ class XMLParser {
                                                        sphere);
     }
   }
-
+  /**
+   * Constructs a LinkedCellsContainer from the path file
+   * @return Returns a LinkedCellsContainer
+   */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
     std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
     std::array<double, 3> lowerBound = linkedCellArg->getLeftLowerBound();
@@ -202,12 +236,18 @@ class XMLParser {
     return LinkedCellsContainer{linkedCellArg->getCellSize(), lowerBound,
                                 upperBound};
   }
-
+  /**
+   * Initialises a cutOffRadius from the path file
+   * @return
+   */
   double initCutOffRadiusXML() {
     std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
     return linkedCellArg->getCutOffRadius();
   }
-
+  /**
+   *  Sets boundaries read from the path file to a given LinkedCellContainer
+   * @param linkedCellsContainer
+   */
   void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
     std::unique_ptr<LinkedCellArg> linkedCellArg = this->extractLinkedCell();
     linkedCellsContainer.setBoundaries({

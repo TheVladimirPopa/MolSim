@@ -18,15 +18,15 @@ class CuboidArg {
             const std::array<int, 3>& dimension, double distance, double mass,
             int type);
 
-  const std::array<double, 3>& getPosition() const;
+  [[nodiscard]] const std::array<double, 3>& getPosition() const;
 
-  const std::array<double, 3>& getVelocity() const;
+  [[nodiscard]] const std::array<double, 3>& getVelocity() const;
 
-  const std::array<int, 3>& getDimension() const;
+  [[nodiscard]] const std::array<int, 3>& getDimension() const;
 
-  double getDistance() const;
+  [[nodiscard]] double getDistance() const;
 
-  double getMass() const;
+  [[nodiscard]] double getMass() const;
 
-  int getType() const;
+  [[nodiscard]] int getType() const;
 };

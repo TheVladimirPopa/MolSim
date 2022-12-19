@@ -14,11 +14,15 @@ class SimulationArg {
   SimulationArg(double endTime, double deltaT, unsigned int writeOutFrequency,
                 std::string  filename, std::string inputFile);
 
-  double getEndTime() const;
-  double getDeltaT() const;
-  unsigned int getWriteOutFrequency() const;
-  const std::string& getFilename() const;
-  std::string getInputFile() const;
+  [[nodiscard]] double getEndTime() const;
+
+  [[nodiscard]] double getDeltaT() const;
+
+  [[nodiscard]] unsigned int getWriteOutFrequency() const;
+
+  [[nodiscard]] const std::string& getFilename() const;
+
+  [[nodiscard]] std::string getInputFile() const;
 
   virtual ~SimulationArg();
 };

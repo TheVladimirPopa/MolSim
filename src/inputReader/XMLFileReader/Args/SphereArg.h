@@ -18,17 +18,17 @@ class SphereArg {
             const std::array<double, 3>& velocity, unsigned int radius,
             unsigned int dimension, double distance, double mass, int type);
 
-  const std::array<double, 3>& getPosition() const;
+  [[nodiscard]] const std::array<double, 3>& getPosition() const;
 
-  const std::array<double, 3>& getVelocity() const;
+  [[nodiscard]] const std::array<double, 3>& getVelocity() const;
 
-  unsigned int getRadius() const;
+  [[nodiscard]] unsigned int getRadius() const;
 
-  unsigned int getDimension() const;
+  [[nodiscard]] unsigned int getDimension() const;
 
-  double getDistance() const;
+  [[nodiscard]] double getDistance() const;
 
-  double getMass() const;
+  [[nodiscard]] double getMass() const;
 
-  int getType() const;
+  [[nodiscard]] int getType() const;
 };
