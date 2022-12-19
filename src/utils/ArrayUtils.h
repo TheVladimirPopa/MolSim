@@ -219,6 +219,11 @@ std::enable_if_t<ArrayUtils::is_container<Container>::value, Container> operator
   return ArrayUtils::elementWisePairOp(lhs, rhs, std::plus<>());
 }
 
+template <>
+inline v3d operator+(const v3d &lhs, const v3d &rhs) {
+  return v3d{lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2]};
+}
+
 /**
  * Element wise subtraction of two containers.
  * @tparam Container
@@ -230,6 +235,11 @@ template <class Container>
 std::enable_if_t<ArrayUtils::is_container<Container>::value, Container> operator-(const Container &lhs,
                                                                                   const Container &rhs) {
   return ArrayUtils::elementWisePairOp(lhs, rhs, std::minus<>());
+}
+
+template <>
+inline v3d operator-(const v3d &lhs, const v3d &rhs) {
+  return v3d{lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2]};
 }
 
 /**
@@ -245,6 +255,11 @@ std::enable_if_t<ArrayUtils::is_container<Container>::value, Container> operator
   return ArrayUtils::elementWisePairOp(lhs, rhs, std::multiplies<>());
 }
 
+template <>
+inline v3d operator*(const v3d &lhs, const v3d &rhs) {
+  return v3d{lhs[0] * rhs[0], lhs[1] * rhs[1], lhs[2] * rhs[2]};
+}
+
 /**
  * Element wise scaling of a container.
  * @tparam Container
@@ -256,6 +271,11 @@ template <class Scalar, class Container>
 std::enable_if_t<ArrayUtils::is_container<Container>::value, Container> operator*(const Scalar &lhs,
                                                                                   const Container &rhs) {
   return ArrayUtils::elementWiseScalarOp(lhs, rhs, std::multiplies<>());
+}
+
+template <class Scalar, typename std::enable_if<std::is_arithmetic_v<Scalar>, bool>::type = true>
+inline v3d operator*(const Scalar &lhs, const v3d &rhs) {
+  return v3d{lhs * rhs[0], lhs * rhs[1], lhs * rhs[2]};
 }
 
 /**
