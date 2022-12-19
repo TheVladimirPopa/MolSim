@@ -19,6 +19,8 @@ Particle::Particle(int type_arg) {
   v = {0.0, 0.0, 0.0};
   f = {0., 0., 0.};
   old_f = {0., 0., 0.};
+  epsilon = getLJEpsilon(type_arg);
+  sigma = getLJSigma(type_arg);
 }
 
 Particle::Particle(const Particle &other) {
