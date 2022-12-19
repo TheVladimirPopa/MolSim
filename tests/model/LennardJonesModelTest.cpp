@@ -5,16 +5,6 @@
 #include "model/NewtonsLawModel.h"
 using std::pow;
 
-/**
- * Worksheet 2 defines epsilon = 5.0 and sigma = 1.0 for the Lennard-Jones
- * potential. (This test might get removed in the future.)
- */
-TEST(LennardJonesModel, WorksheetParameters) {
-  LennardJonesModel model{100.};
-
-  EXPECT_EQ(model.getEpsilon(), 5.0) << "Worksheet 2 expects epsilon = 5.0";
-  EXPECT_EQ(model.getSigma(), 1.0) << "Worksheet 2 expects sigma = 1.0";
-}
 
 /**
  * Check if the applied forces have the correct sign on each particle.

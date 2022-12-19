@@ -211,10 +211,10 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{0., 0., -20};
-  std::array<double, 3> rightUpperCorner{120., 50., 50.};
+  std::array<double, 3> leftLowerCorner{0., 0., -5.};
+  std::array<double, 3> rightUpperCorner{63., 36., 5.};
 
-  LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner,
+  LinkedCellsContainer linkedCellsContainer{5., leftLowerCorner,
                                             rightUpperCorner};
 
 
@@ -228,6 +228,13 @@ int main(int argc, char *argsv[]) {
   });
 
   IContainer *container = &linkedCellsContainer;
+
+  // TODO: REMOVE THIS ------------------------
+  Particle::registerParticleType(0, 1.0, 1.0);
+  Particle::registerParticleType(1, 1.0, 0.9412);
+  Particle::registerParticleType(2, 1.0, 1.2);
+  Particle::registerParticleType(3, 1.0, 1.1);
+  // TODO: -----------------------------------/
 
   switch (simulationType) {
     case simTypes::Single: {
@@ -268,7 +275,8 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, *container, *selectedWriter);
+  // TODO: REVERT GRAVITY CONSTANT
+  simulation.simulate(model, *container, *selectedWriter, -12.44);
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();
