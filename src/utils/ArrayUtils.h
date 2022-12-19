@@ -18,6 +18,7 @@
 #include <unordered_set>
 #include <vector>
 
+using v3d = std::array<double, 3ul>;
 /**
  * Collection of utility functions and operators for iterable data containers
  * like std::array, std::vector, etc.
@@ -168,6 +169,11 @@ inline Container elementWiseScalarOp(const Scalar &lhs, const Container &rhs, F 
 template <class Container>
 double dotProduct(const Container &c) {
   return std::accumulate(std::cbegin(c), std::cend(c), 0.0, [](auto a, auto b) { return a + (b * b); });
+}
+
+template <>
+inline double dotProduct<v3d>(const v3d &c) {
+  return (c[0] * c[0]) + (c[1] * c[1]) + (c[2] * c[2]);
 }
 
 /**
