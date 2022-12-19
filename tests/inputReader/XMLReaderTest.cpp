@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include "dataStructures/Cell.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/XMLParser.h"
@@ -147,6 +146,13 @@ TEST(XMLParser, testSphereInput) {
         type = 2;
         break;
       default:
+        position = {0.0, 0.0, 0.0};
+        radius = 0;
+        velocity = {0.0, 0.0, 0.0};
+        dimension = 0;
+        distance = 0.0;
+        mass = 0.0;
+        type = 0;
         break;
 
         EXPECT_EQ(spheres[i].position, position);
@@ -216,6 +222,12 @@ TEST(XMLParser, testCuboidInput) {
         type = 1;
         break;
       default:
+        position = {0.0, 0.0, 0.0};
+        dimension = {0, 0, 0};
+        velocity = {0.0, 0.0, 0.0};
+        distance = 0.0;
+        mass = 0.0;
+        type = 0;
         break;
     }
 

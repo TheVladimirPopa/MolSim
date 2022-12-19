@@ -162,4 +162,11 @@ class LinkedCellsBoundary {
    * container cube.
    */
   [[maybe_unused]] cubeSide getSide() { return side; }
+  /**
+   *
+   * @return
+   */
+  boundaryType getType(){
+    return type;
+  }
 };

@@ -61,6 +61,18 @@ class Simulation {
    * @return The time until the simulation is run
    */
   double getEndTime() const { return endTime; };
+  /**
+   *
+   * @return
+   */
+  unsigned int getWriteOutFrequency() const {
+    return writeOutFrequency;
+  }
+  /**
+   *
+   * @return
+   */
+  const std::string getFilename() const { return filename; }
 
  private:
   /**
