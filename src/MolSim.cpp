@@ -202,14 +202,14 @@ int main(int argc, char *argsv[]) {
   spdlog::set_level(spdlog::level::trace);
 
   VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{0., 0., -20};
+  std::array<double, 3> leftLowerCorner{-0.5, -0.5, -20};
   std::array<double, 3> rightUpperCorner{120., 50., 50.};
 
-  LinkedCellsContainer linkedCellsContainer{10., leftLowerCorner, rightUpperCorner};
+  LinkedCellsContainer linkedCellsContainer{3., leftLowerCorner, rightUpperCorner};
 
   linkedCellsContainer.setBoundaries({
-      {CubeSide::LEFT, BoundaryType::REFLECT},
-      {CubeSide::RIGHT, BoundaryType::REFLECT},
+      {CubeSide::LEFT, BoundaryType::PERIODIC},
+      {CubeSide::RIGHT, BoundaryType::PERIODIC},
       {CubeSide::TOP, BoundaryType::REFLECT},
       {CubeSide::BOTTOM, BoundaryType::REFLECT},
       {CubeSide::FRONT, BoundaryType::REFLECT},
@@ -233,10 +233,10 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  LennardJonesModel model{10.};
+  LennardJonesModel model{3.};
   model.setDeltaT(simulation.getDeltaT());
 
-  Thermostat thermostat{*container, 10., 20., 5., 1000, 3};
+  Thermostat thermostat{*container, 20., 20., 5., 1000, 3};
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
