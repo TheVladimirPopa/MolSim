@@ -94,11 +94,7 @@
     </xsd:complexType>
 
     <!-- Vector Container-->
-    <xsd:complexType name="vectorContainer_t">
-        <xsd:sequence>
-            <xsd:element name="vector" type="array_d"/>
-        </xsd:sequence>
-    </xsd:complexType>
+    <xsd:complexType name="vectorContainer_t"/>
 
     <!--  Boundary Type  -->
     <xsd:simpleType name="boundary_t">

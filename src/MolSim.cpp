@@ -221,12 +221,10 @@ int main(int argc, char *argsv[]) {
   IContainer *container;
   std::array<double, 3> leftLowerCorner{-15., -20., -5};
   std::array<double, 3> rightUpperCorner{55., 30., 5};
-  LinkedCellsContainer linkedContainer{10., leftLowerCorner,
-                                       rightUpperCorner};
+  LinkedCellsContainer linkedContainer{10., leftLowerCorner, rightUpperCorner};
 
   if (!xmlInput) {
     VectorContainer vectorContainer{};
-
 
     linkedContainer.setBoundaries({
         {cubeSide::LEFT, boundaryType::REFLECT},
@@ -280,15 +278,27 @@ int main(int argc, char *argsv[]) {
   auto startTime = std::chrono::steady_clock::now();
 
   if (xmlInput) {
+    VectorContainer vectorContainer{};
     XMLParser parser = XMLParser(xmlPath);
+    bool linkedCellsStrategy = parser.chooseStrategy();
+
     parser.initialiseSimulationFromXML(simulation);
+
     LinkedCellsContainer linkedCellsContainer =
         parser.initialiseLinkedCellContainerFromXML();
-    parser.XMLLinkedCellBoundaries(linkedCellsContainer);
-    model.setCutOffRadius(parser.initCutOffRadiusXML());
-    parser.initialiseSpheresFromXML(linkedCellsContainer);
-    parser.initialiseCuboidsFromXML(linkedCellsContainer);
-    container = &linkedCellsContainer;
+
+    if (linkedCellsStrategy) {
+      model.setCutOffRadius(parser.initCutOffRadiusXML());
+      parser.XMLLinkedCellBoundaries(linkedCellsContainer);
+      parser.initialiseSpheresFromXML(linkedCellsContainer);
+      parser.initialiseCuboidsFromXML(linkedCellsContainer);
+      container = &linkedCellsContainer;
+    } else {
+      parser.initialiseCuboidsFromXML(vectorContainer);
+      parser.initialiseSpheresFromXML(vectorContainer);
+      container = &vectorContainer;
+    }
+
     simulation.simulate(model, *container, *selectedWriter);
   } else {
     simulation.simulate(model, *container, *selectedWriter);

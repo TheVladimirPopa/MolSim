@@ -87,6 +87,18 @@ class XMLParser {
     throw std::invalid_argument("Invalid boundary string");
   }
   /**
+   * Chooses the container type
+   * @return Returns true if a LinkedCellsContainer is detected, false otherwise
+   */
+  bool chooseStrategy() {
+    for (auto &it : simulation->Container_T()) {
+      for (auto &c : it.LinkedCell()) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
    * LinkedCellContainer from the XML file
    * @return Returns a pointer to LinkedCellArgs
@@ -188,8 +200,7 @@ class XMLParser {
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void initialiseCuboidsFromXML(
-      LinkedCellsContainer &linkedCellsContainer) const {
+  void initialiseCuboidsFromXML(IContainer &container) const {
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
 
     for (auto &it : cuboidArgs) {
@@ -200,16 +211,14 @@ class XMLParser {
       cuboid.distance = it.getDistance();
       cuboid.mass = it.getMass();
       cuboid.type = it.getType();
-      ParticleGeneration::addCuboidToParticleContainer(linkedCellsContainer,
-                                                       cuboid);
+      ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
     }
   }
   /**
    * Adds all spheres read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void initialiseSpheresFromXML(
-      LinkedCellsContainer &linkedCellsContainer) const {
+  void initialiseSpheresFromXML(IContainer &container) const {
     std::vector<SphereArg> sphereArgs = this->extractSpheres();
     for (auto &it : sphereArgs) {
       ParticleGeneration::sphere sphere;
@@ -220,8 +229,7 @@ class XMLParser {
       sphere.distance = it.getDistance();
       sphere.mass = it.getMass();
       sphere.type = it.getType();
-      ParticleGeneration::addSphereToParticleContainer(linkedCellsContainer,
-                                                       sphere);
+      ParticleGeneration::addSphereToParticleContainer(container, sphere);
     }
   }
   /**
