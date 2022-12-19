@@ -11,7 +11,6 @@
 #include <string>
 #include <unordered_map>
 
-
 class IModel;
 class NewtonsLawModel;
 class LennardJonesModel;
@@ -44,6 +43,12 @@ class Particle {
   double m;
 
   /**
+   * Type of the particle. Use it for whatever you want (e.g. to separate
+   * molecules belonging to different bodies, matters, and so on)
+   */
+  int type;
+
+  /**
    * Lennard Jones depth of potential well
    */
   double epsilon;
@@ -54,29 +59,37 @@ class Particle {
   double sigma;
 
   /**
-   * Type of the particle. Use it for whatever you want (e.g. to separate
-   * molecules belonging to different bodies, matters, and so on)
-   */
-  int type;
-
-  /**
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
    */
   bool isDeleted_;
 
   struct ParticleType {
-    double const mass;
     double const epsilon;
     double const sigma;
   };
 
-  static std::unordered_map<int, ParticleType> typeToParametersMap;
+  static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
   /**
-   * Sets mass and Lennard-Jones parameters epsilon and sigma
+   * Get the ParticleType containing the Lennard-Jones parameters.
+   * @param type The integer type a ParticleType was registered for
+   * @return ParticleType containing the epsilon and sigma for the particle.
+   * Returns the default values epsilon=5.0 and sigma=1.0 when the type is not registered.
    */
-  void setLennardJonesParameters(int type);
+  ParticleType getLJParticleType(int type);
+
+  /**
+   * @param type Integer type of particle
+   * @return Lennard Jones depth of potential well
+   */
+  double getLJEpsilon(int type) { return getLJParticleType(type).epsilon; }
+
+  /**
+   * @param type Integer type of particle
+   * @return Sigma parameter aka. size of particle
+   */
+  double getLJSigma(int type) { return getLJParticleType(type).sigma; }
 
  public:
   explicit Particle(int type = 0);
@@ -86,7 +99,7 @@ class Particle {
   Particle(
       // for visualization, we need always 3 coordinates
       // -> in case of 2d, we use only the first and the second
-      std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0}, int type = 0);
+      std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0}, double m_arg = 1.0, int type = 0);
 
   virtual ~Particle();
 
@@ -98,11 +111,16 @@ class Particle {
 
   const std::array<double, 3> &getOldF() const { return old_f; }
 
-  void setX(std::array<double, 3> const&x_arg) { x = x_arg; }
+  void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 
   double getM() const;
 
   int getType() const;
+
+  double getEpsilon() const { return epsilon; };
+
+  double getSigma() const { return sigma; };
+
 
   bool operator==(Particle &other);
 
@@ -132,7 +150,7 @@ class Particle {
    */
   void deleteParticle() { isDeleted_ = true; }
 
-  static void registerParticleType(int type, double mass, double epsilon, double sigma);
+  static void registerParticleType(int type, double epsilon, double sigma);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

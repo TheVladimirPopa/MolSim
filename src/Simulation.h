@@ -20,8 +20,8 @@ class Simulation {
    * @param particles All the particles that take part in the simulation
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
-   * @param gravitationalConstant Is the factor of the gravitational force that gets applied
-   * to a particle
+   * @param gravitationalConstant The factor of the gravitational force that gets applied
+   * to a particle every iteration
    */
   void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, double gravitationalConstant = 0.0);
 
