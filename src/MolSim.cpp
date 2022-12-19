@@ -205,7 +205,7 @@ int main(int argc, char *argsv[]) {
   std::array<double, 3> leftLowerCorner{0., 0., -5.};
   std::array<double, 3> rightUpperCorner{63., 36., 5.};
 
-  LinkedCellsContainer linkedCellsContainer{5., leftLowerCorner,
+  LinkedCellsContainer linkedCellsContainer{4.5, leftLowerCorner,
                                             rightUpperCorner};
 
 
@@ -242,10 +242,10 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  LennardJonesModel model{10.};
+  LennardJonesModel model{2.4};
   model.setDeltaT(simulation.getDeltaT());
 
-  Thermostat thermostat{*container, 10., 20., 5., 1000, 3};
+  Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
