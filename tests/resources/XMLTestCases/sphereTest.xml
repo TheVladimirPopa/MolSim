@@ -1,4 +1,5 @@
-<Simulation_XML endTime="10.0" deltaT="0.014" writeOutFrequency="20" filename="MD.vtk">
+<Simulation_XML endTime="10.0" deltaT="0.014" writeOutFrequency="20" filename="MD.vtk" cutOffRadius="2.0"
+                gravity="-12.44">
     <SimTypes>
         <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
             <position x="0.0" y="0.0" z="0.0"/>
@@ -29,5 +30,8 @@
         </LinkedCell>
     </Container_T>
 
-    <InputFile path="./input/eingabe-sonne.txt"/>
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
+
+
+    <InputFile path="../input/checkpoint.txt"/>
 </Simulation_XML>
