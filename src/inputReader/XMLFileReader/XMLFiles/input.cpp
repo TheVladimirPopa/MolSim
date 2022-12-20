@@ -97,24 +97,6 @@ Container_T (const Container_T_sequence& s)
   this->Container_T_ = s;
 }
 
-const simulation_t::InputFile_sequence& simulation_t::
-InputFile () const
-{
-  return this->InputFile_;
-}
-
-simulation_t::InputFile_sequence& simulation_t::
-InputFile ()
-{
-  return this->InputFile_;
-}
-
-void simulation_t::
-InputFile (const InputFile_sequence& s)
-{
-  this->InputFile_ = s;
-}
-
 const simulation_t::Thermostat_sequence& simulation_t::
 Thermostat () const
 {
@@ -131,6 +113,24 @@ void simulation_t::
 Thermostat (const Thermostat_sequence& s)
 {
   this->Thermostat_ = s;
+}
+
+const simulation_t::InputFile_sequence& simulation_t::
+InputFile () const
+{
+  return this->InputFile_;
+}
+
+simulation_t::InputFile_sequence& simulation_t::
+InputFile ()
+{
+  return this->InputFile_;
+}
+
+void simulation_t::
+InputFile (const InputFile_sequence& s)
+{
+  this->InputFile_ = s;
 }
 
 const simulation_t::endTime_type& simulation_t::
@@ -1223,8 +1223,8 @@ simulation_t (const endTime_type& endTime,
   Particle_ (this),
   SimTypes_ (this),
   Container_T_ (this),
-  InputFile_ (this),
   Thermostat_ (this),
+  InputFile_ (this),
   endTime_ (endTime, this),
   deltaT_ (deltaT, this),
   writeOutFrequency_ (writeOutFrequency, this),
@@ -1242,8 +1242,8 @@ simulation_t (const simulation_t& x,
   Particle_ (x.Particle_, f, this),
   SimTypes_ (x.SimTypes_, f, this),
   Container_T_ (x.Container_T_, f, this),
-  InputFile_ (x.InputFile_, f, this),
   Thermostat_ (x.Thermostat_, f, this),
+  InputFile_ (x.InputFile_, f, this),
   endTime_ (x.endTime_, f, this),
   deltaT_ (x.deltaT_, f, this),
   writeOutFrequency_ (x.writeOutFrequency_, f, this),
@@ -1261,8 +1261,8 @@ simulation_t (const ::xercesc::DOMElement& e,
   Particle_ (this),
   SimTypes_ (this),
   Container_T_ (this),
-  InputFile_ (this),
   Thermostat_ (this),
+  InputFile_ (this),
   endTime_ (this),
   deltaT_ (this),
   writeOutFrequency_ (this),
@@ -1320,17 +1320,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
-    // InputFile
-    //
-    if (n.name () == "InputFile" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< InputFile_type > r (
-        InputFile_traits::create (i, f, this));
-
-      this->InputFile_.push_back (::std::move (r));
-      continue;
-    }
-
     // Thermostat
     //
     if (n.name () == "Thermostat" && n.namespace_ ().empty ())
@@ -1339,6 +1328,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         Thermostat_traits::create (i, f, this));
 
       this->Thermostat_.push_back (::std::move (r));
+      continue;
+    }
+
+    // InputFile
+    //
+    if (n.name () == "InputFile" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< InputFile_type > r (
+        InputFile_traits::create (i, f, this));
+
+      this->InputFile_.push_back (::std::move (r));
       continue;
     }
 
@@ -1447,8 +1447,8 @@ operator= (const simulation_t& x)
     this->Particle_ = x.Particle_;
     this->SimTypes_ = x.SimTypes_;
     this->Container_T_ = x.Container_T_;
-    this->InputFile_ = x.InputFile_;
     this->Thermostat_ = x.Thermostat_;
+    this->InputFile_ = x.InputFile_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
     this->writeOutFrequency_ = x.writeOutFrequency_;

@@ -41,5 +41,5 @@
         </LinkedCell>
     </Container_T>
 
-    <InputFile path="./input/Checkpoint.txt"/>
+    <InputFile path="../input/Checkpoint.txt"/>
 </Simulation_XML>

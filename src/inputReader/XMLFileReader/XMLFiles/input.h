@@ -308,23 +308,6 @@ class simulation_t: public ::xml_schema::type
   void
   Container_T (const Container_T_sequence& s);
 
-  // InputFile
-  //
-  typedef ::input_t InputFile_type;
-  typedef ::xsd::cxx::tree::sequence< InputFile_type > InputFile_sequence;
-  typedef InputFile_sequence::iterator InputFile_iterator;
-  typedef InputFile_sequence::const_iterator InputFile_const_iterator;
-  typedef ::xsd::cxx::tree::traits< InputFile_type, char > InputFile_traits;
-
-  const InputFile_sequence&
-  InputFile () const;
-
-  InputFile_sequence&
-  InputFile ();
-
-  void
-  InputFile (const InputFile_sequence& s);
-
   // Thermostat
   //
   typedef ::thermostat_t Thermostat_type;
@@ -341,6 +324,23 @@ class simulation_t: public ::xml_schema::type
 
   void
   Thermostat (const Thermostat_sequence& s);
+
+  // InputFile
+  //
+  typedef ::input_t InputFile_type;
+  typedef ::xsd::cxx::tree::sequence< InputFile_type > InputFile_sequence;
+  typedef InputFile_sequence::iterator InputFile_iterator;
+  typedef InputFile_sequence::const_iterator InputFile_const_iterator;
+  typedef ::xsd::cxx::tree::traits< InputFile_type, char > InputFile_traits;
+
+  const InputFile_sequence&
+  InputFile () const;
+
+  InputFile_sequence&
+  InputFile ();
+
+  void
+  InputFile (const InputFile_sequence& s);
 
   // endTime
   //
@@ -467,8 +467,8 @@ class simulation_t: public ::xml_schema::type
   Particle_sequence Particle_;
   SimTypes_sequence SimTypes_;
   Container_T_sequence Container_T_;
-  InputFile_sequence InputFile_;
   Thermostat_sequence Thermostat_;
+  InputFile_sequence InputFile_;
   ::xsd::cxx::tree::one< endTime_type > endTime_;
   ::xsd::cxx::tree::one< deltaT_type > deltaT_;
   ::xsd::cxx::tree::one< writeOutFrequency_type > writeOutFrequency_;
