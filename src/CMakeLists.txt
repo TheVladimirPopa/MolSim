@@ -20,8 +20,12 @@ target_include_directories(MolSimLib
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(XERCESC REQUIRED IMPORTED_TARGET xerces-c)
+
 target_link_libraries(MolSimLib
         PUBLIC
+        PkgConfig::XERCESC
         spdlog::spdlog
         )
 
@@ -44,7 +48,6 @@ target_include_directories(MolSim
 # Link files
 target_link_libraries(MolSim
         PUBLIC
-        xerces-c
         MolSimLib
         )
 

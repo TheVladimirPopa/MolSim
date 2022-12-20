@@ -5,7 +5,6 @@
 #include "model/NewtonsLawModel.h"
 using std::pow;
 
-
 /**
  * Check if the applied forces have the correct sign on each particle.
  */
@@ -59,7 +58,6 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
  * Check if Lorentz-Berthelot mixing rules are applied
  */
 TEST(LennardJonesModel, ForceMixingRules) {
-
   VectorContainer c{};
   double distance = 2.0;
   Particle::registerParticleType(1, 99.0, 1.5);
