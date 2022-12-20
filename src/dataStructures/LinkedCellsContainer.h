@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <list>
 #include <memory>
 #include <stdexcept>
@@ -122,9 +123,6 @@ class LinkedCellsContainer : public IContainer {
    * cell, is automatically called before each forEachPair call
    */
   void recalculateStructure();
-  void setGridSize(double gridSize);
-  void setLeftLowerCorner(const std::array<double, 3> &leftLowerCorner);
-  void setRightUpperCorner(const std::array<double, 3> &rightUpperCorner);
 
   /**
    * Sets boundaries of the chosen type on the chosen side of the container

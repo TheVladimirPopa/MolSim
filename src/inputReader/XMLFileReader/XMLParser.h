@@ -86,9 +86,9 @@ class XMLParser {
    */
   bool chooseStrategy() {
     for (auto &it : simulation->Container_T()) {
-      if (it.LinkedCell().empty()) return true;
+      if (it.LinkedCell().empty()) return false;
     }
-    return false;
+    return true;
   }
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a

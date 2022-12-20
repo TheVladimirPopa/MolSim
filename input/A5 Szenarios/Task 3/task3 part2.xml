@@ -25,5 +25,5 @@
 
     <Thermostat initialTemp="0.5" targetTemp="0.5" maxTempChange="0" periodLength="0" dimension="2"/>
 
-    <InputFile path="../input/Checkpoint.txt"/>
+    <InputFile path="../input/checkpoint.txt"/>
 </Simulation_XML>

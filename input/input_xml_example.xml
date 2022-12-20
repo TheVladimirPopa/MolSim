@@ -41,5 +41,7 @@
         </LinkedCell>
     </Container_T>
 
-    <InputFile path="../input/Checkpoint.txt"/>
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
+
+    <InputFile path="../input/checkpoint.txt"/>
 </Simulation_XML>
