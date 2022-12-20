@@ -282,6 +282,8 @@ int main(int argc, char *argsv[]) {
     model.setCutOffRadius(parser.initCutOffRadiusXML());
     model.setDeltaT(simulation.getDeltaT());
 
+    parser.registerParticlesFromXML();
+
     if (linkedCellsStrategy) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
       parser.initialiseSpheresFromXML(linkedCellsContainer);

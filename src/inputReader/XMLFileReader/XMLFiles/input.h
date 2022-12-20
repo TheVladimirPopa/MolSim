@@ -257,6 +257,23 @@ class particle_t;
 class simulation_t: public ::xml_schema::type
 {
   public:
+  // Particle
+  //
+  typedef ::particle_t Particle_type;
+  typedef ::xsd::cxx::tree::sequence< Particle_type > Particle_sequence;
+  typedef Particle_sequence::iterator Particle_iterator;
+  typedef Particle_sequence::const_iterator Particle_const_iterator;
+  typedef ::xsd::cxx::tree::traits< Particle_type, char > Particle_traits;
+
+  const Particle_sequence&
+  Particle () const;
+
+  Particle_sequence&
+  Particle ();
+
+  void
+  Particle (const Particle_sequence& s);
+
   // SimTypes
   //
   typedef ::simTypes_t SimTypes_type;
@@ -324,23 +341,6 @@ class simulation_t: public ::xml_schema::type
 
   void
   Thermostat (const Thermostat_sequence& s);
-
-  // Particles
-  //
-  typedef ::particle_t Particles_type;
-  typedef ::xsd::cxx::tree::sequence< Particles_type > Particles_sequence;
-  typedef Particles_sequence::iterator Particles_iterator;
-  typedef Particles_sequence::const_iterator Particles_const_iterator;
-  typedef ::xsd::cxx::tree::traits< Particles_type, char > Particles_traits;
-
-  const Particles_sequence&
-  Particles () const;
-
-  Particles_sequence&
-  Particles ();
-
-  void
-  Particles (const Particles_sequence& s);
 
   // endTime
   //
@@ -464,11 +464,11 @@ class simulation_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  Particle_sequence Particle_;
   SimTypes_sequence SimTypes_;
   Container_T_sequence Container_T_;
   InputFile_sequence InputFile_;
   Thermostat_sequence Thermostat_;
-  Particles_sequence Particles_;
   ::xsd::cxx::tree::one< endTime_type > endTime_;
   ::xsd::cxx::tree::one< deltaT_type > deltaT_;
   ::xsd::cxx::tree::one< writeOutFrequency_type > writeOutFrequency_;

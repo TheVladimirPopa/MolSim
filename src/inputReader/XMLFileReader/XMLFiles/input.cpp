@@ -43,6 +43,24 @@
 // simulation_t
 // 
 
+const simulation_t::Particle_sequence& simulation_t::
+Particle () const
+{
+  return this->Particle_;
+}
+
+simulation_t::Particle_sequence& simulation_t::
+Particle ()
+{
+  return this->Particle_;
+}
+
+void simulation_t::
+Particle (const Particle_sequence& s)
+{
+  this->Particle_ = s;
+}
+
 const simulation_t::SimTypes_sequence& simulation_t::
 SimTypes () const
 {
@@ -113,24 +131,6 @@ void simulation_t::
 Thermostat (const Thermostat_sequence& s)
 {
   this->Thermostat_ = s;
-}
-
-const simulation_t::Particles_sequence& simulation_t::
-Particles () const
-{
-  return this->Particles_;
-}
-
-simulation_t::Particles_sequence& simulation_t::
-Particles ()
-{
-  return this->Particles_;
-}
-
-void simulation_t::
-Particles (const Particles_sequence& s)
-{
-  this->Particles_ = s;
 }
 
 const simulation_t::endTime_type& simulation_t::
@@ -1220,11 +1220,11 @@ simulation_t (const endTime_type& endTime,
               const cutOffRadius_type& cutOffRadius,
               const gravity_type& gravity)
 : ::xml_schema::type (),
+  Particle_ (this),
   SimTypes_ (this),
   Container_T_ (this),
   InputFile_ (this),
   Thermostat_ (this),
-  Particles_ (this),
   endTime_ (endTime, this),
   deltaT_ (deltaT, this),
   writeOutFrequency_ (writeOutFrequency, this),
@@ -1239,11 +1239,11 @@ simulation_t (const simulation_t& x,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  Particle_ (x.Particle_, f, this),
   SimTypes_ (x.SimTypes_, f, this),
   Container_T_ (x.Container_T_, f, this),
   InputFile_ (x.InputFile_, f, this),
   Thermostat_ (x.Thermostat_, f, this),
-  Particles_ (x.Particles_, f, this),
   endTime_ (x.endTime_, f, this),
   deltaT_ (x.deltaT_, f, this),
   writeOutFrequency_ (x.writeOutFrequency_, f, this),
@@ -1258,11 +1258,11 @@ simulation_t (const ::xercesc::DOMElement& e,
               ::xml_schema::flags f,
               ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Particle_ (this),
   SimTypes_ (this),
   Container_T_ (this),
   InputFile_ (this),
   Thermostat_ (this),
-  Particles_ (this),
   endTime_ (this),
   deltaT_ (this),
   writeOutFrequency_ (this),
@@ -1286,6 +1286,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Particle
+    //
+    if (n.name () == "Particle" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Particle_type > r (
+        Particle_traits::create (i, f, this));
+
+      this->Particle_.push_back (::std::move (r));
+      continue;
+    }
 
     // SimTypes
     //
@@ -1328,17 +1339,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         Thermostat_traits::create (i, f, this));
 
       this->Thermostat_.push_back (::std::move (r));
-      continue;
-    }
-
-    // Particles
-    //
-    if (n.name () == "Particles" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< Particles_type > r (
-        Particles_traits::create (i, f, this));
-
-      this->Particles_.push_back (::std::move (r));
       continue;
     }
 
@@ -1444,11 +1444,11 @@ operator= (const simulation_t& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
+    this->Particle_ = x.Particle_;
     this->SimTypes_ = x.SimTypes_;
     this->Container_T_ = x.Container_T_;
     this->InputFile_ = x.InputFile_;
     this->Thermostat_ = x.Thermostat_;
-    this->Particles_ = x.Particles_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
     this->writeOutFrequency_ = x.writeOutFrequency_;

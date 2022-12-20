@@ -16,9 +16,6 @@
 
 class XMLParser {
  private:
-  /**
-   * XML file simulation
-   */
   std::unique_ptr<simulation_t> simulation;
   /**
    * Generates an array of type double from the xml input
@@ -185,7 +182,8 @@ class XMLParser {
       auto periodLength = it.periodLength();
       auto dimension = it.dimension();
 
-      ThermostatArg thermostatArg = ThermostatArg(initialTemp, targetTemp, maxTempChange, periodLength, dimension);
+      ThermostatArg thermostatArg{initialTemp.get(), targetTemp.get(), maxTempChange.get(), periodLength.get(),
+                                  dimension.get()};
       return thermostatArg;
     }
     throw std::invalid_argument("XML Parser found no thermostat");
@@ -197,12 +195,12 @@ class XMLParser {
   [[nodiscard]] std::vector<ParticleArg> extractParticles() const {
     std::vector<ParticleArg> particleArgs;
 
-    for(auto &it : simulation->Particles()){
+    for (auto &it : simulation->Particle()) {
       auto id = it.id();
       auto epsilon = it.epsilon();
       auto sigma = it.sigma();
 
-      ParticleArg particleArg{id,epsilon,sigma};
+      ParticleArg particleArg{id.get(), epsilon.get(), sigma.get()};
 
       particleArgs.emplace_back(particleArg);
     }
@@ -258,6 +256,25 @@ class XMLParser {
     }
   }
   /**
+   * Initialises a cutOffRadius from the path file
+   * @return Returns the cutOffRadius
+   */
+  double initCutOffRadiusXML() { return simulation->cutOffRadius(); }
+  /**
+   * Initialises the gravity from the path file
+   * @return Returns the gravity
+   */
+  double initGravityFromXML() { return simulation->gravity(); }
+  /**
+   * Registers the particles read in the path file
+   */
+  void registerParticlesFromXML() const {
+    std::vector<ParticleArg> particleArgs = extractParticles();
+    for (auto &p : particleArgs) {
+      Particle::registerParticleType(p.getId(), p.getEpsilon(), p.getSigma());
+    }
+  }
+  /**
    * Constructs a LinkedCellsContainer from the path file
    * @return Returns a LinkedCellsContainer
    */
@@ -283,16 +300,6 @@ class XMLParser {
                       thermostatArg.getPeriodLength(),
                       dimension};
   }
-  /**
-   * Initialises a cutOffRadius from the path file
-   * @return Returns the cutOffRadius
-   */
-  double initCutOffRadiusXML() { return simulation->cutOffRadius(); }
-  /**
-   * Initialises the gravity from the path file
-   * @return Returns the gravity
-   */
-  double initGravityFromXML() { return simulation->gravity(); }
   /**
    *  Sets boundaries read from the path file to a given LinkedCellContainer
    * @param linkedCellsContainer
