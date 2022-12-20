@@ -6,15 +6,15 @@
     <SimTypes>
         <Cuboid distance="1.2" mass="1.0" type="0">
             <position x="1.5" y="2.0" z="0.0"/>
-            <dimension x="2" y="2" z="2"/>
+            <dimension x="250" y="50" z="1"/>
             <velocity x="0.0" y="0.0" z="0.0"/>
         </Cuboid>
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="303">
-            <leftLowerBound x="0" y="0" z="0"/>
-            <rightUpperBound x="180" y="180" z="180"/>
+        <LinkedCell cellSize="4.5">
+            <leftLowerBound x="0" y="0" z="-5"/>
+            <rightUpperBound x="303" y="180" z="5"/>
             <left>REFLECT</left>
             <right>REFLECT</right>
             <top>REFLECT</top>
@@ -24,7 +24,7 @@
         </LinkedCell>
     </Container_T>
 
-    <Thermostat initialTemp="0.5" targetTemp="0.5" maxTempChange="1" periodLength="1000"/>
+    <Thermostat initialTemp="0.5" targetTemp="0.5" maxTempChange="5" periodLength="1000" dimension="2"/>
 
     <InputFile path="../input/Checkpoint.txt"/>
 </Simulation_XML>

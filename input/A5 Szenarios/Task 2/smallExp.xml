@@ -7,21 +7,21 @@
     <SimTypes>
         <Cuboid distance="1.2" mass="1.0" type="0">
             <position x="0.6" y="2.0" z="0.0"/>
-            <dimension x="2" y="2" z="2"/>
+            <dimension x="50" y="14" z="1"/>
             <velocity x="0.0" y="0.0" z="0.0"/>
         </Cuboid>
 
-        <Cuboid distance="1.2" mass="0.5" type="1">
-            <position x="4.0" y="4.0" z="0.0"/>
-            <dimension x="2" y="2" z="2"/>
-            <velocity x="0.0" y="0.0" z="10.0"/>
+        <Cuboid distance="1.2" mass="2.0" type="1">
+            <position x="0.6" y="19" z="0.0"/>
+            <dimension x="50" y="14" z="1"/>
+            <velocity x="0.0" y="0.0" z="0.0"/>
         </Cuboid>
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="63">
-            <leftLowerBound x="0" y="0" z="0"/>
-            <rightUpperBound x="36" y="36" z="36"/>
+        <LinkedCell cellSize="4.5">
+            <leftLowerBound x="0" y="0" z="-5"/>
+            <rightUpperBound x="63" y="36" z="5"/>
             <left>PERIODIC</left>
             <right>PERIODIC</right>
             <top>REFLECT</top>
@@ -31,6 +31,6 @@
         </LinkedCell>
     </Container_T>
 
-    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="1" periodLength="1000"/>
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
 
 </Simulation_XML>
