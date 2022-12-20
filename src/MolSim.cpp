@@ -250,8 +250,6 @@ int main(int argc, char *argsv[]) {
   LennardJonesModel model{10.};
   model.setDeltaT(simulation.getDeltaT());
 
-  Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
-
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
 
@@ -281,9 +279,10 @@ int main(int argc, char *argsv[]) {
     parser.initialiseSimulationFromXML(simulation);
 
     LinkedCellsContainer linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
+    model.setCutOffRadius(parser.initCutOffRadiusXML());
+    model.setDeltaT(simulation.getDeltaT());
 
     if (linkedCellsStrategy) {
-      model.setCutOffRadius(parser.initCutOffRadiusXML());
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
       parser.initialiseSpheresFromXML(linkedCellsContainer);
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
@@ -293,10 +292,10 @@ int main(int argc, char *argsv[]) {
       parser.initialiseSpheresFromXML(vectorContainer);
       container = &vectorContainer;
     }
-
-    // TODO: XML INPUT FOR GRAVITY AND THERMOSTAT
-    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
+    Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
+    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML());
   } else {
+    Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
     simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
   }
 

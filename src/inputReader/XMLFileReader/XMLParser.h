@@ -8,8 +8,10 @@
 #include "XMLParser.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
+#include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
+#include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
 
 class XMLParser {
@@ -102,7 +104,6 @@ class XMLParser {
         auto lb = c.leftLowerBound();
         auto rb = c.rightUpperBound();
         auto cs = c.cellSize();
-        auto cut = c.cutOffRadius();
         auto left = c.left();
         auto right = c.right();
         auto top = c.top();
@@ -110,7 +111,7 @@ class XMLParser {
         auto front = c.front();
         auto back = c.back();
 
-        LinkedCellArg linkedCellArg = LinkedCellArg(cs, cut, generate_double_array(lb), generate_double_array(rb));
+        LinkedCellArg linkedCellArg = LinkedCellArg(cs, generate_double_array(lb), generate_double_array(rb));
         linkedCellArg.setBoundLeft(left);
         linkedCellArg.setBoundRight(right);
         linkedCellArg.setBoundTop(top);
@@ -125,8 +126,8 @@ class XMLParser {
   }
   /**
    * Extracts the arguments (position, velocity, dimension, distance, mass,
-   * type) used to initialise a cuboid from the XML file
-   * @return Returns a pointer to CuboidArgs
+   * type) used to initialise cuboids from the XML file
+   * @return Returns a vector of CuboidArg
    */
   [[nodiscard]] std::vector<CuboidArg> extractCuboid() const {
     std::vector<CuboidArg> cuboidArgs;
@@ -149,8 +150,8 @@ class XMLParser {
   }
   /**
    * Extracts the arguments (position, velocity, radius, distance, mass,
-   * dimension, type) used to initialise a sphere from the XML file
-   * @return Returns a pointer to SphereArgs
+   * dimension, type) used to initialise spheres from the XML file
+   * @return Returns a vector of SphereArg
    */
   [[nodiscard]] std::vector<SphereArg> extractSpheres() const {
     std::vector<SphereArg> sphereArgs;
@@ -170,6 +171,43 @@ class XMLParser {
     }
 
     return sphereArgs;
+  }
+  /**
+   * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
+   * Thermostat from the XML file
+   * @return Returns a ThermostatArg
+   */
+  ThermostatArg extractThermostat() {
+    for (auto &it : simulation->Thermostat()) {
+      auto initialTemp = it.initialTemp();
+      auto targetTemp = it.targetTemp();
+      auto maxTempChange = it.maxTempChange();
+      auto periodLength = it.periodLength();
+      auto dimension = it.dimension();
+
+      ThermostatArg thermostatArg = ThermostatArg(initialTemp, targetTemp, maxTempChange, periodLength, dimension);
+      return thermostatArg;
+    }
+    throw std::invalid_argument("XML Parser found no thermostat");
+  }
+  /**
+   * Extracts the arguments (id, epsilon, sigma) used to initialise particles from the XML file
+   * @return Returns a vector of ParticleArg
+   */
+  [[nodiscard]] std::vector<ParticleArg> extractParticles() const {
+    std::vector<ParticleArg> particleArgs;
+
+    for(auto &it : simulation->Particles()){
+      auto id = it.id();
+      auto epsilon = it.epsilon();
+      auto sigma = it.sigma();
+
+      ParticleArg particleArg{id,epsilon,sigma};
+
+      particleArgs.emplace_back(particleArg);
+    }
+
+    return particleArgs;
   }
   /**
    * Initialises the given simulation sim with the corresponding arguments from
@@ -231,13 +269,30 @@ class XMLParser {
     return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
   }
   /**
-   * Initialises a cutOffRadius from the path file
-   * @return
+   * Constructs a thermostat from the path file and a given container
+   * @param container
+   * @return Returns a Thermostat
    */
-  double initCutOffRadiusXML() {
-    LinkedCellArg linkedCellArg = extractLinkedCell();
-    return linkedCellArg.getCutOffRadius();
+  Thermostat initialiseThermostatFromXML(IContainer &container) {
+    ThermostatArg thermostatArg = extractThermostat();
+    size_t dimension = thermostatArg.getDimension();
+    return Thermostat{container,
+                      thermostatArg.getInitialTemp(),
+                      thermostatArg.getTargetTemp(),
+                      thermostatArg.getMaxTempChange(),
+                      thermostatArg.getPeriodLength(),
+                      dimension};
   }
+  /**
+   * Initialises a cutOffRadius from the path file
+   * @return Returns the cutOffRadius
+   */
+  double initCutOffRadiusXML() { return simulation->cutOffRadius(); }
+  /**
+   * Initialises the gravity from the path file
+   * @return Returns the gravity
+   */
+  double initGravityFromXML() { return simulation->gravity(); }
   /**
    *  Sets boundaries read from the path file to a given LinkedCellContainer
    * @param linkedCellsContainer
