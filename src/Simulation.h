@@ -62,15 +62,21 @@ class Simulation {
    */
   double getEndTime() const { return endTime; };
   /**
-   *
-   * @return
+   * Returns the frequency of file writing
+   * @return the frequency of file writing
    */
   unsigned int getWriteOutFrequency() const { return writeOutFrequency; }
   /**
-   *
-   * @return
+   * Returns the prefix of the output files
+   * @return the prefix of the output files
    */
   const std::string getFilename() const { return filename; }
+
+  /**
+   * Returns the total position updates of all particles
+   * @return the total position updates of all particles
+   */
+  size_t getMoleculeUpdateCount() const { return moleculeUpdateCount; }
 
  private:
   /**
@@ -95,4 +101,9 @@ class Simulation {
    * Path to output file (default "MD_vtk")
    */
   std::string filename = "MD_vtk";
+
+  /**
+   * Counts the total position updates of all particles
+   */
+  size_t moleculeUpdateCount = 0;
 };

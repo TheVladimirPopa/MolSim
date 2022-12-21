@@ -12,9 +12,14 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   double current_time = startTime;
   int iteration = 0;
 
+  size_t updateCount = 0;
+
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;
-  std::function<void(P)> updateX{[&model](P p) { model.updateX(std::forward<P>(p)); }};
+  std::function<void(P)> updateX{[&model, &updateCount](P p) {
+    model.updateX(std::forward<P>(p));
+    ++updateCount;
+  }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
   std::function<void(P)> updateF{[](P p) { p.updateForces(); }};
   std::function<void(P, P)> addForces{
@@ -47,4 +52,5 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     current_time += deltaT;
     iteration++;
   }
+  moleculeUpdateCount = updateCount;
 }
