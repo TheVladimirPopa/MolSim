@@ -35,7 +35,7 @@ class IContainer {
   virtual void reserve(size_t amount) = 0;
 
   /**
-   * Constructs an particle in-place and puts it into the datastructure
+   * Constructs a particle in-place and puts it into the datastructure
    * @param x_arg The position vector of the particle
    * @param v_arg The velocity vector of the particle
    * @param m_arg The mass of the particle
@@ -43,6 +43,13 @@ class IContainer {
    */
   virtual void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg = {0.0, 0.0, 0.0},
                             double m_arg = 1.0, int type = 0) = 0;
+
+  /**
+   * Inserts a external particle into the container.
+   * @param particle
+   */
+  virtual void push_back(Particle& particle) = 0;
+
   /**
    * Returns the number of particles that can be held in currently allocated
    * storage
