@@ -200,12 +200,6 @@ class XMLParser {
 
     return particleArgs;
   }
-
-  void initCheckpoint(std::string &checkpoint){
-    SimulationArg args = extractSimulation();
-    checkpoint = args.getInputFile();
-  }
-
   /**
    * Initialises the given simulation sim with the corresponding arguments from
    * the path file
@@ -235,6 +229,14 @@ class XMLParser {
       cuboid.type = it.getType();
       ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
     }
+  }
+  /**
+   * Initialises the given string with the InputFile path for checkpointing
+   * @param checkpoint
+   */
+  void initCheckpoint(std::string &checkpoint) {
+    SimulationArg args = extractSimulation();
+    checkpoint = args.getInputFile();
   }
   /**
    * Adds all spheres read from the path file to a given LinkedCellsContainer
@@ -274,15 +276,20 @@ class XMLParser {
     }
   }
   /**
-   * Constructs a LinkedCellsContainer from the path file
+   * Constructs a LinkedCellsContainer from the path file if that strategy is chosen
    * @return Returns a LinkedCellsContainer
    */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
-    LinkedCellArg linkedCellArg = extractLinkedCell();
-    std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
-    std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
+    if (chooseStrategy()) {
+      LinkedCellArg linkedCellArg = extractLinkedCell();
+      std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
+      std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
 
-    return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
+      return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
+    } else {
+      std::array<double, 3> zeroBound = {0., 0., 0.};
+      return LinkedCellsContainer{0, zeroBound, zeroBound};
+    }
   }
   /**
    * Constructs a thermostat from the path file and a given container

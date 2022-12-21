@@ -48,7 +48,7 @@ int main(int argc, char *argsv[]) {
   int opt;
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
                                          {"export-checkpoint", no_argument, nullptr, 's'},
-                                         {"checkpoint", no_argument, nullptr, 'c'},
+                                         {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
                                          {"type", required_argument, nullptr, 't'},
@@ -357,7 +357,7 @@ void printUsage() {
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
+               "[-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -371,6 +371,17 @@ void printHelp() {
                "[-n] [-p] [-r] [-v] [-v] [-q]\n"
                "\n"
                "OPTIONS:\n"
+               "        -i <filepath>, --xml=<filepath>\n"
+               "                Use the given <filepath> of an XML file as an input for the simulation.\n"
+               "        \n"
+               "        -s, --export-checkpoint\n"
+               "                When set, the state of the particles after the simulation are saved to\n"
+               "                the file ../input/checkpoint.txt\n"
+               "                \n"
+               "        -c, --input-checkpoint\n"
+               "                When set, a previous checkpoint is taken as an input, in addition to the \n"
+               "                XML input\n"
+               "\n"
                "        -o <filepath>, --output-name=<filepath>\n"
                "                Use the given <filepath> as the path for \n"
                "                the outputfiles(iteration number and file-ending are "
@@ -426,9 +437,6 @@ void printHelp() {
                "                \n"
                "        -q, --quiet\n"
                "                Set loglevel to ERROR. Overrites -v.\n"
-               "\n"
-               "        -i <filepath>, --xml=<filepath>\n"
-               "                Use the XML file at the <filepath> as an input\n"
                "\n"
                "        -h, --help\n"
                "                Prints this help screen."

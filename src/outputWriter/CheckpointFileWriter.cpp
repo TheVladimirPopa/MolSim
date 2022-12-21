@@ -2,12 +2,6 @@
 
 #include <iostream>
 
-/**
- *
- * @param filename
- * @param iteration
- * @param particles
- */
 void CheckpointFileWriter::writeFile(const std::string& filename, int iteration, IContainer& particles) {
   std::function<void(Particle&)> plot{[this](Particle& p) { this->checkpointParticle(p); }};
   writeFile(particles.size());
@@ -50,8 +44,10 @@ void CheckpointFileWriter::checkpointParticle(const Particle& p) {
     file << p.getSigma() << "\n";
   }
 }
+
 CheckpointFileWriter::CheckpointFileWriter(const std::string& path) { file.open(path, std::ios::out); }
+
 CheckpointFileWriter::~CheckpointFileWriter() {
   file.flush();
   file.close();
-};
+}
