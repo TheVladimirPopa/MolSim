@@ -118,7 +118,7 @@ class LinkedCellsContainer : public IContainer {
 
   void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type) override;
 
-  void push_back(Particle& particle) override;
+  void push_back(Particle &particle) override;
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
