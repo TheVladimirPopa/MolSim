@@ -296,27 +296,23 @@ int main(int argc, char *argsv[]) {
 
     parser.registerParticlesFromXML();
 
+    std::string checkpointFile = "../input/checkpoint.txt";
+    parser.initCheckpoint(checkpointFile);
+
     if (linkedCellsStrategy) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
-
-      std::string checkpointFile;
-      if (readFromCheckpoint) {
-        // init checkpoint
-        parser.initCheckpoint(checkpointFile);
-      }
 
       parser.initialiseSpheresFromXML(linkedCellsContainer);
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
       container = &linkedCellsContainer;
     } else {
-      if (readFromCheckpoint) {
-        // init from checkpoint
-      }
-
       parser.initialiseCuboidsFromXML(vectorContainer);
       parser.initialiseSpheresFromXML(vectorContainer);
       container = &vectorContainer;
     }
+
+    if (readFromCheckpoint) FileReader::readFileCheckpoint(*container, checkpointFile.data());
+
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
     simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
   } else {
