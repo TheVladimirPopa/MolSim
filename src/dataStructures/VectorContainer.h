@@ -77,6 +77,8 @@ class VectorContainer : public IContainer {
     vector.emplace_back(x_arg, v_arg, m_arg, type);
   };
 
+  void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
+
   std::vector<Particle> &getVector() { return vector; };
 
  private:
