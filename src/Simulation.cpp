@@ -46,5 +46,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
 
     current_time += deltaT;
     iteration++;
+
+    // Checkpointing after the simulation has ended
+    particles.checkpoint();
   }
 }

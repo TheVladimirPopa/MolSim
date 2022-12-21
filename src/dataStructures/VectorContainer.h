@@ -32,8 +32,36 @@ class VectorContainer : public IContainer {
   void checkpoint() override {
     std::fstream checkpointFile;
     checkpointFile.open("../input/checkpoint.txt", std::ios::out);
+    checkpointFile << "#\n"
+                      "# file format:\n"
+                      "# Lines of comment start with '#' and are only allowed at the beginning of the file\n"
+                      "# Empty lines are not allowed.\n"
+                      "# The first line not being a comment has to be one integer, indicating the number of\n"
+                      "# particles.\n"
+                      "#\n"
+                      "# Molecule data consists of\n"
+                      "# * xyz-coordinates (3 double values)\n"
+                      "# * current velocities (3 double values)\n"
+                      "# * old forces (3 double values)\n"
+                      "# * forces (3 double values)\n"
+                      "# * mass of one particle (1 double value)\n"
+                      "# * type of particles (1 integer)\n"
+                      "# * epsilon (1 double value)\n"
+                      "# * sigma (1 double value)\n"
+                      "# xyz-coord      velocity           oldF            force              mass        type      "
+                      "epsilon     sigma\n";
+    checkpointFile << vector.size() << "\n";
     for (const Particle &p : vector) {
-      if (checkpointFile.is_open()) checkpointFile << p.toString() << "\n";
+      if (checkpointFile.is_open()) {
+        checkpointFile << p.getX().at(0) << " " << p.getX().at(1) << " " << p.getX().at(2) << "\t\t";
+        checkpointFile << p.getV().at(0) << " " << p.getV().at(1) << " " << p.getV().at(2) << "\t\t";
+        checkpointFile << p.getOldF().at(0) << " " << p.getOldF().at(1) << " " << p.getOldF().at(2) << "\t\t";
+        checkpointFile << p.getF().at(0) << " " << p.getF().at(1) << " " << p.getF().at(2) << "\t\t";
+        checkpointFile << p.getM() << "\t\t\t";
+        checkpointFile << p.getType() << "\t\t\t";
+        checkpointFile << p.getEpsilon() << "\t\t\t";
+        checkpointFile << p.getSigma() << "\n";
+      }
     }
     checkpointFile.flush();
     checkpointFile.close();

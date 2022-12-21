@@ -42,9 +42,11 @@ int main(int argc, char *argsv[]) {
   bool hitRateMeasure = false;
   bool xmlInput = false;
   std::string xmlPath;
+  bool checkpointing = false;
 
   int opt;
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
+                                         {"checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
                                          {"type", required_argument, nullptr, 't'},
@@ -59,7 +61,7 @@ int main(int argc, char *argsv[]) {
                                          {"help", no_argument, nullptr, 'h'},
                                          {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "ci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
@@ -87,6 +89,10 @@ int main(int argc, char *argsv[]) {
       case 'i': {
         xmlInput = true;
         xmlPath = optarg;
+        break;
+      }
+      case 'c': {
+        checkpointing = true;
         break;
       }
       case 'e': {
@@ -286,10 +292,19 @@ int main(int argc, char *argsv[]) {
 
     if (linkedCellsStrategy) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
+
+      if (checkpointing) {
+        // init from checkpoint
+      }
+
       parser.initialiseSpheresFromXML(linkedCellsContainer);
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
       container = &linkedCellsContainer;
     } else {
+      if (checkpointing) {
+        // init from checkpoint
+      }
+
       parser.initialiseCuboidsFromXML(vectorContainer);
       parser.initialiseSpheresFromXML(vectorContainer);
       container = &vectorContainer;
