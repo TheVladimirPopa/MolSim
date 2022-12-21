@@ -16,17 +16,64 @@ TEST(LinkedCellsContainer, SetupDim) {
 
   EXPECT_EQ(cells.size(), 7 * 6 * 5);
 
-  EXPECT_EQ(cells[0].type, cellType::halo);
+  EXPECT_EQ(cells[0].type, CellType::halo);
 
-  EXPECT_EQ(cells[1 + 7 + (7 * 6)].type, cellType::boundary);
+  EXPECT_EQ(cells[1 + 7 + (7 * 6)].type, CellType::boundary);
 
   int counter = 0;
   for (auto &cell : cells) {
-    if (cell.type != cellType::halo) {
+    if (cell.type != CellType::halo) {
       counter++;
     }
   }
   EXPECT_EQ(counter, 5 * 4 * 3);
+}
+/**
+ * Make sure the dimension calculation and the particle is correct even tough
+ * the grid size is not a multiple of the domain box
+ */
+TEST(LinkedCellsContainer, GridNonMultipleOfDomainBox) {
+  v3d leftCorner{0., 0., 0.};
+  v3d rightCorner{9., 7., 1.};
+  LinkedCellsContainer c{2.0, leftCorner, rightCorner};
+  auto cells = c.getCellsVector();
+
+  EXPECT_EQ(cells.size(), 6 * 5 * 3);
+
+  size_t halo{};
+  size_t boundary{};
+  for (auto &cell : cells) {
+    EXPECT_NE(cell.type, CellType::inner) << "All cells should be boundary or halo cells";
+    if (cell.type == CellType::boundary) {
+      boundary++;
+    }
+    if (cell.type == CellType::halo) {
+      halo++;
+    }
+  }
+
+  EXPECT_EQ(boundary, 4 * 3 * 1);
+  EXPECT_EQ(halo + boundary, 6 * 5 * 3);
+
+  c.emplace_back(v3d{8.9, 6.9, 0.9}, v3d{0., 0., 0.}, 1., 1);
+  cells = c.getCellsVector();
+  EXPECT_EQ(cells[4 + (3 * 6) + (1 * 6 * 5)].particles.size(), 1);
+
+  c.emplace_back(v3d{6.1, 4.1, 0.1}, v3d{0., 0., 0.}, 1., 1);
+  cells = c.getCellsVector();
+  EXPECT_EQ(cells[4 + (3 * 6) + (1 * 6 * 5)].particles.size(), 2);
+
+  c.emplace_back(v3d{5.9, 3.9, -0.1}, v3d{0., 0., 0.}, 1., 1);
+  cells = c.getCellsVector();
+  EXPECT_EQ(cells[3 + (2 * 6)].particles.size(), 1);
+
+  c.emplace_back(v3d{9.1, 7.1, 1.1}, v3d{0., 0., 0.}, 1., 1);
+  cells = c.getCellsVector();
+  EXPECT_EQ(cells[5 + (4 * 6) + (2 * 6 * 5)].particles.size(), 1);
+
+  c.emplace_back(v3d{-9.1, -7.1, -1.1}, v3d{0., 0., 0.}, 1., 1);
+  cells = c.getCellsVector();
+  EXPECT_EQ(cells[0].particles.size(), 1);
 }
 
 /**
@@ -69,8 +116,7 @@ TEST(LinkedCellsContainer, ParticlePlacementOutsideDomain) {
 
   c.emplace_back(v3d{9., 7., 5.}, v3d{0., 0., 0.}, 1., 1);
 
-  EXPECT_EQ(c.getCellsVector()[c.getCellsVector().size() - 1].particles.size(),
-            1);
+  EXPECT_EQ(c.getCellsVector()[c.getCellsVector().size() - 1].particles.size(), 1);
 }
 
 /**

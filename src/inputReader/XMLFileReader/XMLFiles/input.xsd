@@ -4,14 +4,18 @@
     <!--Simulation-->
     <xsd:complexType name="simulation_t">
         <xsd:sequence>
+            <xsd:element name="Particle" type="particle_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="SimTypes" type="simTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Container_T" type="containerTypes_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
         <xsd:attribute name="deltaT" type="xsd:double" use="required"/>
         <xsd:attribute name="writeOutFrequency" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="filename" type="xsd:string" use="required"/>
+        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
+        <xsd:attribute name="gravity" type="xsd:double" use="required"/>
     </xsd:complexType>
     <xsd:element name="Simulation_XML" type="simulation_t"/>
 
@@ -90,15 +94,10 @@
             <xsd:element name="back" type="boundary_t"/>
         </xsd:sequence>
         <xsd:attribute name="cellSize" type="xsd:double" use="required"/>
-        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
     </xsd:complexType>
 
     <!-- Vector Container-->
-    <xsd:complexType name="vectorContainer_t">
-        <xsd:sequence>
-            <xsd:element name="vector" type="array_d"/>
-        </xsd:sequence>
-    </xsd:complexType>
+    <xsd:complexType name="vectorContainer_t"/>
 
     <!--  Boundary Type  -->
     <xsd:simpleType name="boundary_t">
@@ -108,5 +107,21 @@
             <xsd:enumeration value="PERIODIC"/>
         </xsd:restriction>
     </xsd:simpleType>
+
+    <!--  Thermostat Type  -->
+    <xsd:complexType name="thermostat_t">
+        <xsd:attribute name="initialTemp" type="xsd:double"/>
+        <xsd:attribute name="targetTemp" type="xsd:double"/>
+        <xsd:attribute name="maxTempChange" type="xsd:double"/>
+        <xsd:attribute name="periodLength" type="xsd:int"/>
+        <xsd:attribute name="dimension" type="xsd:int"/>
+    </xsd:complexType>
+
+    <!--  Particle Type  -->
+    <xsd:complexType name="particle_t">
+        <xsd:attribute name="id" type="xsd:int"/>
+        <xsd:attribute name="epsilon" type="xsd:double"/>
+        <xsd:attribute name="sigma" type="xsd:double"/>
+    </xsd:complexType>
 
 </xsd:schema>

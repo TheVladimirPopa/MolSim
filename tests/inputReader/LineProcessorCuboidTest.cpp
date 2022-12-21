@@ -14,9 +14,8 @@ TEST(LineProcessorCuboid, ParticleCount) {
   VectorContainer container{};
   lineProcessorCuboid.processLine(dataStream, container);
 
-  EXPECT_EQ(40 * 8 * 1, container.size())
-      << "The dimensions are not read in correctly, since the particle count "
-         "is no correct";
+  EXPECT_EQ(40 * 8 * 1, container.size()) << "The dimensions are not read in correctly, since the particle count "
+                                             "is no correct";
 }
 
 /**

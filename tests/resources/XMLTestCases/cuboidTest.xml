@@ -1,0 +1,52 @@
+<Simulation_XML endTime="10.0" deltaT="0.014" writeOutFrequency="20" filename="MD.vtk" cutOffRadius="2.0"
+                gravity="-12.44">
+    <SimTypes>
+        <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
+            <position x="0.0" y="0.0" z="0.0"/>
+            <velocity x="0.0" y="0.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="2">
+            <position x="4.0" y="15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="2">
+            <position x="4.0" y="-15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+
+        <Cuboid distance="1.1225" mass="1.0" type="2">
+            <position x="0.0" y="-30.0" z="0.0"/>
+            <dimension x="4" y="4" z="4"/>
+            <velocity x="0.0" y="10.0" z="0.0"/>
+        </Cuboid>
+
+        <Cuboid distance="1.12" mass="1.9" type="1">
+            <position x="80.0" y="0.0" z="0.0"/>
+            <dimension x="10" y="10" z="1"/>
+            <velocity x="-30.0" y="0.0" z="0.0"/>
+        </Cuboid>
+
+        <Cuboid distance="1.9" mass="1.7" type="1">
+            <position x="-110.0" y="0.0" z="0.0"/>
+            <dimension x="40" y="20" z="1"/>
+            <velocity x="40.0" y="0.0" z="0.0"/>
+        </Cuboid>
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="10.0" cutOffRadius="2.0">
+            <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
+            <rightUpperBound x="55.0" y="30.0" z="5"/>
+            <left>REFLECT</left>
+            <right>REFLECT</right>
+            <top>REFLECT</top>
+            <bottom>REFLECT</bottom>
+            <front>REFLECT</front>
+            <back>REFLECT</back>
+        </LinkedCell>
+    </Container_T>
+
+    <InputFile path="../input/checkpoint.txt"/>
+</Simulation_XML>

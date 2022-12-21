@@ -1,14 +1,7 @@
 #include "CuboidArg.h"
-CuboidArg::CuboidArg(const std::array<double, 3>& position,
-                     const std::array<double, 3>& velocity,
-                     const std::array<int, 3>& dimension, double distance,
-                     double mass, int type)
-    : position(position),
-      velocity(velocity),
-      dimension(dimension),
-      distance(distance),
-      mass(mass),
-      type(type) {}
+CuboidArg::CuboidArg(const std::array<double, 3>& position, const std::array<double, 3>& velocity,
+                     const std::array<int, 3>& dimension, double distance, double mass, int type)
+    : position(position), velocity(velocity), dimension(dimension), distance(distance), mass(mass), type(type) {}
 
 const std::array<double, 3>& CuboidArg::getPosition() const { return position; }
 

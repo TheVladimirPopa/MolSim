@@ -58,37 +58,31 @@
 #endif
 
 #include <xsd/cxx/pre.hxx>
-
-#include <xsd/cxx/xml/char-utf8.hxx>
-
-#include <xsd/cxx/tree/exceptions.hxx>
 #include <xsd/cxx/tree/elements.hxx>
+#include <xsd/cxx/tree/exceptions.hxx>
+#include <xsd/cxx/tree/parsing.hxx>
+#include <xsd/cxx/tree/parsing/boolean.hxx>
+#include <xsd/cxx/tree/parsing/byte.hxx>
+#include <xsd/cxx/tree/parsing/decimal.hxx>
+#include <xsd/cxx/tree/parsing/double.hxx>
+#include <xsd/cxx/tree/parsing/float.hxx>
+#include <xsd/cxx/tree/parsing/int.hxx>
+#include <xsd/cxx/tree/parsing/long.hxx>
+#include <xsd/cxx/tree/parsing/short.hxx>
+#include <xsd/cxx/tree/parsing/unsigned-byte.hxx>
+#include <xsd/cxx/tree/parsing/unsigned-int.hxx>
+#include <xsd/cxx/tree/parsing/unsigned-long.hxx>
+#include <xsd/cxx/tree/parsing/unsigned-short.hxx>
 #include <xsd/cxx/tree/types.hxx>
-
+#include <xsd/cxx/xml/char-utf8.hxx>
+#include <xsd/cxx/xml/dom/auto-ptr.hxx>
 #include <xsd/cxx/xml/error-handler.hxx>
 
-#include <xsd/cxx/xml/dom/auto-ptr.hxx>
-
-#include <xsd/cxx/tree/parsing.hxx>
-#include <xsd/cxx/tree/parsing/byte.hxx>
-#include <xsd/cxx/tree/parsing/unsigned-byte.hxx>
-#include <xsd/cxx/tree/parsing/short.hxx>
-#include <xsd/cxx/tree/parsing/unsigned-short.hxx>
-#include <xsd/cxx/tree/parsing/int.hxx>
-#include <xsd/cxx/tree/parsing/unsigned-int.hxx>
-#include <xsd/cxx/tree/parsing/long.hxx>
-#include <xsd/cxx/tree/parsing/unsigned-long.hxx>
-#include <xsd/cxx/tree/parsing/boolean.hxx>
-#include <xsd/cxx/tree/parsing/float.hxx>
-#include <xsd/cxx/tree/parsing/double.hxx>
-#include <xsd/cxx/tree/parsing/decimal.hxx>
-
-namespace xml_schema
-{
+namespace xml_schema {
 // anyType and anySimpleType.
 //
 typedef ::xsd::cxx::tree::type type;
-typedef ::xsd::cxx::tree::simple_type< char, type > simple_type;
+typedef ::xsd::cxx::tree::simple_type<char, type> simple_type;
 typedef ::xsd::cxx::tree::type container;
 
 // 8-bit
@@ -131,86 +125,85 @@ typedef double decimal;
 
 // String types.
 //
-typedef ::xsd::cxx::tree::string< char, simple_type > string;
-typedef ::xsd::cxx::tree::normalized_string< char, string > normalized_string;
-typedef ::xsd::cxx::tree::token< char, normalized_string > token;
-typedef ::xsd::cxx::tree::name< char, token > name;
-typedef ::xsd::cxx::tree::nmtoken< char, token > nmtoken;
-typedef ::xsd::cxx::tree::nmtokens< char, simple_type, nmtoken > nmtokens;
-typedef ::xsd::cxx::tree::ncname< char, name > ncname;
-typedef ::xsd::cxx::tree::language< char, token > language;
+typedef ::xsd::cxx::tree::string<char, simple_type> string;
+typedef ::xsd::cxx::tree::normalized_string<char, string> normalized_string;
+typedef ::xsd::cxx::tree::token<char, normalized_string> token;
+typedef ::xsd::cxx::tree::name<char, token> name;
+typedef ::xsd::cxx::tree::nmtoken<char, token> nmtoken;
+typedef ::xsd::cxx::tree::nmtokens<char, simple_type, nmtoken> nmtokens;
+typedef ::xsd::cxx::tree::ncname<char, name> ncname;
+typedef ::xsd::cxx::tree::language<char, token> language;
 
 // ID/IDREF.
 //
-typedef ::xsd::cxx::tree::id< char, ncname > id;
-typedef ::xsd::cxx::tree::idref< char, ncname, type > idref;
-typedef ::xsd::cxx::tree::idrefs< char, simple_type, idref > idrefs;
+typedef ::xsd::cxx::tree::id<char, ncname> id;
+typedef ::xsd::cxx::tree::idref<char, ncname, type> idref;
+typedef ::xsd::cxx::tree::idrefs<char, simple_type, idref> idrefs;
 
 // URI.
 //
-typedef ::xsd::cxx::tree::uri< char, simple_type > uri;
+typedef ::xsd::cxx::tree::uri<char, simple_type> uri;
 
 // Qualified name.
 //
-typedef ::xsd::cxx::tree::qname< char, simple_type, uri, ncname > qname;
+typedef ::xsd::cxx::tree::qname<char, simple_type, uri, ncname> qname;
 
 // Binary.
 //
-typedef ::xsd::cxx::tree::buffer< char > buffer;
-typedef ::xsd::cxx::tree::base64_binary< char, simple_type > base64_binary;
-typedef ::xsd::cxx::tree::hex_binary< char, simple_type > hex_binary;
+typedef ::xsd::cxx::tree::buffer<char> buffer;
+typedef ::xsd::cxx::tree::base64_binary<char, simple_type> base64_binary;
+typedef ::xsd::cxx::tree::hex_binary<char, simple_type> hex_binary;
 
 // Date/time.
 //
 typedef ::xsd::cxx::tree::time_zone time_zone;
-typedef ::xsd::cxx::tree::date< char, simple_type > date;
-typedef ::xsd::cxx::tree::date_time< char, simple_type > date_time;
-typedef ::xsd::cxx::tree::duration< char, simple_type > duration;
-typedef ::xsd::cxx::tree::gday< char, simple_type > gday;
-typedef ::xsd::cxx::tree::gmonth< char, simple_type > gmonth;
-typedef ::xsd::cxx::tree::gmonth_day< char, simple_type > gmonth_day;
-typedef ::xsd::cxx::tree::gyear< char, simple_type > gyear;
-typedef ::xsd::cxx::tree::gyear_month< char, simple_type > gyear_month;
-typedef ::xsd::cxx::tree::time< char, simple_type > time;
+typedef ::xsd::cxx::tree::date<char, simple_type> date;
+typedef ::xsd::cxx::tree::date_time<char, simple_type> date_time;
+typedef ::xsd::cxx::tree::duration<char, simple_type> duration;
+typedef ::xsd::cxx::tree::gday<char, simple_type> gday;
+typedef ::xsd::cxx::tree::gmonth<char, simple_type> gmonth;
+typedef ::xsd::cxx::tree::gmonth_day<char, simple_type> gmonth_day;
+typedef ::xsd::cxx::tree::gyear<char, simple_type> gyear;
+typedef ::xsd::cxx::tree::gyear_month<char, simple_type> gyear_month;
+typedef ::xsd::cxx::tree::time<char, simple_type> time;
 
 // Entity.
 //
-typedef ::xsd::cxx::tree::entity< char, ncname > entity;
-typedef ::xsd::cxx::tree::entities< char, simple_type, entity > entities;
+typedef ::xsd::cxx::tree::entity<char, ncname> entity;
+typedef ::xsd::cxx::tree::entities<char, simple_type, entity> entities;
 
 typedef ::xsd::cxx::tree::content_order content_order;
 // Flags and properties.
 //
 typedef ::xsd::cxx::tree::flags flags;
-typedef ::xsd::cxx::tree::properties< char > properties;
+typedef ::xsd::cxx::tree::properties<char> properties;
 
 // Parsing/serialization diagnostics.
 //
 typedef ::xsd::cxx::tree::severity severity;
-typedef ::xsd::cxx::tree::error< char > error;
-typedef ::xsd::cxx::tree::diagnostics< char > diagnostics;
+typedef ::xsd::cxx::tree::error<char> error;
+typedef ::xsd::cxx::tree::diagnostics<char> diagnostics;
 
 // Exceptions.
 //
-typedef ::xsd::cxx::tree::exception< char > exception;
-typedef ::xsd::cxx::tree::bounds< char > bounds;
-typedef ::xsd::cxx::tree::duplicate_id< char > duplicate_id;
-typedef ::xsd::cxx::tree::parsing< char > parsing;
-typedef ::xsd::cxx::tree::expected_element< char > expected_element;
-typedef ::xsd::cxx::tree::unexpected_element< char > unexpected_element;
-typedef ::xsd::cxx::tree::expected_attribute< char > expected_attribute;
-typedef ::xsd::cxx::tree::unexpected_enumerator< char > unexpected_enumerator;
-typedef ::xsd::cxx::tree::expected_text_content< char > expected_text_content;
-typedef ::xsd::cxx::tree::no_prefix_mapping< char > no_prefix_mapping;
+typedef ::xsd::cxx::tree::exception<char> exception;
+typedef ::xsd::cxx::tree::bounds<char> bounds;
+typedef ::xsd::cxx::tree::duplicate_id<char> duplicate_id;
+typedef ::xsd::cxx::tree::parsing<char> parsing;
+typedef ::xsd::cxx::tree::expected_element<char> expected_element;
+typedef ::xsd::cxx::tree::unexpected_element<char> unexpected_element;
+typedef ::xsd::cxx::tree::expected_attribute<char> expected_attribute;
+typedef ::xsd::cxx::tree::unexpected_enumerator<char> unexpected_enumerator;
+typedef ::xsd::cxx::tree::expected_text_content<char> expected_text_content;
+typedef ::xsd::cxx::tree::no_prefix_mapping<char> no_prefix_mapping;
 
 // Error handler callback interface.
 //
-typedef ::xsd::cxx::xml::error_handler< char > error_handler;
+typedef ::xsd::cxx::xml::error_handler<char> error_handler;
 
 // DOM interaction.
 //
-namespace dom
-{
+namespace dom {
 // Automatic pointer for DOMDocument.
 //
 using ::xsd::cxx::xml::dom::unique_ptr;
@@ -221,8 +214,8 @@ using ::xsd::cxx::xml::dom::unique_ptr;
 //
 const XMLCh* const tree_node_key = ::xsd::cxx::tree::user_data_keys::node;
 #endif
-}
-}
+}  // namespace dom
+}  // namespace xml_schema
 
 // Forward declarations.
 //
@@ -237,1280 +230,1127 @@ class containerTypes_t;
 class linkedCellContainer_t;
 class vectorContainer_t;
 class boundary_t;
+class thermostat_t;
+class particle_t;
 
-#include <memory>    // ::std::unique_ptr
-#include <limits>    // std::numeric_limits
-#include <algorithm> // std::binary_search
-#include <utility>   // std::move
-
-#include <xsd/cxx/xml/char-utf8.hxx>
-
-#include <xsd/cxx/tree/exceptions.hxx>
-#include <xsd/cxx/tree/elements.hxx>
+#include <algorithm>  // std::binary_search
+#include <limits>     // std::numeric_limits
+#include <memory>     // ::std::unique_ptr
+#include <utility>    // std::move
 #include <xsd/cxx/tree/containers.hxx>
+#include <xsd/cxx/tree/elements.hxx>
+#include <xsd/cxx/tree/exceptions.hxx>
 #include <xsd/cxx/tree/list.hxx>
-
+#include <xsd/cxx/xml/char-utf8.hxx>
 #include <xsd/cxx/xml/dom/parsing-header.hxx>
 
-class simulation_t: public ::xml_schema::type
-{
+class simulation_t : public ::xml_schema::type {
  public:
+  // Particle
+  //
+  typedef ::particle_t Particle_type;
+  typedef ::xsd::cxx::tree::sequence<Particle_type> Particle_sequence;
+  typedef Particle_sequence::iterator Particle_iterator;
+  typedef Particle_sequence::const_iterator Particle_const_iterator;
+  typedef ::xsd::cxx::tree::traits<Particle_type, char> Particle_traits;
+
+  const Particle_sequence& Particle() const;
+
+  Particle_sequence& Particle();
+
+  void Particle(const Particle_sequence& s);
+
   // SimTypes
   //
   typedef ::simTypes_t SimTypes_type;
-  typedef ::xsd::cxx::tree::sequence< SimTypes_type > SimTypes_sequence;
+  typedef ::xsd::cxx::tree::sequence<SimTypes_type> SimTypes_sequence;
   typedef SimTypes_sequence::iterator SimTypes_iterator;
   typedef SimTypes_sequence::const_iterator SimTypes_const_iterator;
-  typedef ::xsd::cxx::tree::traits< SimTypes_type, char > SimTypes_traits;
+  typedef ::xsd::cxx::tree::traits<SimTypes_type, char> SimTypes_traits;
 
-  const SimTypes_sequence&
-  SimTypes () const;
+  const SimTypes_sequence& SimTypes() const;
 
-  SimTypes_sequence&
-  SimTypes ();
+  SimTypes_sequence& SimTypes();
 
-  void
-  SimTypes (const SimTypes_sequence& s);
+  void SimTypes(const SimTypes_sequence& s);
 
   // Container_T
   //
   typedef ::containerTypes_t Container_T_type;
-  typedef ::xsd::cxx::tree::sequence< Container_T_type > Container_T_sequence;
+  typedef ::xsd::cxx::tree::sequence<Container_T_type> Container_T_sequence;
   typedef Container_T_sequence::iterator Container_T_iterator;
   typedef Container_T_sequence::const_iterator Container_T_const_iterator;
-  typedef ::xsd::cxx::tree::traits< Container_T_type, char > Container_T_traits;
+  typedef ::xsd::cxx::tree::traits<Container_T_type, char> Container_T_traits;
 
-  const Container_T_sequence&
-  Container_T () const;
+  const Container_T_sequence& Container_T() const;
 
-  Container_T_sequence&
-  Container_T ();
+  Container_T_sequence& Container_T();
 
-  void
-  Container_T (const Container_T_sequence& s);
+  void Container_T(const Container_T_sequence& s);
+
+  // Thermostat
+  //
+  typedef ::thermostat_t Thermostat_type;
+  typedef ::xsd::cxx::tree::sequence<Thermostat_type> Thermostat_sequence;
+  typedef Thermostat_sequence::iterator Thermostat_iterator;
+  typedef Thermostat_sequence::const_iterator Thermostat_const_iterator;
+  typedef ::xsd::cxx::tree::traits<Thermostat_type, char> Thermostat_traits;
+
+  const Thermostat_sequence& Thermostat() const;
+
+  Thermostat_sequence& Thermostat();
+
+  void Thermostat(const Thermostat_sequence& s);
 
   // InputFile
   //
   typedef ::input_t InputFile_type;
-  typedef ::xsd::cxx::tree::sequence< InputFile_type > InputFile_sequence;
+  typedef ::xsd::cxx::tree::sequence<InputFile_type> InputFile_sequence;
   typedef InputFile_sequence::iterator InputFile_iterator;
   typedef InputFile_sequence::const_iterator InputFile_const_iterator;
-  typedef ::xsd::cxx::tree::traits< InputFile_type, char > InputFile_traits;
+  typedef ::xsd::cxx::tree::traits<InputFile_type, char> InputFile_traits;
 
-  const InputFile_sequence&
-  InputFile () const;
+  const InputFile_sequence& InputFile() const;
 
-  InputFile_sequence&
-  InputFile ();
+  InputFile_sequence& InputFile();
 
-  void
-  InputFile (const InputFile_sequence& s);
+  void InputFile(const InputFile_sequence& s);
 
   // endTime
   //
   typedef ::xml_schema::double_ endTime_type;
-  typedef ::xsd::cxx::tree::traits< endTime_type, char, ::xsd::cxx::tree::schema_type::double_ > endTime_traits;
+  typedef ::xsd::cxx::tree::traits<endTime_type, char, ::xsd::cxx::tree::schema_type::double_> endTime_traits;
 
-  const endTime_type&
-  endTime () const;
+  const endTime_type& endTime() const;
 
-  endTime_type&
-  endTime ();
+  endTime_type& endTime();
 
-  void
-  endTime (const endTime_type& x);
+  void endTime(const endTime_type& x);
 
   // deltaT
   //
   typedef ::xml_schema::double_ deltaT_type;
-  typedef ::xsd::cxx::tree::traits< deltaT_type, char, ::xsd::cxx::tree::schema_type::double_ > deltaT_traits;
+  typedef ::xsd::cxx::tree::traits<deltaT_type, char, ::xsd::cxx::tree::schema_type::double_> deltaT_traits;
 
-  const deltaT_type&
-  deltaT () const;
+  const deltaT_type& deltaT() const;
 
-  deltaT_type&
-  deltaT ();
+  deltaT_type& deltaT();
 
-  void
-  deltaT (const deltaT_type& x);
+  void deltaT(const deltaT_type& x);
 
   // writeOutFrequency
   //
   typedef ::xml_schema::unsigned_int writeOutFrequency_type;
-  typedef ::xsd::cxx::tree::traits< writeOutFrequency_type, char > writeOutFrequency_traits;
+  typedef ::xsd::cxx::tree::traits<writeOutFrequency_type, char> writeOutFrequency_traits;
 
-  const writeOutFrequency_type&
-  writeOutFrequency () const;
+  const writeOutFrequency_type& writeOutFrequency() const;
 
-  writeOutFrequency_type&
-  writeOutFrequency ();
+  writeOutFrequency_type& writeOutFrequency();
 
-  void
-  writeOutFrequency (const writeOutFrequency_type& x);
+  void writeOutFrequency(const writeOutFrequency_type& x);
 
   // filename
   //
   typedef ::xml_schema::string filename_type;
-  typedef ::xsd::cxx::tree::traits< filename_type, char > filename_traits;
+  typedef ::xsd::cxx::tree::traits<filename_type, char> filename_traits;
 
-  const filename_type&
-  filename () const;
+  const filename_type& filename() const;
 
-  filename_type&
-  filename ();
+  filename_type& filename();
 
-  void
-  filename (const filename_type& x);
+  void filename(const filename_type& x);
 
-  void
-  filename (::std::unique_ptr< filename_type > p);
+  void filename(::std::unique_ptr<filename_type> p);
+
+  // cutOffRadius
+  //
+  typedef ::xml_schema::double_ cutOffRadius_type;
+  typedef ::xsd::cxx::tree::traits<cutOffRadius_type, char, ::xsd::cxx::tree::schema_type::double_> cutOffRadius_traits;
+
+  const cutOffRadius_type& cutOffRadius() const;
+
+  cutOffRadius_type& cutOffRadius();
+
+  void cutOffRadius(const cutOffRadius_type& x);
+
+  // gravity
+  //
+  typedef ::xml_schema::double_ gravity_type;
+  typedef ::xsd::cxx::tree::traits<gravity_type, char, ::xsd::cxx::tree::schema_type::double_> gravity_traits;
+
+  const gravity_type& gravity() const;
+
+  gravity_type& gravity();
+
+  void gravity(const gravity_type& x);
 
   // Constructors.
   //
-  simulation_t (const endTime_type&,
-               const deltaT_type&,
-               const writeOutFrequency_type&,
-               const filename_type&);
+  simulation_t(const endTime_type&, const deltaT_type&, const writeOutFrequency_type&, const filename_type&,
+               const cutOffRadius_type&, const gravity_type&);
 
-  simulation_t (const ::xercesc::DOMElement& e,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
+  simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  simulation_t (const simulation_t& x,
-               ::xml_schema::flags f = 0,
-               ::xml_schema::container* c = 0);
+  simulation_t(const simulation_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual simulation_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual simulation_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  simulation_t&
-  operator= (const simulation_t& x);
+  simulation_t& operator=(const simulation_t& x);
 
-  virtual
-      ~simulation_t ();
+  virtual ~simulation_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
+  Particle_sequence Particle_;
   SimTypes_sequence SimTypes_;
   Container_T_sequence Container_T_;
+  Thermostat_sequence Thermostat_;
   InputFile_sequence InputFile_;
-  ::xsd::cxx::tree::one< endTime_type > endTime_;
-  ::xsd::cxx::tree::one< deltaT_type > deltaT_;
-  ::xsd::cxx::tree::one< writeOutFrequency_type > writeOutFrequency_;
-  ::xsd::cxx::tree::one< filename_type > filename_;
+  ::xsd::cxx::tree::one<endTime_type> endTime_;
+  ::xsd::cxx::tree::one<deltaT_type> deltaT_;
+  ::xsd::cxx::tree::one<writeOutFrequency_type> writeOutFrequency_;
+  ::xsd::cxx::tree::one<filename_type> filename_;
+  ::xsd::cxx::tree::one<cutOffRadius_type> cutOffRadius_;
+  ::xsd::cxx::tree::one<gravity_type> gravity_;
 };
 
-class array_i: public ::xml_schema::type
-{
+class array_i : public ::xml_schema::type {
  public:
   // x
   //
   typedef ::xml_schema::int_ x_type;
-  typedef ::xsd::cxx::tree::traits< x_type, char > x_traits;
+  typedef ::xsd::cxx::tree::traits<x_type, char> x_traits;
 
-  const x_type&
-  x () const;
+  const x_type& x() const;
 
-  x_type&
-  x ();
+  x_type& x();
 
-  void
-  x (const x_type& x);
+  void x(const x_type& x);
 
   // y
   //
   typedef ::xml_schema::int_ y_type;
-  typedef ::xsd::cxx::tree::traits< y_type, char > y_traits;
+  typedef ::xsd::cxx::tree::traits<y_type, char> y_traits;
 
-  const y_type&
-  y () const;
+  const y_type& y() const;
 
-  y_type&
-  y ();
+  y_type& y();
 
-  void
-  y (const y_type& x);
+  void y(const y_type& x);
 
   // z
   //
   typedef ::xml_schema::int_ z_type;
-  typedef ::xsd::cxx::tree::traits< z_type, char > z_traits;
+  typedef ::xsd::cxx::tree::traits<z_type, char> z_traits;
 
-  const z_type&
-  z () const;
+  const z_type& z() const;
 
-  z_type&
-  z ();
+  z_type& z();
 
-  void
-  z (const z_type& x);
+  void z(const z_type& x);
 
   // Constructors.
   //
-  array_i (const x_type&,
-          const y_type&,
-          const z_type&);
+  array_i(const x_type&, const y_type&, const z_type&);
 
-  array_i (const ::xercesc::DOMElement& e,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  array_i(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  array_i (const array_i& x,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  array_i(const array_i& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual array_i*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual array_i* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  array_i&
-  operator= (const array_i& x);
+  array_i& operator=(const array_i& x);
 
-  virtual
-      ~array_i ();
+  virtual ~array_i();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< x_type > x_;
-  ::xsd::cxx::tree::one< y_type > y_;
-  ::xsd::cxx::tree::one< z_type > z_;
+  ::xsd::cxx::tree::one<x_type> x_;
+  ::xsd::cxx::tree::one<y_type> y_;
+  ::xsd::cxx::tree::one<z_type> z_;
 };
 
-class array_d: public ::xml_schema::type
-{
+class array_d : public ::xml_schema::type {
  public:
   // x
   //
   typedef ::xml_schema::double_ x_type;
-  typedef ::xsd::cxx::tree::traits< x_type, char, ::xsd::cxx::tree::schema_type::double_ > x_traits;
+  typedef ::xsd::cxx::tree::traits<x_type, char, ::xsd::cxx::tree::schema_type::double_> x_traits;
 
-  const x_type&
-  x () const;
+  const x_type& x() const;
 
-  x_type&
-  x ();
+  x_type& x();
 
-  void
-  x (const x_type& x);
+  void x(const x_type& x);
 
   // y
   //
   typedef ::xml_schema::double_ y_type;
-  typedef ::xsd::cxx::tree::traits< y_type, char, ::xsd::cxx::tree::schema_type::double_ > y_traits;
+  typedef ::xsd::cxx::tree::traits<y_type, char, ::xsd::cxx::tree::schema_type::double_> y_traits;
 
-  const y_type&
-  y () const;
+  const y_type& y() const;
 
-  y_type&
-  y ();
+  y_type& y();
 
-  void
-  y (const y_type& x);
+  void y(const y_type& x);
 
   // z
   //
   typedef ::xml_schema::double_ z_type;
-  typedef ::xsd::cxx::tree::traits< z_type, char, ::xsd::cxx::tree::schema_type::double_ > z_traits;
+  typedef ::xsd::cxx::tree::traits<z_type, char, ::xsd::cxx::tree::schema_type::double_> z_traits;
 
-  const z_type&
-  z () const;
+  const z_type& z() const;
 
-  z_type&
-  z ();
+  z_type& z();
 
-  void
-  z (const z_type& x);
+  void z(const z_type& x);
 
   // Constructors.
   //
-  array_d (const x_type&,
-          const y_type&,
-          const z_type&);
+  array_d(const x_type&, const y_type&, const z_type&);
 
-  array_d (const ::xercesc::DOMElement& e,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  array_d(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  array_d (const array_d& x,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  array_d(const array_d& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual array_d*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual array_d* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  array_d&
-  operator= (const array_d& x);
+  array_d& operator=(const array_d& x);
 
-  virtual
-      ~array_d ();
+  virtual ~array_d();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< x_type > x_;
-  ::xsd::cxx::tree::one< y_type > y_;
-  ::xsd::cxx::tree::one< z_type > z_;
+  ::xsd::cxx::tree::one<x_type> x_;
+  ::xsd::cxx::tree::one<y_type> y_;
+  ::xsd::cxx::tree::one<z_type> z_;
 };
 
-class cuboid_t: public ::xml_schema::type
-{
+class cuboid_t : public ::xml_schema::type {
  public:
   // position
   //
   typedef ::array_d position_type;
-  typedef ::xsd::cxx::tree::traits< position_type, char > position_traits;
+  typedef ::xsd::cxx::tree::traits<position_type, char> position_traits;
 
-  const position_type&
-  position () const;
+  const position_type& position() const;
 
-  position_type&
-  position ();
+  position_type& position();
 
-  void
-  position (const position_type& x);
+  void position(const position_type& x);
 
-  void
-  position (::std::unique_ptr< position_type > p);
+  void position(::std::unique_ptr<position_type> p);
 
   // dimension
   //
   typedef ::array_i dimension_type;
-  typedef ::xsd::cxx::tree::traits< dimension_type, char > dimension_traits;
+  typedef ::xsd::cxx::tree::traits<dimension_type, char> dimension_traits;
 
-  const dimension_type&
-  dimension () const;
+  const dimension_type& dimension() const;
 
-  dimension_type&
-  dimension ();
+  dimension_type& dimension();
 
-  void
-  dimension (const dimension_type& x);
+  void dimension(const dimension_type& x);
 
-  void
-  dimension (::std::unique_ptr< dimension_type > p);
+  void dimension(::std::unique_ptr<dimension_type> p);
 
   // velocity
   //
   typedef ::array_d velocity_type;
-  typedef ::xsd::cxx::tree::traits< velocity_type, char > velocity_traits;
+  typedef ::xsd::cxx::tree::traits<velocity_type, char> velocity_traits;
 
-  const velocity_type&
-  velocity () const;
+  const velocity_type& velocity() const;
 
-  velocity_type&
-  velocity ();
+  velocity_type& velocity();
 
-  void
-  velocity (const velocity_type& x);
+  void velocity(const velocity_type& x);
 
-  void
-  velocity (::std::unique_ptr< velocity_type > p);
+  void velocity(::std::unique_ptr<velocity_type> p);
 
   // distance
   //
   typedef ::xml_schema::double_ distance_type;
-  typedef ::xsd::cxx::tree::traits< distance_type, char, ::xsd::cxx::tree::schema_type::double_ > distance_traits;
+  typedef ::xsd::cxx::tree::traits<distance_type, char, ::xsd::cxx::tree::schema_type::double_> distance_traits;
 
-  const distance_type&
-  distance () const;
+  const distance_type& distance() const;
 
-  distance_type&
-  distance ();
+  distance_type& distance();
 
-  void
-  distance (const distance_type& x);
+  void distance(const distance_type& x);
 
   // mass
   //
   typedef ::xml_schema::double_ mass_type;
-  typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
+  typedef ::xsd::cxx::tree::traits<mass_type, char, ::xsd::cxx::tree::schema_type::double_> mass_traits;
 
-  const mass_type&
-  mass () const;
+  const mass_type& mass() const;
 
-  mass_type&
-  mass ();
+  mass_type& mass();
 
-  void
-  mass (const mass_type& x);
+  void mass(const mass_type& x);
 
   // type
   //
   typedef ::xml_schema::int_ type_type;
-  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+  typedef ::xsd::cxx::tree::traits<type_type, char> type_traits;
 
-  const type_type&
-  type () const;
+  const type_type& type() const;
 
-  type_type&
-  type ();
+  type_type& type();
 
-  void
-  type (const type_type& x);
+  void type(const type_type& x);
 
   // Constructors.
   //
-  cuboid_t (const position_type&,
-           const dimension_type&,
-           const velocity_type&,
-           const distance_type&,
-           const mass_type&,
+  cuboid_t(const position_type&, const dimension_type&, const velocity_type&, const distance_type&, const mass_type&,
            const type_type&);
 
-  cuboid_t (::std::unique_ptr< position_type >,
-           ::std::unique_ptr< dimension_type >,
-           ::std::unique_ptr< velocity_type >,
-           const distance_type&,
-           const mass_type&,
-           const type_type&);
+  cuboid_t(::std::unique_ptr<position_type>, ::std::unique_ptr<dimension_type>, ::std::unique_ptr<velocity_type>,
+           const distance_type&, const mass_type&, const type_type&);
 
-  cuboid_t (const ::xercesc::DOMElement& e,
-           ::xml_schema::flags f = 0,
-           ::xml_schema::container* c = 0);
+  cuboid_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  cuboid_t (const cuboid_t& x,
-           ::xml_schema::flags f = 0,
-           ::xml_schema::container* c = 0);
+  cuboid_t(const cuboid_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual cuboid_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual cuboid_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  cuboid_t&
-  operator= (const cuboid_t& x);
+  cuboid_t& operator=(const cuboid_t& x);
 
-  virtual
-      ~cuboid_t ();
+  virtual ~cuboid_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< position_type > position_;
-  ::xsd::cxx::tree::one< dimension_type > dimension_;
-  ::xsd::cxx::tree::one< velocity_type > velocity_;
-  ::xsd::cxx::tree::one< distance_type > distance_;
-  ::xsd::cxx::tree::one< mass_type > mass_;
-  ::xsd::cxx::tree::one< type_type > type_;
+  ::xsd::cxx::tree::one<position_type> position_;
+  ::xsd::cxx::tree::one<dimension_type> dimension_;
+  ::xsd::cxx::tree::one<velocity_type> velocity_;
+  ::xsd::cxx::tree::one<distance_type> distance_;
+  ::xsd::cxx::tree::one<mass_type> mass_;
+  ::xsd::cxx::tree::one<type_type> type_;
 };
 
-class sphere_t: public ::xml_schema::type
-{
+class sphere_t : public ::xml_schema::type {
  public:
   // position
   //
   typedef ::array_d position_type;
-  typedef ::xsd::cxx::tree::traits< position_type, char > position_traits;
+  typedef ::xsd::cxx::tree::traits<position_type, char> position_traits;
 
-  const position_type&
-  position () const;
+  const position_type& position() const;
 
-  position_type&
-  position ();
+  position_type& position();
 
-  void
-  position (const position_type& x);
+  void position(const position_type& x);
 
-  void
-  position (::std::unique_ptr< position_type > p);
+  void position(::std::unique_ptr<position_type> p);
 
   // velocity
   //
   typedef ::array_d velocity_type;
-  typedef ::xsd::cxx::tree::traits< velocity_type, char > velocity_traits;
+  typedef ::xsd::cxx::tree::traits<velocity_type, char> velocity_traits;
 
-  const velocity_type&
-  velocity () const;
+  const velocity_type& velocity() const;
 
-  velocity_type&
-  velocity ();
+  velocity_type& velocity();
 
-  void
-  velocity (const velocity_type& x);
+  void velocity(const velocity_type& x);
 
-  void
-  velocity (::std::unique_ptr< velocity_type > p);
+  void velocity(::std::unique_ptr<velocity_type> p);
 
   // radius
   //
   typedef ::xml_schema::unsigned_int radius_type;
-  typedef ::xsd::cxx::tree::traits< radius_type, char > radius_traits;
+  typedef ::xsd::cxx::tree::traits<radius_type, char> radius_traits;
 
-  const radius_type&
-  radius () const;
+  const radius_type& radius() const;
 
-  radius_type&
-  radius ();
+  radius_type& radius();
 
-  void
-  radius (const radius_type& x);
+  void radius(const radius_type& x);
 
   // dimension
   //
   typedef ::xml_schema::unsigned_int dimension_type;
-  typedef ::xsd::cxx::tree::traits< dimension_type, char > dimension_traits;
+  typedef ::xsd::cxx::tree::traits<dimension_type, char> dimension_traits;
 
-  const dimension_type&
-  dimension () const;
+  const dimension_type& dimension() const;
 
-  dimension_type&
-  dimension ();
+  dimension_type& dimension();
 
-  void
-  dimension (const dimension_type& x);
+  void dimension(const dimension_type& x);
 
   // distance
   //
   typedef ::xml_schema::double_ distance_type;
-  typedef ::xsd::cxx::tree::traits< distance_type, char, ::xsd::cxx::tree::schema_type::double_ > distance_traits;
+  typedef ::xsd::cxx::tree::traits<distance_type, char, ::xsd::cxx::tree::schema_type::double_> distance_traits;
 
-  const distance_type&
-  distance () const;
+  const distance_type& distance() const;
 
-  distance_type&
-  distance ();
+  distance_type& distance();
 
-  void
-  distance (const distance_type& x);
+  void distance(const distance_type& x);
 
   // mass
   //
   typedef ::xml_schema::double_ mass_type;
-  typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
+  typedef ::xsd::cxx::tree::traits<mass_type, char, ::xsd::cxx::tree::schema_type::double_> mass_traits;
 
-  const mass_type&
-  mass () const;
+  const mass_type& mass() const;
 
-  mass_type&
-  mass ();
+  mass_type& mass();
 
-  void
-  mass (const mass_type& x);
+  void mass(const mass_type& x);
 
   // type
   //
   typedef ::xml_schema::int_ type_type;
-  typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
+  typedef ::xsd::cxx::tree::traits<type_type, char> type_traits;
 
-  const type_type&
-  type () const;
+  const type_type& type() const;
 
-  type_type&
-  type ();
+  type_type& type();
 
-  void
-  type (const type_type& x);
+  void type(const type_type& x);
 
   // Constructors.
   //
-  sphere_t (const position_type&,
-           const velocity_type&,
-           const radius_type&,
-           const dimension_type&,
-           const distance_type&,
-           const mass_type&,
-           const type_type&);
+  sphere_t(const position_type&, const velocity_type&, const radius_type&, const dimension_type&, const distance_type&,
+           const mass_type&, const type_type&);
 
-  sphere_t (::std::unique_ptr< position_type >,
-           ::std::unique_ptr< velocity_type >,
-           const radius_type&,
-           const dimension_type&,
-           const distance_type&,
-           const mass_type&,
-           const type_type&);
+  sphere_t(::std::unique_ptr<position_type>, ::std::unique_ptr<velocity_type>, const radius_type&,
+           const dimension_type&, const distance_type&, const mass_type&, const type_type&);
 
-  sphere_t (const ::xercesc::DOMElement& e,
-           ::xml_schema::flags f = 0,
-           ::xml_schema::container* c = 0);
+  sphere_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  sphere_t (const sphere_t& x,
-           ::xml_schema::flags f = 0,
-           ::xml_schema::container* c = 0);
+  sphere_t(const sphere_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual sphere_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual sphere_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  sphere_t&
-  operator= (const sphere_t& x);
+  sphere_t& operator=(const sphere_t& x);
 
-  virtual
-      ~sphere_t ();
+  virtual ~sphere_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< position_type > position_;
-  ::xsd::cxx::tree::one< velocity_type > velocity_;
-  ::xsd::cxx::tree::one< radius_type > radius_;
-  ::xsd::cxx::tree::one< dimension_type > dimension_;
-  ::xsd::cxx::tree::one< distance_type > distance_;
-  ::xsd::cxx::tree::one< mass_type > mass_;
-  ::xsd::cxx::tree::one< type_type > type_;
+  ::xsd::cxx::tree::one<position_type> position_;
+  ::xsd::cxx::tree::one<velocity_type> velocity_;
+  ::xsd::cxx::tree::one<radius_type> radius_;
+  ::xsd::cxx::tree::one<dimension_type> dimension_;
+  ::xsd::cxx::tree::one<distance_type> distance_;
+  ::xsd::cxx::tree::one<mass_type> mass_;
+  ::xsd::cxx::tree::one<type_type> type_;
 };
 
-class simTypes_t: public ::xml_schema::type
-{
+class simTypes_t : public ::xml_schema::type {
  public:
   // Cuboid
   //
   typedef ::cuboid_t Cuboid_type;
-  typedef ::xsd::cxx::tree::sequence< Cuboid_type > Cuboid_sequence;
+  typedef ::xsd::cxx::tree::sequence<Cuboid_type> Cuboid_sequence;
   typedef Cuboid_sequence::iterator Cuboid_iterator;
   typedef Cuboid_sequence::const_iterator Cuboid_const_iterator;
-  typedef ::xsd::cxx::tree::traits< Cuboid_type, char > Cuboid_traits;
+  typedef ::xsd::cxx::tree::traits<Cuboid_type, char> Cuboid_traits;
 
-  const Cuboid_sequence&
-  Cuboid () const;
+  const Cuboid_sequence& Cuboid() const;
 
-  Cuboid_sequence&
-  Cuboid ();
+  Cuboid_sequence& Cuboid();
 
-  void
-  Cuboid (const Cuboid_sequence& s);
+  void Cuboid(const Cuboid_sequence& s);
 
   // Sphere
   //
   typedef ::sphere_t Sphere_type;
-  typedef ::xsd::cxx::tree::sequence< Sphere_type > Sphere_sequence;
+  typedef ::xsd::cxx::tree::sequence<Sphere_type> Sphere_sequence;
   typedef Sphere_sequence::iterator Sphere_iterator;
   typedef Sphere_sequence::const_iterator Sphere_const_iterator;
-  typedef ::xsd::cxx::tree::traits< Sphere_type, char > Sphere_traits;
+  typedef ::xsd::cxx::tree::traits<Sphere_type, char> Sphere_traits;
 
-  const Sphere_sequence&
-  Sphere () const;
+  const Sphere_sequence& Sphere() const;
 
-  Sphere_sequence&
-  Sphere ();
+  Sphere_sequence& Sphere();
 
-  void
-  Sphere (const Sphere_sequence& s);
+  void Sphere(const Sphere_sequence& s);
 
   // Constructors.
   //
-  simTypes_t ();
+  simTypes_t();
 
-  simTypes_t (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  simTypes_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  simTypes_t (const simTypes_t& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  simTypes_t(const simTypes_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual simTypes_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual simTypes_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  simTypes_t&
-  operator= (const simTypes_t& x);
+  simTypes_t& operator=(const simTypes_t& x);
 
-  virtual
-      ~simTypes_t ();
+  virtual ~simTypes_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
   Cuboid_sequence Cuboid_;
   Sphere_sequence Sphere_;
 };
 
-class input_t: public ::xml_schema::type
-{
+class input_t : public ::xml_schema::type {
  public:
   // path
   //
   typedef ::xml_schema::string path_type;
-  typedef ::xsd::cxx::tree::traits< path_type, char > path_traits;
+  typedef ::xsd::cxx::tree::traits<path_type, char> path_traits;
 
-  const path_type&
-  path () const;
+  const path_type& path() const;
 
-  path_type&
-  path ();
+  path_type& path();
 
-  void
-  path (const path_type& x);
+  void path(const path_type& x);
 
-  void
-  path (::std::unique_ptr< path_type > p);
+  void path(::std::unique_ptr<path_type> p);
 
   // Constructors.
   //
-  input_t (const path_type&);
+  input_t(const path_type&);
 
-  input_t (const ::xercesc::DOMElement& e,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  input_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  input_t (const input_t& x,
-          ::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0);
+  input_t(const input_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual input_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual input_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  input_t&
-  operator= (const input_t& x);
+  input_t& operator=(const input_t& x);
 
-  virtual
-      ~input_t ();
+  virtual ~input_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< path_type > path_;
+  ::xsd::cxx::tree::one<path_type> path_;
 };
 
-class containerTypes_t: public ::xml_schema::type
-{
+class containerTypes_t : public ::xml_schema::type {
  public:
   // LinkedCell
   //
   typedef ::linkedCellContainer_t LinkedCell_type;
-  typedef ::xsd::cxx::tree::sequence< LinkedCell_type > LinkedCell_sequence;
+  typedef ::xsd::cxx::tree::sequence<LinkedCell_type> LinkedCell_sequence;
   typedef LinkedCell_sequence::iterator LinkedCell_iterator;
   typedef LinkedCell_sequence::const_iterator LinkedCell_const_iterator;
-  typedef ::xsd::cxx::tree::traits< LinkedCell_type, char > LinkedCell_traits;
+  typedef ::xsd::cxx::tree::traits<LinkedCell_type, char> LinkedCell_traits;
 
-  const LinkedCell_sequence&
-  LinkedCell () const;
+  const LinkedCell_sequence& LinkedCell() const;
 
-  LinkedCell_sequence&
-  LinkedCell ();
+  LinkedCell_sequence& LinkedCell();
 
-  void
-  LinkedCell (const LinkedCell_sequence& s);
+  void LinkedCell(const LinkedCell_sequence& s);
 
   // VectorCont
   //
   typedef ::vectorContainer_t VectorCont_type;
-  typedef ::xsd::cxx::tree::sequence< VectorCont_type > VectorCont_sequence;
+  typedef ::xsd::cxx::tree::sequence<VectorCont_type> VectorCont_sequence;
   typedef VectorCont_sequence::iterator VectorCont_iterator;
   typedef VectorCont_sequence::const_iterator VectorCont_const_iterator;
-  typedef ::xsd::cxx::tree::traits< VectorCont_type, char > VectorCont_traits;
+  typedef ::xsd::cxx::tree::traits<VectorCont_type, char> VectorCont_traits;
 
-  const VectorCont_sequence&
-  VectorCont () const;
+  const VectorCont_sequence& VectorCont() const;
 
-  VectorCont_sequence&
-  VectorCont ();
+  VectorCont_sequence& VectorCont();
 
-  void
-  VectorCont (const VectorCont_sequence& s);
+  void VectorCont(const VectorCont_sequence& s);
 
   // Constructors.
   //
-  containerTypes_t ();
+  containerTypes_t();
 
-  containerTypes_t (const ::xercesc::DOMElement& e,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
+  containerTypes_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  containerTypes_t (const containerTypes_t& x,
-                   ::xml_schema::flags f = 0,
-                   ::xml_schema::container* c = 0);
+  containerTypes_t(const containerTypes_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual containerTypes_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual containerTypes_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  containerTypes_t&
-  operator= (const containerTypes_t& x);
+  containerTypes_t& operator=(const containerTypes_t& x);
 
-  virtual
-      ~containerTypes_t ();
+  virtual ~containerTypes_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
   LinkedCell_sequence LinkedCell_;
   VectorCont_sequence VectorCont_;
 };
 
-class linkedCellContainer_t: public ::xml_schema::type
-{
+class linkedCellContainer_t : public ::xml_schema::type {
  public:
   // leftLowerBound
   //
   typedef ::array_d leftLowerBound_type;
-  typedef ::xsd::cxx::tree::traits< leftLowerBound_type, char > leftLowerBound_traits;
+  typedef ::xsd::cxx::tree::traits<leftLowerBound_type, char> leftLowerBound_traits;
 
-  const leftLowerBound_type&
-  leftLowerBound () const;
+  const leftLowerBound_type& leftLowerBound() const;
 
-  leftLowerBound_type&
-  leftLowerBound ();
+  leftLowerBound_type& leftLowerBound();
 
-  void
-  leftLowerBound (const leftLowerBound_type& x);
+  void leftLowerBound(const leftLowerBound_type& x);
 
-  void
-  leftLowerBound (::std::unique_ptr< leftLowerBound_type > p);
+  void leftLowerBound(::std::unique_ptr<leftLowerBound_type> p);
 
   // rightUpperBound
   //
   typedef ::array_d rightUpperBound_type;
-  typedef ::xsd::cxx::tree::traits< rightUpperBound_type, char > rightUpperBound_traits;
+  typedef ::xsd::cxx::tree::traits<rightUpperBound_type, char> rightUpperBound_traits;
 
-  const rightUpperBound_type&
-  rightUpperBound () const;
+  const rightUpperBound_type& rightUpperBound() const;
 
-  rightUpperBound_type&
-  rightUpperBound ();
+  rightUpperBound_type& rightUpperBound();
 
-  void
-  rightUpperBound (const rightUpperBound_type& x);
+  void rightUpperBound(const rightUpperBound_type& x);
 
-  void
-  rightUpperBound (::std::unique_ptr< rightUpperBound_type > p);
+  void rightUpperBound(::std::unique_ptr<rightUpperBound_type> p);
 
   // left
   //
   typedef ::boundary_t left_type;
-  typedef ::xsd::cxx::tree::traits< left_type, char > left_traits;
+  typedef ::xsd::cxx::tree::traits<left_type, char> left_traits;
 
-  const left_type&
-  left () const;
+  const left_type& left() const;
 
-  left_type&
-  left ();
+  left_type& left();
 
-  void
-  left (const left_type& x);
+  void left(const left_type& x);
 
-  void
-  left (::std::unique_ptr< left_type > p);
+  void left(::std::unique_ptr<left_type> p);
 
   // right
   //
   typedef ::boundary_t right_type;
-  typedef ::xsd::cxx::tree::traits< right_type, char > right_traits;
+  typedef ::xsd::cxx::tree::traits<right_type, char> right_traits;
 
-  const right_type&
-  right () const;
+  const right_type& right() const;
 
-  right_type&
-  right ();
+  right_type& right();
 
-  void
-  right (const right_type& x);
+  void right(const right_type& x);
 
-  void
-  right (::std::unique_ptr< right_type > p);
+  void right(::std::unique_ptr<right_type> p);
 
   // top
   //
   typedef ::boundary_t top_type;
-  typedef ::xsd::cxx::tree::traits< top_type, char > top_traits;
+  typedef ::xsd::cxx::tree::traits<top_type, char> top_traits;
 
-  const top_type&
-  top () const;
+  const top_type& top() const;
 
-  top_type&
-  top ();
+  top_type& top();
 
-  void
-  top (const top_type& x);
+  void top(const top_type& x);
 
-  void
-  top (::std::unique_ptr< top_type > p);
+  void top(::std::unique_ptr<top_type> p);
 
   // bottom
   //
   typedef ::boundary_t bottom_type;
-  typedef ::xsd::cxx::tree::traits< bottom_type, char > bottom_traits;
+  typedef ::xsd::cxx::tree::traits<bottom_type, char> bottom_traits;
 
-  const bottom_type&
-  bottom () const;
+  const bottom_type& bottom() const;
 
-  bottom_type&
-  bottom ();
+  bottom_type& bottom();
 
-  void
-  bottom (const bottom_type& x);
+  void bottom(const bottom_type& x);
 
-  void
-  bottom (::std::unique_ptr< bottom_type > p);
+  void bottom(::std::unique_ptr<bottom_type> p);
 
   // front
   //
   typedef ::boundary_t front_type;
-  typedef ::xsd::cxx::tree::traits< front_type, char > front_traits;
+  typedef ::xsd::cxx::tree::traits<front_type, char> front_traits;
 
-  const front_type&
-  front () const;
+  const front_type& front() const;
 
-  front_type&
-  front ();
+  front_type& front();
 
-  void
-  front (const front_type& x);
+  void front(const front_type& x);
 
-  void
-  front (::std::unique_ptr< front_type > p);
+  void front(::std::unique_ptr<front_type> p);
 
   // back
   //
   typedef ::boundary_t back_type;
-  typedef ::xsd::cxx::tree::traits< back_type, char > back_traits;
+  typedef ::xsd::cxx::tree::traits<back_type, char> back_traits;
 
-  const back_type&
-  back () const;
+  const back_type& back() const;
 
-  back_type&
-  back ();
+  back_type& back();
 
-  void
-  back (const back_type& x);
+  void back(const back_type& x);
 
-  void
-  back (::std::unique_ptr< back_type > p);
+  void back(::std::unique_ptr<back_type> p);
 
   // cellSize
   //
   typedef ::xml_schema::double_ cellSize_type;
-  typedef ::xsd::cxx::tree::traits< cellSize_type, char, ::xsd::cxx::tree::schema_type::double_ > cellSize_traits;
+  typedef ::xsd::cxx::tree::traits<cellSize_type, char, ::xsd::cxx::tree::schema_type::double_> cellSize_traits;
 
-  const cellSize_type&
-  cellSize () const;
+  const cellSize_type& cellSize() const;
 
-  cellSize_type&
-  cellSize ();
+  cellSize_type& cellSize();
 
-  void
-  cellSize (const cellSize_type& x);
-
-  // cutOffRadius
-  //
-  typedef ::xml_schema::double_ cutOffRadius_type;
-  typedef ::xsd::cxx::tree::traits< cutOffRadius_type, char, ::xsd::cxx::tree::schema_type::double_ > cutOffRadius_traits;
-
-  const cutOffRadius_type&
-  cutOffRadius () const;
-
-  cutOffRadius_type&
-  cutOffRadius ();
-
-  void
-  cutOffRadius (const cutOffRadius_type& x);
+  void cellSize(const cellSize_type& x);
 
   // Constructors.
   //
-  linkedCellContainer_t (const leftLowerBound_type&,
-                        const rightUpperBound_type&,
-                        const left_type&,
-                        const right_type&,
-                        const top_type&,
-                        const bottom_type&,
-                        const front_type&,
-                        const back_type&,
-                        const cellSize_type&,
-                        const cutOffRadius_type&);
+  linkedCellContainer_t(const leftLowerBound_type&, const rightUpperBound_type&, const left_type&, const right_type&,
+                        const top_type&, const bottom_type&, const front_type&, const back_type&, const cellSize_type&);
 
-  linkedCellContainer_t (::std::unique_ptr< leftLowerBound_type >,
-                        ::std::unique_ptr< rightUpperBound_type >,
-                        const left_type&,
-                        const right_type&,
-                        const top_type&,
-                        const bottom_type&,
-                        const front_type&,
-                        const back_type&,
-                        const cellSize_type&,
-                        const cutOffRadius_type&);
+  linkedCellContainer_t(::std::unique_ptr<leftLowerBound_type>, ::std::unique_ptr<rightUpperBound_type>,
+                        const left_type&, const right_type&, const top_type&, const bottom_type&, const front_type&,
+                        const back_type&, const cellSize_type&);
 
-  linkedCellContainer_t (const ::xercesc::DOMElement& e,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
+  linkedCellContainer_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  linkedCellContainer_t (const linkedCellContainer_t& x,
-                        ::xml_schema::flags f = 0,
-                        ::xml_schema::container* c = 0);
+  linkedCellContainer_t(const linkedCellContainer_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual linkedCellContainer_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual linkedCellContainer_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  linkedCellContainer_t&
-  operator= (const linkedCellContainer_t& x);
+  linkedCellContainer_t& operator=(const linkedCellContainer_t& x);
 
-  virtual
-      ~linkedCellContainer_t ();
+  virtual ~linkedCellContainer_t();
 
   // Implementation.
   //
  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  ::xsd::cxx::tree::one< leftLowerBound_type > leftLowerBound_;
-  ::xsd::cxx::tree::one< rightUpperBound_type > rightUpperBound_;
-  ::xsd::cxx::tree::one< left_type > left_;
-  ::xsd::cxx::tree::one< right_type > right_;
-  ::xsd::cxx::tree::one< top_type > top_;
-  ::xsd::cxx::tree::one< bottom_type > bottom_;
-  ::xsd::cxx::tree::one< front_type > front_;
-  ::xsd::cxx::tree::one< back_type > back_;
-  ::xsd::cxx::tree::one< cellSize_type > cellSize_;
-  ::xsd::cxx::tree::one< cutOffRadius_type > cutOffRadius_;
+  ::xsd::cxx::tree::one<leftLowerBound_type> leftLowerBound_;
+  ::xsd::cxx::tree::one<rightUpperBound_type> rightUpperBound_;
+  ::xsd::cxx::tree::one<left_type> left_;
+  ::xsd::cxx::tree::one<right_type> right_;
+  ::xsd::cxx::tree::one<top_type> top_;
+  ::xsd::cxx::tree::one<bottom_type> bottom_;
+  ::xsd::cxx::tree::one<front_type> front_;
+  ::xsd::cxx::tree::one<back_type> back_;
+  ::xsd::cxx::tree::one<cellSize_type> cellSize_;
 };
 
-class vectorContainer_t: public ::xml_schema::type
-{
+class vectorContainer_t : public ::xml_schema::type {
  public:
-  // vector
-  //
-  typedef ::array_d vector_type;
-  typedef ::xsd::cxx::tree::traits< vector_type, char > vector_traits;
-
-  const vector_type&
-  vector () const;
-
-  vector_type&
-  vector ();
-
-  void
-  vector (const vector_type& x);
-
-  void
-  vector (::std::unique_ptr< vector_type > p);
-
   // Constructors.
   //
-  vectorContainer_t (const vector_type&);
+  vectorContainer_t();
 
-  vectorContainer_t (::std::unique_ptr< vector_type >);
+  vectorContainer_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  vectorContainer_t (const ::xercesc::DOMElement& e,
-                    ::xml_schema::flags f = 0,
+  vectorContainer_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  vectorContainer_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f = 0,
                     ::xml_schema::container* c = 0);
 
-  vectorContainer_t (const vectorContainer_t& x,
-                    ::xml_schema::flags f = 0,
-                    ::xml_schema::container* c = 0);
+  vectorContainer_t(const vectorContainer_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  virtual vectorContainer_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
+  virtual vectorContainer_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  vectorContainer_t&
-  operator= (const vectorContainer_t& x);
-
-  virtual
-      ~vectorContainer_t ();
-
-  // Implementation.
-  //
- protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-        ::xml_schema::flags);
-
- protected:
-  ::xsd::cxx::tree::one< vector_type > vector_;
+  virtual ~vectorContainer_t();
 };
 
-class boundary_t: public ::xml_schema::string
-{
+class boundary_t : public ::xml_schema::string {
  public:
-  enum value
-  {
-    OUTFLOW,
-    REFLECT,
-    PERIODIC
-  };
+  enum value { OUTFLOW, REFLECT, PERIODIC };
 
-  boundary_t (value v);
+  boundary_t(value v);
 
-  boundary_t (const char* v);
+  boundary_t(const char* v);
 
-  boundary_t (const ::std::string& v);
+  boundary_t(const ::std::string& v);
 
-  boundary_t (const ::xml_schema::string& v);
+  boundary_t(const ::xml_schema::string& v);
 
-  boundary_t (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
+  boundary_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  boundary_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  boundary_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f = 0,
              ::xml_schema::container* c = 0);
 
-  boundary_t (const ::xercesc::DOMAttr& a,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  boundary_t(const boundary_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
-  boundary_t (const ::std::string& s,
-             const ::xercesc::DOMElement* e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  virtual boundary_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
 
-  boundary_t (const boundary_t& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
+  boundary_t& operator=(value v);
 
-  virtual boundary_t*
-  _clone (::xml_schema::flags f = 0,
-         ::xml_schema::container* c = 0) const;
-
-  boundary_t&
-  operator= (value v);
-
-  virtual
-  operator value () const
-  {
-    return _xsd_boundary_t_convert ();
-  }
+  virtual operator value() const { return _xsd_boundary_t_convert(); }
 
  protected:
-  value
-  _xsd_boundary_t_convert () const;
+  value _xsd_boundary_t_convert() const;
 
  public:
   static const char* const _xsd_boundary_t_literals_[3];
   static const value _xsd_boundary_t_indexes_[3];
 };
 
-#include <iosfwd>
+class thermostat_t : public ::xml_schema::type {
+ public:
+  // initialTemp
+  //
+  typedef ::xml_schema::double_ initialTemp_type;
+  typedef ::xsd::cxx::tree::optional<initialTemp_type> initialTemp_optional;
+  typedef ::xsd::cxx::tree::traits<initialTemp_type, char, ::xsd::cxx::tree::schema_type::double_> initialTemp_traits;
 
-#include <xercesc/sax/InputSource.hpp>
+  const initialTemp_optional& initialTemp() const;
+
+  initialTemp_optional& initialTemp();
+
+  void initialTemp(const initialTemp_type& x);
+
+  void initialTemp(const initialTemp_optional& x);
+
+  // targetTemp
+  //
+  typedef ::xml_schema::double_ targetTemp_type;
+  typedef ::xsd::cxx::tree::optional<targetTemp_type> targetTemp_optional;
+  typedef ::xsd::cxx::tree::traits<targetTemp_type, char, ::xsd::cxx::tree::schema_type::double_> targetTemp_traits;
+
+  const targetTemp_optional& targetTemp() const;
+
+  targetTemp_optional& targetTemp();
+
+  void targetTemp(const targetTemp_type& x);
+
+  void targetTemp(const targetTemp_optional& x);
+
+  // maxTempChange
+  //
+  typedef ::xml_schema::double_ maxTempChange_type;
+  typedef ::xsd::cxx::tree::optional<maxTempChange_type> maxTempChange_optional;
+  typedef ::xsd::cxx::tree::traits<maxTempChange_type, char, ::xsd::cxx::tree::schema_type::double_>
+      maxTempChange_traits;
+
+  const maxTempChange_optional& maxTempChange() const;
+
+  maxTempChange_optional& maxTempChange();
+
+  void maxTempChange(const maxTempChange_type& x);
+
+  void maxTempChange(const maxTempChange_optional& x);
+
+  // periodLength
+  //
+  typedef ::xml_schema::int_ periodLength_type;
+  typedef ::xsd::cxx::tree::optional<periodLength_type> periodLength_optional;
+  typedef ::xsd::cxx::tree::traits<periodLength_type, char> periodLength_traits;
+
+  const periodLength_optional& periodLength() const;
+
+  periodLength_optional& periodLength();
+
+  void periodLength(const periodLength_type& x);
+
+  void periodLength(const periodLength_optional& x);
+
+  // dimension
+  //
+  typedef ::xml_schema::int_ dimension_type;
+  typedef ::xsd::cxx::tree::optional<dimension_type> dimension_optional;
+  typedef ::xsd::cxx::tree::traits<dimension_type, char> dimension_traits;
+
+  const dimension_optional& dimension() const;
+
+  dimension_optional& dimension();
+
+  void dimension(const dimension_type& x);
+
+  void dimension(const dimension_optional& x);
+
+  // Constructors.
+  //
+  thermostat_t();
+
+  thermostat_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  thermostat_t(const thermostat_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual thermostat_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  thermostat_t& operator=(const thermostat_t& x);
+
+  virtual ~thermostat_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  initialTemp_optional initialTemp_;
+  targetTemp_optional targetTemp_;
+  maxTempChange_optional maxTempChange_;
+  periodLength_optional periodLength_;
+  dimension_optional dimension_;
+};
+
+class particle_t : public ::xml_schema::type {
+ public:
+  // id
+  //
+  typedef ::xml_schema::int_ id_type;
+  typedef ::xsd::cxx::tree::optional<id_type> id_optional;
+  typedef ::xsd::cxx::tree::traits<id_type, char> id_traits;
+
+  const id_optional& id() const;
+
+  id_optional& id();
+
+  void id(const id_type& x);
+
+  void id(const id_optional& x);
+
+  // epsilon
+  //
+  typedef ::xml_schema::double_ epsilon_type;
+  typedef ::xsd::cxx::tree::optional<epsilon_type> epsilon_optional;
+  typedef ::xsd::cxx::tree::traits<epsilon_type, char, ::xsd::cxx::tree::schema_type::double_> epsilon_traits;
+
+  const epsilon_optional& epsilon() const;
+
+  epsilon_optional& epsilon();
+
+  void epsilon(const epsilon_type& x);
+
+  void epsilon(const epsilon_optional& x);
+
+  // sigma
+  //
+  typedef ::xml_schema::double_ sigma_type;
+  typedef ::xsd::cxx::tree::optional<sigma_type> sigma_optional;
+  typedef ::xsd::cxx::tree::traits<sigma_type, char, ::xsd::cxx::tree::schema_type::double_> sigma_traits;
+
+  const sigma_optional& sigma() const;
+
+  sigma_optional& sigma();
+
+  void sigma(const sigma_type& x);
+
+  void sigma(const sigma_optional& x);
+
+  // Constructors.
+  //
+  particle_t();
+
+  particle_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  particle_t(const particle_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual particle_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  particle_t& operator=(const particle_t& x);
+
+  virtual ~particle_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  id_optional id_;
+  epsilon_optional epsilon_;
+  sigma_optional sigma_;
+};
+
+#include <iosfwd>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMErrorHandler.hpp>
+#include <xercesc/sax/InputSource.hpp>
 
 // Parse a URI or a local file.
 //
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (const ::std::string& uri,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(const ::std::string& uri, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (const ::std::string& uri,
-               ::xml_schema::error_handler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(const ::std::string& uri, ::xml_schema::error_handler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (const ::std::string& uri,
-               ::xercesc::DOMErrorHandler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(const ::std::string& uri, ::xercesc::DOMErrorHandler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
 // Parse std::istream.
 //
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               ::xml_schema::error_handler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, ::xml_schema::error_handler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               ::xercesc::DOMErrorHandler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, ::xercesc::DOMErrorHandler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               const ::std::string& id,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, const ::std::string& id,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               const ::std::string& id,
-               ::xml_schema::error_handler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, const ::std::string& id,
+                                                  ::xml_schema::error_handler& eh, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::std::istream& is,
-               const ::std::string& id,
-               ::xercesc::DOMErrorHandler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::std::istream& is, const ::std::string& id,
+                                                  ::xercesc::DOMErrorHandler& eh, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
 // Parse xercesc::InputSource.
 //
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::xercesc::InputSource& is,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::xercesc::InputSource& is, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::xercesc::InputSource& is,
-               ::xml_schema::error_handler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::xercesc::InputSource& is, ::xml_schema::error_handler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::xercesc::InputSource& is,
-               ::xercesc::DOMErrorHandler& eh,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::xercesc::InputSource& is, ::xercesc::DOMErrorHandler& eh,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
 // Parse xercesc::DOMDocument.
 //
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (const ::xercesc::DOMDocument& d,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(const ::xercesc::DOMDocument& d, ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
-::std::unique_ptr< ::simulation_t >
-Simulation_XML (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
-               ::xml_schema::flags f = 0,
-               const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::simulation_t> Simulation_XML(::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument> d,
+                                                  ::xml_schema::flags f = 0,
+                                                  const ::xml_schema::properties& p = ::xml_schema::properties());
 
 #include <xsd/cxx/post.hxx>
 
@@ -1519,4 +1359,4 @@ Simulation_XML (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 //
 // End epilogue.
 
-#endif // INPUT_HXX
+#endif  // INPUT_HXX

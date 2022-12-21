@@ -5,8 +5,7 @@
 #include "LineProcessorSingle.h"
 
 #include "spdlog/spdlog.h"
-void LineProcessorSingle::processLine(std::istringstream &dataStream,
-                                      IContainer &container) {
+void LineProcessorSingle::processLine(std::istringstream &dataStream, IContainer &container) {
   for (auto &xj : x) {
     dataStream >> xj;
   }

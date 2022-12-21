@@ -6,17 +6,6 @@
 using std::pow;
 
 /**
- * Worksheet 2 defines epsilon = 5.0 and sigma = 1.0 for the Lennard-Jones
- * potential. (This test might get removed in the future.)
- */
-TEST(LennardJonesModel, WorksheetParameters) {
-  LennardJonesModel model{100.};
-
-  EXPECT_EQ(model.getEpsilon(), 5.0) << "Worksheet 2 expects epsilon = 5.0";
-  EXPECT_EQ(model.getSigma(), 1.0) << "Worksheet 2 expects sigma = 1.0";
-}
-
-/**
  * Check if the applied forces have the correct sign on each particle.
  */
 TEST(LennardJonesModel, ForceCorrectSign) {
@@ -28,10 +17,8 @@ TEST(LennardJonesModel, ForceCorrectSign) {
   EXPECT_NE(p1.getF()[0], 0.0) << "Applied force is zero.";
   EXPECT_NE(p2.getF()[0], 0.0) << "Applied force is zero.";
 
-  EXPECT_LT(p1.getF()[0], 0.0)
-      << "Force on particle 1 points in wrong direction on the x0 axis.";
-  EXPECT_GT(p2.getF()[0], 0.0)
-      << "Force on particle 2 points in wrong direction on the x0 axis of.";
+  EXPECT_LT(p1.getF()[0], 0.0) << "Force on particle 1 points in wrong direction on the x0 axis.";
+  EXPECT_GT(p2.getF()[0], 0.0) << "Force on particle 2 points in wrong direction on the x0 axis of.";
 }
 
 /**
@@ -63,7 +50,6 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
   // Check if result is correct enough for our purposes
   EXPECT_NEAR(p1.getF()[0], expected_force[0], 0.000001);
   EXPECT_NEAR(p1.getF()[0], expected_force[0], 0.00000000000001);
-  EXPECT_NEAR(p1.getF()[0], expected_force[0],
-              std::numeric_limits<double>::epsilon())
+  EXPECT_NEAR(p1.getF()[0], expected_force[0], std::numeric_limits<double>::epsilon())
       << "Note: this last expect might assume unreasonable precision.";
 }

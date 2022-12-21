@@ -6,9 +6,7 @@
 
 class LineProcessorMock : public ILineProcessor {
  public:
-  MOCK_METHOD((void), processLine,
-              (std::istringstream & dataStream, IContainer &container),
-              (override));
+  MOCK_METHOD((void), processLine, (std::istringstream & dataStream, IContainer &container), (override));
 };
 
 /**
@@ -22,8 +20,7 @@ TEST(FileReader, IgnoreComments) {
   LineProcessorMock lineProcessorMock{};
   EXPECT_CALL(lineProcessorMock, processLine(testing::_, testing::_)).Times(2);
 
-  FileReader::readFile(particleContainer, const_cast<char *>(file),
-                       lineProcessorMock);
+  FileReader::readFile(particleContainer, const_cast<char *>(file), lineProcessorMock);
 }
 
 /**
@@ -35,16 +32,13 @@ TEST(FileReader, RigthParticleContainer) {
   const char *file{"../tests/resources/fileReaderTest.txt"};
 
   LineProcessorMock lineProcessorMock{};
-  EXPECT_CALL(
-      lineProcessorMock,
-      processLine(testing::_, testing::Truly([&particleContainer](IContainer &p) -> bool {
-                    // Test that they point to the same memory
-                    return &p == &particleContainer;
-                  })))
+  EXPECT_CALL(lineProcessorMock, processLine(testing::_, testing::Truly([&particleContainer](IContainer &p) -> bool {
+                                               // Test that they point to the same memory
+                                               return &p == &particleContainer;
+                                             })))
       .Times(testing::AnyNumber());
 
-  FileReader::readFile(particleContainer, const_cast<char *>(file),
-                       lineProcessorMock);
+  FileReader::readFile(particleContainer, const_cast<char *>(file), lineProcessorMock);
 }
 
 /**
@@ -60,22 +54,16 @@ TEST(FileReader, CorrectLineReading) {
       "15.0 15.0 0.0   0.0 -10.0 0.0   8 8 1           1.1225          1.0     "
       "    2"};
   LineProcessorMock lineProcessorMock{};
-  EXPECT_CALL(lineProcessorMock,
-              processLine(testing::Truly(
-                              [&firstLine](std::istringstream &stream) -> bool {
-                                return stream.str() == firstLine;
-                              }),
-                          testing::_))
+  EXPECT_CALL(lineProcessorMock, processLine(testing::Truly([&firstLine](std::istringstream &stream) -> bool {
+                                               return stream.str() == firstLine;
+                                             }),
+                                             testing::_))
       .Times(1);
-  EXPECT_CALL(
-      lineProcessorMock,
-      processLine(
-          testing::Truly([&secondLine](std::istringstream &stream) -> bool {
-            return stream.str() == secondLine;
-          }),
-          testing::_))
+  EXPECT_CALL(lineProcessorMock, processLine(testing::Truly([&secondLine](std::istringstream &stream) -> bool {
+                                               return stream.str() == secondLine;
+                                             }),
+                                             testing::_))
       .Times(1);
 
-  FileReader::readFile(particleContainer, const_cast<char *>(file),
-                       lineProcessorMock);
+  FileReader::readFile(particleContainer, const_cast<char *>(file), lineProcessorMock);
 }

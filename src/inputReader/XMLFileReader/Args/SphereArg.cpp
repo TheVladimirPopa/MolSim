@@ -1,8 +1,6 @@
 #include "SphereArg.h"
-SphereArg::SphereArg(const std::array<double, 3>& position,
-                     const std::array<double, 3>& velocity, unsigned int radius,
-                     unsigned int dimension, double distance, double mass,
-                     int type)
+SphereArg::SphereArg(const std::array<double, 3>& position, const std::array<double, 3>& velocity, unsigned int radius,
+                     unsigned int dimension, double distance, double mass, int type)
     : position(position),
       velocity(velocity),
       radius(radius),
