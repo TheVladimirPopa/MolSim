@@ -42,10 +42,12 @@ int main(int argc, char *argsv[]) {
   bool hitRateMeasure = false;
   bool xmlInput = false;
   std::string xmlPath;
-  bool checkpointing = false;
+  bool readFromCheckpoint = false;
+  bool saveCheckpoint = false;
 
   int opt;
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
+                                         {"export-checkpoint", no_argument, nullptr, 's'},
                                          {"checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
@@ -61,7 +63,7 @@ int main(int argc, char *argsv[]) {
                                          {"help", no_argument, nullptr, 'h'},
                                          {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "ci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "sci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
@@ -92,7 +94,7 @@ int main(int argc, char *argsv[]) {
         break;
       }
       case 'c': {
-        checkpointing = true;
+        readFromCheckpoint = true;
         break;
       }
       case 'e': {
@@ -130,6 +132,10 @@ int main(int argc, char *argsv[]) {
           return 1;
         }
 
+        break;
+      }
+      case 's': {
+        saveCheckpoint = true;
         break;
       }
       case 'w': {
@@ -294,7 +300,7 @@ int main(int argc, char *argsv[]) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
 
       std::string checkpointFile;
-      if (checkpointing) {
+      if (readFromCheckpoint) {
         // init checkpoint
         parser.initCheckpoint(checkpointFile);
       }
@@ -303,7 +309,7 @@ int main(int argc, char *argsv[]) {
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
       container = &linkedCellsContainer;
     } else {
-      if (checkpointing) {
+      if (readFromCheckpoint) {
         // init from checkpoint
       }
 
@@ -312,7 +318,7 @@ int main(int argc, char *argsv[]) {
       container = &vectorContainer;
     }
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
-    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML());
+    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
   } else {
     Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
     simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);

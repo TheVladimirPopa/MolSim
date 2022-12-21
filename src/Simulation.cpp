@@ -8,7 +8,7 @@
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                          double gravitationalConstant) {
+                          double gravitationalConstant, bool checkpointing) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
@@ -48,8 +48,9 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     current_time += deltaT;
     iteration++;
   }
-
-  const std::string checkpointPath="../input/checkpoint.txt";
-  CheckpointFileWriter checkpointFileWriter{checkpointPath};
-  checkpointFileWriter.writeFile("", iteration, particles);
+  if (checkpointing) {
+    const std::string checkpointPath = "../input/checkpoint.txt";
+    CheckpointFileWriter checkpointFileWriter{checkpointPath};
+    checkpointFileWriter.writeFile("", iteration, particles);
+  }
 }
