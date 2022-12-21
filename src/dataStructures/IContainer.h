@@ -57,7 +57,5 @@ class IContainer {
    */
   virtual size_t size() = 0;
 
-  virtual void checkpoint() = 0;
-
   virtual ~IContainer() = default;
 };

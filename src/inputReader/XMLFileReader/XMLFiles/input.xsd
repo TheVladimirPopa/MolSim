@@ -110,18 +110,18 @@
 
     <!--  Thermostat Type  -->
     <xsd:complexType name="thermostat_t">
-        <xsd:attribute name="initialTemp" type="xsd:double"/>
-        <xsd:attribute name="targetTemp" type="xsd:double"/>
-        <xsd:attribute name="maxTempChange" type="xsd:double"/>
-        <xsd:attribute name="periodLength" type="xsd:int"/>
-        <xsd:attribute name="dimension" type="xsd:int"/>
+        <xsd:attribute name="initialTemp" type="xsd:double" use="required"/>
+        <xsd:attribute name="targetTemp" type="xsd:double" use="required"/>
+        <xsd:attribute name="maxTempChange" type="xsd:double" use="required"/>
+        <xsd:attribute name="periodLength" type="xsd:int" use="required"/>
+        <xsd:attribute name="dimension" type="xsd:int" use="required"/>
     </xsd:complexType>
 
     <!--  Particle Type  -->
     <xsd:complexType name="particle_t">
-        <xsd:attribute name="id" type="xsd:int"/>
-        <xsd:attribute name="epsilon" type="xsd:double"/>
-        <xsd:attribute name="sigma" type="xsd:double"/>
+        <xsd:attribute name="id" type="xsd:int" use="required"/>
+        <xsd:attribute name="epsilon" type="xsd:double" use="required"/>
+        <xsd:attribute name="sigma" type="xsd:double" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>

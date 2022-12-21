@@ -182,8 +182,7 @@ class XMLParser {
       auto periodLength = it.periodLength();
       auto dimension = it.dimension();
 
-      ThermostatArg thermostatArg{initialTemp.get(), targetTemp.get(), maxTempChange.get(), periodLength.get(),
-                                  dimension.get()};
+      ThermostatArg thermostatArg{initialTemp, targetTemp, maxTempChange, periodLength, dimension};
       return thermostatArg;
     }
     throw std::invalid_argument("XML Parser found no thermostat");
@@ -196,13 +195,7 @@ class XMLParser {
     std::vector<ParticleArg> particleArgs;
 
     for (auto &it : simulation->Particle()) {
-      auto id = it.id();
-      auto epsilon = it.epsilon();
-      auto sigma = it.sigma();
-
-      ParticleArg particleArg{id.get(), epsilon.get(), sigma.get()};
-
-      particleArgs.emplace_back(particleArg);
+      particleArgs.emplace_back(it.id(), it.epsilon(), it.sigma());
     }
 
     return particleArgs;

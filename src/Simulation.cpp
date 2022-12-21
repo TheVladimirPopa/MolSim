@@ -4,6 +4,7 @@
 
 #include "Simulation.h"
 
+#include "outputWriter/CheckpointFileWriter.h"
 #include "spdlog/spdlog.h"
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
@@ -46,8 +47,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
 
     current_time += deltaT;
     iteration++;
-
-    // Checkpointing after the simulation has ended
-    particles.checkpoint();
   }
+  CheckpointFileWriter checkpointFileWriter{};
+  checkpointFileWriter.writeFile("../input/checkpoint.txt", iteration, particles);
 }
