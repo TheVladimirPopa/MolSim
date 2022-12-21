@@ -200,6 +200,12 @@ class XMLParser {
 
     return particleArgs;
   }
+
+  void initCheckpoint(std::string &checkpoint){
+    SimulationArg args = extractSimulation();
+    checkpoint = args.getInputFile();
+  }
+
   /**
    * Initialises the given simulation sim with the corresponding arguments from
    * the path file

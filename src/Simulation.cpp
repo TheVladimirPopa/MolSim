@@ -48,6 +48,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     current_time += deltaT;
     iteration++;
   }
-  CheckpointFileWriter checkpointFileWriter{};
-  checkpointFileWriter.writeFile("../input/checkpoint.txt", iteration, particles);
+
+  const std::string checkpointPath="../input/checkpoint.txt";
+  CheckpointFileWriter checkpointFileWriter{checkpointPath};
+  checkpointFileWriter.writeFile("", iteration, particles);
 }

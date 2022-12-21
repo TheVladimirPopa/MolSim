@@ -293,8 +293,10 @@ int main(int argc, char *argsv[]) {
     if (linkedCellsStrategy) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
 
+      std::string checkpointFile;
       if (checkpointing) {
-        // init from checkpoint
+        // init checkpoint
+        parser.initCheckpoint(checkpointFile);
       }
 
       parser.initialiseSpheresFromXML(linkedCellsContainer);
