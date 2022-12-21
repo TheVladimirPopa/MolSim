@@ -10,17 +10,17 @@
             <velocity x="0.0" y="0.0" z="0.0"/>
         </Sphere>
 
-        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="2">
+        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="0">
             <position x="4.0" y="15.0" z="0.0"/>
             <velocity x="0.0" y="-10.0" z="0.0"/>
         </Sphere>
 
-        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="2">
+        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="1">
             <position x="4.0" y="-15.0" z="0.0"/>
             <velocity x="0.0" y="-10.0" z="0.0"/>
         </Sphere>
 
-        <!--        <Cuboid distance="1.23" mass="0.5" type="2">-->
+        <!--        <Cuboid distance="1.23" mass="0.5" type="1">-->
         <!--            <position x="4.0" y="4.0" z="0.0"/>-->
         <!--            <dimension x="3" y="3" z="3"/>-->
         <!--            <velocity x="0.0" y="0.0" z="10.0"/>-->

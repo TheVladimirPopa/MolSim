@@ -228,3 +228,18 @@ TEST(XMLParser, testCuboidInput) {
     EXPECT_EQ(cuboids[i].type, type);
   }
 }
+/**
+ * Test Thermostat input
+ */
+TEST(XMLParser, thermostatTest) {
+  XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization1.xml");
+  LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
+  IContainer *container = &linkedCellsContainer;
+  Thermostat thermostat = xmlParser.initialiseThermostatFromXML(*container);
+
+  EXPECT_EQ(thermostat.getInitialTemperature(), 40);
+  EXPECT_EQ(thermostat.getTargetTemperature(), 40);
+  EXPECT_EQ(thermostat.getMaxTemperatureChange(), 400);
+  EXPECT_EQ(thermostat.getPeriodLength(), 1000);
+  EXPECT_EQ(thermostat.getDimensionCount(), 2);
+}

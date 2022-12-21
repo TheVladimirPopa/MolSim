@@ -76,3 +76,7 @@ double Thermostat::getCurrentTemperature() {
 }
 
 int Thermostat::getPeriodLength() const { return periodLength; }
+double Thermostat::getInitialTemperature() const { return initialTemperature; }
+double Thermostat::getTargetTemperature() const { return targetTemperature; }
+double Thermostat::getMaxTemperatureChange() const { return maxTemperatureChange; }
+size_t Thermostat::getDimensionCount() const { return dimensionCount; }

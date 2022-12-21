@@ -62,7 +62,6 @@ class Thermostat {
    * @return the current kinetic energy of all particles
    */
   double computeEnergy();
-
   /**
    * Returns the current temperature of the container
    * @return the current temperature of the container
@@ -74,4 +73,8 @@ class Thermostat {
    * @return how many iterations are between two thermostat applications
    */
   int getPeriodLength() const;
+  double getInitialTemperature() const;
+  double getTargetTemperature() const;
+  double getMaxTemperatureChange() const;
+  size_t getDimensionCount() const;
 };
