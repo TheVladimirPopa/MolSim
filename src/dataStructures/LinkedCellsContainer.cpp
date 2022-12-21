@@ -183,7 +183,7 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg, std::array<
   cells[index].particles.push_back(particlesVector.size() - 1);
 }
 
-void LinkedCellsContainer::push_back(Particle& particle)  {
+void LinkedCellsContainer::push_back(Particle &particle) {
   particlesVector.push_back(std::forward<Particle &>(particle));
   size_t index = getCellIndexOfPosition(particle.getX());
   cells[index].particles.push_back(particlesVector.size() - 1);

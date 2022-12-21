@@ -11,4 +11,3 @@ class LineProcessorCheckpoint : public ILineProcessor {
   template <std::size_t size>
   std::array<double, size> getNextArray(std::istringstream &dataStream);
 };
-

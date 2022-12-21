@@ -48,7 +48,7 @@ class IContainer {
    * Inserts a external particle into the container.
    * @param particle
    */
-  virtual void push_back(Particle& particle) = 0;
+  virtual void push_back(Particle &particle) = 0;
 
   /**
    * Returns the number of particles that can be held in currently allocated
