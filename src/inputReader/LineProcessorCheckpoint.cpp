@@ -8,10 +8,11 @@ using v3d = std::array<double, 3>;
 void LineProcessorCheckpoint::processLine(std::istringstream &s, IContainer &container) {
   Particle particle{};
 
-  // Changing the order of the following line, changes the order in which values are expected in the
-  // checkpoint input file
+  // Changing the order of the following lines, changes the order in which values are read from the input file
   particle.x = getNextArray<3>(s);
   particle.v = getNextArray<3>(s);
+  particle.old_f = getNextArray<3>(s);
+  particle.f = getNextArray<3>(s);
   particle.m = getNext(s);
   particle.type = {static_cast<int>(getNext(s))};
   particle.epsilon = getNext(s);
@@ -23,12 +24,12 @@ void LineProcessorCheckpoint::processLine(std::istringstream &s, IContainer &con
 double LineProcessorCheckpoint::getNext(std::istringstream &dataStream) {
   double value{};
 
-  dataStream >> value;
-
   if (dataStream.eof()) {
     spdlog::error("Checkpointing file malformed. Exiting program.");
     exit(-1);
   }
+
+  dataStream >> value;
 
   return value;
 }
