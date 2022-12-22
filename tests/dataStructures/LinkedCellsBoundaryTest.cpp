@@ -215,7 +215,7 @@ class LinkedCellsReflectiveBoundary : public ::testing::Test {
   std::vector<v3d> testParticles;
 
   void SetUp() override {
-    epsilon = ReflectiveBoundary::reflectDistance / 5.0;
+    epsilon = ReflectiveBoundary::SIXTH_ROOT_OF_2 / 5.0;
     centerOffset = 5.0 - epsilon;
 
     testParticles = TestUtils::getTestPositions(centerOffset);
