@@ -65,7 +65,9 @@ void Thermostat::setTemperature(double currentTemperature, double newTemperature
 
 double Thermostat::computeEnergy() {
   double energy{0.};
-  std::function<void(Particle &)> energyCalc = [&energy](Particle &p) { energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.; };
+  std::function<void(Particle &)> energyCalc = [&energy](Particle &p) {
+    energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.;
+  };
   particleContainer.forEach(energyCalc);
 
   return energy;
