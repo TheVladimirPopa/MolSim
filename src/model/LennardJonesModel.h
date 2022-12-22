@@ -3,8 +3,8 @@
 
 class LennardJonesModel : public IModel {
  private:
-  /// The max distance between two particles where are force is applied
-  double cutOffRadius;
+  /// The max distance squared between two particles where are force is applied
+  double cutOffRadiusSquared;
 
   size_t hits{};
   size_t comparisons{};
@@ -18,7 +18,7 @@ class LennardJonesModel : public IModel {
    * @param cutOffRadius_ The max distance between two particles where are force
    * is applied, greater distances between particles the force is considered 0
    */
-  explicit LennardJonesModel(double cutOffRadius_) : cutOffRadius{cutOffRadius_ * cutOffRadius_} {}
+  explicit LennardJonesModel(double cutOffRadius_) : cutOffRadiusSquared{cutOffRadius_ * cutOffRadius_} {}
 
   virtual ~LennardJonesModel() = default;
 
