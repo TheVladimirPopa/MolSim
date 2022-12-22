@@ -270,10 +270,10 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
       EXPECT_EQ(positionSigns, invForceSigns) << "Particle is not symmetrically reflected from boundaries.";
     }
 
-    double const expected = 7932629.5583620192;
+    double const expected = 7932629.5583620109;
     for (int i = 0; i < 3; i++) {
       auto const& f = particle.getF()[i];
-      bool correctAmountOfForce = (abs(f - expected) <= 0.00001 || abs(f - (-expected)) <= 0.00001 || f == 0);
+      bool correctAmountOfForce = (f == expected || f == -expected || f == 0);
 
       EXPECT_TRUE(correctAmountOfForce) << "Where force value: " << f << '\n'
                                         << "expected values: {" << expected << ", " << (-expected) << ", 0.0}";
