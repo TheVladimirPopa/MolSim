@@ -6,17 +6,6 @@
 using std::pow;
 
 /**
- * Worksheet 2 defines epsilon = 5.0 and sigma = 1.0 for the Lennard-Jones
- * potential. (This test might get removed in the future.)
- */
-TEST(LennardJonesModel, WorksheetParameters) {
-  LennardJonesModel model{100.};
-
-  EXPECT_EQ(model.getEpsilon(), 5.0) << "Worksheet 2 expects epsilon = 5.0";
-  EXPECT_EQ(model.getSigma(), 1.0) << "Worksheet 2 expects sigma = 1.0";
-}
-
-/**
  * Check if the applied forces have the correct sign on each particle.
  */
 TEST(LennardJonesModel, ForceCorrectSign) {
@@ -63,4 +52,38 @@ TEST(LennardJonesModel, ForcePrecalculatedExample) {
   EXPECT_NEAR(p1.getF()[0], expected_force[0], 0.00000000000001);
   EXPECT_NEAR(p1.getF()[0], expected_force[0], std::numeric_limits<double>::epsilon())
       << "Note: this last expect might assume unreasonable precision.";
+}
+
+/**
+ * Check if Lorentz-Berthelot mixing rules are applied
+ */
+TEST(LennardJonesModel, ForceMixingRules) {
+  VectorContainer c{};
+  double distance = 2.0;
+  Particle::registerParticleType(1, 99.0, 1.5);
+  Particle::registerParticleType(2, 1.0, 0.5);
+  Particle p1{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, 1.0, 1};
+  Particle p2{{distance, 0.0, 0.0}, {0.0, 0.0, 0.0}, 2.0, 2};
+
+  EXPECT_EQ(p1.getM(), 1.0);
+  EXPECT_EQ(p1.getEpsilon(), 99.0);
+  EXPECT_EQ(p1.getSigma(), 1.5);
+
+  EXPECT_EQ(p2.getM(), 2.0);
+  EXPECT_EQ(p2.getEpsilon(), 1.0);
+  EXPECT_EQ(p2.getSigma(), 0.5);
+
+  LennardJonesModel model{100.};
+  model.addForces(p1, p2);
+
+  // Epsilon mixing rule: sqrt(eps1 * eps2) = 10.0  (5.0 with default settings)
+  // Sigma mixing rule: (sig1 + sig2)/2 = 1.0
+  // => Expect 2 times the force of "ForcePrecalculatedExample" Test
+
+  std::array<double, 3> expected_force = {2 * 465.0 / 512.0, 0.0, 0.0};
+
+  for (size_t i = 0; i < 3; i++) {
+    EXPECT_NEAR(p1.getF().at(i), expected_force.at(i), 0.01);
+    EXPECT_NEAR(p2.getF().at(i), ((-1.0) * expected_force).at(i), 0.01);
+  }
 }

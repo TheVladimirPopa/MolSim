@@ -32,7 +32,7 @@ void Thermostat::initializeTemperature() {
   // Test if all velocities are 0
   bool allZero = true;
   std::array<double, 3> zeroVector{0., 0., 0.};
-  std::function allVelocitiesZero = [&allZero, &zeroVector](Particle &p) {
+  std::function<void(Particle &)> allVelocitiesZero = [&allZero, &zeroVector](Particle &p) {
     if (allZero && !(p.v == zeroVector)) {
       allZero = false;
     }
@@ -44,7 +44,7 @@ void Thermostat::initializeTemperature() {
     // motion
     auto initTemp = initialTemperature;
     auto dimCount = dimensionCount;
-    std::function applyBrownianMotion = [initTemp, dimCount](Particle &p) {
+    std::function<void(Particle &)> applyBrownianMotion = [initTemp, dimCount](Particle &p) {
       double meanVel = std::sqrt(initTemp / p.m);
       p.v = maxwellBoltzmannDistributedVelocity(meanVel, dimCount);
     };
@@ -58,14 +58,16 @@ void Thermostat::setTemperature(double currentTemperature, double newTemperature
   spdlog::debug("Set temperature to {} from {}", newTemperature, currentTemperature);
 
   double scaleFactor = sqrt(newTemperature / currentTemperature);
-  std::function scaleVelocity = [scaleFactor](Particle &p) { p.v = scaleFactor * p.v; };
+  std::function<void(Particle &)> scaleVelocity = [scaleFactor](Particle &p) { p.v = scaleFactor * p.v; };
 
   particleContainer.forEach(scaleVelocity);
 }
 
 double Thermostat::computeEnergy() {
   double energy{0.};
-  std::function energyCalc = [&energy](Particle &p) { energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.; };
+  std::function<void(Particle &)> energyCalc = [&energy](Particle &p) {
+    energy += (p.m * ArrayUtils::dotProduct(p.v)) / 2.;
+  };
   particleContainer.forEach(energyCalc);
 
   return energy;
@@ -76,3 +78,7 @@ double Thermostat::getCurrentTemperature() {
 }
 
 int Thermostat::getPeriodLength() const { return periodLength; }
+double Thermostat::getInitialTemperature() const { return initialTemperature; }
+double Thermostat::getTargetTemperature() const { return targetTemperature; }
+double Thermostat::getMaxTemperatureChange() const { return maxTemperatureChange; }
+size_t Thermostat::getDimensionCount() const { return dimensionCount; }

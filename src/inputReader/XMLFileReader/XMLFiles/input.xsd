@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!--Simulation-->
+    <xsd:complexType name="simulation_t">
+        <xsd:sequence>
+            <xsd:element name="Particle" type="particle_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="SimTypes" type="simTypes_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Container_T" type="containerTypes_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="endTime" type="xsd:double" use="required"/>
+        <xsd:attribute name="deltaT" type="xsd:double" use="required"/>
+        <xsd:attribute name="writeOutFrequency" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="filename" type="xsd:string" use="required"/>
+        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
+        <xsd:attribute name="gravity" type="xsd:double" use="required"/>
+    </xsd:complexType>
+    <xsd:element name="Simulation_XML" type="simulation_t"/>
+
+    <!--Int Array-->
+    <xsd:complexType name="array_i">
+        <xsd:attribute name="x" type="xsd:int" use="required"/>
+        <xsd:attribute name="y" type="xsd:int" use="required"/>
+        <xsd:attribute name="z" type="xsd:int" use="required"/>
+    </xsd:complexType>
+
+    <!-- Double Array -->
+    <xsd:complexType name="array_d">
+        <xsd:attribute name="x" type="xsd:double" use="required"/>
+        <xsd:attribute name="y" type="xsd:double" use="required"/>
+        <xsd:attribute name="z" type="xsd:double" use="required"/>
+    </xsd:complexType>
+
+    <!-- Cuboid -->
+    <xsd:complexType name="cuboid_t">
+        <xsd:sequence>
+            <xsd:element name="position" type="array_d"/>
+            <xsd:element name="dimension" type="array_i"/>
+            <xsd:element name="velocity" type="array_d"/>
+        </xsd:sequence>
+        <xsd:attribute name="distance" type="xsd:double" use="required"/>
+        <xsd:attribute name="mass" type="xsd:double" use="required"/>
+        <xsd:attribute name="type" type="xsd:int" use="required"/>
+
+    </xsd:complexType>
+
+    <!-- Sphere-->
+    <xsd:complexType name="sphere_t">
+        <xsd:sequence>
+            <xsd:element name="position" type="array_d"/>
+            <xsd:element name="velocity" type="array_d"/>
+        </xsd:sequence>
+
+        <xsd:attribute name="radius" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="dimension" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="distance" type="xsd:double" use="required"/>
+        <xsd:attribute name="mass" type="xsd:double" use="required"/>
+        <xsd:attribute name="type" type="xsd:int" use="required"/>
+    </xsd:complexType>
+
+    <!--    SimTypes-->
+    <xsd:complexType name="simTypes_t">
+        <xsd:sequence>
+            <xsd:element name="Cuboid" type="cuboid_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Sphere" type="sphere_t" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Input -->
+    <xsd:complexType name="input_t">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- Container Types -->
+    <xsd:complexType name="containerTypes_t">
+        <xsd:sequence>
+            <xsd:element name="LinkedCell" type="linkedCellContainer_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="VectorCont" type="vectorContainer_t" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Linked Cells Container-->
+    <xsd:complexType name="linkedCellContainer_t">
+        <xsd:sequence>
+            <xsd:element name="leftLowerBound" type="array_d"/>
+            <xsd:element name="rightUpperBound" type="array_d"/>
+            <xsd:element name="left" type="boundary_t"/>
+            <xsd:element name="right" type="boundary_t"/>
+            <xsd:element name="top" type="boundary_t"/>
+            <xsd:element name="bottom" type="boundary_t"/>
+            <xsd:element name="front" type="boundary_t"/>
+            <xsd:element name="back" type="boundary_t"/>
+        </xsd:sequence>
+        <xsd:attribute name="cellSize" type="xsd:double" use="required"/>
+    </xsd:complexType>
+
+    <!-- Vector Container-->
+    <xsd:complexType name="vectorContainer_t"/>
+
+    <!--  Boundary Type  -->
+    <xsd:simpleType name="boundary_t">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OUTFLOW"/>
+            <xsd:enumeration value="REFLECT"/>
+            <xsd:enumeration value="PERIODIC"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--  Thermostat Type  -->
+    <xsd:complexType name="thermostat_t">
+        <xsd:attribute name="initialTemp" type="xsd:double"/>
+        <xsd:attribute name="targetTemp" type="xsd:double"/>
+        <xsd:attribute name="maxTempChange" type="xsd:double"/>
+        <xsd:attribute name="periodLength" type="xsd:int"/>
+        <xsd:attribute name="dimension" type="xsd:int"/>
+    </xsd:complexType>
+
+    <!--  Particle Type  -->
+    <xsd:complexType name="particle_t">
+        <xsd:attribute name="id" type="xsd:int"/>
+        <xsd:attribute name="epsilon" type="xsd:double"/>
+        <xsd:attribute name="sigma" type="xsd:double"/>
+    </xsd:complexType>
+
+</xsd:schema>

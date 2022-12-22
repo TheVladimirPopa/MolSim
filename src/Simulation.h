@@ -22,8 +22,11 @@ class Simulation {
    * @param fileWriter A way of outputting the results every nth iterations to a
    * file
    * @param thermostat The thermostat that controls the temperature
+   * @param gravitationalConstant The factor of the gravitational force that gets applied
+   * to a particle every iteration
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat);
+  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
+                double gravitationalConstant = 0.0);
 
   /**
    * Sets the time until the simulation is run
@@ -58,6 +61,22 @@ class Simulation {
    * @return The time until the simulation is run
    */
   double getEndTime() const { return endTime; };
+  /**
+   * Returns the frequency of file writing
+   * @return the frequency of file writing
+   */
+  unsigned int getWriteOutFrequency() const { return writeOutFrequency; }
+  /**
+   * Returns the prefix of the output files
+   * @return the prefix of the output files
+   */
+  const std::string getFilename() const { return filename; }
+
+  /**
+   * Returns the total position updates of all particles
+   * @return the total position updates of all particles
+   */
+  size_t getMoleculeUpdateCount() const { return moleculeUpdateCount; }
 
  private:
   /**
@@ -82,4 +101,9 @@ class Simulation {
    * Path to output file (default "MD_vtk")
    */
   std::string filename = "MD_vtk";
+
+  /**
+   * Counts the total position updates of all particles
+   */
+  size_t moleculeUpdateCount = 0;
 };

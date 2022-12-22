@@ -6,17 +6,27 @@
 
 #include "spdlog/spdlog.h"
 
-void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat) {
+void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
+                          double gravitationalConstant) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
 
+  size_t updateCount = 0;
+
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;
-  std::function updateX{[&model](P p) { model.updateX(std::forward<P>(p)); }};
-  std::function updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
-  std::function updateF{[](P p) { p.updateForces(); }};
-  std::function addForces{[&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
+  std::function<void(P)> updateX{[&model, &updateCount](P p) {
+    model.updateX(std::forward<P>(p));
+    ++updateCount;
+  }};
+  std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
+  std::function<void(P)> updateF{[gravitationalConstant](P p) {
+    p.updateForces();
+    p.f[1] += p.m * gravitationalConstant;
+  }};
+  std::function<void(P, P)> addForces{
+      [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
 
   // Initialize the container to the temperature
   thermostat.initializeTemperature();
@@ -43,4 +53,5 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     current_time += deltaT;
     iteration++;
   }
+  moleculeUpdateCount = updateCount;
 }

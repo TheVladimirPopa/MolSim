@@ -9,6 +9,7 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
 
 class IModel;
 class NewtonsLawModel;
@@ -49,10 +50,47 @@ class Particle {
   int type;
 
   /**
+   * Lennard Jones depth of potential well
+   */
+  double epsilon;
+
+  /**
+   * Lennard Jones distance at which particle-particle potential energy is 0 / size of the particle
+   */
+  double sigma;
+
+  /**
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
    */
   bool isDeleted_;
+
+  struct ParticleType {
+    double const epsilon;
+    double const sigma;
+  };
+
+  static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
+
+  /**
+   * Get the ParticleType containing the Lennard-Jones parameters.
+   * @param type The integer type a ParticleType was registered for
+   * @return ParticleType containing the epsilon and sigma for the particle.
+   * Returns the default values epsilon=5.0 and sigma=1.0 when the type is not registered.
+   */
+  ParticleType getLJParticleType(int type);
+
+  /**
+   * @param type Integer type of particle
+   * @return Lennard Jones depth of potential well
+   */
+  double getLJEpsilon(int type) { return getLJParticleType(type).epsilon; }
+
+  /**
+   * @param type Integer type of particle
+   * @return Sigma parameter aka. size of particle
+   */
+  double getLJSigma(int type) { return getLJParticleType(type).sigma; }
 
  public:
   explicit Particle(int type = 0);
@@ -80,6 +118,10 @@ class Particle {
 
   int getType() const;
 
+  double getEpsilon() const { return epsilon; };
+
+  double getSigma() const { return sigma; };
+
   bool operator==(Particle &other);
 
   std::string toString() const;
@@ -90,6 +132,7 @@ class Particle {
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
   friend class Thermostat;
+  friend class Simulation;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can
@@ -107,6 +150,15 @@ class Particle {
    * Deleted particle by setting it's deletion state.
    */
   void deleteParticle() { isDeleted_ = true; }
+
+  /**
+   * Registers a new particle type. This is used to ensure that each particle of the same type, gets the same
+   * Lennard-Jones parameters.
+   * @param type Type for which Lennard-Jones parameters get registered
+   * @param epsilon Lennard-Jones epsilon parameter
+   * @param sigma Lennard-Jones sigma parameter
+   */
+  static void registerParticleType(int type, double epsilon, double sigma);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

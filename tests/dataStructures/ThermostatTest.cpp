@@ -29,7 +29,7 @@ TEST(Thermostat, ComputeEnergy) {
 TEST(Thermostat, ComputeTemperature) {
   VectorContainer container{};
   container.emplace_back(v3d{0., 0., 0.}, v3d{1., 2., 2.}, 3.0,
-                         1);  // Ekin=13.5
+                         1);                                         // Ekin=13.5
   container.emplace_back(v3d{0., 3., 0.}, v3d{5., 3., 4.}, 1.0, 1);  // Ekin=25
   container.emplace_back(v3d{0., 5., 0.}, v3d{1., 0., 0.}, 13.0,
                          1);  // Ekin=6.5
@@ -47,8 +47,7 @@ TEST(Thermostat, ComputeTemperature) {
  * temperature
  */
 TEST(Thermostat, VelocitiesScaledCorrectly) {
-  std::array<v3d, 3> velocities{v3d{1., 1., 1.}, v3d{0., 10., 0.},
-                                v3d{1., 0., 0.}};
+  std::array<v3d, 3> velocities{v3d{1., 1., 1.}, v3d{0., 10., 0.}, v3d{1., 0., 0.}};
   VectorContainer container{};
   container.emplace_back(v3d{0., 0., 0.}, v3d{1., 1., 1.}, 2.0, 1);   // Ekin=3
   container.emplace_back(v3d{0., 3., 0.}, v3d{0., 10., 0.}, 1.0, 1);  // Ekin=50
@@ -62,16 +61,14 @@ TEST(Thermostat, VelocitiesScaledCorrectly) {
 
   EXPECT_EQ(thermostatDoNothing.getCurrentTemperature(), 12.);
   for (auto &p : container.getVector()) {
-    EXPECT_TRUE((p.getV() == velocities[0]) || (p.getV() == velocities[1]) ||
-                (p.getV() == velocities[2]));
+    EXPECT_TRUE((p.getV() == velocities[0]) || (p.getV() == velocities[1]) || (p.getV() == velocities[2]));
   }
 
   Thermostat thermostatHalfVelocity{container, 0., 3., 100., 0, 3};
   thermostatHalfVelocity.applyThermostat();
   EXPECT_EQ(thermostatHalfVelocity.getCurrentTemperature(), 3.);
   for (auto &p : container.getVector()) {
-    EXPECT_TRUE((p.getV() == 0.5 * velocities[0]) ||
-                (p.getV() == 0.5 * velocities[1]) ||
+    EXPECT_TRUE((p.getV() == 0.5 * velocities[0]) || (p.getV() == 0.5 * velocities[1]) ||
                 (p.getV() == 0.5 * velocities[2]));
   }
 
@@ -79,8 +76,7 @@ TEST(Thermostat, VelocitiesScaledCorrectly) {
 
   EXPECT_EQ(thermostatDoNothing.getCurrentTemperature(), 12.);
   for (auto &p : container.getVector()) {
-    EXPECT_TRUE((p.getV() == velocities[0]) || (p.getV() == velocities[1]) ||
-                (p.getV() == velocities[2]));
+    EXPECT_TRUE((p.getV() == velocities[0]) || (p.getV() == velocities[1]) || (p.getV() == velocities[2]));
   }
 }
 

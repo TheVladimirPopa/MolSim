@@ -31,10 +31,12 @@ void VTKWriter::initializeOutput(int numParticles) {
   // per point, we add type, position, velocity and force
   PointData pointData;
   DataArray_t mass(type::Float32, "mass", 1);
+  DataArray_t sigma(type::Float32, "sigma", 1);
   DataArray_t velocity(type::Float32, "velocity", 3);
   DataArray_t forces(type::Float32, "force", 3);
   DataArray_t type(type::Int32, "type", 1);
   pointData.DataArray().push_back(mass);
+  pointData.DataArray().push_back(sigma);
   pointData.DataArray().push_back(velocity);
   pointData.DataArray().push_back(forces);
   pointData.DataArray().push_back(type);
@@ -78,6 +80,9 @@ void VTKWriter::plotParticle(Particle &p) {
 
   dataIterator->push_back(p.getM());
   // cout << "Appended mass data in: " << dataIterator->Name();
+  dataIterator++;
+  dataIterator->push_back(p.getSigma());
+  // cout << "Appended sigma data in: " << dataIterator->Name();
 
   dataIterator++;
   dataIterator->push_back(p.getV()[0]);

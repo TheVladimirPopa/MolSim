@@ -2,11 +2,13 @@
 // Created by leo on 01.11.22.
 //
 #pragma once
+#include <fstream>
 #include <functional>
 #include <vector>
 
 #include "IContainer.h"
 #include "Particle.h"
+#include "utils/ArrayUtils.h"
 
 /**  \image html runtime-directsum.png width=900px
  *    \image latex runtime-directsum.png "Runtime" width = [goodwidth]cm

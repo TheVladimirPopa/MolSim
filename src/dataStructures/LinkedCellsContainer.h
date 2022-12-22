@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <list>
 #include <memory>
 #include <stdexcept>
@@ -156,9 +157,24 @@ class LinkedCellsContainer : public IContainer {
    * @return boundaries
    */
   std::vector<LinkedCellsBoundary> &getBoundaries() { return boundaries; }
-
   /**
    * @return Cell dimensions in number of cells per dimension
    */
   std::array<unsigned int, 3> getDimensions() { return dimensions; }
+
+  /**
+   * Returns the size of the grid of the LinkedCells container
+   * @return the grid size
+   */
+  [[nodiscard]] double getGridSize() const { return gridSize; }
+  /**
+   * Returns the left lower corner bound of the LinkedCells container
+   * @return the leftLowerCorner
+   */
+  [[nodiscard]] std::array<double, 3> getLeftLowerCorner() const { return leftLowerCorner; }
+  /**
+   * Returns the right upper corner bound of the LinkedCells container
+   * @return the rightUpperCorner
+   */
+  [[nodiscard]] std::array<double, 3> getRightUpperCorner() const { return rightUpperCorner; }
 };

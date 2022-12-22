@@ -3,14 +3,14 @@
 
 class LennardJonesModel : public IModel {
  private:
-  constexpr static double epsilon = 5.0;
-  constexpr static double sigma = 1.0;
-
   /// The max distance between two particles where are force is applied
   double cutOffRadius;
 
   size_t hits{};
   size_t comparisons{};
+
+ public:
+  void setCutOffRadius(double cutOffRadius);
 
  public:
   /**
@@ -29,10 +29,6 @@ class LennardJonesModel : public IModel {
    * @param p2 The particle which influences particle p1
    */
   void addForces(Particle &p1, Particle &p2) override;
-
-  double getEpsilon() const { return epsilon; }
-
-  double getSigma() const { return sigma; }
 
   size_t getHits() const { return hits; };
 

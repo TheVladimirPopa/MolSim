@@ -10,6 +10,7 @@
 #include "dataStructures/Particle.h"
 #include "dataStructures/VectorContainer.h"
 #include "inputReader/FileReader.h"
+#include "inputReader/XMLFileReader/XMLParser.h"
 #include "model/LennardJonesModel.h"
 #include "model/Thermostat.h"
 #include "outputWriter/NoWriter.h"
@@ -39,9 +40,12 @@ int main(int argc, char *argsv[]) {
   bool quietLog = false;
   bool performanceMeasure = false;
   bool hitRateMeasure = false;
+  bool xmlInput = false;
+  std::string xmlPath;
 
   int opt;
-  static struct option long_options[] = {{"output-file", required_argument, nullptr, 'o'},
+  static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
+                                         {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
@@ -55,7 +59,7 @@ int main(int argc, char *argsv[]) {
                                          {"help", no_argument, nullptr, 'h'},
                                          {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
@@ -78,6 +82,11 @@ int main(int argc, char *argsv[]) {
       }
       case 'f': {
         inputFile = optarg;
+        break;
+      }
+      case 'i': {
+        xmlInput = true;
+        xmlPath = optarg;
         break;
       }
       case 'e': {
@@ -167,8 +176,10 @@ int main(int argc, char *argsv[]) {
     }
   }
 
-  if (inputFile == nullptr) {
-    std::cout << "You have to specify an input file with -f flag" << std::endl;
+  if (inputFile == nullptr && !xmlInput) {
+    std::cout << "You have to specify an input file with -f flag or an xml "
+                 "file with the -i flag"
+              << std::endl;
     printUsage();
     return 1;
   }
@@ -201,42 +212,43 @@ int main(int argc, char *argsv[]) {
   spdlog::set_default_logger(std::make_shared<spdlog::logger>("", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
 
-  VectorContainer vectorContainer{};
-  std::array<double, 3> leftLowerCorner{-0.5, -0.5, -20};
-  std::array<double, 3> rightUpperCorner{120., 50., 50.};
+  IContainer *container;
+  std::array<double, 3> leftLowerCorner{-15., -20., -5};
+  std::array<double, 3> rightUpperCorner{55., 30., 5};
+  LinkedCellsContainer linkedContainer{10., leftLowerCorner, rightUpperCorner};
 
-  LinkedCellsContainer linkedCellsContainer{3., leftLowerCorner, rightUpperCorner};
+  if (!xmlInput) {
+    VectorContainer vectorContainer{};
 
-  linkedCellsContainer.setBoundaries({
-      {CubeSide::LEFT, BoundaryType::PERIODIC},
-      {CubeSide::RIGHT, BoundaryType::PERIODIC},
-      {CubeSide::TOP, BoundaryType::REFLECT},
-      {CubeSide::BOTTOM, BoundaryType::REFLECT},
-      {CubeSide::FRONT, BoundaryType::REFLECT},
-      {CubeSide::BACK, BoundaryType::REFLECT},
-  });
+    linkedContainer.setBoundaries({
+        {CubeSide::LEFT, BoundaryType::PERIODIC},
+        {CubeSide::RIGHT, BoundaryType::PERIODIC},
+        {CubeSide::TOP, BoundaryType::REFLECT},
+        {CubeSide::BOTTOM, BoundaryType::REFLECT},
+        {CubeSide::FRONT, BoundaryType::PERIODIC},
+        {CubeSide::BACK, BoundaryType::PERIODIC},
+    });
 
-  IContainer *container = &linkedCellsContainer;
+    container = &linkedContainer;
 
-  switch (simulationType) {
-    case simTypes::Single: {
-      FileReader::readFileSingle(*container, inputFile);
-      break;
-    }
-    case simTypes::Cuboid: {
-      FileReader::readFileCuboid(*container, inputFile);
-      break;
-    }
-    case simTypes::Sphere: {
-      FileReader::readFileSphere(*container, inputFile);
-      break;
+    switch (simulationType) {
+      case simTypes::Single: {
+        FileReader::readFileSingle(*container, inputFile);
+        break;
+      }
+      case simTypes::Cuboid: {
+        FileReader::readFileCuboid(*container, inputFile);
+        break;
+      }
+      case simTypes::Sphere: {
+        FileReader::readFileSphere(*container, inputFile);
+        break;
+      }
     }
   }
 
   LennardJonesModel model{3.};
   model.setDeltaT(simulation.getDeltaT());
-
-  Thermostat thermostat{*container, 20., 20., 5., 1000, 3};
 
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
@@ -259,21 +271,52 @@ int main(int argc, char *argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(model, *container, *selectedWriter, thermostat);
+  if (xmlInput) {
+    VectorContainer vectorContainer{};
+    XMLParser parser = XMLParser(xmlPath);
+    bool linkedCellsStrategy = parser.chooseStrategy();
+
+    parser.initialiseSimulationFromXML(simulation);
+
+    LinkedCellsContainer linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
+    model.setCutOffRadius(parser.initCutOffRadiusXML());
+    model.setDeltaT(simulation.getDeltaT());
+
+    parser.registerParticlesFromXML();
+
+    if (linkedCellsStrategy) {
+      parser.XMLLinkedCellBoundaries(linkedCellsContainer);
+      parser.initialiseSpheresFromXML(linkedCellsContainer);
+      parser.initialiseCuboidsFromXML(linkedCellsContainer);
+      container = &linkedCellsContainer;
+    } else {
+      parser.initialiseCuboidsFromXML(vectorContainer);
+      parser.initialiseSpheresFromXML(vectorContainer);
+      container = &vectorContainer;
+    }
+    Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
+    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML());
+  } else {
+    Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
+    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
+  }
 
   if (performanceMeasure) {
     auto endTime = std::chrono::steady_clock::now();
     auto durationSec = std::chrono::duration<double>{endTime - startTime}.count();
     auto iterationCount = std::ceil(simulation.getEndTime() / simulation.getDeltaT());
     std::cout << "Results of performance measurement\n"
-                 "Execution time       : "
+                 "Execution time:              "
               << durationSec
               << "s\n"
-                 "Number of iterations : "
-              << static_cast<unsigned long>(iterationCount)
+                 "Number of iterations:        "
+              << static_cast<unsigned long>(iterationCount) << "\n"
+              << "Number of molecule updates:  " << simulation.getMoleculeUpdateCount()
               << "\n"
-                 "Time per iteration   : "
-              << (durationSec / iterationCount) << "s" << std::endl;
+                 "Time per iteration:          "
+              << (durationSec / iterationCount) << "s\n"
+              << "Molecule Updates per second: "
+              << (static_cast<double>(simulation.getMoleculeUpdateCount()) / durationSec) << std::endl;
   }
   if (hitRateMeasure) {
     std::cout << "########################################################\n"
@@ -298,7 +341,7 @@ void printUsage() {
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-v] [-v] [-q]\n"
+               "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -346,7 +389,7 @@ void printHelp() {
                "                get written to a file (default is 10).\n"
                "        \n"
                "        -p, --performance\n"
-               "                Takes a performace measurement of the simulation, \n"
+               "                Takes a performance measurement of the simulation, \n"
                "                implicitly sets the -n flag and deactivates logging "
                "entirely.\n"
                "                \n"
@@ -367,6 +410,9 @@ void printHelp() {
                "                \n"
                "        -q, --quiet\n"
                "                Set loglevel to ERROR. Overrites -v.\n"
+               "\n"
+               "        -i <filepath>, --xml=<filepath>\n"
+               "                Use the XML file at the <filepath> as an input\n"
                "\n"
                "        -h, --help\n"
                "                Prints this help screen."

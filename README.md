@@ -1,4 +1,4 @@
-Molecular Simulation Assignment 1 Group D
+Molecular Simulation Group D
 ===
 ### Authors: Leo Pahl, Vladimir Popa, Jakob Semmler
 
@@ -9,6 +9,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 - [cmake](https://cmake.org/) (3.18.4)
 - [gcc](https://gcc.gnu.org/) (11.1.0)
 - [Doxygen](https://doxygen.nl/) (1.9) (_Not mandatory, only for documentation_)
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (0.29.1)
 
 ## Build
 1. Create `build` folder.
@@ -43,10 +44,13 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 
 ```
 Usage
-        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
+        ./MolSim -i <filepath> [-f <input-file>] [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
                                 [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-r] [-v] [-v] [-q]
 
 OPTIONS:
+        -i <filepath>, --xml=<filepath>
+                Use the given <filepath> of an XML file as an input for the simulation.
+
         -o <filepath>, --output-name=<filepath>
                 Use the given <filepath> as the path for 
                 the outputfiles(iteration number and file-ending are added automatically)
