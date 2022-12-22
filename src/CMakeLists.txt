@@ -29,6 +29,8 @@ target_link_libraries(MolSimLib
         spdlog::spdlog
         )
 
+target_compile_features(MolSimLib PRIVATE cxx_std_20)
+
 # create make target
 add_executable(MolSim "${CMAKE_CURRENT_SOURCE_DIR}/MolSim.cpp")
 
