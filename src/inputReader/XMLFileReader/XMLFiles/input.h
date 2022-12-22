@@ -1119,77 +1119,63 @@ class thermostat_t : public ::xml_schema::type {
   // initialTemp
   //
   typedef ::xml_schema::double_ initialTemp_type;
-  typedef ::xsd::cxx::tree::optional<initialTemp_type> initialTemp_optional;
   typedef ::xsd::cxx::tree::traits<initialTemp_type, char, ::xsd::cxx::tree::schema_type::double_> initialTemp_traits;
 
-  const initialTemp_optional& initialTemp() const;
+  const initialTemp_type& initialTemp() const;
 
-  initialTemp_optional& initialTemp();
+  initialTemp_type& initialTemp();
 
   void initialTemp(const initialTemp_type& x);
-
-  void initialTemp(const initialTemp_optional& x);
 
   // targetTemp
   //
   typedef ::xml_schema::double_ targetTemp_type;
-  typedef ::xsd::cxx::tree::optional<targetTemp_type> targetTemp_optional;
   typedef ::xsd::cxx::tree::traits<targetTemp_type, char, ::xsd::cxx::tree::schema_type::double_> targetTemp_traits;
 
-  const targetTemp_optional& targetTemp() const;
+  const targetTemp_type& targetTemp() const;
 
-  targetTemp_optional& targetTemp();
+  targetTemp_type& targetTemp();
 
   void targetTemp(const targetTemp_type& x);
-
-  void targetTemp(const targetTemp_optional& x);
 
   // maxTempChange
   //
   typedef ::xml_schema::double_ maxTempChange_type;
-  typedef ::xsd::cxx::tree::optional<maxTempChange_type> maxTempChange_optional;
   typedef ::xsd::cxx::tree::traits<maxTempChange_type, char, ::xsd::cxx::tree::schema_type::double_>
       maxTempChange_traits;
 
-  const maxTempChange_optional& maxTempChange() const;
+  const maxTempChange_type& maxTempChange() const;
 
-  maxTempChange_optional& maxTempChange();
+  maxTempChange_type& maxTempChange();
 
   void maxTempChange(const maxTempChange_type& x);
-
-  void maxTempChange(const maxTempChange_optional& x);
 
   // periodLength
   //
   typedef ::xml_schema::int_ periodLength_type;
-  typedef ::xsd::cxx::tree::optional<periodLength_type> periodLength_optional;
   typedef ::xsd::cxx::tree::traits<periodLength_type, char> periodLength_traits;
 
-  const periodLength_optional& periodLength() const;
+  const periodLength_type& periodLength() const;
 
-  periodLength_optional& periodLength();
+  periodLength_type& periodLength();
 
   void periodLength(const periodLength_type& x);
-
-  void periodLength(const periodLength_optional& x);
 
   // dimension
   //
   typedef ::xml_schema::int_ dimension_type;
-  typedef ::xsd::cxx::tree::optional<dimension_type> dimension_optional;
   typedef ::xsd::cxx::tree::traits<dimension_type, char> dimension_traits;
 
-  const dimension_optional& dimension() const;
+  const dimension_type& dimension() const;
 
-  dimension_optional& dimension();
+  dimension_type& dimension();
 
   void dimension(const dimension_type& x);
 
-  void dimension(const dimension_optional& x);
-
   // Constructors.
   //
-  thermostat_t();
+  thermostat_t(const initialTemp_type&, const targetTemp_type&, const maxTempChange_type&, const periodLength_type&,
+               const dimension_type&);
 
   thermostat_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
@@ -1207,11 +1193,11 @@ class thermostat_t : public ::xml_schema::type {
   void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  initialTemp_optional initialTemp_;
-  targetTemp_optional targetTemp_;
-  maxTempChange_optional maxTempChange_;
-  periodLength_optional periodLength_;
-  dimension_optional dimension_;
+  ::xsd::cxx::tree::one<initialTemp_type> initialTemp_;
+  ::xsd::cxx::tree::one<targetTemp_type> targetTemp_;
+  ::xsd::cxx::tree::one<maxTempChange_type> maxTempChange_;
+  ::xsd::cxx::tree::one<periodLength_type> periodLength_;
+  ::xsd::cxx::tree::one<dimension_type> dimension_;
 };
 
 class particle_t : public ::xml_schema::type {
@@ -1219,48 +1205,39 @@ class particle_t : public ::xml_schema::type {
   // id
   //
   typedef ::xml_schema::int_ id_type;
-  typedef ::xsd::cxx::tree::optional<id_type> id_optional;
   typedef ::xsd::cxx::tree::traits<id_type, char> id_traits;
 
-  const id_optional& id() const;
+  const id_type& id() const;
 
-  id_optional& id();
+  id_type& id();
 
   void id(const id_type& x);
-
-  void id(const id_optional& x);
 
   // epsilon
   //
   typedef ::xml_schema::double_ epsilon_type;
-  typedef ::xsd::cxx::tree::optional<epsilon_type> epsilon_optional;
   typedef ::xsd::cxx::tree::traits<epsilon_type, char, ::xsd::cxx::tree::schema_type::double_> epsilon_traits;
 
-  const epsilon_optional& epsilon() const;
+  const epsilon_type& epsilon() const;
 
-  epsilon_optional& epsilon();
+  epsilon_type& epsilon();
 
   void epsilon(const epsilon_type& x);
-
-  void epsilon(const epsilon_optional& x);
 
   // sigma
   //
   typedef ::xml_schema::double_ sigma_type;
-  typedef ::xsd::cxx::tree::optional<sigma_type> sigma_optional;
   typedef ::xsd::cxx::tree::traits<sigma_type, char, ::xsd::cxx::tree::schema_type::double_> sigma_traits;
 
-  const sigma_optional& sigma() const;
+  const sigma_type& sigma() const;
 
-  sigma_optional& sigma();
+  sigma_type& sigma();
 
   void sigma(const sigma_type& x);
 
-  void sigma(const sigma_optional& x);
-
   // Constructors.
   //
-  particle_t();
+  particle_t(const id_type&, const epsilon_type&, const sigma_type&);
 
   particle_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
@@ -1278,9 +1255,9 @@ class particle_t : public ::xml_schema::type {
   void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
 
  protected:
-  id_optional id_;
-  epsilon_optional epsilon_;
-  sigma_optional sigma_;
+  ::xsd::cxx::tree::one<id_type> id_;
+  ::xsd::cxx::tree::one<epsilon_type> epsilon_;
+  ::xsd::cxx::tree::one<sigma_type> sigma_;
 };
 
 #include <iosfwd>

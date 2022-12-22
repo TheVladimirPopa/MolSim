@@ -182,8 +182,7 @@ class XMLParser {
       auto periodLength = it.periodLength();
       auto dimension = it.dimension();
 
-      ThermostatArg thermostatArg{initialTemp.get(), targetTemp.get(), maxTempChange.get(), periodLength.get(),
-                                  dimension.get()};
+      ThermostatArg thermostatArg{initialTemp, targetTemp, maxTempChange, periodLength, dimension};
       return thermostatArg;
     }
     throw std::invalid_argument("XML Parser found no thermostat");
@@ -196,13 +195,7 @@ class XMLParser {
     std::vector<ParticleArg> particleArgs;
 
     for (auto &it : simulation->Particle()) {
-      auto id = it.id();
-      auto epsilon = it.epsilon();
-      auto sigma = it.sigma();
-
-      ParticleArg particleArg{id.get(), epsilon.get(), sigma.get()};
-
-      particleArgs.emplace_back(particleArg);
+      particleArgs.emplace_back(it.id(), it.epsilon(), it.sigma());
     }
 
     return particleArgs;
@@ -236,6 +229,14 @@ class XMLParser {
       cuboid.type = it.getType();
       ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
     }
+  }
+  /**
+   * Initialises the given string with the InputFile path for checkpointing
+   * @param checkpoint
+   */
+  void initCheckpoint(std::string &checkpoint) {
+    SimulationArg args = extractSimulation();
+    checkpoint = args.getInputFile();
   }
   /**
    * Adds all spheres read from the path file to a given LinkedCellsContainer
@@ -275,15 +276,20 @@ class XMLParser {
     }
   }
   /**
-   * Constructs a LinkedCellsContainer from the path file
+   * Constructs a LinkedCellsContainer from the path file if that container type is chosen
    * @return Returns a LinkedCellsContainer
    */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
-    LinkedCellArg linkedCellArg = extractLinkedCell();
-    std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
-    std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
+    if (chooseStrategy()) {
+      LinkedCellArg linkedCellArg = extractLinkedCell();
+      std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
+      std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
 
-    return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
+      return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
+    } else {
+      std::array<double, 3> zeroBound = {0., 0., 0.};
+      return LinkedCellsContainer{0, zeroBound, zeroBound};
+    }
   }
   /**
    * Constructs a thermostat from the path file and a given container

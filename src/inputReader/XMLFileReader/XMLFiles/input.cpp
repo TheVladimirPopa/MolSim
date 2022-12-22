@@ -401,72 +401,56 @@ boundary_t& boundary_t::operator=(value v) {
 // thermostat_t
 //
 
-const thermostat_t::initialTemp_optional& thermostat_t::initialTemp() const { return this->initialTemp_; }
+const thermostat_t::initialTemp_type& thermostat_t::initialTemp() const { return this->initialTemp_.get(); }
 
-thermostat_t::initialTemp_optional& thermostat_t::initialTemp() { return this->initialTemp_; }
+thermostat_t::initialTemp_type& thermostat_t::initialTemp() { return this->initialTemp_.get(); }
 
 void thermostat_t::initialTemp(const initialTemp_type& x) { this->initialTemp_.set(x); }
 
-void thermostat_t::initialTemp(const initialTemp_optional& x) { this->initialTemp_ = x; }
+const thermostat_t::targetTemp_type& thermostat_t::targetTemp() const { return this->targetTemp_.get(); }
 
-const thermostat_t::targetTemp_optional& thermostat_t::targetTemp() const { return this->targetTemp_; }
-
-thermostat_t::targetTemp_optional& thermostat_t::targetTemp() { return this->targetTemp_; }
+thermostat_t::targetTemp_type& thermostat_t::targetTemp() { return this->targetTemp_.get(); }
 
 void thermostat_t::targetTemp(const targetTemp_type& x) { this->targetTemp_.set(x); }
 
-void thermostat_t::targetTemp(const targetTemp_optional& x) { this->targetTemp_ = x; }
+const thermostat_t::maxTempChange_type& thermostat_t::maxTempChange() const { return this->maxTempChange_.get(); }
 
-const thermostat_t::maxTempChange_optional& thermostat_t::maxTempChange() const { return this->maxTempChange_; }
-
-thermostat_t::maxTempChange_optional& thermostat_t::maxTempChange() { return this->maxTempChange_; }
+thermostat_t::maxTempChange_type& thermostat_t::maxTempChange() { return this->maxTempChange_.get(); }
 
 void thermostat_t::maxTempChange(const maxTempChange_type& x) { this->maxTempChange_.set(x); }
 
-void thermostat_t::maxTempChange(const maxTempChange_optional& x) { this->maxTempChange_ = x; }
+const thermostat_t::periodLength_type& thermostat_t::periodLength() const { return this->periodLength_.get(); }
 
-const thermostat_t::periodLength_optional& thermostat_t::periodLength() const { return this->periodLength_; }
-
-thermostat_t::periodLength_optional& thermostat_t::periodLength() { return this->periodLength_; }
+thermostat_t::periodLength_type& thermostat_t::periodLength() { return this->periodLength_.get(); }
 
 void thermostat_t::periodLength(const periodLength_type& x) { this->periodLength_.set(x); }
 
-void thermostat_t::periodLength(const periodLength_optional& x) { this->periodLength_ = x; }
+const thermostat_t::dimension_type& thermostat_t::dimension() const { return this->dimension_.get(); }
 
-const thermostat_t::dimension_optional& thermostat_t::dimension() const { return this->dimension_; }
-
-thermostat_t::dimension_optional& thermostat_t::dimension() { return this->dimension_; }
+thermostat_t::dimension_type& thermostat_t::dimension() { return this->dimension_.get(); }
 
 void thermostat_t::dimension(const dimension_type& x) { this->dimension_.set(x); }
-
-void thermostat_t::dimension(const dimension_optional& x) { this->dimension_ = x; }
 
 // particle_t
 //
 
-const particle_t::id_optional& particle_t::id() const { return this->id_; }
+const particle_t::id_type& particle_t::id() const { return this->id_.get(); }
 
-particle_t::id_optional& particle_t::id() { return this->id_; }
+particle_t::id_type& particle_t::id() { return this->id_.get(); }
 
 void particle_t::id(const id_type& x) { this->id_.set(x); }
 
-void particle_t::id(const id_optional& x) { this->id_ = x; }
+const particle_t::epsilon_type& particle_t::epsilon() const { return this->epsilon_.get(); }
 
-const particle_t::epsilon_optional& particle_t::epsilon() const { return this->epsilon_; }
-
-particle_t::epsilon_optional& particle_t::epsilon() { return this->epsilon_; }
+particle_t::epsilon_type& particle_t::epsilon() { return this->epsilon_.get(); }
 
 void particle_t::epsilon(const epsilon_type& x) { this->epsilon_.set(x); }
 
-void particle_t::epsilon(const epsilon_optional& x) { this->epsilon_ = x; }
+const particle_t::sigma_type& particle_t::sigma() const { return this->sigma_.get(); }
 
-const particle_t::sigma_optional& particle_t::sigma() const { return this->sigma_; }
-
-particle_t::sigma_optional& particle_t::sigma() { return this->sigma_; }
+particle_t::sigma_type& particle_t::sigma() { return this->sigma_.get(); }
 
 void particle_t::sigma(const sigma_type& x) { this->sigma_.set(x); }
-
-void particle_t::sigma(const sigma_optional& x) { this->sigma_ = x; }
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
@@ -1574,13 +1558,15 @@ const boundary_t::value boundary_t::_xsd_boundary_t_indexes_[3] = {::boundary_t:
 // thermostat_t
 //
 
-thermostat_t::thermostat_t()
+thermostat_t::thermostat_t(const initialTemp_type& initialTemp, const targetTemp_type& targetTemp,
+                           const maxTempChange_type& maxTempChange, const periodLength_type& periodLength,
+                           const dimension_type& dimension)
     : ::xml_schema::type(),
-      initialTemp_(this),
-      targetTemp_(this),
-      maxTempChange_(this),
-      periodLength_(this),
-      dimension_(this) {}
+      initialTemp_(initialTemp, this),
+      targetTemp_(targetTemp, this),
+      maxTempChange_(maxTempChange, this),
+      periodLength_(periodLength, this),
+      dimension_(dimension, this) {}
 
 thermostat_t::thermostat_t(const thermostat_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c),
@@ -1633,6 +1619,26 @@ void thermostat_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
       continue;
     }
   }
+
+  if (!initialTemp_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("initialTemp", "");
+  }
+
+  if (!targetTemp_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("targetTemp", "");
+  }
+
+  if (!maxTempChange_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("maxTempChange", "");
+  }
+
+  if (!periodLength_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("periodLength", "");
+  }
+
+  if (!dimension_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("dimension", "");
+  }
 }
 
 thermostat_t* thermostat_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
@@ -1657,7 +1663,8 @@ thermostat_t::~thermostat_t() {}
 // particle_t
 //
 
-particle_t::particle_t() : ::xml_schema::type(), id_(this), epsilon_(this), sigma_(this) {}
+particle_t::particle_t(const id_type& id, const epsilon_type& epsilon, const sigma_type& sigma)
+    : ::xml_schema::type(), id_(id, this), epsilon_(epsilon, this), sigma_(sigma, this) {}
 
 particle_t::particle_t(const particle_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c), id_(x.id_, f, this), epsilon_(x.epsilon_, f, this), sigma_(x.sigma_, f, this) {}
@@ -1689,6 +1696,18 @@ void particle_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flag
       this->sigma_.set(sigma_traits::create(i, f, this));
       continue;
     }
+  }
+
+  if (!id_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("id", "");
+  }
+
+  if (!epsilon_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("epsilon", "");
+  }
+
+  if (!sigma_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("sigma", "");
   }
 }
 

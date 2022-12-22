@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "ILineProcessor.h"
+#include "LineProcessorCheckpoint.h"
 #include "LineProcessorCuboid.h"
 #include "LineProcessorSingle.h"
 #include "LineProcessorSphere.h"
@@ -53,6 +54,18 @@ class FileReader {
    */
   static void readFileSphere(IContainer &particles, char *filename) {
     LineProcessorSphere lineProcessor{};
+    readFile(particles, filename, lineProcessor);
+  }
+
+  /**
+   * Reads in a file with particles packed in spheres and emplaces the read
+   * particles in the ParticleContainer
+   * @param particles The particleContainer in which the particles get emplaced
+   * @param filename Path to the input file, see cuboid-format specified in
+   * README.md
+   */
+  static void readFileCheckpoint(IContainer &particles, char *filename) {
+    LineProcessorCheckpoint lineProcessor{};
     readFile(particles, filename, lineProcessor);
   }
 

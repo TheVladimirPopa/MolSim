@@ -20,6 +20,7 @@ Particle::Particle(int type_arg) {
   m = 0.0;
   f = {0., 0., 0.};
   old_f = {0., 0., 0.};
+  m = 1.0;
   epsilon = getLJEpsilon(type_arg);
   sigma = getLJSigma(type_arg);
 }

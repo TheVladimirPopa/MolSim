@@ -42,9 +42,13 @@ int main(int argc, char *argsv[]) {
   bool hitRateMeasure = false;
   bool xmlInput = false;
   std::string xmlPath;
+  bool readFromCheckpoint = false;
+  bool saveCheckpoint = false;
 
   int opt;
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
+                                         {"export-checkpoint", no_argument, nullptr, 's'},
+                                         {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
                                          {"type", required_argument, nullptr, 't'},
@@ -59,7 +63,7 @@ int main(int argc, char *argsv[]) {
                                          {"help", no_argument, nullptr, 'h'},
                                          {nullptr, 0, nullptr, 0}};
 
-  while ((opt = getopt_long(argc, argsv, "i:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "sci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         simulation.setFilename(optarg);
@@ -87,6 +91,10 @@ int main(int argc, char *argsv[]) {
       case 'i': {
         xmlInput = true;
         xmlPath = optarg;
+        break;
+      }
+      case 'c': {
+        readFromCheckpoint = true;
         break;
       }
       case 'e': {
@@ -124,6 +132,10 @@ int main(int argc, char *argsv[]) {
           return 1;
         }
 
+        break;
+      }
+      case 's': {
+        saveCheckpoint = true;
         break;
       }
       case 'w': {
@@ -284,8 +296,12 @@ int main(int argc, char *argsv[]) {
 
     parser.registerParticlesFromXML();
 
+    std::string checkpointFile = "./checkpoint.txt";
+    parser.initCheckpoint(checkpointFile);
+
     if (linkedCellsStrategy) {
       parser.XMLLinkedCellBoundaries(linkedCellsContainer);
+
       parser.initialiseSpheresFromXML(linkedCellsContainer);
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
       container = &linkedCellsContainer;
@@ -294,8 +310,11 @@ int main(int argc, char *argsv[]) {
       parser.initialiseSpheresFromXML(vectorContainer);
       container = &vectorContainer;
     }
+
+    if (readFromCheckpoint) FileReader::readFileCheckpoint(*container, checkpointFile.data());
+
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
-    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML());
+    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
   } else {
     Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
     simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
@@ -341,7 +360,7 @@ void printUsage() {
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-v] [-v] [-q] [-x]\n"
+               "[-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -355,6 +374,17 @@ void printHelp() {
                "[-n] [-p] [-r] [-v] [-v] [-q]\n"
                "\n"
                "OPTIONS:\n"
+               "        -i <filepath>, --xml=<filepath>\n"
+               "                Use the given <filepath> of an XML file as an input for the simulation.\n"
+               "        \n"
+               "        -s, --export-checkpoint\n"
+               "                When set, the state of the particles after the simulation are saved to\n"
+               "                the file ./checkpoint.txt\n"
+               "                \n"
+               "        -c, --input-checkpoint\n"
+               "                When set, a previous checkpoint is taken as an input, in addition to the \n"
+               "                XML input\n"
+               "\n"
                "        -o <filepath>, --output-name=<filepath>\n"
                "                Use the given <filepath> as the path for \n"
                "                the outputfiles(iteration number and file-ending are "
@@ -410,9 +440,6 @@ void printHelp() {
                "                \n"
                "        -q, --quiet\n"
                "                Set loglevel to ERROR. Overrites -v.\n"
-               "\n"
-               "        -i <filepath>, --xml=<filepath>\n"
-               "                Use the XML file at the <filepath> as an input\n"
                "\n"
                "        -h, --help\n"
                "                Prints this help screen."

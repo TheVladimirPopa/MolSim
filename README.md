@@ -1,17 +1,21 @@
 Molecular Simulation Group D
 ===
+
 ### Authors: Leo Pahl, Vladimir Popa, Jakob Semmler
 
-This is the first assignment as part of the Scientific Computing (PSE) Molecular Dynamics (IN0012, IN4229) practical course. The template this code is based on
+This is the first assignment as part of the Scientific Computing (PSE) Molecular Dynamics (IN0012, IN4229) practical
+course. The template this code is based on
 can be found [here](https://github.com/TUM-I5/MolSim).
 
 ## Requirements
+
 - [cmake](https://cmake.org/) (3.18.4)
 - [gcc](https://gcc.gnu.org/) (11.1.0)
 - [Doxygen](https://doxygen.nl/) (1.9) (_Not mandatory, only for documentation_)
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (0.29.1)
 
 ## Build
+
 1. Create `build` folder.
 
     ``` bash
@@ -45,11 +49,19 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 ```
 Usage
         ./MolSim -i <filepath> [-f <input-file>] [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
-                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-r] [-v] [-v] [-q]
+                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q]
 
 OPTIONS:
         -i <filepath>, --xml=<filepath>
                 Use the given <filepath> of an XML file as an input for the simulation.
+        
+        -s, --export-checkpoint
+                When set, the state of the particles after the simulation are saved to
+                the file ./checkpoint.txt
+                
+        -c, --input-checkpoint
+                When set, a previous checkpoint is taken as an input, in addition to the 
+                XML input
 
         -o <filepath>, --output-name=<filepath>
                 Use the given <filepath> as the path for 
@@ -104,7 +116,7 @@ Running the target with faulty parameters will return an appropriate message.
 
 ## Input file format
 
-We currently support two different file-formats. For both of them holds:
+We support two different file-formats (along with the XML file input). For both of them holds:
 
 - Lines of comment start with '#' and are only allowed at the beginning of the file
 - Empty lines are not allowed.
@@ -147,6 +159,65 @@ A line of molecule data consists of:
 
 For example: `4.0 15.0 0.0    0.0 -10.0 0.0    6         2            1.1225          1.0         2`
 
+## XML File Format
+
+We support XML file input. The file has to include:
+
+* the simulation parameters (endTime, deltaT, writeOutFrequency, filename, cutOffRadius, gravity)
+* _(optional)_ preinitialised particles
+* a simulationType (containing either Cuboids or Spheres)
+* a containerType, describing the strategy used (either LinkedCell for the linkedCells algorithm or VectorContainer for
+  DirectSum)
+* when using the linkedCellsContainer cellSize and boundaries have to be specified
+* a thermostat with the appropriate parameters (initialTemp, targetTemp, maxChangeTemp, periodLength, dimension)
+* an input file (by default checkpoint.txt, in order to perform checkpointing)
+
+The following is an example of how an XML input file (e.g. for cuboid in the file ```./input/input_xml_example```:
+```xml
+
+<Simulation_XML endTime="10.0" deltaT="0.0005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
+                gravity="-12.44">
+
+    <Particle id="0" epsilon="1.0" sigma="1.0"/>
+    <Particle id="1" epsilon="1.0" sigma="0.9412"/>
+
+    <SimTypes>
+        <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
+            <position x="0.0" y="0.0" z="0.0"/>
+            <velocity x="0.0" y="0.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="0">
+            <position x="4.0" y="15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+
+        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="1">
+            <position x="4.0" y="-15.0" z="0.0"/>
+            <velocity x="0.0" y="-10.0" z="0.0"/>
+        </Sphere>
+
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="10.0">
+            <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
+            <rightUpperBound x="55.0" y="30.0" z="5"/>
+            <left>REFLECT</left>
+            <right>REFLECT</right>
+            <top>PERIODIC</top>
+            <bottom>REFLECT</bottom>
+            <front>REFLECT</front>
+            <back>REFLECT</back>
+        </LinkedCell>
+    </Container_T>
+
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
+
+    <InputFile path="./checkpoint.txt"/>
+</Simulation_XML>
+```
+
 ## Visualisation (_optional_)
 
 In order to visualize the results of the simulation, open [Paraview](https://www.paraview.org/).
@@ -163,6 +234,7 @@ In order to visualize the results of the simulation, open [Paraview](https://www
 - Run the simulation.
 
 ## Full Documentation
+
 In order to view the full the documentation for the project:
 
 - Run the following from the `MolSim` directory:

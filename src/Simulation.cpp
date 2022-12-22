@@ -4,10 +4,12 @@
 
 #include "Simulation.h"
 
+#include "outputWriter/CheckpointFileWriter.h"
 #include "spdlog/spdlog.h"
+#define CHECKPOINT_PATH "./checkpoint.txt"
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                          double gravitationalConstant) {
+                          double gravitationalConstant, bool checkpointing) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
@@ -29,7 +31,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
 
   // Initialize the container to the temperature
-  thermostat.initializeTemperature();
+  if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
 
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
@@ -42,7 +44,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     particles.forEachPair(addForces);
     particles.forEach(updateV);
 
-    if (iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
+    if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();
     }
 
@@ -54,4 +56,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     iteration++;
   }
   moleculeUpdateCount = updateCount;
+  if (checkpointing) {
+    CheckpointFileWriter checkpointFileWriter{};
+    checkpointFileWriter.writeFile(CHECKPOINT_PATH, iteration, particles);
+  }
 }
