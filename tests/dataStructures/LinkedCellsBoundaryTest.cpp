@@ -273,7 +273,7 @@ TEST_F(LinkedCellsReflectiveBoundary, ForcesCorrect) {
     double const expected = 7932629.5583620192;
     for (int i = 0; i < 3; i++) {
       auto const& f = particle.getF()[i];
-      bool correctAmountOfForce = (f == expected || f == -expected || f == 0);
+      bool correctAmountOfForce = (abs(f - expected) <= 0.00001 || abs(f - (-expected)) <= 0.00001 || f == 0);
 
       EXPECT_TRUE(correctAmountOfForce) << "Where force value: " << f << '\n'
                                         << "expected values: {" << expected << ", " << (-expected) << ", 0.0}";
@@ -388,7 +388,10 @@ TEST_F(LinkedCellsBoundaryPeriodic, ForcesThrough3DCorner) {
   }
 
   EXPECT_EQ(particles.at(0).getF(), (-1.0) * particles.at(1).getF()) << "Forces where not applied symmetrically";
-  EXPECT_EQ(particles.at(0).getF(), (v3d{-1097378875171.5172, -1097378875171.5172, -1097378875171.5172}));
+  auto expected = v3d{-1097378875171.5186, -1097378875171.5186, -1097378875171.5186};
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_DOUBLE_EQ(particles.at(0).getF()[i], expected[i]);
+  }
 }
 
 /**
