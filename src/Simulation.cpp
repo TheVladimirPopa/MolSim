@@ -22,7 +22,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
   std::function<void(P)> applyGravity{[&gravitationalConstant](P p) { p.f[1] += p.m * gravitationalConstant; }};
   // Initialize the container to the temperature
-  thermostat.initializeTemperature();
+  if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
 
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
@@ -37,7 +37,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     if (gravitationalConstant != 0.0) particles.forEach(applyGravity);
     particles.forEach(updateV);
 
-    if (iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
+    if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();
     }
 
