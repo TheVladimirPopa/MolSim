@@ -306,14 +306,17 @@ int main(int argc, char *argsv[]) {
     auto durationSec = std::chrono::duration<double>{endTime - startTime}.count();
     auto iterationCount = std::ceil(simulation.getEndTime() / simulation.getDeltaT());
     std::cout << "Results of performance measurement\n"
-                 "Execution time       : "
+                 "Execution time:              "
               << durationSec
               << "s\n"
-                 "Number of iterations : "
-              << static_cast<unsigned long>(iterationCount)
+                 "Number of iterations:        "
+              << static_cast<unsigned long>(iterationCount) << "\n"
+              << "Number of molecule updates:  " << simulation.getMoleculeUpdateCount()
               << "\n"
-                 "Time per iteration   : "
-              << (durationSec / iterationCount) << "s" << std::endl;
+                 "Time per iteration:          "
+              << (durationSec / iterationCount) << "s\n"
+              << "Molecule Updates per second: "
+              << (static_cast<double>(simulation.getMoleculeUpdateCount()) / durationSec) << std::endl;
   }
   if (hitRateMeasure) {
     std::cout << "########################################################\n"
@@ -386,7 +389,7 @@ void printHelp() {
                "                get written to a file (default is 10).\n"
                "        \n"
                "        -p, --performance\n"
-               "                Takes a performace measurement of the simulation, \n"
+               "                Takes a performance measurement of the simulation, \n"
                "                implicitly sets the -n flag and deactivates logging "
                "entirely.\n"
                "                \n"
