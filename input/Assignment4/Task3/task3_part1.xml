@@ -1,13 +1,14 @@
-<Simulation_XML endTime="40" deltaT="0.0005" writeOutFrequency="50" filename="task3-2.vtk" cutOffRadius="3"
+<Simulation_XML endTime="15" deltaT="0.0005" writeOutFrequency="50" filename="task3-1.vtk" cutOffRadius="3"
                 gravity="-12.44">
 
     <Particle id="0" epsilon="1.0" sigma="1.2"/>
 
     <SimTypes>
-        <Sphere radius="20" dimension="2" distance="1.2" mass="1.0" type="0">
-            <position x="150" y="150" z="0.0"/>
+        <Cuboid distance="1.2" mass="1.0" type="0">
+            <position x="1.5" y="2.0" z="0.0"/>
+            <dimension x="250" y="50" z="1"/>
             <velocity x="0.0" y="0.0" z="0.0"/>
-        </Sphere>
+        </Cuboid>
     </SimTypes>
 
     <Container_T>
@@ -23,7 +24,7 @@
         </LinkedCell>
     </Container_T>
 
-    <Thermostat initialTemp="0.5" targetTemp="0.5" maxTempChange="0" periodLength="0" dimension="2"/>
+    <Thermostat initialTemp="0.5" targetTemp="0.5" maxTempChange="5" periodLength="1000" dimension="2"/>
 
-    <InputFile path="../input/checkpoint.txt"/>
+    <InputFile path="./checkpoint.txt"/>
 </Simulation_XML>

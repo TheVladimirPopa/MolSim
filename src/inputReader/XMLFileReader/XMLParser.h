@@ -276,7 +276,7 @@ class XMLParser {
     }
   }
   /**
-   * Constructs a LinkedCellsContainer from the path file if that strategy is chosen
+   * Constructs a LinkedCellsContainer from the path file if that container type is chosen
    * @return Returns a LinkedCellsContainer
    */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {

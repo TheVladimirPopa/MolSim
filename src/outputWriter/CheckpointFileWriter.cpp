@@ -28,12 +28,12 @@ void CheckpointFileWriter::writeFile(size_t size) {
           "# xyz-coord      velocity           oldF            force              mass        type      "
           "epsilon     sigma\n";
 
+  file.precision(17);
   file << size << "\n";
 }
 
 void CheckpointFileWriter::checkpointParticle(const Particle& p) {
   if (file.is_open()) {
-    file.precision(17);
     file << p.getX().at(0) << " " << p.getX().at(1) << " " << p.getX().at(2) << "\t\t";
     file << p.getV().at(0) << " " << p.getV().at(1) << " " << p.getV().at(2) << "\t\t";
     file << p.getOldF().at(0) << " " << p.getOldF().at(1) << " " << p.getOldF().at(2) << "\t\t";

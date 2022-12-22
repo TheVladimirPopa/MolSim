@@ -296,7 +296,7 @@ int main(int argc, char *argsv[]) {
 
     parser.registerParticlesFromXML();
 
-    std::string checkpointFile = "../input/checkpoint.txt";
+    std::string checkpointFile = "./checkpoint.txt";
     parser.initCheckpoint(checkpointFile);
 
     if (linkedCellsStrategy) {
@@ -376,7 +376,7 @@ void printHelp() {
                "        \n"
                "        -s, --export-checkpoint\n"
                "                When set, the state of the particles after the simulation are saved to\n"
-               "                the file ../input/checkpoint.txt\n"
+               "                the file ./checkpoint.txt\n"
                "                \n"
                "        -c, --input-checkpoint\n"
                "                When set, a previous checkpoint is taken as an input, in addition to the \n"

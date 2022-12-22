@@ -49,7 +49,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     iteration++;
   }
   if (checkpointing) {
-    const std::string checkpointPath = "../input/checkpoint.txt";
+    const std::string checkpointPath = "./checkpoint.txt";
     CheckpointFileWriter checkpointFileWriter{checkpointPath};
     checkpointFileWriter.writeFile("", iteration, particles);
   }

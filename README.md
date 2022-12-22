@@ -56,7 +56,7 @@ OPTIONS:
         
         -s, --export-checkpoint
                 When set, the state of the particles after the simulation are saved to
-                the file ../input/checkpoint.txt
+                the file ./checkpoint.txt
                 
         -c, --input-checkpoint
                 When set, a previous checkpoint is taken as an input, in addition to the 
@@ -171,10 +171,10 @@ We support XML file input. The file has to include:
 * a thermostat with the appropriate parameters (initialTemp, targetTemp, maxChangeTemp, periodLength, dimension)
 * an input file (by default checkpoint.txt, in order to perform checkpointing)
 
-The following is an example of how an XML input file:
+The following is an example of how an XML input file (e.g. for cuboid in the file ```./input/input_xml_example```:
 ```xml
 
-<Simulation_XML endTime="10.0" deltaT="0.019" writeOutFrequency="20" filename="MD.vtk" cutOffRadius="2.0"
+<Simulation_XML endTime="10.0" deltaT="0.0005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
                 gravity="-12.44">
 
     <Particle id="0" epsilon="1.0" sigma="1.0"/>
@@ -196,12 +196,6 @@ The following is an example of how an XML input file:
             <velocity x="0.0" y="-10.0" z="0.0"/>
         </Sphere>
 
-        <!--        <Cuboid distance="1.23" mass="0.5" type="1">-->
-        <!--            <position x="4.0" y="4.0" z="0.0"/>-->
-        <!--            <dimension x="3" y="3" z="3"/>-->
-        <!--            <velocity x="0.0" y="0.0" z="10.0"/>-->
-        <!--        </Cuboid>-->
-
     </SimTypes>
 
     <Container_T>
@@ -219,7 +213,7 @@ The following is an example of how an XML input file:
 
     <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
 
-    <InputFile path="../input/checkpoint.txt"/>
+    <InputFile path="./checkpoint.txt"/>
 </Simulation_XML>
 ```
 
