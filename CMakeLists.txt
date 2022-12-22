@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 # define project name, version
 project(PSEMolDyn_GroupD VERSION 0.0.1)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.22:
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.22.0")
@@ -48,10 +52,15 @@ endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(global_compiler_flags
-  $<$<CXX_COMPILER_ID:GNU>:-Wall>
-  # disable some spam warnings for icpc...
-  $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
-)
+        $<$<CXX_COMPILER_ID:GNU>:-Wall>
+        # disable some spam warnings for icpc...
+        $<$<CXX_COMPILER_ID:Intel>:-std=c++20 -w3 -wd383,981,1418,1572,2259>
+        )
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2")
+#SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+#SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+
 
 # Compile MolSim
 add_subdirectory(src)
