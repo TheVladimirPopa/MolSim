@@ -85,6 +85,9 @@ void LinkedCellsBoundary::reflectParticles() {
     for (auto particleIndex : cell->particles) {
       auto& particle = (*particlesVector)[particleIndex];
       auto distance = getDistanceToBoundary(particle);
+
+      double reflectDistance = SIXTH_ROOT_OF_2 * particle.getSigma();
+
       if (distance > reflectDistance || distance < -reflectDistance) continue;
 
       auto dimIndex = getDimensionBySide(side);

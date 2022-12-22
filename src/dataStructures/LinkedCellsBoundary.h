@@ -3,18 +3,15 @@
 #include "Cell.h"
 #include "model/LennardJonesModel.h"
 
-#define SIGMA_PLACEHOLDER 1.0
 #define SIXTH_RT 1.1224620483093729814335330496791795162324111106
 
 /// Parameters for reflection boundary.
 namespace ReflectiveBoundary {
 // Parameters for reflection
-constexpr double SIGMA = SIGMA_PLACEHOLDER;
 constexpr double SIXTH_ROOT_OF_2 = SIXTH_RT;
-constexpr double reflectDistance = SIXTH_ROOT_OF_2 * SIGMA;
 
 // Initialize LennardJones model for reflective boundary.
-static LennardJonesModel lennardJones{10 * reflectDistance};
+static LennardJonesModel lennardJones{3e9};
 }  // namespace ReflectiveBoundary
 
 enum class BoundaryType {

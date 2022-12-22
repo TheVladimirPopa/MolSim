@@ -9,6 +9,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 - [cmake](https://cmake.org/) (3.18.4)
 - [gcc](https://gcc.gnu.org/) (11.1.0)
 - [Doxygen](https://doxygen.nl/) (1.9) (_Not mandatory, only for documentation_)
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (0.29.1)
 
 ## Build
 1. Create `build` folder.
