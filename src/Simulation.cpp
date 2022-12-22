@@ -16,7 +16,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   using P = Particle &;
   std::function<void(P)> updateX{[&model](P p) { model.updateX(std::forward<P>(p)); }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
-  std::function<void(P)> updateF{[](P p) {
+  std::function<void(P)> updateF{[gravitationalConstant](P p) {
     p.updateForces();
     p.f[1] += p.m * gravitationalConstant;
   }};
