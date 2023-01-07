@@ -3,8 +3,8 @@
 #include "LinkedCellsBoundary.h"
 #include "utils/ArrayUtils.h"
 
-LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
-                                           std::array<double, 3> &rightUpperBound)
+LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> leftLowerBound,
+                                           std::array<double, 3> rightUpperBound)
     : cells{},
       gridSize{cellSize},
       leftLowerCorner{leftLowerBound},

@@ -93,7 +93,7 @@ class LinkedCellsContainer : public IContainer {
    * @param leftLowerBound The left lower corner of the domain bounding box
    * @param rightUpperBound The right upper corner of the domain bounding box
    */
-  LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound, std::array<double, 3> &rightUpperBound);
+  LinkedCellsContainer(double cellSize, std::array<double, 3> leftLowerBound, std::array<double, 3> rightUpperBound);
 
   ~LinkedCellsContainer() override = default;
 

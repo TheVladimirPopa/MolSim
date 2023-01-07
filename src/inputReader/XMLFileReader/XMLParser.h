@@ -80,15 +80,20 @@ class XMLParser {
     }
     throw std::invalid_argument("Invalid boundary string");
   }
+
+  enum class ContainerType {
+    VECTOR = 0,
+    LINKED_CELLS = 1
+  };
+
   /**
-   * Chooses the container type
-   * @return Returns true if a LinkedCellsContainer is detected, false otherwise
+   * @return Returns type of the container specified in the xml file
    */
-  bool chooseStrategy() {
+  ContainerType getContainerType() {
     for (auto &it : simulation->Container_T()) {
-      if (it.LinkedCell().empty()) return false;
+      if (it.LinkedCell().empty()) return ContainerType::VECTOR;
     }
-    return true;
+    return ContainerType::LINKED_CELLS;
   }
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
@@ -216,7 +221,7 @@ class XMLParser {
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void initialiseCuboidsFromXML(IContainer &container) const {
+  void spawnCuboids(IContainer &container) const {
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
 
     for (auto &it : cuboidArgs) {
@@ -242,7 +247,7 @@ class XMLParser {
    * Adds all spheres read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void initialiseSpheresFromXML(IContainer &container) const {
+  void spawnSpheres(IContainer &container) const {
     std::vector<SphereArg> sphereArgs = extractSpheres();
     for (auto &it : sphereArgs) {
       ParticleGeneration::sphere sphere;
@@ -257,19 +262,17 @@ class XMLParser {
     }
   }
   /**
-   * Initialises a cutOffRadius from the path file
-   * @return Returns the cutOffRadius
+   * @return Returns the Lennard Jones cutOffRadius of the simulation
    */
-  double initCutOffRadiusXML() { return simulation->cutOffRadius(); }
+  double getCutOffRadius() { return simulation->cutOffRadius(); }
   /**
-   * Initialises the gravity from the path file
-   * @return Returns the gravity
+   * @return Returns the gravity constant
    */
-  double initGravityFromXML() { return simulation->gravity(); }
+  double getGravityConstant() { return simulation->gravity(); }
   /**
    * Registers the particles read in the path file
    */
-  void registerParticlesFromXML() const {
+  void initializeParticleTypes() const {
     std::vector<ParticleArg> particleArgs = extractParticles();
     for (auto &p : particleArgs) {
       Particle::registerParticleType(p.getId(), p.getEpsilon(), p.getSigma());
@@ -280,16 +283,12 @@ class XMLParser {
    * @return Returns a LinkedCellsContainer
    */
   LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
-    if (chooseStrategy()) {
-      LinkedCellArg linkedCellArg = extractLinkedCell();
-      std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
-      std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
-
-      return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
-    } else {
-      std::array<double, 3> zeroBound = {0., 0., 0.};
-      return LinkedCellsContainer{0, zeroBound, zeroBound};
-    }
+    LinkedCellArg linkedCellArg = extractLinkedCell();
+    std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
+    std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
+    LinkedCellsContainer c{linkedCellArg.getCellSize(), lowerBound, upperBound};
+    XMLLinkedCellBoundaries(c);
+    return c;
   }
   /**
    * Constructs a thermostat from the path file and a given container
