@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "Configuration.h"
 #include "Simulation.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/Particle.h"
@@ -19,13 +20,7 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
-#include "Configuration.h"
-
-void printHelp();
-void printUsage();
-enum simTypes { Single, Cuboid, Sphere };
-const std::map<std::string, simTypes> simTypeStrings{
-    {"single", simTypes::Single}, {"cuboid", simTypes::Cuboid}, {"sphere", simTypes::Sphere}};
+#include "utils/SimulationUtils.h"
 
 struct Environment {
   char *inputFile = nullptr;
@@ -44,55 +39,13 @@ struct Environment {
   VTKWriter vtkWriter{};
   NoWriter noWriter{};
 
-
-  void configureLogging() {
-    auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);
-
-    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-
-    if (performanceMeasure) {
-      noOutput = true;
-    }
-    if (quietLog) {
-      console_sink->set_level(spdlog::level::err);
-      file_sink->set_level(spdlog::level::info);
-    } else {
-      switch (loglevel) {
-        case 0:
-          console_sink->set_level(spdlog::level::info);
-          file_sink->set_level(spdlog::level::info);
-          break;
-        case 1:
-          console_sink->set_level(spdlog::level::debug);
-          file_sink->set_level(spdlog::level::debug);
-          break;
-        default:
-          console_sink->set_level(spdlog::level::trace);
-          file_sink->set_level(spdlog::level::trace);
-          break;
-      }
-    }
-    spdlog::set_default_logger(
-        std::make_shared<spdlog::logger>("", spdlog::sinks_init_list({console_sink, file_sink})));
-    spdlog::set_level(spdlog::level::trace);
-  }
-
   void disableLogging() {
     console_sink->set_level(spdlog::level::off);
     file_sink->set_level(spdlog::level::off);
   }
 
   IContainer *setupContainer() {
-    if (!xmlInput) return setupDeprecatedDefaultContainer();
-    parser.initialiseSimulationFromXML(simulation);
 
-    lennardJonesModel.setDeltaT(simulation.getDeltaT());
-
-    if (parser.getContainerType() == XMLParser::ContainerType::LINKED_CELLS) return loadLinkedCellsContainer(parser);
-
-    if (parser.getContainerType() == XMLParser::ContainerType::VECTOR) return loadVectorContainer(parser);
-
-    throw std::invalid_argument("Unsupported container type. Please update MolSim.cpp");
   }
 
   IModel *setupModel() {
@@ -100,33 +53,11 @@ struct Environment {
     lennardJonesModel.setCutOffRadius(parser.getCutOffRadius())
   }
 
-  VectorContainer *loadVectorContainer(XMLParser &) {
-    VectorContainer v{};
-    vectorContainer = v;
-    return &(this->vectorContainer);
-  }
 
-  LinkedCellsContainer *loadLinkedCellsContainer(XMLParser &parser) {
-    linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
 
-    // TODO:
-  }
 
-  void setupParticles(IContainer &container) {
-    if (!xmlInput) {
-      setupParticlesDeprecated(container);
-      return;
-    }
 
-    parser.initializeParticleTypes();
-    std::string checkpointFile = "./checkpoint.txt";
-    parser.initCheckpoint(checkpointFile);
 
-    parser.spawnSpheres(container);
-    parser.spawnCuboids(container);
-
-    if (readFromCheckpoint) FileReader::readFileCheckpoint(container, checkpointFile.data());
-  }
 
   IContainer *getSelectedContainer() {
     if (parser.getContainerType() == XMLParser::ContainerType::LINKED_CELLS) return &linkedCellsContainer;
@@ -192,24 +123,56 @@ struct Environment {
   }
 };
 
+void configureLogging(int logLevel, bool disableLogging) {
+  auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);
+  auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+
+  if (disableLogging) logLevel = -1;
+
+  switch (logLevel) {
+    case -1:
+      console_sink->set_level(spdlog::level::err);
+      file_sink->set_level(spdlog::level::info);
+      break;
+    case 0:
+      console_sink->set_level(spdlog::level::info);
+      file_sink->set_level(spdlog::level::info);
+      break;
+    case 1:
+      console_sink->set_level(spdlog::level::debug);
+      file_sink->set_level(spdlog::level::debug);
+      break;
+    default:
+      console_sink->set_level(spdlog::level::trace);
+      file_sink->set_level(spdlog::level::trace);
+      break;
+  }
+
+  spdlog::set_default_logger(std::make_shared<spdlog::logger>("", spdlog::sinks_init_list({console_sink, file_sink})));
+  spdlog::set_level(spdlog::level::trace);
+}
+
 int main(int argc, char *argsv[]) {
   // Print help when no arguments or options are present
   if (argc == 1) {
-    printUsage();
+    Configuration::printUsage();
     return 1;
   }
 
-  // 1. Set up logging
-  env.configureLogging();
-
-  // 2. Load config
+  // 1. Load config
   Configuration config = Configuration::parseOptions(argc, argsv);
+  if (config.getInputType() == InputType::XML) SimulationUtils::parseXmlInput(config.getXmlPath());
 
-  // 3. Read input, generate particles
+  // 2. Set up logging
+  configureLogging(config.getLogLevel(), config.isLogDisabled());
 
-  IContainer *container = env.setupContainer();
-  IModel *model = env.setupModel();
+  // 3. Set up container and populate it with particles
+
+  auto container = SimulationUtils::setupContainer(config.getContainerType());
+  SimulationUtils::populateContainer(*container, config.getInputType())
+
   env.setupParticles(*container);
+  IModel *model = env.setupModel();
   IWriter *selectedWriter = env.getSelectedWriter();
   Thermostat thermostat = env.getThermostat();
   double const gravityConstant = env.xmlInput ? env.parser.getGravityConstant() : -12.44;
@@ -219,6 +182,10 @@ int main(int argc, char *argsv[]) {
   simulation.setDeltaT(config.deltaT);
   simulation.setEndTime(config.endTime);
   simulation.setIterationsPerWrite(confige.outputWriteInterval);
+
+  if (performanceMeasure) {
+    noOutput = true;
+  }
 
   if (env.performanceMeasure) {
     spdlog::info(
@@ -266,5 +233,3 @@ int main(int argc, char *argsv[]) {
   spdlog::info("Terminating...");
   return 0;
 }
-
-

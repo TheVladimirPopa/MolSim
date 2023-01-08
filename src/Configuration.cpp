@@ -21,7 +21,7 @@ enum Configuration::simulationType Configuration::getSimulationTypeDeprecated(st
   auto result = simTypeStrings.find(name);
   if (result == simTypeStrings.end()) {
     spdlog::error("Type ", optarg, " is not known. Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   return result->second;
@@ -34,12 +34,12 @@ double Configuration::getEndTime(string endTimeAsString) {
     end = std::stod(endTimeAsString);
   } catch (std::invalid_argument &e) {
     spdlog::error("End-time is not in a supported format: ", endTimeAsString, ". Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if (end <= 0) {
     spdlog::error("End-time has to be positive, but it is ", end, " . Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   return end;
@@ -52,12 +52,12 @@ double Configuration::getDeltaT(string deltaTAsString) {
     delta = std::stod(deltaTAsString);
   } catch (std::invalid_argument &e) {
     spdlog::error("DeltaT has to be double, but failed to convert: ", deltaTAsString, " . Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if (delta <= 0) {
     spdlog::error("DeltaT has to be positive but is: ", delta, " . Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   return delta;
@@ -70,12 +70,12 @@ int Configuration::getWriteInterval(string writeIntervalAsString) {
     frequency = std::stoi(writeIntervalAsString);
   } catch (std::invalid_argument &e) {
     spdlog::error("WriteOutFrequency is not in a supported format: ", writeIntervalAsString, ". Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   if (frequency <= 0) {
     spdlog::error("WriteOutFrequency has to be positive integer but ", frequency, "is negative. Please check --help.");
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   return frequency;
@@ -109,7 +109,6 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
-        // TODO: simulation.setFilename(optarg);
         break;
       }
       case 'n': {
@@ -168,29 +167,25 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
       }
       case 'h': {
         printHelp();
-        exit(0);
+        exit(EXIT_SUCCESS);
       }
       case '?':
       default: {
         printUsage();
-        exit(1);
+        exit(EXIT_FAILURE);
       }
     }
   }
 
-  // TODO: THIS THING
-  if (config.inputFile == nullptr && !xmlInput) {
-    std::cout << "You have to specify an input file with -f flag or an xml "
-                 "file with the -i flag"
-              << std::endl;
-    printUsage();
-    exit(1);
+  if (config.inFile.empty() && config.inFileXml.empty()) {
+    spdlog::error("You must specify an input file with -i (recommended) or -f. For details check --help.");
+    exit(EXIT_FAILURE);
   }
 
-  return Configuration();
+  return config;
 }
 
-void printUsage() {
+void Configuration::printUsage() {
   std::cout << " Usage\n"
                "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
                "\n"
@@ -204,7 +199,7 @@ void printUsage() {
             << std::endl;
 }
 
-void printHelp() {
+void Configuration::printHelp() {
   std::cout << "Usage\n"
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"

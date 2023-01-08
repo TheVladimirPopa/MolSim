@@ -50,5 +50,11 @@ class Configuration {
   static Configuration parseOptions(int argc, char *argsv[]);
   static void printHelp();
   static void printUsage();
+
+  double getLogLevel() { return logLevel; };
+  bool isLogDisabled() { return quietLog; };
+  ContainerType getContainerType() { /* TODO: return xml container type, linked or vector container */ }
+  InputType getInputType() { return inputType; };
+  std::string getXmlPath() { return inFileXml; };
 };
 

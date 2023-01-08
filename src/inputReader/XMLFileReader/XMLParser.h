@@ -282,13 +282,13 @@ class XMLParser {
    * Constructs a LinkedCellsContainer from the path file if that container type is chosen
    * @return Returns a LinkedCellsContainer
    */
-  LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
+  std::unique_ptr<LinkedCellsContainer> initialiseLinkedCellContainerFromXML() {
     LinkedCellArg linkedCellArg = extractLinkedCell();
     std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
     std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
-    LinkedCellsContainer c{linkedCellArg.getCellSize(), lowerBound, upperBound};
-    XMLLinkedCellBoundaries(c);
-    return c;
+    auto container = std::make_unique<LinkedCellsContainer>(linkedCellArg.getCellSize(), lowerBound, upperBound);
+    XMLLinkedCellBoundaries(*container);
+    return container;
   }
   /**
    * Constructs a thermostat from the path file and a given container
