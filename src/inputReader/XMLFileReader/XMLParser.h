@@ -84,7 +84,16 @@ class XMLParser {
    * Extracts the model that is used for the simulation
    * @return Returns the model used for the simulation
    */
-  std::string extractModel() { return simulation->Model(); }
+  std::string extractModel() {
+    if (simulation->Model() == "LennardJones") {
+      return "LennardJones";
+    } else if (simulation->Model() == "SmoothedLennardJones") {
+      return "SmoothedLennardJones";
+    } else if (simulation->Model() == "Gravity") {
+      return "Gravity";
+    }
+    throw std::invalid_argument("Invalid model");
+  }
   /**
    * Chooses the container type
    * @return Returns true if a LinkedCellsContainer is detected, false otherwise
@@ -271,6 +280,11 @@ class XMLParser {
    * @return Returns the gravity
    */
   double initGravityFromXML() { return simulation->gravity(); }
+  /**
+   * Initialises the radius_l from the path file
+   * @return
+   */
+  double initRadius_l() { return simulation->radius_l(); }
   /**
    * Registers the particles read in the path file
    */
