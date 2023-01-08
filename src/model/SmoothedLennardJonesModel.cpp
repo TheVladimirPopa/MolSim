@@ -15,29 +15,13 @@ void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) {
   double sig_len = sigma * sigma / length;  // (sigma²/length)
   sig_len *= sig_len * sig_len;             // (sigma²/length)³
 
-  // S(x_i, x_j)
-  double S;
-  if (length <= radius_l) {
-    S = 1;
-  } else if (radius_l <= length && length <= radius_c) {
-    S = length - radius_l;
-    S *= S;
-    S *= (3 * radius_c - radius_l - 2 * length);
-    auto s = radius_c - radius_l;
-    s *= s * s;
-    S /= s;
-    S = 1 - S;
-  } else {  // length >= cuttOffRadiusSquared
-    S = 0;
-  }
-
   // This is the force formula from worksheet 2 slightly reformulated for better numerical accuracy.
   double epsilon = p1.epsilon == p2.epsilon ? p1.epsilon : std::sqrt(p1.epsilon * p2.epsilon);
 
   std::array<double, 3> force{};
 
   if (length <= radius_l) {
-    force = S * ((-24 * epsilon) / length) * (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
+    force = ((-24 * epsilon) / length) * (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
   } else if (radius_l <= length && length <= radius_c) {
     // x_j - x_i
     auto d = p2.x - p1.x;
