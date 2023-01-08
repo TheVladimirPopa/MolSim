@@ -1,5 +1,5 @@
 <Simulation_XML endTime="10.0" deltaT="0.005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
-                gravity="-12.44">
+                gravity="-12.44" radius_l="1.9" Model="LennardJones">
 
     <Particle id="0" epsilon="1.0" sigma="1.0"/>
     <Particle id="1" epsilon="1.0" sigma="0.9412"/>

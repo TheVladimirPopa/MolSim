@@ -81,6 +81,11 @@ class XMLParser {
     throw std::invalid_argument("Invalid boundary string");
   }
   /**
+   * Extracts the model that is used for the simulation
+   * @return Returns the model used for the simulation
+   */
+  std::string extractModel() { return simulation->Model(); }
+  /**
    * Chooses the container type
    * @return Returns true if a LinkedCellsContainer is detected, false otherwise
    */

@@ -16,6 +16,7 @@ class NewtonsLawModel;
 class LennardJonesModel;
 class Thermostat;
 class LineProcessorCheckpoint;
+class SmoothedLennardJonesModel;
 
 class Particle {
  private:
@@ -135,6 +136,7 @@ class Particle {
   friend class Thermostat;
   friend class Simulation;
   friend class LineProcessorCheckpoint;
+  friend class SmoothedLennardJonesModel;
 
   /**
    * Move current forces on particle to old_f and set f to 0-vector so we can

@@ -291,8 +291,11 @@ int main(int argc, char *argsv[]) {
     parser.initialiseSimulationFromXML(simulation);
 
     LinkedCellsContainer linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
-    model.setCutOffRadius(parser.initCutOffRadiusXML());
-    model.setDeltaT(simulation.getDeltaT());
+
+    //TODO switch between LJ, Smoothed LJ, Gravity
+
+    LennardJonesModel ljModel{parser.initCutOffRadiusXML()};
+    ljModel.setDeltaT(simulation.getDeltaT());
 
     parser.registerParticlesFromXML();
 
@@ -314,7 +317,7 @@ int main(int argc, char *argsv[]) {
     if (readFromCheckpoint) FileReader::readFileCheckpoint(*container, checkpointFile.data());
 
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
-    simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
+    simulation.simulate(ljModel, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
   } else {
     Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
     simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
