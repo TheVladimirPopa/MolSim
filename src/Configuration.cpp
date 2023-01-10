@@ -182,6 +182,18 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
+  if (config.selectedModel() == Models::NewtonsLaw && config.hirateMeasure) {
+    // TODO: sollte vielleicht im IModel sein.
+    spdlog::error("The Newtons Law model does not support hitrate measurement.");
+    exit(EXIT_FAILURE);
+  }
+
+  if (config.hasLoggingEnabled() || config.hasFileOutputEnabled()) {
+    spdlog::info("Disabling file output and logging for performance measurement.");
+    config.quietLog = true;
+    config.noOuput = true;
+  }
+
   return config;
 }
 
