@@ -141,10 +141,12 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
     applyPeriodicForces(binaryFunction);
   }
 
+#pragma omp parallel for default(none) shared(binaryFunction, cells) schedule(static, 8)
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == CellType::halo) {
+    if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
       continue;
     }
+    cells[index].lock();
     for (size_t indexOffset : indexOffsetAdjacent) {
       // Special case to match particles within one cell
       if (indexOffset == 0) {
@@ -158,14 +160,17 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
         }
 
       } else {
+        cells[index + indexOffset].lock();
         // Loop so the particles of each of the two cells and match them
         for (auto cellAParticle : cells[index].particles) {
           for (auto cellBParticle : cells[index + indexOffset].particles) {
             binaryFunction(particlesVector[cellAParticle], particlesVector[cellBParticle]);
           }
         }
+        cells[index + indexOffset].unlock();
       }
     }
+    cells[index].unlock();
   }
 }
 
