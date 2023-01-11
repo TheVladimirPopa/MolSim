@@ -3,11 +3,11 @@
 #include "utils/ArrayUtils.h"
 using ArrayUtils::dotProduct;
 
-void LennardJonesModel::addForces(Particle &p1, Particle &p2) {
+void LennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   double length = dotProduct(p1.x - p2.x);
-  ++comparisons;
+  //++comparisons;
   if (length >= cutOffRadiusSquared) return;
-  ++hits;
+  //++hits;
 
   // Calculate (sigma⁶/length³)
   double sigma = (p1.sigma + p2.sigma) / 2;
