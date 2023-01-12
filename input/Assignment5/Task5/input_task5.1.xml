@@ -1,0 +1,31 @@
+<Simulation_XML endTime="150" deltaT="0.0001" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.3"
+                gravity="1" radius_l="1.9" Model="SmoothedLennardJones">
+
+    <Particle id="1" epsilon="1.0" sigma="1.0"/>
+
+    <SimTypes>
+        <Cuboid distance="1.15" mass="1.0" type="1">
+            <position x="0.575" y="0.575" z="0.575"/>
+            <dimension x="8" y="8" z="8"/>
+            <velocity x="0" y="0" z="0"/>
+        </Cuboid>
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="3">
+            <leftLowerBound x="0" y="0" z="0"/>
+            <rightUpperBound x="9.2" y="9.2" z="9.2"/>
+            <left>PERIODIC</left>
+            <right>PERIODIC</right>
+            <top>PERIODIC</top>
+            <bottom>PERIODIC</bottom>
+            <front>PERIODIC</front>
+            <back>PERIODIC</back>
+        </LinkedCell>
+    </Container_T>
+
+    <Thermostat initialTemp="0.01" targetTemp="3.0" maxTempChange="0.001" periodLength="1000" dimension="40"/>
+
+    <InputFile path="./checkpoint.txt"/>
+
+</Simulation_XML>
