@@ -1,7 +1,3 @@
-//
-// Created by Jay on 07.01.2023.
-//
-
 #include "Configuration.h"
 
 #include <getopt.h>
@@ -188,13 +184,35 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (config.hasLoggingEnabled() || config.hasFileOutputEnabled()) {
+  if (config.isLoggingEnabled() || config.isFileOutputEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
     config.quietLog = true;
-    config.noOuput = true;
+    config.noOutput = true;
   }
 
   return config;
+}
+
+bool Configuration::tryParseXml() {
+  if (inFileXml.empty() || inputType != InputType::XML) return false;
+
+  try {
+    xmlParser = std::make_unique<XMLParser>(inFileXml);
+  } catch (const std::exception& exception) {
+    spdlog::error("Failed to load XML. Error: ", std::string(exception.what()));
+    return false;
+  }
+
+  endTime = xmlParser->getEndTime();
+  deltaT = xmlParser->getDeltaT();
+  gravityConstant = xmlParser->getGravityConstant();
+  outputWriteInterval = xmlParser->getWriteInterval();
+  cutOffRadius = xmlParser->getCutOffRadius();
+
+  for (auto sphere : xmlParser->getSpheres()) particleShapes.push_back(sphere);
+  for (auto cuboid : xmlParser->getCuboids()) particleShapes.push_back(cuboid);
+
+  return true;
 }
 
 void Configuration::printUsage() {

@@ -5,7 +5,6 @@ class LennardJonesModel : public IModel {
  private:
   /// The max distance squared between two particles where are force is applied
   double cutOffRadiusSquared;
-
   size_t hits{};
   size_t comparisons{};
 
@@ -30,7 +29,7 @@ class LennardJonesModel : public IModel {
    */
   void addForces(Particle &p1, Particle &p2) override;
 
-  size_t getHits() const { return hits; };
+  size_t getHits() const override { return hits; };
 
-  size_t getComparisons() const { return comparisons; };
+  size_t getComparisons() const override { return comparisons; };
 };

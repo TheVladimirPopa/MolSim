@@ -10,15 +10,11 @@ enum class Models { NewtonsLaw, LennardJones };
 
 enum class Writers { NoWriter, VTKWriter };
 
+enum class SimTypeDeprecated { Single, Cuboid, Sphere };
+
 namespace SimulationUtils {
-std::unique_ptr<XMLParser> xmlParser;
 
-void parseXmlInput(std::string xmlPath) {
-  // The constructor of the parser already does the parsing
-  xmlParser = std::make_unique<XMLParser>(xmlPath);
 
-  // TODO! This probably should be part of the configuration class!
-}
 
 std::unique_ptr<LinkedCellsContainer> makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.
@@ -59,32 +55,36 @@ std::unique_ptr<IContainer> setupContainer(ContainerType containerType) {
   throw std::invalid_argument("Unsupported container type. Please update MolSim.cpp");
 }
 
-void populateContainerFile(IContainer &container, char *filePath) {
-  switch (simulationType) {
-    case simTypes::Single: {
+void populateContainerViaFile(IContainer &container, char *filePath, SimTypeDeprecated type) {
+  switch (type) {
+    case SimTypeDeprecated::Single: {
       FileReader::readFileSingle(container, filePath);
       break;
     }
-    case simTypes::Cuboid: {
+    case SimTypeDeprecated::Cuboid: {
       FileReader::readFileCuboid(container, filePath);
       break;
     }
-    case simTypes::Sphere: {
+    case SimTypeDeprecated::Sphere: {
       FileReader::readFileSphere(container, filePath);
       break;
     }
   }
 }
 
-void populateContainer(IContainer &container) {
+void populateContainer(IContainer &container, bool loadCheckpoint, std::vector<ParticleShape> shapes) {
   parser.initializeParticleTypes();
-  std::string checkpointFile = "./checkpoint.txt";
-  parser.initCheckpoint(checkpointFile);
+  std::string checkpointFile = parser.getCheckpointPath();
 
-  parser.spawnSpheres(container);
-  parser.spawnCuboids(container);
+  for (auto shape : shapes) {
+    if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
+      ParticleGeneration::addCuboidToParticleContainer(container, std::get<ParticleGeneration::cuboid>(shape));
 
-  if (readFromCheckpoint) FileReader::readFileCheckpoint(container, checkpointFile.data());
+    if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
+      ParticleGeneration::addSphereToParticleContainer(container, std::get<ParticleGeneration::sphere>(shape));
+  }
+
+  if (loadCheckpoint) FileReader::readFileCheckpoint(container, checkpointFile.data());
 }
 
 std::unique_ptr<IModel> getModel(Models modelType) {

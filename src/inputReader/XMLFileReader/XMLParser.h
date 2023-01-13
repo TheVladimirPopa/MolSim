@@ -6,6 +6,8 @@
 
 #include "Simulation.h"
 #include "XMLParser.h"
+#include "dataStructures/LinkedCellsBoundary.h"
+#include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
@@ -221,7 +223,8 @@ class XMLParser {
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void spawnCuboids(IContainer &container) const {
+  std::vector<ParticleGeneration::cuboid> getCuboids() const {
+    std::vector<ParticleGeneration::cuboid> cuboids;
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
 
     for (auto &it : cuboidArgs) {
@@ -232,22 +235,26 @@ class XMLParser {
       cuboid.distance = it.getDistance();
       cuboid.mass = it.getMass();
       cuboid.type = it.getType();
-      ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
+      cuboids.push_back(cuboid);
     }
+
+    return cuboids;
   }
   /**
-   * Initialises the given string with the InputFile path for checkpointing
+   * Return path where to load the checkpoint from
    * @param checkpoint
    */
-  void initCheckpoint(std::string &checkpoint) {
+  std::string getCheckpointPath() {
     SimulationArg args = extractSimulation();
-    checkpoint = args.getInputFile();
+    return args.getInputFile();
   }
   /**
    * Adds all spheres read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void spawnSpheres(IContainer &container) const {
+  std::vector<ParticleGeneration::sphere> getSpheres() const {
+    std::vector<ParticleGeneration::sphere> spheres;
+
     std::vector<SphereArg> sphereArgs = extractSpheres();
     for (auto &it : sphereArgs) {
       ParticleGeneration::sphere sphere;
@@ -258,9 +265,15 @@ class XMLParser {
       sphere.distance = it.getDistance();
       sphere.mass = it.getMass();
       sphere.type = it.getType();
-      ParticleGeneration::addSphereToParticleContainer(container, sphere);
+      spheres.push_back(sphere);
     }
+
+    return spheres;
   }
+
+
+
+
   /**
    * @return Returns the Lennard Jones cutOffRadius of the simulation
    */
@@ -320,4 +333,8 @@ class XMLParser {
         {CubeSide::BACK, XMLParser::strToEnumBoundary(linkedCellArg.getBoundBack())},
     });
   }
+
+  double getEndTime() { return simulation->endTime(); }
+  double getDeltaT() { return simulation->deltaT(); }
+  double getWriteInterval() { return simulation->writeOutFrequency(); }
 };

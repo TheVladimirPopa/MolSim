@@ -1,36 +1,41 @@
 #pragma once
 
-#include <string>
 #include <map>
 #include <string>
+#include <variant>
 
-enum class InputType {
-  File, XML
-};
+#include "inputReader/XMLFileReader/XMLParser.h"
+
+using ParticleShape = std::variant<ParticleGeneration::sphere, ParticleGeneration::cuboid>;
+
+enum class InputType { File, XML };
 
 class Configuration {
  private:
   std::string outFileName;
   std::string inFileXml;
-  std::string inFile; // Todo: variable sinnvoll umbenennen
+  std::string inFile;  // Todo: variable sinnvoll umbenennen
+  std::unique_ptr<XMLParser> xmlParser;
+  std::vector<ParticleTypes> particleTypes; // TODO: Implementieren
+  std::vector<ParticleShape> particleShapes;
+  std::vector<Particle> checkPointData; // TODO: 1. implementieren, 2: vorsicht, das kann sehr groß sein!
 
   // Input, output
-  bool noOutput{false}; // todo: disableFileWriting
+  bool noOutput{false};  // todo: disableFileWriting
   bool readCheckpoint{false};
   bool writeCheckpoint{false};
   int outputWriteInterval{1000};
-  bool useXml;
 
   // Simulation parameters
   double deltaT{0.014};
   double endTime{1.0};
   InputType inputType{};
-  double gravityConstant{-12.44}; // TODO!!! SET WHEN LOADING XML
+  double gravityConstant{-12.44};
 
   // Performance measurement, log behavior
   bool performanceMeasure{false};
   bool hitRateMeasure{false};
-  bool quietLog{false}; // disable console logging
+  bool quietLog{false};  // disable console logging
   int logLevel{0};
 
   // Converter functions for string input
@@ -44,29 +49,37 @@ class Configuration {
   static enum simulationType getSimulationTypeDeprecated(std::string name);
 
   // Use parseOptions to generate the Configuration object.
-  Configuration() {};
+  Configuration(){};
+
  public:
   // Todo: docs
-  static Configuration parseOptions(int argc, char *argsv[]);
+  static Configuration parseOptions(int argc, char* argsv[]);
   static void printHelp();
   static void printUsage();
+  bool tryParseXml();
 
   // TODO: Zeug renamen, vor allem bool getters
   double getLogLevel() { return logLevel; };
-  bool hasLoggingEnabled() { return !quietLog; };
-  bool hasFileOutputEnabled() { return !noOutput; };
-  bool measurePerformance() { return performanceMeasure; };
-  bool measureHitrate() { return hitRateMeasure; };
+  bool isLoadCheckpointEnabled() { return readCheckpoint; }
+  bool isWriteCheckpointEnabled() { return writeCheckpoint; }
+  bool isLoggingEnabled() { return !quietLog; };
+  bool isFileOutputEnabled() { return !noOutput; };
+  bool isPerformanceMeasureEnabled() { return performanceMeasure; };
+  bool isMeasureHitrateEnabled() { return hitRateMeasure; };
 
-  ContainerType getContainerType() { /* TODO: return xml container type, linked or vector container */ }
+  ContainerType getContainerType() { /* TODO: return xml container type, linked or vector container */
+  }
   InputType getInputType() { return inputType; };
-  std::string getXmlPath() { return inFileXml; };
-  std::string getInPath() { return inFile; };
-  double getGravityConst() { return gravityConstant; };
-  double getDeltaT() { return deltaT; };
-  double getEndTime() { return endTime; };
-  double getWriteInterval() { return outputWriteInterval; };
 
+  std::string getInputPath() const {
+    if (inputType == InputType::XML) return inFileXml;
 
+    return inFile;
+  }
+
+  double getGravityConst() const { return gravityConstant; };
+  double getDeltaT() const { return deltaT; };
+  double getEndTime() const { return endTime; };
+  double getWriteInterval() const { return outputWriteInterval; };
+  std::vector<ParticleShape> getParticleShapes() { return particleShapes; }
 };
-
