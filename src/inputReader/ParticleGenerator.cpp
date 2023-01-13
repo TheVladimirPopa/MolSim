@@ -96,3 +96,30 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
 
   spdlog::debug("Added sphere particles to particle container.");
 }
+
+void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
+                                                        ParticleGeneration::membrane const &data) {
+  if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
+    spdlog::error("Only membranes with a width of 1 are accepted. Terminating simulation.");
+    exit(EXIT_FAILURE);
+  }
+
+  int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
+
+  if (container.size() + numParticles > container.capacity()) container.reserve(container.size() + (2 * numParticles));
+
+  std::array<double, 3> position{};
+  for (int x = 0; x < data.dimension[0]; ++x) {
+    for (int y = 0; y < data.dimension[1]; ++y) {
+      for (int z = 0; z < data.dimension[2]; ++z) {
+        position = data.position;
+        position[0] += x * data.distance;
+        position[1] += y * data.distance;
+        position[2] += z * data.distance;
+
+        // TODO: add particles AS molecules NOT as single particles into the container!
+        container.emplace_back(position, data.velocity, data.mass, data.type);
+      }
+    }
+  }
+}

@@ -46,6 +46,14 @@ struct sphere {
 };
 
 /**
+ * Struct containing all the values specifying a membrane. In essence a membrane molecule has the structure of a
+ * cuboid where the size of 1 dimension must be 1. Beware that the force calculation is different to a cuboid or sphere.
+ * Molecules get special treatment with respect to the force calculation, to ensure e.g. that they do not accidentally
+ * get ripped apart.
+ */
+struct membrane : cuboid {};
+
+/**
  * Generate all the single particles for a cuboid and places them in the
  * container
  * @note The particle velocity is calculated with @see
@@ -67,4 +75,10 @@ void addCuboidToParticleContainer(IContainer &container, cuboid const &data);
  */
 void addSphereToParticleContainer(IContainer &container, sphere const &data);
 
+/**
+ * Adds a membrane molecule to the container. Molecules are treated differently to particles in the force calculation.
+ * @param container The container that receives the membrane molecule
+ * @param data The membrane struct which holds the data for the generation
+ */
+void addMembraneToParticleContainer(IContainer &container, membrane const &data);
 };  // namespace ParticleGeneration
