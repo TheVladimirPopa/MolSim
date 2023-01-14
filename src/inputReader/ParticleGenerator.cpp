@@ -7,6 +7,7 @@
 #include <array>
 using std::array;
 using vec3d = std::array<double, 3>;
+#include "dataStructures/MembraneParticle.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -97,29 +98,40 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
   spdlog::debug("Added sphere particles to particle container.");
 }
 
+std::vector<size_t> getDirectNeighbourIndices(std::array<int, 3> dimensions, size_t index) {
+  // First determine what is LEFT, RIGHT, UP, DOWN depending on the orientation
+  // only return those indices that are within the vector.
+
+  return {};
+}
+
 void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
                                                         ParticleGeneration::membrane const &data) {
   if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
-    spdlog::error("Only membranes with a width of 1 are accepted. Terminating simulation.");
+    spdlog::error("Only single layer membranes are supported. Please check your input file.");
     exit(EXIT_FAILURE);
   }
 
-  int numParticles = data.dimension[0] * data.dimension[1] * data.dimension[2];
-
-  if (container.size() + numParticles > container.capacity()) container.reserve(container.size() + (2 * numParticles));
+  // We first fill up the MembraneParticle vector and then link the vector up.
+  std::vector<MembraneParticle> membraneParticles;
 
   std::array<double, 3> position{};
-  for (int x = 0; x < data.dimension[0]; ++x) {
-    for (int y = 0; y < data.dimension[1]; ++y) {
-      for (int z = 0; z < data.dimension[2]; ++z) {
+  for (size_t x = 0; x < data.dimension[0]; ++x) {
+    for (size_t y = 0; y < data.dimension[1]; ++y) {
+      for (size_t z = 0; z < data.dimension[2]; ++z) {
         position = data.position;
         position[0] += x * data.distance;
         position[1] += y * data.distance;
         position[2] += z * data.distance;
 
         // TODO: add particles AS molecules NOT as single particles into the container!
-        container.emplace_back(position, data.velocity, data.mass, data.type);
+
+        membraneParticles.emplace_back(std::array<size_t, 3>{x, y, z}, position, data.velocity, data.mass, data.type);
       }
     }
   }
+
+  // Link up neighbours
+  // todo: create the molecule;
+
 }

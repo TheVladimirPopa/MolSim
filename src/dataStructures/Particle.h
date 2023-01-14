@@ -168,7 +168,7 @@ class Particle {
    * @param partner The particle that gets the negative force applied
    * @param force The force that gets added to the particle and subtracted from the partner
    */
-  void inline applySymmetricForce(Particle &partner, std::array<double, 3> &force);
+  void applySymmetricForce(Particle &partner, std::array<double, 3> &force);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
