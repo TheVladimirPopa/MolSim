@@ -91,3 +91,8 @@ Particle::ParticleType Particle::getLJParticleType(int type) {
   auto searchResult = typeToParametersMap.find(type);
   return (searchResult == typeToParametersMap.end()) ? DEFAULT : searchResult->second;
 }
+
+void Particle::applySymmetricForce(Particle &partner, std::array<double, 3> &force) {
+  f = f + force;
+  partner.f = partner.f - force;
+}

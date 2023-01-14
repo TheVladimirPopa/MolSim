@@ -161,6 +161,14 @@ class Particle {
    * @param sigma Lennard-Jones sigma parameter
    */
   static void registerParticleType(int type, double epsilon, double sigma);
+
+  /**
+   * Adds force to the particle and subtracts force from partner particle.
+   * Implements Newtons Third law.
+   * @param partner The particle that gets the negative force applied
+   * @param force The force that gets added to the particle and subtracted from the partner
+   */
+  void inline applySymmetricForce(Particle &partner, std::array<double, 3> &force);
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
