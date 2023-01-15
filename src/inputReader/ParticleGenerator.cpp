@@ -98,13 +98,6 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
   spdlog::debug("Added sphere particles to particle container.");
 }
 
-std::vector<size_t> getDirectNeighbourIndices(std::array<int, 3> dimensions, size_t index) {
-  // First determine what is LEFT, RIGHT, UP, DOWN depending on the orientation
-  // only return those indices that are within the vector.
-
-  return {};
-}
-
 void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
                                                         ParticleGeneration::membrane const &data) {
   if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
@@ -112,26 +105,25 @@ void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
     exit(EXIT_FAILURE);
   }
 
-  // We first fill up the MembraneParticle vector and then link the vector up.
+  // Generate particles first
   std::vector<MembraneParticle> membraneParticles;
 
   std::array<double, 3> position{};
-  for (size_t x = 0; x < data.dimension[0]; ++x) {
-    for (size_t y = 0; y < data.dimension[1]; ++y) {
-      for (size_t z = 0; z < data.dimension[2]; ++z) {
+  for (int x = 0; x < data.dimension[0]; ++x) {
+    for (int y = 0; y < data.dimension[1]; ++y) {
+      for (int z = 0; z < data.dimension[2]; ++z) {
         position = data.position;
         position[0] += x * data.distance;
         position[1] += y * data.distance;
         position[2] += z * data.distance;
 
-        // TODO: add particles AS molecules NOT as single particles into the container!
-
-        membraneParticles.emplace_back(std::array<size_t, 3>{x, y, z}, position, data.velocity, data.mass, data.type);
+        std::array<size_t, 3> castedPos{static_cast<size_t>(x), static_cast<size_t>(y), static_cast<size_t>(z)};
+        membraneParticles.emplace_back(castedPos, position, data.velocity, data.mass, data.type);
       }
     }
   }
 
-  // Link up neighbours
-  // todo: create the molecule;
-
+  // Then generate membrane molecule. The linking of particles in done in the constructor.
+  MembraneMolecule membrane{data.stiffness, data.bondLength, std::move(membraneParticles)};
+  container.push_back(std::move(membrane));
 }

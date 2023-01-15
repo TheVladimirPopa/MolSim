@@ -51,7 +51,10 @@ struct sphere {
  * Molecules get special treatment with respect to the force calculation, to ensure e.g. that they do not accidentally
  * get ripped apart.
  */
-struct membrane : cuboid {};
+struct membrane : cuboid {
+  double bondLength{2.2};
+  double stiffness{300.};
+};
 
 /**
  * Generate all the single particles for a cuboid and places them in the
