@@ -46,6 +46,18 @@ struct sphere {
 };
 
 /**
+ * The force that applies to a specific membrane particle for timeSpan iterations.
+ */
+struct MembraneForce {
+  unsigned int row{};
+  unsigned int column{};
+  double x{};
+  double y{};
+  double z{};
+  unsigned long timeSpan{};
+};
+
+/**
  * Struct containing all the values specifying a membrane. In essence a membrane molecule has the structure of a
  * cuboid where the size of 1 dimension must be 1. Beware that the force calculation is different to a cuboid or sphere.
  * Molecules get special treatment with respect to the force calculation, to ensure e.g. that they do not accidentally
@@ -54,6 +66,7 @@ struct sphere {
 struct membrane : cuboid {
   double bondLength{2.2};
   double stiffness{300.};
+  std::vector<MembraneForce> membraneForces;
 };
 
 /**
