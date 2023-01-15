@@ -304,6 +304,7 @@ int main(int argc, char *argsv[]) {
 
       parser.initialiseSpheresFromXML(linkedCellsContainer);
       parser.initialiseCuboidsFromXML(linkedCellsContainer);
+      parser.initialiseMembraneFromXML(linkedCellsContainer);
       container = &linkedCellsContainer;
     } else {
       parser.initialiseCuboidsFromXML(vectorContainer);

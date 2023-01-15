@@ -20,5 +20,5 @@ class MembraneParticle : public Particle {
 
   [[nodiscard]] std::vector<MembraneParticle*> getDiagonalNeighbours() const { return diagonalNeighbours; }
 
-  std::array<size_t, 3> getMembranePosition() const { return membranePosition; };
+  [[nodiscard]] std::array<size_t, 3> getMembranePosition() const { return membranePosition; };
 };

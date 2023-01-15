@@ -8,6 +8,7 @@
 #include "XMLParser.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
+#include "inputReader/XMLFileReader/Args/MembraneArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
@@ -169,6 +170,42 @@ class XMLParser {
 
     return sphereArgs;
   }
+
+  std::vector<MembraneArg> extractMembrane() {
+    std::vector<MembraneArg> args;
+    for (auto &it : simulation->MembraneMolecule()) {
+      auto pos = it.position();
+      auto dim = it.dimension();
+      auto vel = it.velocity();
+      auto dist = it.distance();
+      auto mass = it.mass();
+      auto stiff = it.stiffness();
+      auto bl = it.bondLength();
+      auto type = it.type();
+
+      args.emplace_back(generate_double_array(pos), generate_int_array(dim), generate_double_array(vel),
+                        extractMembraneForces(), dist, mass, stiff, bl, type);
+    }
+    return args;
+  }
+
+  std::vector<MembraneForceArg> extractMembraneForces() {
+    std::vector<MembraneForceArg> membraneForces;
+    for (auto &it : simulation->MembraneMolecule()) {
+      for (auto &mf : it.membraneForce()) {
+        auto row = mf.row();
+        auto col = mf.column();
+        auto x = mf.x();
+        auto y = mf.y();
+        auto z = mf.z();
+        auto ts = mf.timeSpan();
+
+        membraneForces.emplace_back(row, col, x, y, z, ts);
+      }
+    }
+
+    return membraneForces;
+  }
   /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
@@ -213,6 +250,14 @@ class XMLParser {
     sim.setFilename(args.getFilename());
   }
   /**
+   * Initialises the given string with the InputFile path for checkpointing
+   * @param checkpoint
+   */
+  void initCheckpoint(std::string &checkpoint) {
+    SimulationArg args = extractSimulation();
+    checkpoint = args.getInputFile();
+  }
+  /**
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
@@ -231,15 +276,7 @@ class XMLParser {
     }
   }
   /**
-   * Initialises the given string with the InputFile path for checkpointing
-   * @param checkpoint
-   */
-  void initCheckpoint(std::string &checkpoint) {
-    SimulationArg args = extractSimulation();
-    checkpoint = args.getInputFile();
-  }
-  /**
-   * Adds all spheres read from the path file to a given LinkedCellsContainer
+   * Adds all spheres read from the path file to a given Container
    * @param linkedCellsContainer
    */
   void initialiseSpheresFromXML(IContainer &container) const {
@@ -254,6 +291,40 @@ class XMLParser {
       sphere.mass = it.getMass();
       sphere.type = it.getType();
       ParticleGeneration::addSphereToParticleContainer(container, sphere);
+    }
+  }
+
+  /**
+   * Initialises the Membrane from the path file
+   * @param arg
+   * @return
+   */
+  void initialiseMembraneFromXML(IContainer &container) {
+    std::vector<MembraneArg> membraneArgs = extractMembrane();
+
+    for (auto &it : membraneArgs) {
+      ParticleGeneration::membrane membrane;
+      membrane.position = it.getPosition();
+      membrane.dimension = it.getDimension();
+      membrane.velocity = it.getVelocity();
+      membrane.distance = it.getDistance();
+      membrane.mass = it.getMass();
+      membrane.type = it.getType();
+      membrane.bondLength = it.getBondLength();
+      membrane.stiffness = it.getStiffness();
+      std::vector<ParticleGeneration::MembraneForce> membraneForces;
+      for (MembraneForceArg mfa : it.getMembraneForces()) {
+        ParticleGeneration::MembraneForce membraneForce;
+        membraneForce.row = mfa.getRow();
+        membraneForce.column = mfa.getColumn();
+        membraneForce.x = mfa.getX();
+        membraneForce.y = mfa.getY();
+        membraneForce.z = mfa.getZ();
+        membraneForce.timeSpan = mfa.getTimeSpan();
+        membraneForces.emplace_back(membraneForce);
+      }
+      membrane.membraneForces = membraneForces;
+      ParticleGeneration::addMembraneToParticleContainer(container, membrane);
     }
   }
   /**
