@@ -6,7 +6,7 @@ void MembraneMolecule::linkMembraneParticles() {
     for (int i = 0; i < 3; i++) {
       for (int offset : {-1, +1}) {
         auto pos = particle.getMembranePosition();
-        pos[i] + offset;
+        pos[i] += offset;
 
         if (positionIsInMembrane(pos)) particle.addDirectNeighbourUnique(&getParticleByPosition(pos));
       }

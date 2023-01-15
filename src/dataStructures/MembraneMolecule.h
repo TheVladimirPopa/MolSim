@@ -41,8 +41,8 @@ class MembraneMolecule {
 
  public:
   MembraneMolecule(double stiffness, double bondLength, std::vector<MembraneParticle>&& particles)
-      : stiffness{stiffness}, bondLength{bondLength}, particles{particles} {
-    // The membrane consists out of a single layer. Find out indeces of which dimensions are relevant.
+      : particles{particles}, stiffness{stiffness}, bondLength{bondLength} {
+    // The membrane consists out of a single layer. Find out indices of which dimensions are relevant.
     for (int i = 0; i < 3; i++) {
       if (dimensions[i] == 1) {
         dimHeight = (i + 1) % 3;
@@ -83,4 +83,6 @@ class MembraneMolecule {
       if (i + width + 1 < size) applyDiagonalForce(particles[i], particles[i + width + 1]);
     }
   };
+
+  std::vector<MembraneParticle>& getParticles() { return particles; }
 };
