@@ -81,22 +81,30 @@ void LinkedCellsBoundary::deleteOutFlow() {
 
 using namespace ReflectiveBoundary;
 void LinkedCellsBoundary::reflectParticles() {
+  auto reflectParticle = [this](Particle& particle){
+    auto distance = getDistanceToBoundary(particle);
+
+    double reflectDistance = SIXTH_ROOT_OF_2 * particle.getSigma();
+
+    if (distance > reflectDistance || distance < -reflectDistance) return;
+
+    auto ghostPos = particle.getX();
+    ghostPos[getDimensionBySide(side)] -= 2 * distance;
+
+    // Todo: Make this more lightweight
+    Particle ghost{ghostPos};
+    lennardJones.addForces(particle, ghost);
+  };
+
   for (cell* cell : connectedCells) {
     for (auto particleIndex : cell->particles) {
-      auto& particle = (*particlesVector)[particleIndex];
-      auto distance = getDistanceToBoundary(particle);
+      reflectParticle((*particlesVector)[particleIndex]);
+    }
+  }
 
-      double reflectDistance = SIXTH_ROOT_OF_2 * particle.getSigma();
-
-      if (distance > reflectDistance || distance < -reflectDistance) continue;
-
-      auto dimIndex = getDimensionBySide(side);
-
-      auto ghostPos = particle.getX();
-      ghostPos[dimIndex] -= 2 * distance;
-
-      Particle ghost{ghostPos};
-      lennardJones.addForces(particle, ghost);
+  for (auto* molecule : connectedMolecules) {
+    for (auto& particle : molecule->getParticles()) {
+      reflectParticle(particle);
     }
   }
 }

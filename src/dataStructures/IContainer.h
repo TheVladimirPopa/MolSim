@@ -2,6 +2,7 @@
 #include <fstream>
 #include <functional>
 
+#include "MembraneMolecule.h"
 #include "Particle.h"
 /**  \image html runtime.png width=900px
  *    \image latex runtime.png "Runtimes comparison" width = [goodwidth]cm
@@ -63,6 +64,13 @@ class IContainer {
    * @return the number of particles
    */
   virtual size_t size() = 0;
+
+  /**
+   * Attaches a membrane molecule to the container.
+   * For now (worksheet 5) only Membrane molecules are supported.
+   * @param membrane The membrane that will be attached to the container.
+   */
+  virtual void push_back(MembraneMolecule&& membrane) = 0;
 
   virtual ~IContainer() = default;
 };

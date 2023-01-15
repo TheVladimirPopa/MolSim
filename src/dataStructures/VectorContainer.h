@@ -21,6 +21,8 @@ class VectorContainer : public IContainer {
   }
 
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
+    for (auto& molecule : moleculesVector) molecule.applyInternalForces();
+
     for (size_t i = 0; i < size(); ++i) {
       for (size_t j = i + 1; j < size(); ++j) {
         binaryFunction(vector[i], vector[j]);
@@ -40,8 +42,16 @@ class VectorContainer : public IContainer {
 
   void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
 
+  void push_back(MembraneMolecule &&membrane) override {
+    moleculesVector.push_back(membrane);
+  }
+
   std::vector<Particle> &getVector() { return vector; };
 
  private:
+  /// The vector containing all the particles
   std::vector<Particle> vector{};
+
+  /// The vector containing all molecules. (Only membranes for now, worksheet 5)
+  std::vector<MembraneMolecule> moleculesVector;
 };

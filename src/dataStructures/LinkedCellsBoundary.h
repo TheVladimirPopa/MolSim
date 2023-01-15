@@ -98,6 +98,9 @@ class LinkedCellsBoundary {
   /// Pointers to connected halo cells
   std::vector<cell*> connectedHalos;
 
+  /// Connected molecules. For now only supports membranes and reflective boundaries. (WS5)
+  std::vector<MembraneMolecule*> connectedMolecules;
+
   /**
    * Instantiate a LinkedCellsBoundary which is used to model the walls of a
    * LinkedCells Container.
