@@ -299,9 +299,15 @@ class XMLParser {
       ParticleGeneration::addSphereToParticleContainer(container, sphere);
     }
   }
-  //  void initialiseMembraneFromXML(MembraneMolecule membraneMolecule){
-  //    std::vector<MembraneArg> membraneArgs;
-  //  }
+  //TODO
+  /**
+   * Initialises the Membrane from the path file
+   * @param arg
+   * @return
+   */
+  MembraneMolecule initialiseMembraneFromXML(MembraneArg arg) {
+    return MembraneMolecule{arg.getStiffness(),arg.getBondLength()};
+  }
   /**
    * Initialises a cutOffRadius from the path file
    * @return Returns the cutOffRadius

@@ -313,6 +313,7 @@ int main(int argc, char *argsv[]) {
 
     if (readFromCheckpoint) FileReader::readFileCheckpoint(*container, checkpointFile.data());
 
+    MembraneMolecule membraneMolecule = parser.initialiseMembraneFromXML(parser.extractMembrane());
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
     simulation.simulate(model, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
   } else {

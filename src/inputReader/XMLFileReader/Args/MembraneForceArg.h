@@ -13,15 +13,15 @@ class MembraneForceArg {
  public:
   MembraneForceArg(int row, int column, double x, double y, double z, int timeSpan);
 
-  int getRow() const;
+  [[nodiscard]] int getRow() const;
 
-  int getColumn() const;
+  [[nodiscard]] int getColumn() const;
 
-  double getX() const;
+  [[nodiscard]] double getX() const;
 
-  double getY() const;
+  [[nodiscard]] double getY() const;
 
-  double getZ() const;
+  [[nodiscard]] double getZ() const;
 
-  int getTimeSpan() const;
+  [[nodiscard]] int getTimeSpan() const;
 };
