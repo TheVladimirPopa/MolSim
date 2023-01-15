@@ -171,7 +171,8 @@ class XMLParser {
     return sphereArgs;
   }
 
-  [[nodiscard]] MembraneArg extractMembrane() {
+  std::vector<MembraneArg> extractMembrane() {
+    std::vector<MembraneArg> args;
     for (auto &it : simulation->MembraneMolecule()) {
       auto pos = it.position();
       auto dim = it.dimension();
@@ -182,17 +183,10 @@ class XMLParser {
       auto bl = it.bondLength();
       auto type = it.type();
 
-      return MembraneArg{generate_double_array(pos),
-                         generate_int_array(dim),
-                         generate_double_array(vel),
-                         extractMembraneForces(),
-                         dist,
-                         mass,
-                         stiff,
-                         bl,
-                         type};
+      args.emplace_back(generate_double_array(pos), generate_int_array(dim), generate_double_array(vel),
+                        extractMembraneForces(), dist, mass, stiff, bl, type);
     }
-    throw std::invalid_argument("No membrane");
+    return args;
   }
 
   std::vector<MembraneForceArg> extractMembraneForces() {
@@ -256,6 +250,14 @@ class XMLParser {
     sim.setFilename(args.getFilename());
   }
   /**
+   * Initialises the given string with the InputFile path for checkpointing
+   * @param checkpoint
+   */
+  void initCheckpoint(std::string &checkpoint) {
+    SimulationArg args = extractSimulation();
+    checkpoint = args.getInputFile();
+  }
+  /**
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
@@ -274,15 +276,7 @@ class XMLParser {
     }
   }
   /**
-   * Initialises the given string with the InputFile path for checkpointing
-   * @param checkpoint
-   */
-  void initCheckpoint(std::string &checkpoint) {
-    SimulationArg args = extractSimulation();
-    checkpoint = args.getInputFile();
-  }
-  /**
-   * Adds all spheres read from the path file to a given LinkedCellsContainer
+   * Adds all spheres read from the path file to a given Container
    * @param linkedCellsContainer
    */
   void initialiseSpheresFromXML(IContainer &container) const {
@@ -299,14 +293,39 @@ class XMLParser {
       ParticleGeneration::addSphereToParticleContainer(container, sphere);
     }
   }
-  //TODO
+
   /**
    * Initialises the Membrane from the path file
    * @param arg
    * @return
    */
-  MembraneMolecule initialiseMembraneFromXML(MembraneArg arg) {
-    return MembraneMolecule{arg.getStiffness(),arg.getBondLength()};
+  void initialiseMembraneFromXML(IContainer &container) {
+    std::vector<MembraneArg> membraneArgs = extractMembrane();
+
+    for (auto &it : membraneArgs) {
+      ParticleGeneration::membrane membrane;
+      membrane.position = it.getPosition();
+      membrane.dimension = it.getDimension();
+      membrane.velocity = it.getVelocity();
+      membrane.distance = it.getDistance();
+      membrane.mass = it.getMass();
+      membrane.type = it.getType();
+      membrane.bondLength = it.getBondLength();
+      membrane.stiffness = it.getStiffness();
+      std::vector<ParticleGeneration::MembraneForce> membraneForces;
+      for (MembraneForceArg mfa : it.getMembraneForces()) {
+        ParticleGeneration::MembraneForce membraneForce;
+        membraneForce.row = mfa.getRow();
+        membraneForce.column = mfa.getColumn();
+        membraneForce.x = mfa.getX();
+        membraneForce.y = mfa.getY();
+        membraneForce.z = mfa.getZ();
+        membraneForce.timeSpan = mfa.getTimeSpan();
+        membraneForces.emplace_back(membraneForce);
+      }
+      membrane.membraneForces = membraneForces;
+      ParticleGeneration::addMembraneToParticleContainer(container, membrane);
+    }
   }
   /**
    * Initialises a cutOffRadius from the path file
