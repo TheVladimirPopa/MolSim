@@ -8,6 +8,7 @@
 #include "XMLParser.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
+#include "inputReader/XMLFileReader/Args/MembraneArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
@@ -169,6 +170,48 @@ class XMLParser {
 
     return sphereArgs;
   }
+
+  [[nodiscard]] MembraneArg extractMembrane() {
+    for (auto &it : simulation->MembraneMolecule()) {
+      auto pos = it.position();
+      auto dim = it.dimension();
+      auto vel = it.velocity();
+      auto dist = it.distance();
+      auto mass = it.mass();
+      auto stiff = it.stiffness();
+      auto bl = it.bondLength();
+      auto type = it.type();
+
+      return MembraneArg{generate_double_array(pos),
+                         generate_int_array(dim),
+                         generate_double_array(vel),
+                         extractMembraneForces(),
+                         dist,
+                         mass,
+                         stiff,
+                         bl,
+                         type};
+    }
+    throw std::invalid_argument("No membrane");
+  }
+
+  std::vector<MembraneForceArg> extractMembraneForces() {
+    std::vector<MembraneForceArg> membraneForces;
+    for (auto &it : simulation->MembraneMolecule()) {
+      for (auto &mf : it.membraneForce()) {
+        auto row = mf.row();
+        auto col = mf.column();
+        auto x = mf.x();
+        auto y = mf.y();
+        auto z = mf.z();
+        auto ts = mf.timeSpan();
+
+        membraneForces.emplace_back(row, col, x, y, z, ts);
+      }
+    }
+
+    return membraneForces;
+  }
   /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
@@ -256,6 +299,9 @@ class XMLParser {
       ParticleGeneration::addSphereToParticleContainer(container, sphere);
     }
   }
+  //  void initialiseMembraneFromXML(MembraneMolecule membraneMolecule){
+  //    std::vector<MembraneArg> membraneArgs;
+  //  }
   /**
    * Initialises a cutOffRadius from the path file
    * @return Returns the cutOffRadius
