@@ -103,7 +103,7 @@ void LinkedCellsBoundary::reflectParticles() {
   }
 
   for (auto* molecule : connectedMolecules) {
-    for (auto& particle : molecule->getParticles()) {
+    for (auto& particle : *molecule) {
       reflectParticle(particle);
     }
   }
