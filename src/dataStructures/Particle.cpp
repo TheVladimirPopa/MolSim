@@ -96,3 +96,7 @@ void Particle::applySymmetricForce(Particle &partner, std::array<double, 3> &for
   f = f + force;
   partner.f = partner.f - force;
 }
+
+void Particle::applyForce(std::array<double, 3> &force) {
+  f = f + force;
+}

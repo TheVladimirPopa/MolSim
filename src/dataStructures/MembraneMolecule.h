@@ -13,6 +13,21 @@ class MembraneMolecule {
   /// The particles that are part of the molecule.
   std::vector<MembraneParticle> particles;
 
+  /// A particle and the force that gets applied to it in each iteration
+  struct MembraneForce {
+    /// The particle
+    MembraneParticle* particle{nullptr};
+
+    /// The force
+    std::array<double, 3> force{0., 0., 0.};
+
+    /// The number of times the force gets applied
+    unsigned long timeSpan{0};
+  };
+
+  /// The forces that get applied to individually selected particles
+  std::vector<MembraneForce> singleForces;
+
   /// The stiffness factor of the membrane
   double const stiffness{};
 
@@ -75,6 +90,15 @@ class MembraneMolecule {
 
  public:
   MembraneMolecule(double stiffness, double bondLength, std::vector<MembraneParticle>&& particles);
+
+  /**
+   * Defines the force that gets applied to a single, specified particle of the membrane in each iteration.
+   * @param row The row of the particle within the membrane
+   * @param column The column of the particle within the membrane
+   * @param force The force that gets applied to the particle
+   * @param timeSpan The number of iteration that force gets applied
+   */
+  void addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force, unsigned long timeSpan);
 
   /**
    * For each particle applies the membrane forces to direct (horizontal and vertical) neighbours

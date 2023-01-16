@@ -89,6 +89,22 @@ MembraneMolecule::MembraneMolecule(double stiffness, double bondLength, std::vec
   linkMembraneParticles();
 }
 
+void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
+                                          unsigned long timeSpan) {
+  MembraneForce mf{};
+
+  std::array<unsigned long, 3> pos3d{1, 1, 1};
+  pos3d[dimHeight] = row;
+  pos3d[dimWidth] = column;
+  if (!positionIsInMembrane(pos3d)) throw std::runtime_error("Membrane particle position for force is invalid.");
+
+  mf.particle = &getParticleByPosition(pos3d);
+  mf.force = force;
+  mf.timeSpan = timeSpan;
+
+  singleForces.push_back(mf);
+};
+
 void MembraneMolecule::applyInternalForces() {
   //  o o o o   <--- We iterate over the membrane particle grid.
   //  o o o o        Direct forces: For each particle, we build a pair, by taking the right and lower particle.
@@ -109,7 +125,17 @@ void MembraneMolecule::applyInternalForces() {
     // Right lower diagonal neighbour
     if (i + width + 1 < size) applyDiagonalForce(particles[i], particles[i + width + 1]);
   }
-};
 
+  // Apply forces defined for the individual particles within the membrane
+  if (singleForces.empty()) return;
 
+  bool allForcesUsedUp{true};
+  for (auto& mf : singleForces) {
+    if (mf.timeSpan <= 0) continue;
 
+    mf.particle->applyForce(mf.force);
+    mf.timeSpan--;
+    allForcesUsedUp = false;
+  }
+  if (allForcesUsedUp) singleForces.clear();
+}

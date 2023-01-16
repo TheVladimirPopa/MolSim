@@ -125,5 +125,8 @@ void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
 
   // Then generate membrane molecule. The linking of particles in done in the constructor.
   MembraneMolecule membrane{data.stiffness, data.bondLength, std::move(membraneParticles)};
+  for (auto &mf : data.membraneForces)
+    membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
+
   container.push_back(std::move(membrane));
 }
