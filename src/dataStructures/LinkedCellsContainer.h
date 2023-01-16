@@ -123,7 +123,7 @@ class LinkedCellsContainer : public IContainer {
 
   void push_back(Particle &particle) override;
 
-  void push_back(MembraneMolecule&& membrane) override;
+  void push_back(MembraneMolecule membrane) override;
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct

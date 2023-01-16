@@ -42,7 +42,7 @@ class VectorContainer : public IContainer {
 
   void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
 
-  void push_back(MembraneMolecule &&membrane) override {
+  void push_back(MembraneMolecule membrane) override {
     moleculesVector.push_back(membrane);
   }
 

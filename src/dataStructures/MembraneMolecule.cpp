@@ -1,4 +1,5 @@
 #include "MembraneMolecule.h"
+#include <iostream>
 
 void MembraneMolecule::linkMembraneParticles() {
   for (auto& particle : particles) {
@@ -67,8 +68,9 @@ void MembraneMolecule::applyDiagonalForce(MembraneParticle& x, MembraneParticle&
   x.applySymmetricForce(y, force);
 }
 
-MembraneMolecule::MembraneMolecule(double stiffness, double bondLength, std::vector<MembraneParticle>&& particles)
-    : particles{particles}, stiffness{stiffness}, bondLength{bondLength} {
+MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
+                                   std::vector<MembraneParticle> particles)
+    : dimensions{dimensions}, particles{particles}, stiffness{stiffness}, bondLength{bondLength} {
   // The membrane consists out of a single layer. Find out indices of which dimensions are relevant.
   for (int i = 0; i < 3; i++) {
     if (dimensions[i] == 1) {
@@ -93,7 +95,7 @@ void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column,
                                           unsigned long timeSpan) {
   MembraneForce mf{};
 
-  std::array<unsigned long, 3> pos3d{1, 1, 1};
+  std::array<unsigned long, 3> pos3d{0, 0, 0};
   pos3d[dimHeight] = row;
   pos3d[dimWidth] = column;
   if (!positionIsInMembrane(pos3d)) throw std::runtime_error("Membrane particle position for force is invalid.");

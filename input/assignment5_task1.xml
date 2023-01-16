@@ -8,8 +8,8 @@
 
     <Container_T>
         <LinkedCell cellSize="10.0">
-            <leftLowerBound x="-15.0" y="--5.0" z="-5"/>
-            <rightUpperBound x="55.0" y="55.0" z="55.0"/>
+            <leftLowerBound x="-2.0" y="-2.0" z="-2.0"/>
+            <rightUpperBound x="148.0" y="148.0" z="148.0"/>
             <left>REFLECT</left>
             <right>REFLECT</right>
             <top>REFLECT</top>

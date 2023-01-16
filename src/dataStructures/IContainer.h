@@ -70,7 +70,7 @@ class IContainer {
    * For now (worksheet 5) only Membrane molecules are supported.
    * @param membrane The membrane that will be attached to the container.
    */
-  virtual void push_back(MembraneMolecule&& membrane) = 0;
+  virtual void push_back(MembraneMolecule membrane) = 0;
 
   virtual ~IContainer() = default;
 };

@@ -10,6 +10,9 @@ using ArrayUtils::L2Norm;
 
 class MembraneMolecule {
  private:
+  /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
+  std::array<size_t, 3> dimensions{2, 2, 1};
+
   /// The particles that are part of the molecule.
   std::vector<MembraneParticle> particles;
 
@@ -34,9 +37,6 @@ class MembraneMolecule {
   /// The average bond length within the membrane
   double const bondLength{};
 
-  /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
-  std::array<size_t, 3> dimensions{2, 2, 1};
-
   /// The index of the dimension that defines the height e.g. 0
   int dimHeight{};
 
@@ -49,7 +49,7 @@ class MembraneMolecule {
    * @param pos A 3d grid position, e.g. {42, 42 ,42} (not part of membrane as the membrane is single layered)
    * @return true: position is part of the membrane, false: position is not part of the membrane
    */
-  bool positionIsInMembrane(std::array<unsigned long, 3> pos) const;
+  [[nodiscard]] bool positionIsInMembrane(std::array<unsigned long, 3> pos) const;
 
   /**
    * Converts a 3d grid position to a vector index of the internal particles vector.
@@ -89,7 +89,8 @@ class MembraneMolecule {
   void applyDiagonalForce(MembraneParticle& x, MembraneParticle& y) const;
 
  public:
-  MembraneMolecule(double stiffness, double bondLength, std::vector<MembraneParticle>&& particles);
+  MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
+                   std::vector<MembraneParticle> particles);
 
   /**
    * Defines the force that gets applied to a single, specified particle of the membrane in each iteration.

@@ -191,7 +191,7 @@ void LinkedCellsContainer::push_back(Particle &particle) {
   cells[index].particles.push_back(particlesVector.size() - 1);
 }
 
-void LinkedCellsContainer::push_back(MembraneMolecule &&membrane) {
+void LinkedCellsContainer::push_back(MembraneMolecule membrane) {
   moleculesVector.push_back(membrane);
 
   // Boundaries need to know molecules to interact.
