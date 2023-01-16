@@ -21,7 +21,7 @@ class VectorContainer : public IContainer {
   }
 
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
-    for (auto& molecule : moleculesVector) molecule.applyInternalForces();
+    for (auto &molecule : moleculesVector) molecule.applyInternalForces();
 
     for (size_t i = 0; i < size(); ++i) {
       for (size_t j = i + 1; j < size(); ++j) {
@@ -30,7 +30,12 @@ class VectorContainer : public IContainer {
     }
   }
 
-  size_t size() override { return vector.size(); }
+  size_t size() override {
+    auto count = vector.size();
+    for (auto &molecule : moleculesVector) count += molecule.size();
+
+    return count;
+  }
 
   size_t capacity() override { return vector.capacity(); }
 
@@ -42,9 +47,7 @@ class VectorContainer : public IContainer {
 
   void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
 
-  void push_back(MembraneMolecule membrane) override {
-    moleculesVector.push_back(membrane);
-  }
+  void push_back(MembraneMolecule membrane) override { moleculesVector.push_back(membrane); }
 
   std::vector<Particle> &getVector() { return vector; };
 
