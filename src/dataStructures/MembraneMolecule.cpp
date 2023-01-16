@@ -100,7 +100,7 @@ void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column,
   pos3d[dimWidth] = column;
   if (!positionIsInMembrane(pos3d)) throw std::runtime_error("Membrane particle position for force is invalid.");
 
-  mf.particle = &getParticleByPosition(pos3d);
+  mf.particleId = positionToIndex(pos3d);
   mf.force = force;
   mf.timeSpan = timeSpan;
 
@@ -135,7 +135,7 @@ void MembraneMolecule::applyInternalForces() {
   for (auto& mf : singleForces) {
     if (mf.timeSpan <= 0) continue;
 
-    mf.particle->applyForce(mf.force);
+    particles[mf.particleId].applyForce(mf.force);
     mf.timeSpan--;
     allForcesUsedUp = false;
   }

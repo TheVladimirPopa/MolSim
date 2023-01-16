@@ -19,7 +19,7 @@ class MembraneMolecule {
   /// A particle and the force that gets applied to it in each iteration
   struct MembraneForce {
     /// The particle
-    MembraneParticle* particle{nullptr};
+    size_t particleId{0xffffffff};
 
     /// The force
     std::array<double, 3> force{0., 0., 0.};
@@ -67,6 +67,7 @@ class MembraneMolecule {
    */
   [[nodiscard]] MembraneParticle& getParticleByPosition(std::array<unsigned long, 3> pos);
 
+  // todo: NEIGHBOURS ARE ACTUALLY UNUSED?
   /**
    * Once the particles are part of the membrane, this method assigns them their members.
    */
