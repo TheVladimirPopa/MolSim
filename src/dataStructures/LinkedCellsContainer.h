@@ -12,7 +12,7 @@
  *    \image latex runtime-linkedcells.png "Runtime" width = [goodwidth]cm
  */
 class LinkedCellsContainer : public IContainer {
- private:
+ protected:
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
