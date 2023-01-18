@@ -61,6 +61,8 @@ class Particle {
    */
   double sigma;
 
+  std::array<double, 3> initial_x;
+
   /**
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
@@ -113,6 +115,8 @@ class Particle {
   const std::array<double, 3> &getF() const { return f; }
 
   const std::array<double, 3> &getOldF() const { return old_f; }
+
+  const std::array<double, 3> &getInitialX() const { return initial_x; }
 
   void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 
