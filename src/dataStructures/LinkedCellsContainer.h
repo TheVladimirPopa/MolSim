@@ -184,4 +184,10 @@ class LinkedCellsContainer : public IContainer {
    * @return the rightUpperCorner
    */
   [[nodiscard]] std::array<double, 3> getRightUpperCorner() const { return rightUpperCorner; }
+
+  /**
+   * Returns molecules that are attached to the container
+   * @return attached molecules
+   */
+  [[nodiscard]] std::vector<MembraneMolecule>& getMolecules() { return moleculesVector; };
 };

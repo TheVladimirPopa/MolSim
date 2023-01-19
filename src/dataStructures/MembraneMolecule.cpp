@@ -1,4 +1,5 @@
 #include "MembraneMolecule.h"
+
 #include <iostream>
 
 void MembraneMolecule::linkMembraneParticles() {
@@ -52,18 +53,22 @@ MembraneParticle& MembraneMolecule::getParticleByPosition(std::array<unsigned lo
 }
 
 void MembraneMolecule::applyDefaultForce(MembraneParticle& x, MembraneParticle& y) const {
-  auto diff = x.getX() - y.getX();
+  auto diff = y.getX() - x.getX();
 
-  auto force = stiffness * (1 / L2Norm(diff)) * (L2Norm(diff) - bondLength) * diff;
+  auto dist = L2Norm(diff);
+  // if (dist > 1.12246204830937298143353304 * x.getSigma()) return;
+  auto force = stiffness * (1 / dist) * (dist - bondLength) * diff;
 
   x.applySymmetricForce(y, force);
 }
 
 void MembraneMolecule::applyDiagonalForce(MembraneParticle& x, MembraneParticle& y) const {
   constexpr double sqrt2 = 1.41421356237309504880168872;
-  auto diff = x.getX() - y.getX();
+  auto diff = y.getX() - x.getX();
 
-  auto force = stiffness * (1 / L2Norm(diff)) * (L2Norm(diff) - sqrt2 * bondLength) * diff;
+  auto dist = L2Norm(diff);
+  // if (dist > 1.12246204830937298143353304 * x.getSigma()) return;
+  auto force = stiffness * (1 / dist) * (dist - sqrt2 * bondLength) * diff;
 
   x.applySymmetricForce(y, force);
 }
@@ -88,7 +93,8 @@ MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stif
     exit(EXIT_FAILURE);
   }
 
-  linkMembraneParticles();
+  // TODO: Put back?
+  // linkMembraneParticles();
 }
 
 void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
@@ -122,10 +128,10 @@ void MembraneMolecule::applyInternalForces() {
     if (i + width < size) applyDefaultForce(particles[i], particles[i + width]);
 
     // Left lower diagonal neighbour
-    if (i + width - 1 < size) applyDiagonalForce(particles[i], particles[i + width - 1]);
+    if (i % width != 0 && i + width - 1 < size) applyDiagonalForce(particles[i], particles[i + width - 1]);
 
     // Right lower diagonal neighbour
-    if (i + width + 1 < size) applyDiagonalForce(particles[i], particles[i + width + 1]);
+    if ((i + 1) % width != 0 && i + width + 1 < size) applyDiagonalForce(particles[i], particles[i + width + 1]);
   }
 
   // Apply forces defined for the individual particles within the membrane
