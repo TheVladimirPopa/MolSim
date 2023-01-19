@@ -30,12 +30,7 @@ class VectorContainer : public IContainer {
     }
   }
 
-  size_t size() override {
-    auto count = vector.size();
-    for (auto &molecule : moleculesVector) count += molecule.size();
-
-    return count;
-  }
+  size_t size() override { return vector.size(); }
 
   size_t capacity() override { return vector.capacity(); }
 

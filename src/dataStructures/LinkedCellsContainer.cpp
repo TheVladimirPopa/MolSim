@@ -129,12 +129,6 @@ void LinkedCellsContainer::forEach(std::function<void(Particle &)> &unaryFunctio
   for (auto &p : particlesVector) {
     if (!p.isDeleted()) unaryFunction(p);
   }
-
-  for (auto &molecule : moleculesVector) {
-    for (auto &p : molecule) {
-      unaryFunction(p);
-    }
-  }
 }
 
 void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) {
@@ -181,12 +175,7 @@ void LinkedCellsContainer::reserve(size_t amount) { particlesVector.reserve(amou
 size_t LinkedCellsContainer::capacity() { return particlesVector.capacity(); }
 
 size_t LinkedCellsContainer::size() {
-  size_t count =
-      std::count_if(particlesVector.begin(), particlesVector.end(), [](Particle &p) { return !p.isDeleted(); });
-
-  for (auto &molecule : moleculesVector) count += molecule.size();
-
-  return count;
+  return std::count_if(particlesVector.begin(), particlesVector.end(), [](Particle &p) { return !p.isDeleted(); });
 }
 
 void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
