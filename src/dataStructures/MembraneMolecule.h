@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "MembraneParticle.h"
 #include "Particle.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
@@ -11,10 +10,16 @@ using ArrayUtils::L2Norm;
 class MembraneMolecule {
  private:
   /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
-  std::array<size_t, 3> dimensions{2, 2, 1};
+  const std::array<size_t, 3> dimensions{2, 2, 1};
 
-  /// The particles that are part of the molecule.
-  std::vector<MembraneParticle> particles;
+  /// Defines where in the particles vector the first particle of the membrane is
+  const size_t startIndex{0};
+
+  /// Defines where in the particles vector the last particle of the membrane is
+  const size_t particleCount;
+
+  /// The vector that contains the particles of the membrane
+  std::vector<Particle>* particles;
 
   /// A particle and the force that gets applied to it in each iteration
   struct MembraneForce {
@@ -65,13 +70,13 @@ class MembraneMolecule {
    * @param pos Position where a particle sits
    * @return The particle
    */
-  [[nodiscard]] MembraneParticle& getParticleByPosition(std::array<unsigned long, 3> pos);
+  [[maybe_unused]] [[nodiscard]] Particle& getParticleByPosition(std::array<unsigned long, 3> pos);
 
   // todo: NEIGHBOURS ARE ACTUALLY UNUSED?
   /**
    * Once the particles are part of the membrane, this method assigns them their members.
    */
-  void linkMembraneParticles();
+  // void linkParticles();
 
   /**
    * Applies the default force that is meant to be applied to direct neighbours
@@ -79,7 +84,7 @@ class MembraneMolecule {
    * @param x The first particle that influences the second particle
    * @param y The second particle that influences the first particle
    */
-  void applyDefaultForce(MembraneParticle& x, MembraneParticle& y) const;
+  void applyDefaultForce(Particle& x, Particle& y) const;
 
   /**
    * Applies the diagonal force that is meant to be applied to diagonal neighbours
@@ -87,11 +92,11 @@ class MembraneMolecule {
    * @param x The first particle that influences the second particle
    * @param y The second particle that influences the first particle
    */
-  void applyDiagonalForce(MembraneParticle& x, MembraneParticle& y) const;
+  void applyDiagonalForce(Particle& x, Particle& y) const;
 
  public:
   MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
-                   std::vector<MembraneParticle> particles);
+                   std::vector<Particle>& particles);
 
   /**
    * Defines the force that gets applied to a single, specified particle of the membrane in each iteration.
@@ -108,9 +113,13 @@ class MembraneMolecule {
    */
   void applyInternalForces();
 
-  auto begin() { return particles.begin(); };
+  auto begin() { return particles->begin(); };
 
-  auto end() { return particles.end(); }
+  auto end() {
+    auto it = particles->begin();
+    std::advance(it, particleCount);
+    return it;
+  }
 
-  size_t size() { return particles.size(); }
+  [[nodiscard]] size_t size() const { return particleCount; }
 };
