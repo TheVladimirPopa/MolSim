@@ -1,4 +1,4 @@
-<Simulation_XML endTime="500.0" deltaT="0.01" writeOutFrequency="50" filename="ws5_task1.vtk" cutOffRadius="4.0"
+<Simulation_XML endTime="500.0" deltaT="0.01" writeOutFrequency="20" filename="ws5_task1.vtk" cutOffRadius="4.0"
                 gravity="-0.001">
 
     <Particle id="0" epsilon="1.0" sigma="1.0"/>
@@ -25,10 +25,10 @@
         <position x="15.0" y="15.0" z="15.0"/>
         <dimension x="50" y="50" z="1"/>
         <velocity x="0.0" y="0.0" z="0.0"/>
-        <membraneForce row="17" column="24" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
-        <membraneForce row="17" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
-        <membraneForce row="18" column="24" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
-        <membraneForce row="18" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
+        <membraneForce row="17" column="24" x="0.0" y="0.0" z="0.8" timeSpan="15000"/>
+        <membraneForce row="17" column="25" x="0.0" y="0.0" z="0.8" timeSpan="15000"/>
+        <membraneForce row="18" column="24" x="0.0" y="0.0" z="0.8" timeSpan="15000"/>
+        <membraneForce row="18" column="25" x="0.0" y="0.0" z="0.8" timeSpan="15000"/>
     </MembraneMolecule>
 
     <InputFile path="./checkpoint.txt"/>

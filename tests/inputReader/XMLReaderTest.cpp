@@ -243,10 +243,14 @@ TEST(XMLParser, thermostatTest) {
   EXPECT_EQ(thermostat.getPeriodLength(), 1000);
   EXPECT_EQ(thermostat.getDimensionCount(), 2);
 }
+
 /**
  * Test Membrane input
  */
+
 TEST(XMLParser, membraneTest) {
+  // TODO
+  /*
   XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/.xml");
   LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
   IContainer *container = &linkedCellsContainer;
@@ -255,4 +259,5 @@ TEST(XMLParser, membraneTest) {
   EXPECT_EQ(distance, 2.2);
   EXPECT_EQ(mass, 1.0);
   EXPECT_EQ(stiffness, )
+ */
 }

@@ -189,5 +189,11 @@ class LinkedCellsContainer : public IContainer {
    * Returns molecules that are attached to the container
    * @return attached molecules
    */
-  [[nodiscard]] std::vector<MembraneMolecule>& getMolecules() { return moleculesVector; };
+  [[nodiscard]] std::vector<MembraneMolecule> &getMolecules() { return moleculesVector; };
+
+  /**
+   * Returns reference to particle vector
+   * @return Reference to particles vector
+   */
+  [[nodiscard]] std::vector<Particle> &getParticlesRef() { return particlesVector; }
 };

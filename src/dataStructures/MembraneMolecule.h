@@ -13,13 +13,13 @@ class MembraneMolecule {
   const std::array<size_t, 3> dimensions{2, 2, 1};
 
   /// Defines where in the particles vector the first particle of the membrane is
-  const size_t startIndex{0};
+  const size_t startIndex;
 
   /// Defines where in the particles vector the last particle of the membrane is
   const size_t particleCount;
 
   /// The vector that contains the particles of the membrane
-  std::vector<Particle>* particles;
+  std::vector<Particle>* particles{nullptr};
 
   /// A particle and the force that gets applied to it in each iteration
   struct MembraneForce {

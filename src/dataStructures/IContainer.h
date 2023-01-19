@@ -72,5 +72,11 @@ class IContainer {
    */
   virtual void push_back(MembraneMolecule membrane) = 0;
 
+  /**
+   * Returns a reference to a vector containing the particles of the container.
+   * @return A vector containing particles
+   */
+  virtual std::vector<Particle> &getParticlesRef() = 0;
+
   virtual ~IContainer() = default;
 };

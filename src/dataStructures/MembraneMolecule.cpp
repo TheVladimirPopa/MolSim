@@ -96,9 +96,6 @@ MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stif
     spdlog::error("Membranes must at least have 2x2 dimensions");
     exit(EXIT_FAILURE);
   }
-
-  // TODO: Put back?
-  // linkMembraneParticles();
 }
 
 void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
@@ -135,8 +132,7 @@ void MembraneMolecule::applyInternalForces() {
     if (i % width != 0 && i + width - 1 < particleCount) applyDiagonalForce(particle[i], particle[i + width - 1]);
 
     // Right lower diagonal neighbour
-    if ((i + 1) % width != 0 && i + width + 1 < particleCount)
-      applyDiagonalForce(particle[i], particle[i + width + 1]);
+    if ((i + 1) % width != 0 && i + width + 1 < particleCount) applyDiagonalForce(particle[i], particle[i + width + 1]);
   }
 
   // Apply forces defined for the individual particles within the membrane

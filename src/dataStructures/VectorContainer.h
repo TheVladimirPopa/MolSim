@@ -51,6 +51,8 @@ class VectorContainer : public IContainer {
 
   std::vector<Particle> &getVector() { return vector; };
 
+  std::vector<Particle> &getParticlesRef() { return vector; };
+
  private:
   /// The vector containing all the particles
   std::vector<Particle> vector{};

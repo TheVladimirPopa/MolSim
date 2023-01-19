@@ -141,7 +141,7 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   recalculateStructure();
   applyBoundaries();
 
-  for (auto& molecule : moleculesVector) molecule.applyInternalForces();
+  for (auto &molecule : moleculesVector) molecule.applyInternalForces();
 
   if (hasPeriodicBoundaries) {
     // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
@@ -184,7 +184,7 @@ size_t LinkedCellsContainer::size() {
   size_t count =
       std::count_if(particlesVector.begin(), particlesVector.end(), [](Particle &p) { return !p.isDeleted(); });
 
-  for (auto& molecule : moleculesVector) count += molecule.size();
+  for (auto &molecule : moleculesVector) count += molecule.size();
 
   return count;
 }
@@ -206,14 +206,13 @@ void LinkedCellsContainer::push_back(MembraneMolecule membrane) {
   moleculesVector.push_back(membrane);
 
   // Boundaries need to know molecules to interact.
-  for (auto& molecule : moleculesVector) {
-    for (auto& boundary : boundaries) {
+  for (auto &molecule : moleculesVector) {
+    for (auto &boundary : boundaries) {
       boundary.connectedMolecules.clear();
       boundary.connectedMolecules.push_back(&molecule);
     }
   }
 }
-
 
 void LinkedCellsContainer::recalculateStructure() {
   // Loop through each cell
@@ -254,7 +253,7 @@ void LinkedCellsContainer::recalculateStructure() {
 
   linkBoundaryToHaloCells();
 
-  for (auto& molecule : moleculesVector) boundaries.back().connectedMolecules.push_back(&molecule);
+  for (auto &molecule : moleculesVector) boundaries.back().connectedMolecules.push_back(&molecule);
 }
 
 /**

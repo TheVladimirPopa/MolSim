@@ -105,9 +105,7 @@ void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
     exit(EXIT_FAILURE);
   }
 
-  // Generate particles first
-  std::vector<MembraneParticle> membraneParticles;
-
+  // Insert particles into container
   std::array<double, 3> position{};
   for (int x = 0; x < data.dimension[0]; ++x) {
     for (int y = 0; y < data.dimension[1]; ++y) {
@@ -117,17 +115,17 @@ void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
         position[1] += y * data.distance;
         position[2] += z * data.distance;
 
-        std::array<size_t, 3> castedPos{static_cast<size_t>(x), static_cast<size_t>(y), static_cast<size_t>(z)};
-        membraneParticles.emplace_back(castedPos, position, data.velocity, data.mass, data.type);
+        container.emplace_back(position, data.velocity, data.mass, data.type);
       }
     }
   }
 
-  // Then generate membrane molecule. The linking of particles in done in the constructor.
+  // Then generate membrane molecule. The last particles of the container are consider to be part of the molecule.
   std::array<size_t, 3> castedDimension = {static_cast<size_t>(data.dimension[0]),
                                            static_cast<size_t>(data.dimension[1]),
                                            static_cast<size_t>(data.dimension[2])};
-  MembraneMolecule membrane{castedDimension, data.stiffness, data.bondLength, membraneParticles};
+
+  MembraneMolecule membrane{castedDimension, data.stiffness, data.bondLength, container.getParticlesRef()};
   for (auto &mf : data.membraneForces)
     membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
 
