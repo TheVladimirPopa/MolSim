@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "gtest/gtest.h"
+#include "dataStructures/VectorContainer.h"
 #include "model/LennardJonesModel.h"
 #include "model/NewtonsLawModel.h"
 using std::pow;

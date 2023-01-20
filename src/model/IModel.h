@@ -1,7 +1,6 @@
 #pragma once
 
 #include "dataStructures/Particle.h"
-#include "dataStructures/VectorContainer.h"
 #include "utils/ArrayUtils.h"
 
 class IModel {
@@ -9,6 +8,8 @@ class IModel {
   double delta_t;
 
  public:
+  virtual ~IModel() {};
+
   /**
    * Calculate position of particle
    * @param p The particle that gets its location changed
