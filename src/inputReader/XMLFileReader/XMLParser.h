@@ -299,7 +299,7 @@ class XMLParser {
    * @param arg
    * @return
    */
-  void initialiseMembraneFromXML(IContainer &container) {
+  void initialiseMembraneFromXML(LinkedCellsContainer &container) {
     std::vector<MembraneArg> membraneArgs = extractMembrane();
 
     for (auto &it : membraneArgs) {
