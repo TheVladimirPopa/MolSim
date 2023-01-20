@@ -1,6 +1,7 @@
 #include "LinkedCellsContainer.h"
 
 #include "LinkedCellsBoundary.h"
+#include "dataStructures/MembraneMolecule.h"
 #include "utils/ArrayUtils.h"
 
 LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
@@ -90,6 +91,7 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(std::array<double, 3> const 
   return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
 
+// todo: fix this
 std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors(Particle &particle) {
   std::vector<std::reference_wrapper<Particle>> neighbors;
 
@@ -135,8 +137,6 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   recalculateStructure();
   applyBoundaries();
 
-  for (auto &molecule : moleculesVector) molecule.applyInternalForces();
-
   if (hasPeriodicBoundaries) {
     // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
     recalculateStructure();
@@ -144,30 +144,44 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   }
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == CellType::halo) {
-      continue;
-    }
+    if (cells[index].type == CellType::halo) continue;
+
     for (size_t indexOffset : indexOffsetAdjacent) {
       // Special case to match particles within one cell
       if (indexOffset == 0) {
         auto &particles = cells[index].particles;
         for (auto first = particles.begin(); first != particles.end(); ++first) {
-          for (auto second = first; second != particles.end(); ++second) {
-            // Don't run the function on a pair consisting of the same particle
-            if (*second == *first) continue;
-            binaryFunction(particlesVector[*first], particlesVector[*second]);
+          auto &p1 = particlesVector[*first];
+          for (auto second = std::next(first); second != particles.end(); ++second) {
+            auto &p2 = particlesVector[*second];
+
+            // Neighbour particles within molecules require different physics
+            if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
+              moleculesVector[p1.getMolecule()].applyForce(p1, p2, *first, *second);
+            else
+              binaryFunction(p1, p2);
           }
         }
-
       } else {
         // Loop so the particles of each of the two cells and match them
-        for (auto cellAParticle : cells[index].particles) {
-          for (auto cellBParticle : cells[index + indexOffset].particles) {
-            binaryFunction(particlesVector[cellAParticle], particlesVector[cellBParticle]);
+        for (auto indexA : cells[index].particles) {
+          auto &p1 = particlesVector[indexA];
+          for (auto indexB : cells[index + indexOffset].particles) {
+            auto &p2 = particlesVector[indexB];
+
+            // Neighbour particles within molecules require different physics
+            if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
+              moleculesVector[p1.getMolecule()].applyForce(p1, p2, indexA, indexB);
+            else
+              binaryFunction(p1, p2);
           }
         }
       }
     }
+  }
+
+  for (auto& molecule : moleculesVector) {
+    if (molecule.hasArtificalForces()) molecule.applyArtificialForces();
   }
 }
 
@@ -193,14 +207,7 @@ void LinkedCellsContainer::push_back(Particle &particle) {
 
 void LinkedCellsContainer::push_back(MembraneMolecule membrane) {
   moleculesVector.push_back(membrane);
-
-  // Boundaries need to know molecules to interact.
-  for (auto &molecule : moleculesVector) {
-    for (auto &boundary : boundaries) {
-      boundary.connectedMolecules.clear();
-      boundary.connectedMolecules.push_back(&molecule);
-    }
-  }
+  moleculesVector.back().setMoleculeVectorIndex(moleculesVector.size() - 1);
 }
 
 void LinkedCellsContainer::recalculateStructure() {
@@ -241,8 +248,6 @@ void LinkedCellsContainer::recalculateStructure() {
   }
 
   linkBoundaryToHaloCells();
-
-  for (auto &molecule : moleculesVector) boundaries.back().connectedMolecules.push_back(&molecule);
 }
 
 /**

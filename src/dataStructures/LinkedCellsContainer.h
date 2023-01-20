@@ -123,7 +123,7 @@ class LinkedCellsContainer : public IContainer {
 
   void push_back(Particle &particle) override;
 
-  void push_back(MembraneMolecule membrane) override;
+  void push_back(MembraneMolecule membrane);
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
@@ -192,8 +192,8 @@ class LinkedCellsContainer : public IContainer {
   [[nodiscard]] std::vector<MembraneMolecule> &getMolecules() { return moleculesVector; };
 
   /**
-   * Returns reference to particle vector
+   * Returns reference to particles vector
    * @return Reference to particles vector
    */
-  [[nodiscard]] std::vector<Particle> &getParticlesRef() { return particlesVector; }
+  [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return particlesVector; }
 };

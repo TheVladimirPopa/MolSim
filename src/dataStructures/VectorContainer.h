@@ -21,7 +21,7 @@ class VectorContainer : public IContainer {
   }
 
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
-    for (auto &molecule : moleculesVector) molecule.applyInternalForces();
+    // for (auto &molecule : moleculesVector) molecule.applyInternalForces();
 
     for (size_t i = 0; i < size(); ++i) {
       for (size_t j = i + 1; j < size(); ++j) {
@@ -46,7 +46,7 @@ class VectorContainer : public IContainer {
 
   std::vector<Particle> &getVector() { return vector; };
 
-  std::vector<Particle> &getParticlesRef() { return vector; };
+  [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return vector; }
 
  private:
   /// The vector containing all the particles
