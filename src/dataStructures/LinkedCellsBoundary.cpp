@@ -1,6 +1,5 @@
 #include "LinkedCellsBoundary.h"
 
-#include <cmath>
 #include <vector>
 
 #include "spdlog/spdlog.h"
@@ -99,12 +98,6 @@ void LinkedCellsBoundary::reflectParticles() {
   for (cell* cell : connectedCells) {
     for (auto particleIndex : cell->particles) {
       reflectParticle((*particlesVector)[particleIndex]);
-    }
-  }
-
-  for (auto* molecule : connectedMolecules) {
-    for (auto& particle : *molecule) {
-      reflectParticle(particle);
     }
   }
 }
