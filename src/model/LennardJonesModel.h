@@ -20,7 +20,7 @@ class LennardJonesModel : public IModel {
    */
   explicit LennardJonesModel(double cutOffRadius_) : cutOffRadiusSquared{cutOffRadius_ * cutOffRadius_} {}
 
-  virtual ~LennardJonesModel() = default;
+  ~LennardJonesModel() = default;
 
   /**
    * Add the forces both particles apply upon each based on the
