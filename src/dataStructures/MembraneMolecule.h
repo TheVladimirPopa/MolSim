@@ -3,9 +3,9 @@
 #include <vector>
 
 #include "Particle.h"
+#include "model/HarmonicPotentialModel.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
-#include "model/HarmonicPotentialModel.h"
 using ArrayUtils::L2Norm;
 
 class MembraneMolecule {
@@ -76,12 +76,6 @@ class MembraneMolecule {
    */
   [[maybe_unused]] [[nodiscard]] Particle& getParticleByPosition(std::array<unsigned long, 3> pos);
 
-  // todo: NEIGHBOURS ARE ACTUALLY UNUSED?
-  /**
-   * Once the particles are part of the membrane, this method assigns them their members.
-   */
-  // void linkParticles();
-
   /**
    * Applies the default force that is meant to be applied to direct neighbours
    * (= particles that are either horizontal or vertical neighbours).
@@ -146,17 +140,34 @@ class MembraneMolecule {
    */
   [[maybe_unused]] bool indicesAreNeighbours(size_t indexA, size_t indexB);
 
+  /**
+   * @return Whether there are still forces that get applied every iteration to specific particles.
+   */
   bool hasArtificalForces() { return !artificialForces.empty(); }
 
+  /**
+   * In practice this id marks the membrane molecule to be unique identifiable.
+   * @param index The index the molecule has within the respective container
+   * The linked cells container expects this index to be set to where the molecule lies within its own molecule vector.
+   */
   void setMoleculeVectorIndex(size_t index);
 
+  /**
+   * @return The begin() iterator over the particles of the molecule
+   */
   auto begin() { return particles->begin(); };
 
+  /**
+   * @return The end() iterator over the particles of the molecule
+   */
   auto end() {
     auto it = particles->begin();
     std::advance(it, particleCount);
     return it;
   }
 
+  /**
+   * @return The number of particles that are part of the molecule
+   */
   [[nodiscard]] size_t size() const { return particleCount; }
 };
