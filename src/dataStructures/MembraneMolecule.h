@@ -5,6 +5,7 @@
 #include "Particle.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
+#include "model/HarmonicPotentialModel.h"
 using ArrayUtils::L2Norm;
 
 class MembraneMolecule {
@@ -34,7 +35,7 @@ class MembraneMolecule {
   };
 
   /// The forces that get applied to individually selected particles
-  std::vector<MembraneForce> singleForces;
+  std::vector<MembraneForce> artificialForces;
 
   /// The stiffness factor of the membrane
   double const stiffness{};
@@ -47,6 +48,9 @@ class MembraneMolecule {
 
   /// The index of the dimension that defines the width e.g. 1
   int dimWidth{};
+
+  /// The model defining forces between particles
+  HarmonicPotentialModel physics;
 
   // Helper functions to find particles
   /**
@@ -84,7 +88,7 @@ class MembraneMolecule {
    * @param x The first particle that influences the second particle
    * @param y The second particle that influences the first particle
    */
-  void applyDefaultForce(Particle& x, Particle& y) const;
+  void applyDirectForce(Particle& x, Particle& y) const;
 
   /**
    * Applies the diagonal force that is meant to be applied to diagonal neighbours
@@ -112,6 +116,39 @@ class MembraneMolecule {
    * and diagonal neighbours.
    */
   void applyInternalForces();
+
+  /**
+   * Applies the artificial forces that were defined in the xml file.
+   */
+  void applyArtificialForces();
+
+  /**
+   * Repulses the particles p1 and p2 if they are close enough.
+   * @param p1 The first particle which repulses the second
+   * @param p2 The second particle which repulses the first
+   */
+  void applyRepulsiveForce(Particle& p1, Particle& p2);
+
+  /**
+   * Applies the correct inner molecule force selected based on indices.
+   * @param p1 Particle 1
+   * @param p2 Particle 2
+   * @param indexP1 Index of particle 1
+   * @param indexP2 Index of particle 2
+   */
+  void applyForce(Particle& p1, Particle& p2, size_t indexP1, size_t indexP2);
+
+  /**
+   * Returns whether the two passed particle indices are neighbours (direct or diagonal)
+   * @param indexA Index of first particle
+   * @param indexB Index of second particle
+   * @return Whether first and second particle are neighbours
+   */
+  [[maybe_unused]] bool indicesAreNeighbours(size_t indexA, size_t indexB);
+
+  bool hasArtificalForces() { return !artificialForces.empty(); }
+
+  void setMoleculeVectorIndex(size_t index);
 
   auto begin() { return particles->begin(); };
 

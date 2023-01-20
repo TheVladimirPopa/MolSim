@@ -7,7 +7,7 @@
 #include <array>
 using std::array;
 using vec3d = std::array<double, 3>;
-#include "dataStructures/MembraneParticle.h"
+#include "dataStructures/MembraneMolecule.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -98,7 +98,7 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
   spdlog::debug("Added sphere particles to particle container.");
 }
 
-void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
+void ParticleGeneration::addMembraneToParticleContainer(LinkedCellsContainer &container,
                                                         ParticleGeneration::membrane const &data) {
   if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
     spdlog::error("Only single layer membranes are supported. Please check your input file.");

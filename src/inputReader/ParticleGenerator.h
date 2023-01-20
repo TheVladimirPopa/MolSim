@@ -5,6 +5,7 @@
 #include <array>
 
 #include "dataStructures/IContainer.h"
+#include "dataStructures/LinkedCellsContainer.h"
 
 namespace ParticleGeneration {
 /**
@@ -96,5 +97,5 @@ void addSphereToParticleContainer(IContainer &container, sphere const &data);
  * @param container The container that receives the membrane molecule
  * @param data The membrane struct which holds the data for the generation
  */
-void addMembraneToParticleContainer(IContainer &container, membrane const &data);
+void addMembraneToParticleContainer(LinkedCellsContainer &container, membrane const &data);
 };  // namespace ParticleGeneration

@@ -10,12 +10,14 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#define NOT_IN_MOLECULE 0xffffffff
 
 class IModel;
 class NewtonsLawModel;
 class LennardJonesModel;
 class Thermostat;
 class LineProcessorCheckpoint;
+class MembraneMolecule;
 
 class Particle {
  private:
@@ -65,6 +67,9 @@ class Particle {
    * cleanup.
    */
   bool isDeleted_;
+
+  // The id or index of the molecule the particle is a member of
+  size_t moleculeId;
 
   struct ParticleType {
     double const epsilon;
@@ -146,7 +151,7 @@ class Particle {
    * true iff a particle no longer is part of the simulation and waits for
    * cleanup.
    */
-  bool isDeleted() { return isDeleted_; }
+  bool isDeleted() const { return isDeleted_; }
 
   /**
    * Deleted particle by setting it's deletion state.
@@ -175,6 +180,22 @@ class Particle {
    * @param force the force that gets added to the particle
    */
   void applyForce(std::array<double, 3> &force);
+
+  /**
+   * Sets the molecule membership of the current particle
+   * @param pMolecule The molecule the particle is a member of
+   */
+  void setMolecule(size_t moleculeId_) { moleculeId = moleculeId_; }
+
+  /**
+   * @return The molecule the particle is part of
+   */
+  size_t getMolecule() { return moleculeId; }
+
+  /**
+   * @return Whether the particle is member of a molecule
+   */
+  bool isInMolecule() const { return moleculeId != NOT_IN_MOLECULE; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
