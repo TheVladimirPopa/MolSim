@@ -1,3 +1,4 @@
+#pragma once
 #include "dataStructures/LinkedCellsContainer.h"
 
 class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
@@ -12,9 +13,9 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
       colourList.emplace_back();
     }
 
-    for (int z = 1; z < dimensions[2] - 1; ++z) {
-      for (int y = 1; y < dimensions[1] - 1; ++y) {
-        for (int x = 1; x < dimensions[0] - 1; ++x) {
+    for (size_t z = 1; z < dimensions[2] - 1; ++z) {
+      for (size_t y = 1; y < dimensions[1] - 1; ++y) {
+        for (size_t x = 1; x < dimensions[0] - 1; ++x) {
           size_t index = x % 3;
           index += (y % 3) * 3;
           if (z % 2 == 0) {
@@ -66,4 +67,7 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
       }
     }
   }
+
+  // For testing purposes
+  const std::vector<std::vector<size_t>> &getColourList() const { return colourList; }
 };
