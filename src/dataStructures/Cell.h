@@ -75,8 +75,10 @@ struct cell {
 
   explicit cell(CellType t, size_t index, std::array<unsigned int, 3>* dimensions, std::array<double, 3>* cubeSize)
       : particles{}, type{t}, cellVectorIndex{index}, gridDimensions{dimensions}, cubeSize{cubeSize} {
+#ifdef _OPENMP
     omp_init_lock(&ompLock);
     omp_unset_lock(&ompLock);
+#endif
   }
 
   /// Returns whether the cell is empty
@@ -206,8 +208,9 @@ struct cell {
 
     linkPartnerUnique(diagonalHaloCellPosition, cells, offset);
   }
-
+#ifdef _OPENMP
   inline void lock() { omp_set_lock(&ompLock); }
 
   inline void unlock() { omp_unset_lock(&ompLock); }
+#endif
 };

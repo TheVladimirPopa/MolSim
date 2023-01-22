@@ -5,6 +5,7 @@ project(PSEMolDyn_GroupD VERSION 0.0.1)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
+option(OPEN_MP "Enable openMP" ON)
 
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.22:
@@ -57,11 +58,11 @@ set(global_compiler_flags
         $<$<CXX_COMPILER_ID:Intel>:-std=c++20 -w3 -wd383,981,1418,1572,2259>
         )
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+IF (OPEN_MP)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+endif ()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2")
-#SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-#SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2")
 
 
 # Compile MolSim

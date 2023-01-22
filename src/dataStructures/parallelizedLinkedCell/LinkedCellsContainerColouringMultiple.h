@@ -2,6 +2,7 @@
 #include "dataStructures/LinkedCellsContainer.h"
 
 class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
+#ifdef _OPENMP
  private:
   std::vector<std::vector<std::array<size_t, 4>>> colourList{};
 
@@ -73,4 +74,5 @@ class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
   }
 
   [[nodiscard]] const std::vector<std::vector<std::array<size_t, 4>>> &getColourList() const { return colourList; }
+#endif
 };

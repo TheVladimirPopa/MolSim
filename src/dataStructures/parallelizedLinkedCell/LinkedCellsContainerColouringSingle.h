@@ -2,6 +2,8 @@
 #include "dataStructures/LinkedCellsContainer.h"
 
 class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
+#ifdef _OPENMP
+
  private:
   std::vector<std::vector<size_t>> colourList{};
 
@@ -70,4 +72,5 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
 
   // For testing purposes
   const std::vector<std::vector<size_t>> &getColourList() const { return colourList; }
+#endif
 };

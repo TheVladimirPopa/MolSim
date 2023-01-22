@@ -2,6 +2,8 @@
 #include "dataStructures/LinkedCellsContainer.h"
 
 class LinkedCellsContainerLocks : LinkedCellsContainer {
+#ifdef _OPENMP
+
  public:
   LinkedCellsContainerLocks(double cellSize, std::array<double, 3> &leftLowerBound,
                             std::array<double, 3> &rightUpperBound)
@@ -49,4 +51,5 @@ class LinkedCellsContainerLocks : LinkedCellsContainer {
       cells[index].unlock();
     }
   }
+#endif
 };
