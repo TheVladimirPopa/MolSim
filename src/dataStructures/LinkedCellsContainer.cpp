@@ -91,9 +91,8 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(std::array<double, 3> const 
   return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
 
-// todo: fix this
-std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors(Particle &particle) {
-  std::vector<std::reference_wrapper<Particle>> neighbors;
+void LinkedCellsContainer::forEachNeighbor(Particle &particle,
+                                           std::function<void(Particle &, Particle &)> &binaryFunction) {
 
   size_t gridCell = getCellIndexOfPosition(particle.getX());
   for (size_t indexOffset : indexOffsetAdjacent) {
@@ -102,7 +101,7 @@ std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors
       for (auto &&particleIndex : cells[gridCell].particles) {
         auto &neighborParticle = particlesVector[particleIndex];
 
-        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
+        if (&particle != &neighborParticle) binaryFunction(particle, neighborParticle);
       }
     } else {
       // Loop so the particles of each of the two cells and match them
@@ -112,19 +111,10 @@ std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors
       for (auto &&cellBParticle : cells[partnerCellIndex].particles) {
         auto &neighborParticle = particlesVector[cellBParticle];
 
-        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
+        if (&particle != &neighborParticle) binaryFunction(particle, neighborParticle);
       }
     }
   }
-
-  return neighbors;
-}
-
-void LinkedCellsContainer::forEachNeighbor(Particle &particle,
-                                           std::function<void(Particle &, Particle &)> &binaryFunction) {
-  std::vector<std::reference_wrapper<Particle>> neighbors = getNeighbors(particle);
-
-  for (auto &neighbor : neighbors) binaryFunction(particle, neighbor);
 }
 
 void LinkedCellsContainer::forEach(std::function<void(Particle &)> &unaryFunction) {

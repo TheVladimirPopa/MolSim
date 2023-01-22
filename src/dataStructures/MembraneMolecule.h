@@ -146,9 +146,10 @@ class MembraneMolecule {
   bool hasArtificalForces() { return !artificialForces.empty(); }
 
   /**
-   * In practice this id marks the membrane molecule to be unique identifiable.
+   * In practice this id marks the membrane molecule to be uniquely identifiable.
    * @param index The index the molecule has within the respective container
-   * The linked cells container expects this index to be set to where the molecule lies within its own molecule vector.
+   * @note The linked cells container expects this index to be set to where the molecule lies within its own molecule
+   * vector.
    */
   void setMoleculeVectorIndex(size_t index);
 

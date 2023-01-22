@@ -70,13 +70,6 @@ class LinkedCellsContainer : public IContainer {
   std::array<size_t, 14> indexOffsetAdjacent{};
 
   /**
-   * Generates neighbor list for theoretical particle by taking the particles of surrounding cells
-   * @param particle A particle for which the neighboring particles will be determined
-   * @return List of neighboring particles (ignores cutoff distance)
-   */
-  std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
-
-  /**
    * Links up boundary cells and halo cells depending on the configuration of periodic boundaries that was applied.
    */
   void linkBoundaryToHaloCells();

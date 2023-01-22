@@ -4,6 +4,10 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
         )
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+
 # We do want to include main into our tests later
 list(REMOVE_ITEM MY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/MolSim.cpp")
 
