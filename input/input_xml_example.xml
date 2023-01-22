@@ -31,7 +31,7 @@
             <rightUpperBound x="55.0" y="30.0" z="5"/>
             <left>REFLECT</left>
             <right>REFLECT</right>
-            <top>PERIODIC</top>
+            <top>REFLECT</top>
             <bottom>REFLECT</bottom>
             <front>REFLECT</front>
             <back>REFLECT</back>

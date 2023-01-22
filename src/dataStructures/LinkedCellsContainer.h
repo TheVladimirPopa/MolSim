@@ -85,6 +85,7 @@ class LinkedCellsContainer : public IContainer {
 
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
+  friend class ThermodynamicStatistics;
 
  public:
   /**

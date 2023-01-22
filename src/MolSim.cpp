@@ -12,6 +12,7 @@
 #include "inputReader/FileReader.h"
 #include "inputReader/XMLFileReader/XMLParser.h"
 #include "model/LennardJonesModel.h"
+#include "model/SmoothedLennardJonesModel.h"
 #include "model/Thermostat.h"
 #include "outputWriter/NoWriter.h"
 #include "outputWriter/VTKWriter.h"
@@ -292,10 +293,26 @@ int main(int argc, char *argsv[]) {
 
     LinkedCellsContainer linkedCellsContainer = parser.initialiseLinkedCellContainerFromXML();
 
-    //TODO switch between LJ, Smoothed LJ, Gravity
+    IModel *simulationModel;
+    std::string modelSelection = parser.extractModel();
 
     LennardJonesModel ljModel{parser.initCutOffRadiusXML()};
     ljModel.setDeltaT(simulation.getDeltaT());
+
+    SmoothedLennardJonesModel sljModel{parser.initCutOffRadiusXML(), parser.initRadius_l()};
+    sljModel.setDeltaT(simulation.getDeltaT());
+
+    NewtonsLawModel nlModel{};
+
+    if (modelSelection == "LennardJones") {
+      simulationModel = &ljModel;
+    } else if (modelSelection == "SmoothedLennardJones") {
+      simulationModel = &sljModel;
+    } else if (modelSelection == "Gravity") {
+      simulationModel = &nlModel;
+    } else {
+      return -1;  // invalid model is thrown earlier
+    }
 
     parser.registerParticlesFromXML();
 
@@ -317,7 +334,8 @@ int main(int argc, char *argsv[]) {
     if (readFromCheckpoint) FileReader::readFileCheckpoint(*container, checkpointFile.data());
 
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
-    simulation.simulate(ljModel, *container, *selectedWriter, thermostat, parser.initGravityFromXML(), saveCheckpoint);
+    simulation.simulate(*simulationModel, *container, *selectedWriter, thermostat, parser.initGravityFromXML(),
+                        saveCheckpoint);
   } else {
     Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
     simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);

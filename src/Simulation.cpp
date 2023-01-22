@@ -1,8 +1,9 @@
 //
 // Created by leo on 09.11.22.
 //
-
 #include "Simulation.h"
+
+#include <map>
 
 #include "outputWriter/CheckpointFileWriter.h"
 #include "spdlog/spdlog.h"
@@ -29,6 +30,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   }};
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
+  std::function<void(P p)> registerTime{
+      [current_time](Particle &p) { p.timePositionMap.emplace(current_time, p.getX()); }};
 
   // Initialize the container to the temperature
   if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
@@ -43,6 +46,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     particles.forEach(updateF);
     particles.forEachPair(addForces);
     particles.forEach(updateV);
+    particles.forEach(registerTime);
 
     if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();

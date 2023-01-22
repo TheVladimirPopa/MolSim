@@ -8,6 +8,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -61,8 +62,6 @@ class Particle {
    */
   double sigma;
 
-  std::array<double, 3> initial_x;
-
   /**
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
@@ -73,6 +72,12 @@ class Particle {
     double const epsilon;
     double const sigma;
   };
+
+  /**
+   * Maps the position of the Particle at a particular time
+   */
+
+  std::map<double, std::array<double, 3>> timePositionMap;
 
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
@@ -116,7 +121,7 @@ class Particle {
 
   const std::array<double, 3> &getOldF() const { return old_f; }
 
-  const std::array<double, 3> &getInitialX() const { return initial_x; }
+  const std::map<double, std::array<double, 3>> &getTimePositionMap() const { return timePositionMap; }
 
   void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 

@@ -1,42 +1,118 @@
 #pragma once
+#include <map>
+
 #include "ArrayUtils.h"
 #include "dataStructures/IContainer.h"
+#include "dataStructures/LinkedCellsContainer.h"
+#include "dataStructures/VectorContainer.h"
+#define PI 3.141592653589793238462643383279502884L
 using ArrayUtils::dotProduct;
 
-/**
- *
- * @param particleContainer
- * @return
- */
+class ThermodynamicStatistics {
+  /**
+   * Calculates the diffusion for a LinkedCellsContainer
+   * @param particleContainer
+   * @return
+   */
+  static double var(LinkedCellsContainer &particleContainer, double currentTime, double referenceTime) {
+    double var = 0;
 
-double variance(IContainer &particleContainer) {
-  double var = 0;
+    for (const Particle &p : particleContainer.particlesVector) {
+      var += dotProduct(p.getTimePositionMap().at(currentTime) - p.getTimePositionMap().at(referenceTime));
+    }
 
-  for (const Particle p : particleContainer) {
-    var += dotProduct(p.getX() - p.getInitialX());
+    var /= particleContainer.size();
+
+    return var;
   }
+  /**
+   * Calculates the diffusion for a VectorContainer
+   * @param particleContainer
+   * @param currentTime
+   * @param referenceTime
+   * @return
+   */
+  static double var(VectorContainer &particleContainer, double currentTime, double referenceTime) {
+    double var = 0;
 
-  var /= particleContainer.size();
+    for (const Particle &p : particleContainer.vector) {
+      var += dotProduct(p.getTimePositionMap().at(currentTime) - p.getTimePositionMap().at(referenceTime));
+    }
 
-  // particleContainer.forEach(addDotProduct(var)); // templates
+    var /= particleContainer.size();
 
-  return var;
-}
-
-/**
- *
- * @return
- */
-
-double radialDistributionFunction(double delta_r, IContainer &particleContainer, int intervalStart, int intervalEnd) {
-  double pi = 3.14;
-  int numPairs = 0;
-  for (Particle p : particleContainer) {
-    for (int i = intervalStart; i <= intervalEnd; i++) {
-      double r= dotProduct();
-      if () {
-        numPairs++;
+    return var;
+  }
+  /**
+   * Computes the radialDistributionFunction for particles in a LinkedCellsContainer
+   * @param delta_r
+   * @param particleContainer
+   * @param intervalStart
+   * @param intervalEnd
+   * @return a vector of the local densities
+   */
+  static std::vector<double> radialDistributionFunction(double delta_r, LinkedCellsContainer &particleContainer,
+                                                        int intervalStart, int intervalEnd) {
+    std::vector<double> densities;
+    for (Particle p1 : particleContainer.particlesVector) {
+      for (Particle p2 : particleContainer.particlesVector) {
+        if (p1 == p2) {
+          continue;
+        }
+        double r = dotProduct(p1.getX() - p2.getX());
+        for (int i = intervalStart; i <= intervalEnd; i++) {
+          int numPairs = 0;
+          double ri = 0;
+          if (r > ri && r < ri + delta_r) {
+            numPairs++;
+          }
+          double density = numPairs;
+          density /= 4 * PI / 3;
+          double aux = (ri + delta_r);
+          aux *= aux * aux;
+          aux -= ri * ri * ri;
+          density /= aux;
+          densities.emplace_back(density);
+        }
       }
     }
+    return densities;
   }
-}
+  /**
+   * Computes the radialDistributionFunction of particles in VectorContainer
+   * @param delta_r
+   * @param particleContainer
+   * @param intervalStart
+   * @param intervalEnd
+   * @return a vector of the local densities
+   */
+  static std::vector<double> radialDistributionFunction(double delta_r, VectorContainer &particleContainer,
+                                                        int intervalStart, int intervalEnd) {
+    std::vector<double> densities;
+    for (Particle p1 : particleContainer.vector) {
+      for (Particle p2 : particleContainer.vector) {
+        if (p1 == p2) {
+          continue;
+        }
+
+        double r = dotProduct(p1.getX() - p2.getX());
+
+        for (int i = intervalStart; i <= intervalEnd; i++) {
+          int numPairs = 0;
+          double ri = 0;
+          if (r > ri && r < ri + delta_r) {
+            numPairs++;
+          }
+          double density = numPairs;
+          density /= 4 * PI / 3;
+          double aux = (ri + delta_r);
+          aux *= aux * aux;
+          aux -= ri * ri * ri;
+          density /= aux;
+          densities.emplace_back(density);
+        }
+      }
+    }
+    return densities;
+  }
+};
