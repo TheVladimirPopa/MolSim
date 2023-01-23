@@ -15,6 +15,7 @@
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
 #include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
+#include "utils/SimulationUtils.h"
 
 class XMLParser {
  private:
@@ -82,11 +83,6 @@ class XMLParser {
     }
     throw std::invalid_argument("Invalid boundary string");
   }
-
-  enum class ContainerType {
-    VECTOR = 0,
-    LINKED_CELLS = 1
-  };
 
   /**
    * @return Returns type of the container specified in the xml file
@@ -252,7 +248,7 @@ class XMLParser {
    * Adds all spheres read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  std::vector<ParticleGeneration::sphere> getSpheres() const {
+  [[nodiscard]] std::vector<ParticleGeneration::sphere> getSpheres() const {
     std::vector<ParticleGeneration::sphere> spheres;
 
     std::vector<SphereArg> sphereArgs = extractSpheres();
@@ -271,17 +267,24 @@ class XMLParser {
     return spheres;
   }
 
-
-
-
   /**
    * @return Returns the Lennard Jones cutOffRadius of the simulation
    */
-  double getCutOffRadius() { return simulation->cutOffRadius(); }
+  double getCutOffRadius() const { return simulation->cutOffRadius(); }
+
   /**
    * @return Returns the gravity constant
    */
-  double getGravityConstant() { return simulation->gravity(); }
+  double getGravityConstant() const { return simulation->gravity(); }
+
+  /**
+   * @return The selected model
+   */
+  ModelType getModel() const {
+    // TODO: Read this value from "simulation" once the xml part is updated
+    return ModelType::LennardJones;
+  }
+
   /**
    * Registers the particles read in the path file
    */
@@ -300,9 +303,10 @@ class XMLParser {
     std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
     std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
     auto container = std::make_unique<LinkedCellsContainer>(linkedCellArg.getCellSize(), lowerBound, upperBound);
-    XMLLinkedCellBoundaries(*container);
+    applyBoundariesFromXML(*container);
     return container;
   }
+
   /**
    * Constructs a thermostat from the path file and a given container
    * @param container
@@ -322,7 +326,7 @@ class XMLParser {
    *  Sets boundaries read from the path file to a given LinkedCellContainer
    * @param linkedCellsContainer
    */
-  void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
+  void applyBoundariesFromXML(LinkedCellsContainer &linkedCellsContainer) {
     LinkedCellArg linkedCellArg = extractLinkedCell();
     linkedCellsContainer.setBoundaries({
         {CubeSide::LEFT, XMLParser::strToEnumBoundary(linkedCellArg.getBoundLeft())},

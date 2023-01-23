@@ -46,7 +46,7 @@ TEST(XMLParser, initLinkedCellContainerBoundary) {
   XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization2.xml");
 
   LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
-  xmlParser.XMLLinkedCellBoundaries(linkedCellsContainer);
+  xmlParser.applyBoundariesFromXML(linkedCellsContainer);
 
   for (auto it : linkedCellsContainer.getBoundaries()) {
     switch (it.getSide()) {

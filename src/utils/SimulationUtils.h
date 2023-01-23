@@ -1,18 +1,18 @@
 #pragma once
 
-#include "inputReader/XMLFileReader/XMLParser.h"
-using ContainerType = XMLParser::ContainerType;
-
 #include "Configuration.h"
 #include "dataStructures/LinkedCellsContainer.h"
+#include "inputReader/XMLFileReader/XMLParser.h"
+#include "outputWriter/NoWriter.h"
 #include "spdlog/spdlog.h"
 using duration = std::chrono::nanoseconds;
 using time_point = std::chrono::time_point<std::chrono::steady_clock, duration>;
+using ParticleShape = std::variant<ParticleGeneration::sphere, ParticleGeneration::cuboid>;
 
-enum class Models { NewtonsLaw, LennardJones };
-
-enum class Writers { NoWriter, VTKWriter };
-
+enum class InputType { File, XML };
+enum class ContainerType { VECTOR = 0, LINKED_CELLS = 1 };
+enum class ModelType { NewtonsLaw, LennardJones };
+enum class WriterType { NoWriter, VTKWriter };
 enum class SimTypeDeprecated { Single, Cuboid, Sphere };
 
 namespace SimulationUtils {
@@ -36,85 +36,78 @@ std::unique_ptr<LinkedCellsContainer> makeDefaultContainer() {
   return defaultContainer;
 }
 
-std::unique_ptr<IContainer> setupContainer(ContainerType containerType) {
-  if (containerType == ContainerType::VECTOR) return std::make_unique<VectorContainer>();
-
-  // Todo: linked_cells container is exclusively possible with xml input
-  if (containerType == ContainerType::LINKED_CELLS) {
-    if (!xmlParser) {
-      spdlog::info("You are using file input. The structure of your linked cells container is undefined.");
-      spdlog::info("Creating fallback container with hard coded values.");
-      return makeDefaultContainer();
-    }
-
-    // Todo: Die Reference die wir vom XML Parser bekommen ist ein LinkedCellsContainer_t. Warum?
-    std::unique_ptr<LinkedCellsContainer> linkedCellsContainer = xmlParser->initialiseLinkedCellContainerFromXML();
-
-    return linkedCellsContainer;
-  }
-
-  throw std::invalid_argument("Unsupported container type. Please update MolSim.cpp");
+std::unique_ptr<IContainer> makeContainer(ContainerType type, std::unique_ptr<IContainer> container) {
+  if (type == ContainerType::VECTOR)
+    return std::make_unique<VectorContainer>();
+  else if (type == ContainerType::LINKED_CELLS)
+    return container; // This is a placeholder for now
+  else
+    throw std::runtime_error("Unsupported container type. Check Simulationutils.h");
 }
 
-void populateContainerViaFile(IContainer &container, char *filePath, SimTypeDeprecated type) {
+void populateContainerViaFile(IContainer &container, std::string filePath, SimTypeDeprecated type) {
+  spdlog::info("Generating particles via File input. (Warning: Deprecated)");
   switch (type) {
     case SimTypeDeprecated::Single: {
-      FileReader::readFileSingle(container, filePath);
+      FileReader::readFileSingle(container, filePath.data());
       break;
     }
     case SimTypeDeprecated::Cuboid: {
-      FileReader::readFileCuboid(container, filePath);
+      FileReader::readFileCuboid(container, filePath.data());
       break;
     }
     case SimTypeDeprecated::Sphere: {
-      FileReader::readFileSphere(container, filePath);
+      FileReader::readFileSphere(container, filePath.data());
       break;
     }
   }
 }
 
 void populateContainer(IContainer &container, bool loadCheckpoint, std::vector<ParticleShape> shapes) {
-  parser.initializeParticleTypes();
-  std::string checkpointFile = parser.getCheckpointPath();
-
+  spdlog::info("Generating particles via XML input.");
   for (auto shape : shapes) {
     if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
       ParticleGeneration::addCuboidToParticleContainer(container, std::get<ParticleGeneration::cuboid>(shape));
 
     if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
       ParticleGeneration::addSphereToParticleContainer(container, std::get<ParticleGeneration::sphere>(shape));
-  }
 
-  if (loadCheckpoint) FileReader::readFileCheckpoint(container, checkpointFile.data());
+    // Todo: Add membrane
+  }
 }
 
-std::unique_ptr<IModel> getModel(Models modelType) {
-  // Todo: This is currently always the default lennard jones model
-  if (modelType == Models::LennardJones) {
-    auto lennardJones = std::make_unique<LennardJonesModel>(3.0);
-
-    // todo: wie bringen wir das sauber hier rein?
-    lennardJones->setDeltaT(simulation.getDeltaT());
-    lennardJones->setCutOffRadius(parser.getCutOffRadius());
-
-    return lennardJones;
-  }
-
-  return std::make_unique<NewtonsLawModel>();
+void loadCheckpoint(IContainer &container, std::string checkpointPath) {
+  spdlog::info("Loading checkpoint file.");
+  FileReader::readFileCheckpoint(container, checkpointPath.data());
 }
 
-std::unique_ptr<IWriter> getWriter(Writers writerType) {
-  if (writerType == Writers::VTKWriter) return std::make_unique<VTKWriter>();
+std::unique_ptr<IModel> makeModel(ModelType modelType, double deltaT, double cutOff = 1e9) {
+  std::unique_ptr<IModel> model;
+
+  if (modelType == ModelType::LennardJones) {
+    model = std::make_unique<LennardJonesModel>(cutOff);
+  } else if (modelType == ModelType::NewtonsLaw) {
+    model = std::make_unique<NewtonsLawModel>();
+  } else {
+    throw std::runtime_error("If you add a new model, please update SimulationUtils::makeModel().");
+  }
+
+  model->setDeltaT(deltaT);
+  return model;
+}
+
+std::unique_ptr<IWriter> makeWriter(WriterType writerType) {
+  if (writerType == WriterType::VTKWriter) return std::make_unique<VTKWriter>();
 
   return std::make_unique<NoWriter>();
 }
 
-std::unique_ptr<Thermostat> getThermostat() {
-  if (!xmlInput) {
-    return Thermostat{*getSelectedContainer(), 40., 40., 5., 1000, 2};
-  }
+std::unique_ptr<Thermostat> makeDefaultThermostat(IContainer& container) {
+  return std::make_unique<Thermostat>(container, 40., 40., 5., 1000, 2);
+}
 
-  return parser.initialiseThermostatFromXML(*getSelectedContainer());
+std::unique_ptr<Thermostat> makeThermostat(IContainer &container) {
+  return parser.initialiseThermostatFromXML(container);
 }
 
 }  // namespace SimulationUtils

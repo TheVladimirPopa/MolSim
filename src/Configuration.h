@@ -5,20 +5,16 @@
 #include <variant>
 
 #include "inputReader/XMLFileReader/XMLParser.h"
+#include "utils/SimulationUtils.h"
 
-using ParticleShape = std::variant<ParticleGeneration::sphere, ParticleGeneration::cuboid>;
-
-enum class InputType { File, XML };
 
 class Configuration {
  private:
   std::string outFileName;
-  std::string inFileXml;
-  std::string inFile;  // Todo: variable sinnvoll umbenennen
+  std::string inFilePath;
+  std::string checkpointPath;
   std::unique_ptr<XMLParser> xmlParser;
-  std::vector<ParticleTypes> particleTypes; // TODO: Implementieren
   std::vector<ParticleShape> particleShapes;
-  std::vector<Particle> checkPointData; // TODO: 1. implementieren, 2: vorsicht, das kann sehr groß sein!
 
   // Input, output
   bool noOutput{false};  // todo: disableFileWriting
@@ -29,8 +25,10 @@ class Configuration {
   // Simulation parameters
   double deltaT{0.014};
   double endTime{1.0};
-  InputType inputType{};
+  InputType inputType{InputType::XML};
   double gravityConstant{-12.44};
+  double cutOff{4.0};
+  std::unique_ptr<LinkedCellsContainer> container;
 
   // Performance measurement, log behavior
   bool performanceMeasure{false};
@@ -39,14 +37,13 @@ class Configuration {
   int logLevel{0};
 
   // Converter functions for string input
-  static double getEndTime(std::string endTimeAsString);
-  static double getDeltaT(std::string deltaTAsString);
+  static double stringToEndTime(std::string endTimeAsString);
+  static double stringToDeltaT(std::string deltaTAsString);
   static int getWriteInterval(std::string writeIntervalAsString);
 
   // Deprecated simulation type. XML now combines multiple types.
-  enum class simulationType { Single, Cuboid, Sphere };
-  simulationType simType{simulationType::Single};
-  static enum simulationType getSimulationTypeDeprecated(std::string name);
+  SimTypeDeprecated simType{SimTypeDeprecated::Single};
+  static enum SimTypeDeprecated stringToSimType(std::string name);
 
   // Use parseOptions to generate the Configuration object.
   Configuration(){};
@@ -60,26 +57,37 @@ class Configuration {
 
   // TODO: Zeug renamen, vor allem bool getters
   double getLogLevel() { return logLevel; };
-  bool isLoadCheckpointEnabled() { return readCheckpoint; }
-  bool isWriteCheckpointEnabled() { return writeCheckpoint; }
-  bool isLoggingEnabled() { return !quietLog; };
-  bool isFileOutputEnabled() { return !noOutput; };
-  bool isPerformanceMeasureEnabled() { return performanceMeasure; };
-  bool isMeasureHitrateEnabled() { return hitRateMeasure; };
+  bool hasLoadCheckpointEnabled() { return readCheckpoint; }
+  bool hasWriteCheckpointEnabled() { return writeCheckpoint; }
+  bool hasLoggingEnabled() { return !quietLog; };
+  bool hasFileOutputEnabled() { return !noOutput; };
+  bool hasPerformanceMeasureEnabled() { return performanceMeasure; };
+  bool hasHitrateMeasureEnabled() { return hitRateMeasure; };
 
   ContainerType getContainerType() { /* TODO: return xml container type, linked or vector container */
   }
-  InputType getInputType() { return inputType; };
+  InputType getInputType() const { return inputType; };
 
   std::string getInputPath() const {
-    if (inputType == InputType::XML) return inFileXml;
+    if (inputType == InputType::XML) return inFilePath;
 
-    return inFile;
+    return inFilePath;
   }
 
   double getGravityConst() const { return gravityConstant; };
   double getDeltaT() const { return deltaT; };
   double getEndTime() const { return endTime; };
   double getWriteInterval() const { return outputWriteInterval; };
+  double getCutOff() const { return cutOff; }
+
   std::vector<ParticleShape> getParticleShapes() { return particleShapes; }
+  ModelType getSelectedModel() const {
+    if (getInputType() != InputType::XML) return ModelType::LennardJones;
+
+    return xmlParser->getModel();
+  }
+
+  std::string getCheckpointPath() const { return checkpointPath; };
+  SimTypeDeprecated getSimType() const { return simType; };
+  std::unique_ptr<LinkedCellsContainer> takeContainer();
 };

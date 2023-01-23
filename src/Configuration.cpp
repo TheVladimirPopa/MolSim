@@ -8,9 +8,10 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
+
 using std::string;
 
-enum Configuration::simulationType Configuration::getSimulationTypeDeprecated(string name) {
+enum Configuration::simulationType Configuration::stringToSimType(string name) {
   const std::map<std::string, Configuration::simulationType> simTypeStrings{
       {"single", simulationType::Single}, {"cuboid", simulationType::Cuboid}, {"sphere", simulationType::Sphere}};
 
@@ -23,7 +24,7 @@ enum Configuration::simulationType Configuration::getSimulationTypeDeprecated(st
   return result->second;
 }
 
-double Configuration::getEndTime(string endTimeAsString) {
+double Configuration::stringToEndTime(string endTimeAsString) {
   double end{0.0};
 
   try {
@@ -41,7 +42,7 @@ double Configuration::getEndTime(string endTimeAsString) {
   return end;
 }
 
-double Configuration::getDeltaT(string deltaTAsString) {
+double Configuration::stringToDeltaT(string deltaTAsString) {
   double delta{0.0};
 
   try {
@@ -112,16 +113,22 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 't': {
-        config.simType = getSimulationTypeDeprecated(string(optarg));
+        config.simType = stringToSimType(string(optarg));
         break;
       }
       case 'f': {
-        config.inFile = optarg;
+        if (!config.inFilePath.empty())
+          spdlog::error("Make sure not to combine -i and -x.");
+
+        config.inFilePath = optarg;
         config.inputType = InputType::File;
         break;
       }
       case 'i': {
-        config.inFileXml = optarg;
+        if (!config.inFilePath.empty())
+          spdlog::error("Make sure not to combine -i and -x.");
+
+        config.inFilePath = optarg;
         config.inputType = InputType::XML;
         break;
       }
@@ -130,11 +137,11 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'e': {
-        config.endTime = getEndTime(string(optarg));
+        config.endTime = stringToEndTime(string(optarg));
         break;
       }
       case 'd': {
-        config.deltaT = getDeltaT((string(optarg)));
+        config.deltaT = stringToDeltaT((string(optarg)));
         break;
       }
       case 's': {
@@ -173,18 +180,17 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     }
   }
 
-  if (config.inFile.empty() && config.inFileXml.empty()) {
-    spdlog::error("You must specify an input file with -i (recommended) or -f. For details check --help.");
+  if (config.inFilePath.empty()) {
+    spdlog::error("You must specify an input file with -i (xml, recommended) or -f (file). For details check --help.");
     exit(EXIT_FAILURE);
   }
 
-  if (config.selectedModel() == Models::NewtonsLaw && config.hirateMeasure) {
-    // TODO: sollte vielleicht im IModel sein.
+  if (config.getSelectedModel() == ModelType::NewtonsLaw && config.hasHitrateMeasureEnabled()) {
     spdlog::error("The Newtons Law model does not support hitrate measurement.");
     exit(EXIT_FAILURE);
   }
 
-  if (config.isLoggingEnabled() || config.isFileOutputEnabled()) {
+  if (config.hasLoggingEnabled() || config.hasFileOutputEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
     config.quietLog = true;
     config.noOutput = true;
@@ -194,10 +200,10 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 }
 
 bool Configuration::tryParseXml() {
-  if (inFileXml.empty() || inputType != InputType::XML) return false;
+  if (inFilePath.empty() || inputType != InputType::XML) return false;
 
   try {
-    xmlParser = std::make_unique<XMLParser>(inFileXml);
+    xmlParser = std::make_unique<XMLParser>(inFilePath);
   } catch (const std::exception &exception) {
     spdlog::error("Failed to load XML. Error: ", std::string(exception.what()));
     return false;
@@ -207,12 +213,21 @@ bool Configuration::tryParseXml() {
   deltaT = xmlParser->getDeltaT();
   gravityConstant = xmlParser->getGravityConstant();
   outputWriteInterval = xmlParser->getWriteInterval();
-  cutOffRadius = xmlParser->getCutOffRadius();
+  cutOff = xmlParser->getCutOffRadius();
 
   for (auto sphere : xmlParser->getSpheres()) particleShapes.push_back(sphere);
   for (auto cuboid : xmlParser->getCuboids()) particleShapes.push_back(cuboid);
+  // TODO: Add membrane after merge. Also update SimulationUtils
+
+  xmlParser->initializeParticleTypes();
+  checkpointPath = xmlParser->getCheckpointPath();
+  container = xmlParser->initialiseLinkedCellContainerFromXML();
 
   return true;
+}
+
+std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() {
+  return std::move(container);
 }
 
 void Configuration::printUsage() {
