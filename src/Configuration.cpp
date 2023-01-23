@@ -198,7 +198,7 @@ bool Configuration::tryParseXml() {
 
   try {
     xmlParser = std::make_unique<XMLParser>(inFileXml);
-  } catch (const std::exception& exception) {
+  } catch (const std::exception &exception) {
     spdlog::error("Failed to load XML. Error: ", std::string(exception.what()));
     return false;
   }
