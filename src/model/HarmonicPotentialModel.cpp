@@ -1,19 +1,20 @@
 #include "HarmonicPotentialModel.h"
-using ArrayUtils::L2Norm;
+using ArrayUtils::dotProduct;
 
 void HarmonicPotentialModel::addDirectForce(Particle& x, Particle& y) const {
   auto diff = y.getX() - x.getX();
-  auto dist = L2Norm(diff);
+  auto dist = dotProduct(diff);
+  if (dist >= harmonicCutOffSquared) return;
+  dist = std::sqrt(dist);
 
-  auto force = stiffness * (1 / dist) * (dist - bondLength) * diff;
-  x.applySymmetricForce(y, force);
+  x.applySymmetricForce(y, (stiffness / dist) * (dist - bondLength) * diff);
 }
 
 void HarmonicPotentialModel::addDiagonalForce(Particle& x, Particle& y) const {
   auto diff = y.getX() - x.getX();
-  auto dist = L2Norm(diff);
+  auto dist = dotProduct(diff);
+  if (dist >= harmonicCutOffSquared) return;
+  dist = std::sqrt(dist);
 
-  auto force = stiffness * (1 / dist) * (dist - 1.41421356237309504880168872 * bondLength) * diff;
-
-  x.applySymmetricForce(y, force);
+  x.applySymmetricForce(y, (stiffness / dist) * (dist - 1.41421356237309504880168872 * bondLength) * diff);
 }

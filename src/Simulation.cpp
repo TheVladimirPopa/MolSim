@@ -27,8 +27,19 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     p.updateForces();
     p.f[1] += p.m * gravitationalConstant;
   }};
+
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
+
+  // Enable molecule physics handling on demand
+  if (particles.containsMolecules()) {
+    addForces = [&model, &particles](P p1, P p2) {
+      if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
+        particles.getMoleculesVectorRef()[p1.getMolecule()].applyForce(p1, p2, p1.getId(), p2.getId());
+      else
+        model.addForces(std::forward<P>(p1), std::forward<P>(p2));
+    };
+  }
 
   // Initialize the container to the temperature
   if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();

@@ -20,7 +20,7 @@ void MembraneMolecule::applyDiagonalForce(Particle& x, Particle& y) const { phys
 
 void MembraneMolecule::applyRepulsiveForce(Particle& p1, Particle& p2) { physics.addForces(p1, p2); }
 
-MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
+MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                                    std::vector<Particle>& particles)
     : dimensions{dimensions},
       startIndex{particles.size() - (dimensions[0] * dimensions[1] * dimensions[2])},
@@ -28,7 +28,7 @@ MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stif
       particles{&particles},
       stiffness{stiffness},
       bondLength{bondLength},
-      physics(stiffness, bondLength) {
+      physics(stiffness, bondLength, cutOff) {
   // The membrane consists out of a single layer. Find out indices of which dimensions are relevant.
   for (int i = 0; i < 3; i++) {
     if (dimensions[i] == 1) {

@@ -182,11 +182,16 @@ class LinkedCellsContainer : public IContainer {
    * Returns molecules that are attached to the container
    * @return attached molecules
    */
-  [[nodiscard]] std::vector<MembraneMolecule> &getMolecules() { return moleculesVector; };
+  [[nodiscard]] std::vector<MembraneMolecule> &getMoleculesVectorRef() { return moleculesVector; };
 
   /**
    * Returns reference to particles vector
    * @return Reference to particles vector
    */
   [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return particlesVector; }
+
+  /**
+   * @return True if the linked cells container has molecules
+   */
+  [[nodiscard]] bool containsMolecules() { return !moleculesVector.empty(); };
 };

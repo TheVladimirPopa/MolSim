@@ -11,6 +11,7 @@
 #include <string>
 #include <unordered_map>
 #define NOT_IN_MOLECULE 0xffffffff
+#define NO_UNIQUE_ID 0xffffffff
 
 class IModel;
 class NewtonsLawModel;
@@ -68,8 +69,11 @@ class Particle {
    */
   bool isDeleted_;
 
-  // The id or index of the molecule the particle is a member of
+  /// The id or index of the molecule the particle is a member of. -1 if not set.
   size_t moleculeId;
+
+  /// The id or index of the particle. -1 if not set.
+  size_t particleId;
 
   struct ParticleType {
     double const epsilon;
@@ -173,13 +177,13 @@ class Particle {
    * @param partner The particle that gets the negative force applied
    * @param force The force that gets added to the particle and subtracted from the partner
    */
-  void applySymmetricForce(Particle &partner, std::array<double, 3> &force);
+  void applySymmetricForce(Particle &partner, const std::array<double, 3> &force);
 
   /**
    * Adds force to particle.
    * @param force the force that gets added to the particle
    */
-  void applyForce(std::array<double, 3> &force);
+  void applyForce(const std::array<double, 3> &force);
 
   /**
    * Sets the molecule membership of the current particle
@@ -196,6 +200,18 @@ class Particle {
    * @return Whether the particle is member of a molecule
    */
   bool isInMolecule() const { return moleculeId != NOT_IN_MOLECULE; }
+
+  /**
+   * Sets id of particle
+   * @param particleId_ Id of particle
+   * @note This is used for the membrane
+   */
+  void setId(size_t id) { particleId = id; }
+
+  /**
+   * @return Id of particle
+   */
+  size_t getId() const { return particleId; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

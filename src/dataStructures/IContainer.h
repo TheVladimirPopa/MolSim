@@ -78,5 +78,15 @@ class IContainer {
    */
   virtual std::vector<Particle> &getParticlesRef() = 0;
 
+  /**
+   * @return True, if the container has molecules and support molecules. Otherwise false.
+   */
+  virtual bool containsMolecules() { return false; };
+
+  /**
+   * @return Reference to membrane vector
+   */
+  virtual std::vector<MembraneMolecule> &getMoleculesVectorRef() { throw std::runtime_error("Not implemented."); }
+
   virtual ~IContainer() = default;
 };

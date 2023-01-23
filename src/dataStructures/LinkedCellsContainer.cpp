@@ -93,7 +93,6 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(std::array<double, 3> const 
 
 void LinkedCellsContainer::forEachNeighbor(Particle &particle,
                                            std::function<void(Particle &, Particle &)> &binaryFunction) {
-
   size_t gridCell = getCellIndexOfPosition(particle.getX());
   for (size_t indexOffset : indexOffsetAdjacent) {
     // Special case to match particles within one cell
@@ -141,36 +140,22 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
       if (indexOffset == 0) {
         auto &particles = cells[index].particles;
         for (auto first = particles.begin(); first != particles.end(); ++first) {
-          auto &p1 = particlesVector[*first];
           for (auto second = std::next(first); second != particles.end(); ++second) {
-            auto &p2 = particlesVector[*second];
-
-            // Neighbour particles within molecules require different physics
-            if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
-              moleculesVector[p1.getMolecule()].applyForce(p1, p2, *first, *second);
-            else
-              binaryFunction(p1, p2);
+            binaryFunction(particlesVector[*first], particlesVector[*second]);
           }
         }
       } else {
         // Loop so the particles of each of the two cells and match them
         for (auto indexA : cells[index].particles) {
-          auto &p1 = particlesVector[indexA];
           for (auto indexB : cells[index + indexOffset].particles) {
-            auto &p2 = particlesVector[indexB];
-
-            // Neighbour particles within molecules require different physics
-            if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
-              moleculesVector[p1.getMolecule()].applyForce(p1, p2, indexA, indexB);
-            else
-              binaryFunction(p1, p2);
+            binaryFunction(particlesVector[indexA], particlesVector[indexB]);
           }
         }
       }
     }
   }
 
-  for (auto& molecule : moleculesVector) {
+  for (auto &molecule : moleculesVector) {
     if (molecule.hasArtificalForces()) molecule.applyArtificialForces();
   }
 }
@@ -187,12 +172,14 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg, std::array<
   particlesVector.emplace_back(x_arg, v_arg, m_arg, type);
   size_t index = getCellIndexOfPosition(x_arg);
   cells[index].particles.push_back(particlesVector.size() - 1);
+  particlesVector.back().setId(particlesVector.size() - 1);
 }
 
 void LinkedCellsContainer::push_back(Particle &particle) {
   particlesVector.push_back(std::forward<Particle &>(particle));
   size_t index = getCellIndexOfPosition(particle.getX());
   cells[index].particles.push_back(particlesVector.size() - 1);
+  particlesVector.back().setId(particlesVector.size() - 1);
 }
 
 void LinkedCellsContainer::push_back(MembraneMolecule membrane) {

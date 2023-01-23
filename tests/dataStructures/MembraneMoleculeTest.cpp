@@ -40,8 +40,8 @@ TEST(MembraneMolecule, Essentials) {
   ParticleGeneration::addMembraneToParticleContainer(*cont, mem);
 
   // Check location
-  ASSERT_EQ(cont->getMolecules().size(), 1);
-  MembraneMolecule& membrane = cont->getMolecules().back();
+  ASSERT_EQ(cont->getMoleculesVectorRef().size(), 1);
+  MembraneMolecule& membrane = cont->getMoleculesVectorRef().back();
   EXPECT_EQ(membrane.size(), 4);
 
   std::vector<v3d> targetLocations{
@@ -91,7 +91,7 @@ TEST(MembraneMolecule, ArtificialForces) {
 
   ParticleGeneration::addMembraneToParticleContainer(*cont, mem);
 
-  auto& molecule = cont->getMolecules().back();
+  auto& molecule = cont->getMoleculesVectorRef().back();
   auto expectedForce = v3d{0, 0, 0};
   for (size_t i = 0; i < 157; i++) {
     if (i <= 155) {
@@ -126,7 +126,7 @@ TEST(MembraneMolecule, RepulsiveForces) {
   auto x2 = v3d{11, 10, 10};
   particle2.setX(x2);
 
-  cont->getMolecules().back().applyForce(particle1, particle2, 0, 10);
+  cont->getMoleculesVectorRef().back().applyForce(particle1, particle2, 0, 10);
 
   auto expectedForce1 = v3d{-120., 0.0, 0.0};
   ASSERT_EQ(particle1.getF(), expectedForce1);

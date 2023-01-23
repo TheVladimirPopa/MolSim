@@ -93,7 +93,7 @@ class MembraneMolecule {
   void applyDiagonalForce(Particle& x, Particle& y) const;
 
  public:
-  MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
+  MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                    std::vector<Particle>& particles);
 
   /**
