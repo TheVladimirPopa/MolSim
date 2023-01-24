@@ -8,7 +8,7 @@
 #pragma once
 
 #include <array>
-#include <map>
+#include <vector>
 #include <string>
 #include <unordered_map>
 
@@ -77,7 +77,7 @@ class Particle {
    * Maps the position of the Particle at a particular time
    */
 
-  std::map<double, std::array<double, 3>> timePositionMap;
+  std::vector<std::array<double, 3>> timePosition;
 
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
@@ -121,7 +121,7 @@ class Particle {
 
   const std::array<double, 3> &getOldF() const { return old_f; }
 
-  const std::map<double, std::array<double, 3>> &getTimePositionMap() const { return timePositionMap; }
+  const std::vector<std::array<double, 3>> &getTimePosition() const { return timePosition; }
 
   void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 

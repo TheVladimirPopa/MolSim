@@ -6,8 +6,10 @@
 #include <map>
 
 #include "outputWriter/CheckpointFileWriter.h"
+#include "outputWriter/StatisticsWriter.h"
 #include "spdlog/spdlog.h"
 #define CHECKPOINT_PATH "./checkpoint.txt"
+#define STATISTICS_PATH "./thermodynamic_statistics.txt"
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
                           double gravitationalConstant, bool checkpointing) {
@@ -16,6 +18,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   int iteration = 0;
 
   size_t updateCount = 0;
+
+  StatisticsWriter statisticsWriter{};
 
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;
@@ -30,8 +34,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   }};
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
-  std::function<void(P p)> registerTime{
-      [current_time](Particle &p) { p.timePositionMap.emplace(current_time, p.getX()); }};
+  std::function<void(P p)> registerTime{[current_time](Particle &p) { p.timePosition.emplace_back(p.getX()); }};
 
   // Initialize the container to the temperature
   if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
@@ -46,7 +49,10 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     particles.forEach(updateF);
     particles.forEachPair(addForces);
     particles.forEach(updateV);
-    particles.forEach(registerTime);
+
+    if (iteration % 1000 == 0) {
+      particles.forEach(registerTime);
+    }
 
     if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();
@@ -54,6 +60,12 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
 
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
+    }
+    // TODO filewriter(filename, iteration, particles) stat.txt lastposition vector
+
+    // Every 1000th iteration the statistics are being written
+    if (iteration % 1000 == 0) {
+      statisticsWriter.writeFile("", iteration, particles);
     }
 
     current_time += deltaT;

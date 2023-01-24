@@ -14,14 +14,14 @@ class ThermodynamicStatistics {
    * @param particleContainer
    * @return
    */
-  static double var(LinkedCellsContainer &particleContainer, double currentTime, double referenceTime) {
+  static double var(LinkedCellsContainer &particleContainer, int currentTime, int referenceTime) {
     double var = 0;
 
     for (const Particle &p : particleContainer.particlesVector) {
-      var += dotProduct(p.getTimePositionMap().at(currentTime) - p.getTimePositionMap().at(referenceTime));
+      var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
     }
 
-    var /= particleContainer.size();
+    var /= (double) particleContainer.size();
 
     return var;
   }
@@ -32,14 +32,14 @@ class ThermodynamicStatistics {
    * @param referenceTime
    * @return
    */
-  static double var(VectorContainer &particleContainer, double currentTime, double referenceTime) {
+  static double var(VectorContainer &particleContainer, int currentTime, int referenceTime) {
     double var = 0;
 
     for (const Particle &p : particleContainer.vector) {
-      var += dotProduct(p.getTimePositionMap().at(currentTime) - p.getTimePositionMap().at(referenceTime));
+      var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
     }
 
-    var /= particleContainer.size();
+    var /= (double) particleContainer.size();
 
     return var;
   }
@@ -62,15 +62,14 @@ class ThermodynamicStatistics {
         double r = dotProduct(p1.getX() - p2.getX());
         for (int i = intervalStart; i <= intervalEnd; i++) {
           int numPairs = 0;
-          double ri = 0;
-          if (r > ri && r < ri + delta_r) {
+          if (r > i && r < i + delta_r) {
             numPairs++;
           }
           double density = numPairs;
           density /= 4 * PI / 3;
-          double aux = (ri + delta_r);
+          double aux = (i + delta_r);
           aux *= aux * aux;
-          aux -= ri * ri * ri;
+          aux -= i * i * i;
           density /= aux;
           densities.emplace_back(density);
         }
@@ -99,15 +98,14 @@ class ThermodynamicStatistics {
 
         for (int i = intervalStart; i <= intervalEnd; i++) {
           int numPairs = 0;
-          double ri = 0;
-          if (r > ri && r < ri + delta_r) {
+          if (r > i && r < i + delta_r) {
             numPairs++;
           }
           double density = numPairs;
           density /= 4 * PI / 3;
-          double aux = (ri + delta_r);
+          double aux = (i + delta_r);
           aux *= aux * aux;
-          aux -= ri * ri * ri;
+          aux -= i * i * i;
           density /= aux;
           densities.emplace_back(density);
         }
