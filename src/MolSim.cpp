@@ -54,8 +54,8 @@ int main(int argc, char* argsv[]) {
   simulation.setIterationsPerWrite(config.getWriteInterval());
   simulation.setFilename(config.getFileName());
 
-  spdlog::info("Simulation is starting with {} particles and will run for {} iterations.",
-               container->size(), std::ceil(config.getEndTime() / config.getDeltaT()));
+  spdlog::info("Simulation is starting with {} particles and will run for {} iterations.", container->size(),
+               std::ceil(config.getEndTime() / config.getDeltaT()));
 
   auto startTime = std::chrono::steady_clock::now();
 

@@ -109,7 +109,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'n': {
-        config.noOutput = true;
+        config.disableFileWriting = true;
         break;
       }
       case 't': {
@@ -163,7 +163,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'q': {
-        config.quietLog = true;
+        config.disableLogging = true;
         break;
       }
       case 'h': {
@@ -190,8 +190,8 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   if (config.hasPerformanceMeasureEnabled() && config.hasLoggingEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
-    config.quietLog = true;
-    config.noOutput = true;
+    config.disableLogging = true;
+    config.disableFileWriting = true;
   }
 
   return config;

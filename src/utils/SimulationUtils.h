@@ -30,7 +30,7 @@ std::unique_ptr<IModel> makeModel(ModelType modelType, double deltaT, double cut
 
 std::unique_ptr<IWriter> makeWriter(WriterType writerType);
 
-std::unique_ptr<Thermostat> makeDefaultThermostat(IContainer& container);
+std::unique_ptr<Thermostat> makeDefaultThermostat(IContainer &container);
 
 std::unique_ptr<Thermostat> makeThermostat(std::unique_ptr<Thermostat> thermo);
 

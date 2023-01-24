@@ -8,13 +8,13 @@ std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   auto defaultContainer = std::make_unique<LinkedCellsContainer>(10., leftLowerCorner, rightUpperCorner);
 
   defaultContainer->setBoundaries({
-                                      {CubeSide::LEFT, BoundaryType::PERIODIC},
-                                      {CubeSide::RIGHT, BoundaryType::PERIODIC},
-                                      {CubeSide::TOP, BoundaryType::REFLECT},
-                                      {CubeSide::BOTTOM, BoundaryType::REFLECT},
-                                      {CubeSide::FRONT, BoundaryType::PERIODIC},
-                                      {CubeSide::BACK, BoundaryType::PERIODIC},
-                                  });
+      {CubeSide::LEFT, BoundaryType::PERIODIC},
+      {CubeSide::RIGHT, BoundaryType::PERIODIC},
+      {CubeSide::TOP, BoundaryType::REFLECT},
+      {CubeSide::BOTTOM, BoundaryType::REFLECT},
+      {CubeSide::FRONT, BoundaryType::PERIODIC},
+      {CubeSide::BACK, BoundaryType::PERIODIC},
+  });
 
   return defaultContainer;
 }
@@ -22,7 +22,7 @@ std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, s
   if (type == ContainerType::VECTOR)
     return std::make_unique<VectorContainer>();
   else if (type == ContainerType::LINKED_CELLS)
-    return container; // This is a placeholder for now
+    return container;  // This is a placeholder for now
   else
     throw std::runtime_error("Unsupported container type. Check Simulationutils.h");
 }
@@ -82,7 +82,7 @@ std::unique_ptr<Thermostat> SimulationUtils::makeDefaultThermostat(IContainer& c
   return std::make_unique<Thermostat>(container, 40., 40., 5., 1000, 2);
 }
 std::unique_ptr<Thermostat> SimulationUtils::makeThermostat(std::unique_ptr<Thermostat> thermo) {
-  return std::move(thermo); // Placeholder
+  return std::move(thermo);  // Placeholder
 }
 void ConfigurationUtils::configureLogging(int logLevel, bool disableLogging) {
   auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);
