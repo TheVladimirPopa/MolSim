@@ -8,7 +8,6 @@ class IModel {
  private:
   double delta_t;
 
-
  public:
   virtual ~IModel() {}
 

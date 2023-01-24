@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 
-#include "utils/MolSimEnums.h"
 #include "Simulation.h"
 #include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
@@ -12,6 +11,7 @@
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
 #include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
+#include "utils/MolSimEnums.h"
 #include "utils/SimulationUtils.h"
 
 class XMLParser {
