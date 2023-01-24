@@ -8,12 +8,12 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-
 using std::string;
 
-enum Configuration::simulationType Configuration::stringToSimType(string name) {
-  const std::map<std::string, Configuration::simulationType> simTypeStrings{
-      {"single", simulationType::Single}, {"cuboid", simulationType::Cuboid}, {"sphere", simulationType::Sphere}};
+enum SimTypeDeprecated Configuration::stringToSimType(string name) {
+  const std::map<std::string, SimTypeDeprecated> simTypeStrings{{"single", SimTypeDeprecated::Single},
+                                                                {"cuboid", SimTypeDeprecated::Cuboid},
+                                                                {"sphere", SimTypeDeprecated::Sphere}};
 
   auto result = simTypeStrings.find(name);
   if (result == simTypeStrings.end()) {
@@ -117,16 +117,14 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'f': {
-        if (!config.inFilePath.empty())
-          spdlog::error("Make sure not to combine -i and -x.");
+        if (!config.inFilePath.empty()) spdlog::error("Make sure not to combine -i and -x.");
 
         config.inFilePath = optarg;
         config.inputType = InputType::File;
         break;
       }
       case 'i': {
-        if (!config.inFilePath.empty())
-          spdlog::error("Make sure not to combine -i and -x.");
+        if (!config.inFilePath.empty()) spdlog::error("Make sure not to combine -i and -x.");
 
         config.inFilePath = optarg;
         config.inputType = InputType::XML;
@@ -214,6 +212,7 @@ bool Configuration::tryParseXml() {
   gravityConstant = xmlParser->getGravityConstant();
   outputWriteInterval = xmlParser->getWriteInterval();
   cutOff = xmlParser->getCutOffRadius();
+  containerType = xmlParser->getContainerType();
 
   for (auto sphere : xmlParser->getSpheres()) particleShapes.push_back(sphere);
   for (auto cuboid : xmlParser->getCuboids()) particleShapes.push_back(cuboid);
@@ -222,13 +221,14 @@ bool Configuration::tryParseXml() {
   xmlParser->initializeParticleTypes();
   checkpointPath = xmlParser->getCheckpointPath();
   container = xmlParser->initialiseLinkedCellContainerFromXML();
+  thermostat = xmlParser->initialiseThermostatFromXML(*container);
 
   return true;
 }
 
-std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() {
-  return std::move(container);
-}
+std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() { return std::move(container); }
+
+std::unique_ptr<Thermostat> Configuration::takeThermostat() { return std::move(thermostat); }
 
 void Configuration::printUsage() {
   std::cout << " Usage\n"

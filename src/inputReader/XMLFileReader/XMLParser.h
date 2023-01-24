@@ -1,11 +1,8 @@
-//
-// Created by vladi on 11/27/2022.
-//
 #pragma once
 #include <memory>
 
+#include "utils/MolSimEnums.h"
 #include "Simulation.h"
-#include "XMLParser.h"
 #include "dataStructures/LinkedCellsBoundary.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
@@ -89,7 +86,7 @@ class XMLParser {
    */
   ContainerType getContainerType() {
     for (auto &it : simulation->Container_T()) {
-      if (it.LinkedCell().empty()) return ContainerType::VECTOR;
+      if (it.LinkedCell().empty()) return ::ContainerType::VECTOR;
     }
     return ContainerType::LINKED_CELLS;
   }
@@ -270,17 +267,17 @@ class XMLParser {
   /**
    * @return Returns the Lennard Jones cutOffRadius of the simulation
    */
-  double getCutOffRadius() const { return simulation->cutOffRadius(); }
+  [[nodiscard]] double getCutOffRadius() const { return simulation->cutOffRadius(); }
 
   /**
    * @return Returns the gravity constant
    */
-  double getGravityConstant() const { return simulation->gravity(); }
+  [[nodiscard]] double getGravityConstant() const { return simulation->gravity(); }
 
   /**
    * @return The selected model
    */
-  ModelType getModel() const {
+  [[nodiscard]] ModelType getModel() const {
     // TODO: Read this value from "simulation" once the xml part is updated
     return ModelType::LennardJones;
   }
@@ -312,15 +309,11 @@ class XMLParser {
    * @param container
    * @return Returns a Thermostat
    */
-  Thermostat initialiseThermostatFromXML(IContainer &container) {
+  std::unique_ptr<Thermostat> initialiseThermostatFromXML(IContainer &container) {
     ThermostatArg thermostatArg = extractThermostat();
     size_t dimension = thermostatArg.getDimension();
-    return Thermostat{container,
-                      thermostatArg.getInitialTemp(),
-                      thermostatArg.getTargetTemp(),
-                      thermostatArg.getMaxTempChange(),
-                      thermostatArg.getPeriodLength(),
-                      dimension};
+    return std::make_unique<Thermostat>(container, thermostatArg.getInitialTemp(), thermostatArg.getTargetTemp(),
+                                        thermostatArg.getMaxTempChange(), thermostatArg.getPeriodLength(), dimension);
   }
   /**
    *  Sets boundaries read from the path file to a given LinkedCellContainer

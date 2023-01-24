@@ -1,13 +1,13 @@
 #include <chrono>
 #include <cmath>
 
+#include "utils/SimulationUtils.h"
 #include "Configuration.h"
 #include "Simulation.h"
-#include "inputReader/XMLFileReader/XMLParser.h"
-#include "outputWriter/NoWriter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
-#include "utils/SimulationUtils.h"
+
+
 
 // --------------------------------------
 //                 Main
@@ -31,12 +31,18 @@ int main(int argc, char* argsv[]) {
   ConfigurationUtils::configureLogging(config.getLogLevel(), !config.hasLoggingEnabled());
 
   // 2. Set up container and populate it with particles
-  std::unique_ptr<IContainer> container =
-      isXmlInput ? SimulationUtils::makeContainer(config.getContainerType(), config.takeContainer())
-                 : SimulationUtils::makeDefaultContainer();
+  std::unique_ptr<IContainer> container;
+  if (isXmlInput) {
+    container = SimulationUtils::makeContainer(config.getContainerType(), config.takeContainer());
+  } else {
+    container = SimulationUtils::makeDefaultContainer();
+  }
 
-  isXmlInput ? SimulationUtils::populateContainer(*container, config.getParticleShapes())
-             : SimulationUtils::populateContainerViaFile(*container, config.getInputPath(), config.getSimType());
+  if (isXmlInput) {
+    SimulationUtils::populateContainer(*container, config.hasLoadCheckpointEnabled(), config.getParticleShapes());
+  } else {
+    SimulationUtils::populateContainerViaFile(*container, config.getInputPath(), config.getSimType());
+  }
 
   if (config.hasLoadCheckpointEnabled()) SimulationUtils::loadCheckpoint(*container, config.getCheckpointPath());
 
@@ -44,8 +50,8 @@ int main(int argc, char* argsv[]) {
   auto model = SimulationUtils::makeModel(config.getSelectedModel(), config.getDeltaT(), config.getCutOff());
   auto writer = config.hasFileOutputEnabled() ? SimulationUtils::makeWriter(WriterType::VTKWriter)
                                               : SimulationUtils::makeWriter(WriterType::NoWriter);
-  auto thermostat =
-      isXmlInput ? SimulationUtils::makeThermostat(*container) : SimulationUtils::makeDefaultThermostat(*container);
+  auto thermostat = isXmlInput ? SimulationUtils::makeThermostat(config.takeThermostat())
+                               : SimulationUtils::makeDefaultThermostat(*container);
 
   // 4. Start simulation
   Simulation simulation{};
@@ -55,7 +61,8 @@ int main(int argc, char* argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst());
+  simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
+                      config.hasWriteCheckpointEnabled());
 
   auto endTime = std::chrono::steady_clock::now();
 

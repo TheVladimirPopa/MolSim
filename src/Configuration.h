@@ -8,6 +8,7 @@
 #include "utils/SimulationUtils.h"
 
 
+
 class Configuration {
  private:
   std::string outFileName;
@@ -17,18 +18,20 @@ class Configuration {
   std::vector<ParticleShape> particleShapes;
 
   // Input, output
-  bool noOutput{false};  // todo: disableFileWriting
+  InputType inputType{InputType::XML};
   bool readCheckpoint{false};
   bool writeCheckpoint{false};
+  bool noOutput{false};  // todo: disableFileWriting
   int outputWriteInterval{1000};
 
   // Simulation parameters
   double deltaT{0.014};
   double endTime{1.0};
-  InputType inputType{InputType::XML};
   double gravityConstant{-12.44};
   double cutOff{4.0};
+  ContainerType containerType{ContainerType::LINKED_CELLS};
   std::unique_ptr<LinkedCellsContainer> container;
+  std::unique_ptr<Thermostat> thermostat;
 
   // Performance measurement, log behavior
   bool performanceMeasure{false};
@@ -43,10 +46,11 @@ class Configuration {
 
   // Deprecated simulation type. XML now combines multiple types.
   SimTypeDeprecated simType{SimTypeDeprecated::Single};
-  static enum SimTypeDeprecated stringToSimType(std::string name);
+  static SimTypeDeprecated stringToSimType(std::string name);
 
   // Use parseOptions to generate the Configuration object.
-  Configuration(){};
+  Configuration() = default;
+  ;
 
  public:
   // Todo: docs
@@ -64,8 +68,7 @@ class Configuration {
   bool hasPerformanceMeasureEnabled() { return performanceMeasure; };
   bool hasHitrateMeasureEnabled() { return hitRateMeasure; };
 
-  ContainerType getContainerType() { /* TODO: return xml container type, linked or vector container */
-  }
+  ContainerType getContainerType() { return containerType; }
   InputType getInputType() const { return inputType; };
 
   std::string getInputPath() const {
@@ -90,4 +93,5 @@ class Configuration {
   std::string getCheckpointPath() const { return checkpointPath; };
   SimTypeDeprecated getSimType() const { return simType; };
   std::unique_ptr<LinkedCellsContainer> takeContainer();
+  std::unique_ptr<Thermostat> takeThermostat();
 };
