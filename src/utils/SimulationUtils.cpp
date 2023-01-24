@@ -49,7 +49,7 @@ void SimulationUtils::populateContainer(IContainer& container, bool loadCheckpoi
     if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
       ParticleGeneration::addCuboidToParticleContainer(container, std::get<ParticleGeneration::cuboid>(shape));
 
-    if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
+    if (std::holds_alternative<ParticleGeneration::sphere>(shape))
       ParticleGeneration::addSphereToParticleContainer(container, std::get<ParticleGeneration::sphere>(shape));
 
     // Todo: Add membrane

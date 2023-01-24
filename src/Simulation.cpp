@@ -10,7 +10,6 @@
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
                           double gravitationalConstant, bool checkpointing) {
-  spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;
 
@@ -48,15 +47,22 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
       thermostat.applyThermostat();
     }
 
+    current_time += deltaT;
+
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
+
+      if (iteration % (writeOutFrequency * 50) == 0 && startTime < endTime)
+        spdlog::info("Completed {} iterations.", iteration);
     }
 
-    current_time += deltaT;
     iteration++;
   }
   moleculeUpdateCount = updateCount;
+
+  spdlog::info("Completed {} iterations.", iteration);
   if (checkpointing) {
+    spdlog::info("Writing checkpoint.");
     CheckpointFileWriter checkpointFileWriter{};
     checkpointFileWriter.writeFile(CHECKPOINT_PATH, iteration, particles);
   }

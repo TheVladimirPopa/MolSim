@@ -1,13 +1,11 @@
 #include <chrono>
 #include <cmath>
 
-#include "utils/SimulationUtils.h"
 #include "Configuration.h"
 #include "Simulation.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
-
-
+#include "utils/SimulationUtils.h"
 
 // --------------------------------------
 //                 Main
@@ -22,11 +20,7 @@ int main(int argc, char* argsv[]) {
   // 1. Load config & configure logging (e.g. no logging when performance measurement)
   Configuration config = Configuration::parseOptions(argc, argsv);
   bool isXmlInput = config.getInputType() == InputType::XML;
-  if (isXmlInput) {
-    bool xmlInputOk = config.tryParseXml();
-
-    if (!xmlInputOk) exit(EXIT_FAILURE);
-  }
+  if (isXmlInput && !config.tryParseXml()) exit(EXIT_FAILURE);
 
   ConfigurationUtils::configureLogging(config.getLogLevel(), !config.hasLoggingEnabled());
 
@@ -58,6 +52,10 @@ int main(int argc, char* argsv[]) {
   simulation.setDeltaT(config.getDeltaT());
   simulation.setEndTime(config.getEndTime());
   simulation.setIterationsPerWrite(config.getWriteInterval());
+  simulation.setFilename(config.getFileName());
+
+  spdlog::info("Simulation is starting with {} particles and will run for {} iterations.",
+               container->size(), std::ceil(config.getEndTime() / config.getDeltaT()));
 
   auto startTime = std::chrono::steady_clock::now();
 
@@ -71,6 +69,6 @@ int main(int argc, char* argsv[]) {
     ConfigurationUtils::printPerformanceMeasure(startTime, endTime, simulation);
   if (config.hasHitrateMeasureEnabled()) ConfigurationUtils::printHitrateMeasure(std::move(model));
 
-  spdlog::info("Terminating...");
+  spdlog::info("Simulation completed successfully.");
   return EXIT_SUCCESS;
 }

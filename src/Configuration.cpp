@@ -188,7 +188,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (config.hasLoggingEnabled() || config.hasFileOutputEnabled()) {
+  if (config.hasPerformanceMeasureEnabled() && config.hasLoggingEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
     config.quietLog = true;
     config.noOutput = true;
@@ -203,7 +203,7 @@ bool Configuration::tryParseXml() {
   try {
     xmlParser = std::make_unique<XMLParser>(inFilePath);
   } catch (const std::exception &exception) {
-    spdlog::error("Failed to load XML. Error: ", std::string(exception.what()));
+    spdlog::error("Failed to load XML. Error: {}", std::string(exception.what()));
     return false;
   }
 
@@ -213,6 +213,7 @@ bool Configuration::tryParseXml() {
   outputWriteInterval = xmlParser->getWriteInterval();
   cutOff = xmlParser->getCutOffRadius();
   containerType = xmlParser->getContainerType();
+  outFileName = xmlParser->extractSimulation().getFilename();
 
   for (auto sphere : xmlParser->getSpheres()) particleShapes.push_back(sphere);
   for (auto cuboid : xmlParser->getCuboids()) particleShapes.push_back(cuboid);

@@ -91,6 +91,7 @@ class Configuration {
   }
 
   std::string getCheckpointPath() const { return checkpointPath; };
+  std::string getFileName() const { return outFileName; };
   SimTypeDeprecated getSimType() const { return simType; };
   std::unique_ptr<LinkedCellsContainer> takeContainer();
   std::unique_ptr<Thermostat> takeThermostat();
