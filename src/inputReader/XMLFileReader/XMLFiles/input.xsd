@@ -8,7 +8,7 @@
             <xsd:element name="SimTypes" type="simTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Container_T" type="containerTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
-            <xsd:element name="MembraneMolecule" type="membrane_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Membrane" type="membrane_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
@@ -137,6 +137,7 @@
         <xsd:attribute name="mass" type="xsd:double" use="required"/>
         <xsd:attribute name="stiffness" type="xsd:double" use="required"/>
         <xsd:attribute name="bondLength" type="xsd:double" use="required"/>
+        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
         <xsd:attribute name="type" type="xsd:int" use="required"/>
     </xsd:complexType>
 

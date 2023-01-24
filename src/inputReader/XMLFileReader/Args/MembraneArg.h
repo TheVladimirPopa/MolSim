@@ -15,12 +15,13 @@ class MembraneArg {
   double mass;
   double stiffness;
   double bondLength;
+  double cutOffRadius;
   int type;
 
  public:
   MembraneArg(const std::array<double, 3>& position, const std::array<int, 3>& dimension,
               const std::array<double, 3>& velocity, std::vector<MembraneForceArg>  membraneForces,
-              double distance, double mass, double stiffness, double bondLength, int type);
+              double distance, double mass, double stiffness, double bondLength, double cutOffRadius,int type);
 
   [[nodiscard]] const std::array<double, 3>& getPosition() const;
 

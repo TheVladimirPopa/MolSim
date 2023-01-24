@@ -3,7 +3,8 @@
 #include <utility>
 MembraneArg::MembraneArg(const std::array<double, 3>& position, const std::array<int, 3>& dimension,
                          const std::array<double, 3>& velocity, std::vector<MembraneForceArg> membraneForces,
-                         double distance, double mass, double stiffness, double bondLength, int type)
+                         double distance, double mass, double stiffness, double bondLength, double cutOffRadius,
+                         int type)
     : position(position),
       dimension(dimension),
       velocity(velocity),
@@ -12,6 +13,7 @@ MembraneArg::MembraneArg(const std::array<double, 3>& position, const std::array
       mass(mass),
       stiffness(stiffness),
       bondLength(bondLength),
+      cutOffRadius(cutOffRadius),
       type(type) {}
 
 const std::array<double, 3>& MembraneArg::getPosition() const { return position; }
