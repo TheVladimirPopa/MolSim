@@ -19,7 +19,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
 
   size_t updateCount = 0;
 
-  StatisticsWriter statisticsWriter{};
+  StatisticsWriter statisticsWriter(&particles);
 
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;

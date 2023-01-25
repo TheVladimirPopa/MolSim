@@ -9,6 +9,7 @@
 using ArrayUtils::dotProduct;
 
 class ThermodynamicStatistics {
+ public:
   /**
    * Calculates the diffusion for a LinkedCellsContainer
    * @param particleContainer
