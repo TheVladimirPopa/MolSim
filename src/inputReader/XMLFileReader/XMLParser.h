@@ -8,6 +8,7 @@
 #include "XMLParser.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
+#include "inputReader/XMLFileReader/Args/LinkedCellsColouringArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
@@ -170,6 +171,66 @@ class XMLParser {
     return sphereArgs;
   }
   /**
+   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringSingles
+   * from the XML file
+   * @return Returns a vector of linkedCellsColouringArg
+   */
+  [[nodiscard]] std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringSingle() const {
+    std::vector<LinkedCellsColouringArg> singleArgs;
+
+    for (auto &it : simulation->SimTypes()) {
+      for (auto &s : it.LinkedCellsColouringSingle()) {
+        auto cs = s.cellSize();
+        auto lb = s.leftLowerBound();
+        auto rb = s.rightUpperBound();
+
+        singleArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
+      }
+    }
+
+    return singleArgs;
+  }
+  /**
+   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringMultiples
+   * from the XML file
+   * @return Returns a vector of linkedCellsColouringArg
+   */
+  [[nodiscard]] std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringMultiple() const {
+    std::vector<LinkedCellsColouringArg> multipleArgs;
+
+    for (auto &it : simulation->SimTypes()) {
+      for (auto &s : it.LinkedCellsColouringMultiple()) {
+        auto cs = s.cellSize();
+        auto lb = s.leftLowerBound();
+        auto rb = s.rightUpperBound();
+
+        multipleArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
+      }
+    }
+
+    return multipleArgs;
+  }
+  /**
+   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringLocks
+   * from the XML file
+   * @return Returns a vector of linkedCellsColouringArg
+   */
+  std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringLocks() const {
+    std::vector<LinkedCellsColouringArg> locksArgs;
+
+    for (auto &it : simulation->SimTypes()) {
+      for (auto &s : it.LinkedCellsColouringLocks()) {
+        auto cs = s.cellSize();
+        auto lb = s.leftLowerBound();
+        auto rb = s.rightUpperBound();
+
+        locksArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
+      }
+    }
+
+    return locksArgs;
+  }
+  /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
    * @return Returns a ThermostatArg
@@ -230,6 +291,22 @@ class XMLParser {
       ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
     }
   }
+
+  void initialiseLinkedCellsSinglesFromXML() const {
+    std::vector<LinkedCellsColouringArg> singleArgs = this->extractLinkedCellsColouringSingle();
+    // init
+  }
+
+  void initialiseLinkedCellsMultiplesFromXML() const {
+    std::vector<LinkedCellsColouringArg> multipleArgs = this->extractLinkedCellsColouringMultiple();
+    // init
+  }
+
+  void initialiseLinkedCellsLocksFromXML() const {
+    std::vector<LinkedCellsColouringArg> multipleArgs = this->extractLinkedCellsColouringLocks();
+    // init
+  }
+
   /**
    * Initialises the given string with the InputFile path for checkpointing
    * @param checkpoint
