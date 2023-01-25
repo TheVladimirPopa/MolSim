@@ -335,10 +335,10 @@ int main(int argc, char *argsv[]) {
 
     Thermostat thermostat = parser.initialiseThermostatFromXML(*container);
     simulation.simulate(*simulationModel, *container, *selectedWriter, thermostat, parser.initGravityFromXML(),
-                        saveCheckpoint);
+                        saveCheckpoint, false);
   } else {
     Thermostat thermostat{*container, 40., 40., 5., 1000, 2};
-    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44);
+    simulation.simulate(model, *container, *selectedWriter, thermostat, -12.44, false, false);
   }
 
   if (performanceMeasure) {

@@ -122,7 +122,17 @@ void LinkedCellsBoundary::teleportParticles() {
     for (auto particleIndex : halo->particles) {
       Particle& particle = (*particlesVector)[particleIndex];
 
-      if (!particle.isDeleted()) particle.setX(getPeriodicLocation(particle));
+      if (!particle.isDeleted()) {
+        std::array<double, 3> poz= particle.getX();
+        particle.setX(getPeriodicLocation(particle));
+        size_t dimIndex = getDimensionBySide(side);
+        bool leftRelative = side == CubeSide::LEFT || side == CubeSide::TOP || side == CubeSide::FRONT;
+        if (leftRelative) {
+          particle.getPeriodicBoundariesCrossed()[dimIndex]--;
+        } else {
+          particle.getPeriodicBoundariesCrossed()[dimIndex]++;
+        }
+      }
     }
   }
 }

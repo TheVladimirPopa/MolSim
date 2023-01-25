@@ -12,7 +12,7 @@
 #define STATISTICS_PATH "./thermodynamic_statistics.txt"
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                          double gravitationalConstant, bool checkpointing) {
+                          double gravitationalConstant, bool checkpointing, bool statistics) {
   spdlog::info("Simulation is starting...");
   double current_time = startTime;
   int iteration = 0;

@@ -26,7 +26,7 @@ class Simulation {
    * to a particle every iteration
    */
   void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                double gravitationalConstant = 0.0, bool checkpointing = false);
+                double gravitationalConstant = 0.0, bool checkpointing = false, bool statistics = false);
 
   /**
    * Sets the time until the simulation is run

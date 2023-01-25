@@ -18,14 +18,34 @@ class ThermodynamicStatistics {
   static double var(LinkedCellsContainer &particleContainer, int currentTime, int referenceTime) {
     double var = 0;
 
-    for (const Particle &p : particleContainer.particlesVector) {
-      var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
+    for (Particle &p : particleContainer.particlesVector) {
+      var += dotProduct(
+          getTruePosition(particleContainer, p.getTimePosition().at(currentTime), p.getPeriodicBoundariesCrossed()) -
+          p.getTimePosition().at(referenceTime));
+      p.getPeriodicBoundariesCrossed() = {0, 0, 0};
     }
 
     var /= (double)particleContainer.size();
 
     return var;
   }
+
+  /**
+   * Calculates the position of the particles and also taking periodic boundaries into account
+   * @param particleContainer
+   * @param oldPosition
+   * @param boundariesCrossed
+   * @return
+   */
+  static std::array<double, 3> getTruePosition(LinkedCellsContainer &particleContainer,
+                                               std::array<double, 3> oldPosition,
+                                               std::array<int, 3> boundariesCrossed) {
+    for (int i = 0; i < 3; i++) {
+      oldPosition[i] += boundariesCrossed[i] * particleContainer.cubeSize[i];
+    }
+    return oldPosition;
+  }
+
   /**
    * Calculates the diffusion for a VectorContainer
    * @param particleContainer

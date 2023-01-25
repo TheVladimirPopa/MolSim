@@ -8,9 +8,9 @@
 #pragma once
 
 #include <array>
-#include <vector>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class IModel;
 class NewtonsLawModel;
@@ -61,6 +61,11 @@ class Particle {
    * Lennard Jones distance at which particle-particle potential energy is 0 / size of the particle
    */
   double sigma;
+
+  /**
+   * Counts how many times a periodic boun
+   */
+  std::array<int, 3> periodicBoundariesCrossed;
 
   /**
    * Is true when a particle no longer is part of the simulation and waits for
@@ -122,6 +127,8 @@ class Particle {
   const std::array<double, 3> &getOldF() const { return old_f; }
 
   const std::vector<std::array<double, 3>> &getTimePosition() const { return timePosition; }
+
+  std::array<int, 3> &getPeriodicBoundariesCrossed() { return periodicBoundariesCrossed; }
 
   void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 
