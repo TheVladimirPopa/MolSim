@@ -42,7 +42,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
   particles.forEachPair(addForces);
-  particles.forEach(registerTime);
+
+  if (statistics) particles.forEach(registerTime);
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
@@ -60,7 +61,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     }
 
     // Every 1000th iteration the statistics are being written
-    if (iteration % 1000 == 0 && iteration != 0) {
+    if (iteration % 1000 == 0 && iteration != 0 && statistics) {
       particles.forEach(registerTime);
       statisticsWriter.writeFile(STATISTICS_PATH, iteration, particles);
     }
