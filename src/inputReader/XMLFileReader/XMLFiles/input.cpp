@@ -67,13 +67,11 @@ simulation_t::Thermostat_sequence& simulation_t::Thermostat() { return this->The
 
 void simulation_t::Thermostat(const Thermostat_sequence& s) { this->Thermostat_ = s; }
 
-const simulation_t::MembraneMolecule_sequence& simulation_t::MembraneMolecule() const {
-  return this->MembraneMolecule_;
-}
+const simulation_t::Membrane_sequence& simulation_t::Membrane() const { return this->Membrane_; }
 
-simulation_t::MembraneMolecule_sequence& simulation_t::MembraneMolecule() { return this->MembraneMolecule_; }
+simulation_t::Membrane_sequence& simulation_t::Membrane() { return this->Membrane_; }
 
-void simulation_t::MembraneMolecule(const MembraneMolecule_sequence& s) { this->MembraneMolecule_ = s; }
+void simulation_t::Membrane(const Membrane_sequence& s) { this->Membrane_ = s; }
 
 const simulation_t::InputFile_sequence& simulation_t::InputFile() const { return this->InputFile_; }
 
@@ -517,6 +515,12 @@ membrane_t::bondLength_type& membrane_t::bondLength() { return this->bondLength_
 
 void membrane_t::bondLength(const bondLength_type& x) { this->bondLength_.set(x); }
 
+const membrane_t::cutOffRadius_type& membrane_t::cutOffRadius() const { return this->cutOffRadius_.get(); }
+
+membrane_t::cutOffRadius_type& membrane_t::cutOffRadius() { return this->cutOffRadius_.get(); }
+
+void membrane_t::cutOffRadius(const cutOffRadius_type& x) { this->cutOffRadius_.set(x); }
+
 const membrane_t::type_type& membrane_t::type() const { return this->type_.get(); }
 
 membrane_t::type_type& membrane_t::type() { return this->type_.get(); }
@@ -575,7 +579,7 @@ simulation_t::simulation_t(const endTime_type& endTime, const deltaT_type& delta
       SimTypes_(this),
       Container_T_(this),
       Thermostat_(this),
-      MembraneMolecule_(this),
+      Membrane_(this),
       InputFile_(this),
       endTime_(endTime, this),
       deltaT_(deltaT, this),
@@ -590,7 +594,7 @@ simulation_t::simulation_t(const simulation_t& x, ::xml_schema::flags f, ::xml_s
       SimTypes_(x.SimTypes_, f, this),
       Container_T_(x.Container_T_, f, this),
       Thermostat_(x.Thermostat_, f, this),
-      MembraneMolecule_(x.MembraneMolecule_, f, this),
+      Membrane_(x.Membrane_, f, this),
       InputFile_(x.InputFile_, f, this),
       endTime_(x.endTime_, f, this),
       deltaT_(x.deltaT_, f, this),
@@ -605,7 +609,7 @@ simulation_t::simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f
       SimTypes_(this),
       Container_T_(this),
       Thermostat_(this),
-      MembraneMolecule_(this),
+      Membrane_(this),
       InputFile_(this),
       endTime_(this),
       deltaT_(this),
@@ -660,12 +664,12 @@ void simulation_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
       continue;
     }
 
-    // MembraneMolecule
+    // Membrane
     //
-    if (n.name() == "MembraneMolecule" && n.namespace_().empty()) {
-      ::std::unique_ptr<MembraneMolecule_type> r(MembraneMolecule_traits::create(i, f, this));
+    if (n.name() == "Membrane" && n.namespace_().empty()) {
+      ::std::unique_ptr<Membrane_type> r(Membrane_traits::create(i, f, this));
 
-      this->MembraneMolecule_.push_back(::std::move(r));
+      this->Membrane_.push_back(::std::move(r));
       continue;
     }
 
@@ -752,7 +756,7 @@ simulation_t& simulation_t::operator=(const simulation_t& x) {
     this->SimTypes_ = x.SimTypes_;
     this->Container_T_ = x.Container_T_;
     this->Thermostat_ = x.Thermostat_;
-    this->MembraneMolecule_ = x.MembraneMolecule_;
+    this->Membrane_ = x.Membrane_;
     this->InputFile_ = x.InputFile_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
@@ -1856,7 +1860,7 @@ particle_t::~particle_t() {}
 
 membrane_t::membrane_t(const position_type& position, const dimension_type& dimension, const velocity_type& velocity,
                        const distance_type& distance, const mass_type& mass, const stiffness_type& stiffness,
-                       const bondLength_type& bondLength, const type_type& type)
+                       const bondLength_type& bondLength, const cutOffRadius_type& cutOffRadius, const type_type& type)
     : ::xml_schema::type(),
       position_(position, this),
       dimension_(dimension, this),
@@ -1866,11 +1870,13 @@ membrane_t::membrane_t(const position_type& position, const dimension_type& dime
       mass_(mass, this),
       stiffness_(stiffness, this),
       bondLength_(bondLength, this),
+      cutOffRadius_(cutOffRadius, this),
       type_(type, this) {}
 
 membrane_t::membrane_t(::std::unique_ptr<position_type> position, ::std::unique_ptr<dimension_type> dimension,
                        ::std::unique_ptr<velocity_type> velocity, const distance_type& distance, const mass_type& mass,
-                       const stiffness_type& stiffness, const bondLength_type& bondLength, const type_type& type)
+                       const stiffness_type& stiffness, const bondLength_type& bondLength,
+                       const cutOffRadius_type& cutOffRadius, const type_type& type)
     : ::xml_schema::type(),
       position_(std::move(position), this),
       dimension_(std::move(dimension), this),
@@ -1880,6 +1886,7 @@ membrane_t::membrane_t(::std::unique_ptr<position_type> position, ::std::unique_
       mass_(mass, this),
       stiffness_(stiffness, this),
       bondLength_(bondLength, this),
+      cutOffRadius_(cutOffRadius, this),
       type_(type, this) {}
 
 membrane_t::membrane_t(const membrane_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
@@ -1892,6 +1899,7 @@ membrane_t::membrane_t(const membrane_t& x, ::xml_schema::flags f, ::xml_schema:
       mass_(x.mass_, f, this),
       stiffness_(x.stiffness_, f, this),
       bondLength_(x.bondLength_, f, this),
+      cutOffRadius_(x.cutOffRadius_, f, this),
       type_(x.type_, f, this) {}
 
 membrane_t::membrane_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
@@ -1904,6 +1912,7 @@ membrane_t::membrane_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::
       mass_(this),
       stiffness_(this),
       bondLength_(this),
+      cutOffRadius_(this),
       type_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
@@ -1997,6 +2006,11 @@ void membrane_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flag
       continue;
     }
 
+    if (n.name() == "cutOffRadius" && n.namespace_().empty()) {
+      this->cutOffRadius_.set(cutOffRadius_traits::create(i, f, this));
+      continue;
+    }
+
     if (n.name() == "type" && n.namespace_().empty()) {
       this->type_.set(type_traits::create(i, f, this));
       continue;
@@ -2019,6 +2033,10 @@ void membrane_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flag
     throw ::xsd::cxx::tree::expected_attribute<char>("bondLength", "");
   }
 
+  if (!cutOffRadius_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("cutOffRadius", "");
+  }
+
   if (!type_.present()) {
     throw ::xsd::cxx::tree::expected_attribute<char>("type", "");
   }
@@ -2039,6 +2057,7 @@ membrane_t& membrane_t::operator=(const membrane_t& x) {
     this->mass_ = x.mass_;
     this->stiffness_ = x.stiffness_;
     this->bondLength_ = x.bondLength_;
+    this->cutOffRadius_ = x.cutOffRadius_;
     this->type_ = x.type_;
   }
 

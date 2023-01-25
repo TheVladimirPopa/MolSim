@@ -40,7 +40,7 @@
 
     <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
 
-    <MembraneMolecule distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="1">
+    <Membrane distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="1">
         <position x="15.0" y="15.0" z="15.0"/>
         <dimension x="50" y="50" z="1"/>
         <velocity x="0.0" y="0.0" z="0.0"/>
@@ -48,7 +48,7 @@
         <membraneForce row="17" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
         <membraneForce row="18" column="24" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
         <membraneForce row="18" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
-    </MembraneMolecule>
+    </Membrane>
 
     <InputFile path="./checkpoint.txt"/>
 </Simulation_XML>

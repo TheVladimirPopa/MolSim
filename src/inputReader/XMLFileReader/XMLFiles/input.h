@@ -304,19 +304,19 @@ class simulation_t : public ::xml_schema::type {
 
   void Thermostat(const Thermostat_sequence& s);
 
-  // MembraneMolecule
+  // Membrane
   //
-  typedef ::membrane_t MembraneMolecule_type;
-  typedef ::xsd::cxx::tree::sequence<MembraneMolecule_type> MembraneMolecule_sequence;
-  typedef MembraneMolecule_sequence::iterator MembraneMolecule_iterator;
-  typedef MembraneMolecule_sequence::const_iterator MembraneMolecule_const_iterator;
-  typedef ::xsd::cxx::tree::traits<MembraneMolecule_type, char> MembraneMolecule_traits;
+  typedef ::membrane_t Membrane_type;
+  typedef ::xsd::cxx::tree::sequence<Membrane_type> Membrane_sequence;
+  typedef Membrane_sequence::iterator Membrane_iterator;
+  typedef Membrane_sequence::const_iterator Membrane_const_iterator;
+  typedef ::xsd::cxx::tree::traits<Membrane_type, char> Membrane_traits;
 
-  const MembraneMolecule_sequence& MembraneMolecule() const;
+  const Membrane_sequence& Membrane() const;
 
-  MembraneMolecule_sequence& MembraneMolecule();
+  Membrane_sequence& Membrane();
 
-  void MembraneMolecule(const MembraneMolecule_sequence& s);
+  void Membrane(const Membrane_sequence& s);
 
   // InputFile
   //
@@ -425,7 +425,7 @@ class simulation_t : public ::xml_schema::type {
   SimTypes_sequence SimTypes_;
   Container_T_sequence Container_T_;
   Thermostat_sequence Thermostat_;
-  MembraneMolecule_sequence MembraneMolecule_;
+  Membrane_sequence Membrane_;
   InputFile_sequence InputFile_;
   ::xsd::cxx::tree::one<endTime_type> endTime_;
   ::xsd::cxx::tree::one<deltaT_type> deltaT_;
@@ -1376,6 +1376,17 @@ class membrane_t : public ::xml_schema::type {
 
   void bondLength(const bondLength_type& x);
 
+  // cutOffRadius
+  //
+  typedef ::xml_schema::double_ cutOffRadius_type;
+  typedef ::xsd::cxx::tree::traits<cutOffRadius_type, char, ::xsd::cxx::tree::schema_type::double_> cutOffRadius_traits;
+
+  const cutOffRadius_type& cutOffRadius() const;
+
+  cutOffRadius_type& cutOffRadius();
+
+  void cutOffRadius(const cutOffRadius_type& x);
+
   // type
   //
   typedef ::xml_schema::int_ type_type;
@@ -1390,10 +1401,11 @@ class membrane_t : public ::xml_schema::type {
   // Constructors.
   //
   membrane_t(const position_type&, const dimension_type&, const velocity_type&, const distance_type&, const mass_type&,
-             const stiffness_type&, const bondLength_type&, const type_type&);
+             const stiffness_type&, const bondLength_type&, const cutOffRadius_type&, const type_type&);
 
   membrane_t(::std::unique_ptr<position_type>, ::std::unique_ptr<dimension_type>, ::std::unique_ptr<velocity_type>,
-             const distance_type&, const mass_type&, const stiffness_type&, const bondLength_type&, const type_type&);
+             const distance_type&, const mass_type&, const stiffness_type&, const bondLength_type&,
+             const cutOffRadius_type&, const type_type&);
 
   membrane_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
@@ -1419,6 +1431,7 @@ class membrane_t : public ::xml_schema::type {
   ::xsd::cxx::tree::one<mass_type> mass_;
   ::xsd::cxx::tree::one<stiffness_type> stiffness_;
   ::xsd::cxx::tree::one<bondLength_type> bondLength_;
+  ::xsd::cxx::tree::one<cutOffRadius_type> cutOffRadius_;
   ::xsd::cxx::tree::one<type_type> type_;
 };
 

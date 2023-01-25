@@ -173,7 +173,7 @@ class XMLParser {
 
   std::vector<MembraneArg> extractMembrane() {
     std::vector<MembraneArg> args;
-    for (auto &it : simulation->MembraneMolecule()) {
+    for (auto &it : simulation->Membrane()) {
       auto pos = it.position();
       auto dim = it.dimension();
       auto vel = it.velocity();
@@ -181,17 +181,18 @@ class XMLParser {
       auto mass = it.mass();
       auto stiff = it.stiffness();
       auto bl = it.bondLength();
+      auto cor = it.cutOffRadius();
       auto type = it.type();
 
       args.emplace_back(generate_double_array(pos), generate_int_array(dim), generate_double_array(vel),
-                        extractMembraneForces(), dist, mass, stiff, bl, type);
+                        extractMembraneForces(), dist, mass, stiff, bl, cor, type);
     }
     return args;
   }
 
   std::vector<MembraneForceArg> extractMembraneForces() {
     std::vector<MembraneForceArg> membraneForces;
-    for (auto &it : simulation->MembraneMolecule()) {
+    for (auto &it : simulation->Membrane()) {
       for (auto &mf : it.membraneForce()) {
         auto row = mf.row();
         auto col = mf.column();
@@ -312,6 +313,7 @@ class XMLParser {
       membrane.type = it.getType();
       membrane.bondLength = it.getBondLength();
       membrane.stiffness = it.getStiffness();
+      // Membrane CutOffRadius initialisation
       std::vector<ParticleGeneration::MembraneForce> membraneForces;
       for (MembraneForceArg mfa : it.getMembraneForces()) {
         ParticleGeneration::MembraneForce membraneForce;
