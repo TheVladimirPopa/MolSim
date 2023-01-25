@@ -23,10 +23,15 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     ++updateCount;
   }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
-  std::function<void(P)> updateF{[gravitationalConstant](P p) {
-    p.updateForces();
-    p.f[1] += p.m * gravitationalConstant;
-  }};
+  std::function<void(P)> updateF;
+  if (gravitationalConstant == 0) {
+    updateF = [](P p) { p.updateForces(); };
+  } else {
+    updateF = [gravitationalConstant](P p) {
+      p.updateForces();
+      p.f[2] += p.m * gravitationalConstant;
+    };
+  }
 
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
@@ -45,6 +50,9 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
 
   // Initialize the force so that we know the current force for the first loop
+  if (particles.containsMolecules())
+    for (auto &mol : particles.getMoleculesVectorRef()) mol.applyArtificialForces();
+
   particles.forEach(updateF);
   particles.forEachPair(addForces);
 

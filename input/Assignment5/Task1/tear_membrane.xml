@@ -1,0 +1,131 @@
+<Simulation_XML endTime="100.0" deltaT="0.01" writeOutFrequency="100" filename="ws5_task1_tear2.vtk" cutOffRadius="4.0"
+                gravity="-0.001">
+
+    <Particle id="0" epsilon="1.0" sigma="1.0"/>
+
+    <SimTypes>
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="4.0">
+            <leftLowerBound x="0.0" y="0.0" z="0.0"/>
+            <rightUpperBound x="148.0" y="148.0" z="148.0"/>
+            <left>REFLECT</left>
+            <right>REFLECT</right>
+            <top>REFLECT</top>
+            <bottom>REFLECT</bottom>
+            <front>REFLECT</front>
+            <back>REFLECT</back>
+        </LinkedCell>
+    </Container_T>
+
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="0" dimension="3"/>
+
+    <MembraneMolecule distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="0">
+        <position x="15.0" y="15.0" z="15.0"/>
+        <dimension x="50" y="50" z="1"/>
+        <velocity x="0.0" y="0.0" z="0.0"/>
+        <membraneForce row="0" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="1" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="2" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="3" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="4" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="5" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="6" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="7" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="8" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="9" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="10" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="11" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="12" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="13" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="14" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="15" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="16" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="17" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="18" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="19" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="20" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="21" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="22" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="23" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="24" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="25" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="26" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="27" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="28" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="29" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="30" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="31" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="32" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="33" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="34" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="35" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="36" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="37" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="38" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="39" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="40" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="41" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="42" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="43" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="44" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="45" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="46" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="47" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="48" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="49" column="0" x="-20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="0" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="1" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="2" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="3" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="4" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="5" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="6" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="7" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="8" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="9" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="10" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="11" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="12" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="13" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="14" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="15" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="16" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="17" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="18" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="19" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="20" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="21" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="22" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="23" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="24" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="25" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="26" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="27" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="28" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="29" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="30" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="31" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="32" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="33" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="34" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="35" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="36" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="37" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="38" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="39" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="40" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="41" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="42" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="43" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="44" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="45" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="46" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="47" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="48" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+        <membraneForce row="49" column="49" x="20.0" y="0.0" z="0.001" timeSpan="15000"/>
+    </MembraneMolecule>
+
+    <InputFile path="./checkpoint.txt"/>
+</Simulation_XML>
