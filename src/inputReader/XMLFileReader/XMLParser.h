@@ -313,7 +313,7 @@ class XMLParser {
       membrane.type = it.getType();
       membrane.bondLength = it.getBondLength();
       membrane.stiffness = it.getStiffness();
-      // Membrane CutOffRadius initialisation
+      membrane.cutOffRadius = it.getCutOffRadius();
       std::vector<ParticleGeneration::MembraneForce> membraneForces;
       for (MembraneForceArg mfa : it.getMembraneForces()) {
         ParticleGeneration::MembraneForce membraneForce;

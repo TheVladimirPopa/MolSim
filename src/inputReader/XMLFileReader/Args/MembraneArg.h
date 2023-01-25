@@ -40,5 +40,7 @@ class MembraneArg {
 
   [[nodiscard]] double getBondLength() const;
 
+  [[nodiscard]] double getCutOffRadius() const;
+
   [[nodiscard]] int getType() const;
 };

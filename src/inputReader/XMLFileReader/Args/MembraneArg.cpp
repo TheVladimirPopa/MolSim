@@ -32,4 +32,6 @@ double MembraneArg::getStiffness() const { return stiffness; }
 
 double MembraneArg::getBondLength() const { return bondLength; }
 
+double MembraneArg::getCutOffRadius() const { return cutOffRadius; }
+
 int MembraneArg::getType() const { return type; }

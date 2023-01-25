@@ -67,6 +67,7 @@ struct MembraneForce {
 struct membrane : cuboid {
   double bondLength{2.2};
   double stiffness{300.};
+  double cutOffRadius{1e30};
   std::vector<MembraneForce> membraneForces;
 };
 
