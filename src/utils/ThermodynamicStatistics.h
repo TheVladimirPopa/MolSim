@@ -22,7 +22,7 @@ class ThermodynamicStatistics {
       var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
     }
 
-    var /= (double) particleContainer.size();
+    var /= (double)particleContainer.size();
 
     return var;
   }
@@ -40,7 +40,7 @@ class ThermodynamicStatistics {
       var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
     }
 
-    var /= (double) particleContainer.size();
+    var /= (double)particleContainer.size();
 
     return var;
   }

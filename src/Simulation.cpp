@@ -42,6 +42,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   // Initialize the force so that we know the current force for the first loop
   particles.forEach(updateF);
   particles.forEachPair(addForces);
+  particles.forEach(registerTime);
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {
@@ -50,10 +51,6 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     particles.forEachPair(addForces);
     particles.forEach(updateV);
 
-    if (iteration % 1000 == 0) {
-      particles.forEach(registerTime);
-    }
-
     if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();
     }
@@ -61,11 +58,11 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
     }
-    // TODO filewriter(filename, iteration, particles) stat.txt lastposition vector
 
     // Every 1000th iteration the statistics are being written
-    if (iteration % 1000 == 0) {
-      statisticsWriter.writeFile("", iteration, particles);
+    if (iteration % 1000 == 0 && iteration != 0) {
+      particles.forEach(registerTime);
+      statisticsWriter.writeFile(STATISTICS_PATH, iteration, particles);
     }
 
     current_time += deltaT;

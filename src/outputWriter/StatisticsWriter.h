@@ -8,7 +8,6 @@ class StatisticsWriter : public IWriter {
  private:
   std::ofstream file;
   IContainer *particleContainer;
-
   /**
    * Writes the statistics file header and number of particles into the file
    * @param size the number of particles
@@ -18,8 +17,21 @@ class StatisticsWriter : public IWriter {
   /**
    * Writes the particle data into the file
    * @param p the given particle
+   * @param iteration the current iteration
    */
-  void registerParticle(const Particle &p);
+  void registerParticle(const Particle& p, int iteration);
+
+  /**
+   * Used to determine the class of an object (similar to instanceof in Java)
+   * @tparam Base
+   * @tparam T
+   * @param ptr
+   * @return
+   */
+  template <typename Base, typename T>
+  inline bool instanceof (const T *ptr) {
+    return dynamic_cast<const Base *>(ptr) != nullptr;
+  }
 
  public:
   /**
