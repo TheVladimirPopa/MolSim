@@ -224,6 +224,9 @@ class array_i;
 class array_d;
 class cuboid_t;
 class sphere_t;
+class linkedCellsColouringSingle_t;
+class linkedCellsColouringMultiple_t;
+class linkedCellsColouringLocks_t;
 class simTypes_t;
 class input_t;
 class containerTypes_t;
@@ -777,6 +780,213 @@ class sphere_t : public ::xml_schema::type {
   ::xsd::cxx::tree::one<type_type> type_;
 };
 
+class linkedCellsColouringSingle_t : public ::xml_schema::type {
+ public:
+  // leftLowerBound
+  //
+  typedef ::array_d leftLowerBound_type;
+  typedef ::xsd::cxx::tree::traits<leftLowerBound_type, char> leftLowerBound_traits;
+
+  const leftLowerBound_type& leftLowerBound() const;
+
+  leftLowerBound_type& leftLowerBound();
+
+  void leftLowerBound(const leftLowerBound_type& x);
+
+  void leftLowerBound(::std::unique_ptr<leftLowerBound_type> p);
+
+  // rightUpperBound
+  //
+  typedef ::array_d rightUpperBound_type;
+  typedef ::xsd::cxx::tree::traits<rightUpperBound_type, char> rightUpperBound_traits;
+
+  const rightUpperBound_type& rightUpperBound() const;
+
+  rightUpperBound_type& rightUpperBound();
+
+  void rightUpperBound(const rightUpperBound_type& x);
+
+  void rightUpperBound(::std::unique_ptr<rightUpperBound_type> p);
+
+  // cellSize
+  //
+  typedef ::xml_schema::double_ cellSize_type;
+  typedef ::xsd::cxx::tree::traits<cellSize_type, char, ::xsd::cxx::tree::schema_type::double_> cellSize_traits;
+
+  const cellSize_type& cellSize() const;
+
+  cellSize_type& cellSize();
+
+  void cellSize(const cellSize_type& x);
+
+  // Constructors.
+  //
+  linkedCellsColouringSingle_t(const leftLowerBound_type&, const rightUpperBound_type&, const cellSize_type&);
+
+  linkedCellsColouringSingle_t(::std::unique_ptr<leftLowerBound_type>, ::std::unique_ptr<rightUpperBound_type>,
+                               const cellSize_type&);
+
+  linkedCellsColouringSingle_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
+
+  linkedCellsColouringSingle_t(const linkedCellsColouringSingle_t& x, ::xml_schema::flags f = 0,
+                               ::xml_schema::container* c = 0);
+
+  virtual linkedCellsColouringSingle_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  linkedCellsColouringSingle_t& operator=(const linkedCellsColouringSingle_t& x);
+
+  virtual ~linkedCellsColouringSingle_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<leftLowerBound_type> leftLowerBound_;
+  ::xsd::cxx::tree::one<rightUpperBound_type> rightUpperBound_;
+  ::xsd::cxx::tree::one<cellSize_type> cellSize_;
+};
+
+class linkedCellsColouringMultiple_t : public ::xml_schema::type {
+ public:
+  // leftLowerBound
+  //
+  typedef ::array_d leftLowerBound_type;
+  typedef ::xsd::cxx::tree::traits<leftLowerBound_type, char> leftLowerBound_traits;
+
+  const leftLowerBound_type& leftLowerBound() const;
+
+  leftLowerBound_type& leftLowerBound();
+
+  void leftLowerBound(const leftLowerBound_type& x);
+
+  void leftLowerBound(::std::unique_ptr<leftLowerBound_type> p);
+
+  // rightUpperBound
+  //
+  typedef ::array_d rightUpperBound_type;
+  typedef ::xsd::cxx::tree::traits<rightUpperBound_type, char> rightUpperBound_traits;
+
+  const rightUpperBound_type& rightUpperBound() const;
+
+  rightUpperBound_type& rightUpperBound();
+
+  void rightUpperBound(const rightUpperBound_type& x);
+
+  void rightUpperBound(::std::unique_ptr<rightUpperBound_type> p);
+
+  // cellSize
+  //
+  typedef ::xml_schema::double_ cellSize_type;
+  typedef ::xsd::cxx::tree::traits<cellSize_type, char, ::xsd::cxx::tree::schema_type::double_> cellSize_traits;
+
+  const cellSize_type& cellSize() const;
+
+  cellSize_type& cellSize();
+
+  void cellSize(const cellSize_type& x);
+
+  // Constructors.
+  //
+  linkedCellsColouringMultiple_t(const leftLowerBound_type&, const rightUpperBound_type&, const cellSize_type&);
+
+  linkedCellsColouringMultiple_t(::std::unique_ptr<leftLowerBound_type>, ::std::unique_ptr<rightUpperBound_type>,
+                                 const cellSize_type&);
+
+  linkedCellsColouringMultiple_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  linkedCellsColouringMultiple_t(const linkedCellsColouringMultiple_t& x, ::xml_schema::flags f = 0,
+                                 ::xml_schema::container* c = 0);
+
+  virtual linkedCellsColouringMultiple_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  linkedCellsColouringMultiple_t& operator=(const linkedCellsColouringMultiple_t& x);
+
+  virtual ~linkedCellsColouringMultiple_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<leftLowerBound_type> leftLowerBound_;
+  ::xsd::cxx::tree::one<rightUpperBound_type> rightUpperBound_;
+  ::xsd::cxx::tree::one<cellSize_type> cellSize_;
+};
+
+class linkedCellsColouringLocks_t : public ::xml_schema::type {
+ public:
+  // leftLowerBound
+  //
+  typedef ::array_d leftLowerBound_type;
+  typedef ::xsd::cxx::tree::traits<leftLowerBound_type, char> leftLowerBound_traits;
+
+  const leftLowerBound_type& leftLowerBound() const;
+
+  leftLowerBound_type& leftLowerBound();
+
+  void leftLowerBound(const leftLowerBound_type& x);
+
+  void leftLowerBound(::std::unique_ptr<leftLowerBound_type> p);
+
+  // rightUpperBound
+  //
+  typedef ::array_d rightUpperBound_type;
+  typedef ::xsd::cxx::tree::traits<rightUpperBound_type, char> rightUpperBound_traits;
+
+  const rightUpperBound_type& rightUpperBound() const;
+
+  rightUpperBound_type& rightUpperBound();
+
+  void rightUpperBound(const rightUpperBound_type& x);
+
+  void rightUpperBound(::std::unique_ptr<rightUpperBound_type> p);
+
+  // cellSize
+  //
+  typedef ::xml_schema::double_ cellSize_type;
+  typedef ::xsd::cxx::tree::traits<cellSize_type, char, ::xsd::cxx::tree::schema_type::double_> cellSize_traits;
+
+  const cellSize_type& cellSize() const;
+
+  cellSize_type& cellSize();
+
+  void cellSize(const cellSize_type& x);
+
+  // Constructors.
+  //
+  linkedCellsColouringLocks_t(const leftLowerBound_type&, const rightUpperBound_type&, const cellSize_type&);
+
+  linkedCellsColouringLocks_t(::std::unique_ptr<leftLowerBound_type>, ::std::unique_ptr<rightUpperBound_type>,
+                              const cellSize_type&);
+
+  linkedCellsColouringLocks_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  linkedCellsColouringLocks_t(const linkedCellsColouringLocks_t& x, ::xml_schema::flags f = 0,
+                              ::xml_schema::container* c = 0);
+
+  virtual linkedCellsColouringLocks_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  linkedCellsColouringLocks_t& operator=(const linkedCellsColouringLocks_t& x);
+
+  virtual ~linkedCellsColouringLocks_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<leftLowerBound_type> leftLowerBound_;
+  ::xsd::cxx::tree::one<rightUpperBound_type> rightUpperBound_;
+  ::xsd::cxx::tree::one<cellSize_type> cellSize_;
+};
+
 class simTypes_t : public ::xml_schema::type {
  public:
   // Cuboid
@@ -807,6 +1017,48 @@ class simTypes_t : public ::xml_schema::type {
 
   void Sphere(const Sphere_sequence& s);
 
+  // LinkedCellsColouringSingle
+  //
+  typedef ::linkedCellsColouringSingle_t LinkedCellsColouringSingle_type;
+  typedef ::xsd::cxx::tree::sequence<LinkedCellsColouringSingle_type> LinkedCellsColouringSingle_sequence;
+  typedef LinkedCellsColouringSingle_sequence::iterator LinkedCellsColouringSingle_iterator;
+  typedef LinkedCellsColouringSingle_sequence::const_iterator LinkedCellsColouringSingle_const_iterator;
+  typedef ::xsd::cxx::tree::traits<LinkedCellsColouringSingle_type, char> LinkedCellsColouringSingle_traits;
+
+  const LinkedCellsColouringSingle_sequence& LinkedCellsColouringSingle() const;
+
+  LinkedCellsColouringSingle_sequence& LinkedCellsColouringSingle();
+
+  void LinkedCellsColouringSingle(const LinkedCellsColouringSingle_sequence& s);
+
+  // LinkedCellsColouringMultiple
+  //
+  typedef ::linkedCellsColouringMultiple_t LinkedCellsColouringMultiple_type;
+  typedef ::xsd::cxx::tree::sequence<LinkedCellsColouringMultiple_type> LinkedCellsColouringMultiple_sequence;
+  typedef LinkedCellsColouringMultiple_sequence::iterator LinkedCellsColouringMultiple_iterator;
+  typedef LinkedCellsColouringMultiple_sequence::const_iterator LinkedCellsColouringMultiple_const_iterator;
+  typedef ::xsd::cxx::tree::traits<LinkedCellsColouringMultiple_type, char> LinkedCellsColouringMultiple_traits;
+
+  const LinkedCellsColouringMultiple_sequence& LinkedCellsColouringMultiple() const;
+
+  LinkedCellsColouringMultiple_sequence& LinkedCellsColouringMultiple();
+
+  void LinkedCellsColouringMultiple(const LinkedCellsColouringMultiple_sequence& s);
+
+  // LinkedCellsColouringLocks
+  //
+  typedef ::linkedCellsColouringLocks_t LinkedCellsColouringLocks_type;
+  typedef ::xsd::cxx::tree::sequence<LinkedCellsColouringLocks_type> LinkedCellsColouringLocks_sequence;
+  typedef LinkedCellsColouringLocks_sequence::iterator LinkedCellsColouringLocks_iterator;
+  typedef LinkedCellsColouringLocks_sequence::const_iterator LinkedCellsColouringLocks_const_iterator;
+  typedef ::xsd::cxx::tree::traits<LinkedCellsColouringLocks_type, char> LinkedCellsColouringLocks_traits;
+
+  const LinkedCellsColouringLocks_sequence& LinkedCellsColouringLocks() const;
+
+  LinkedCellsColouringLocks_sequence& LinkedCellsColouringLocks();
+
+  void LinkedCellsColouringLocks(const LinkedCellsColouringLocks_sequence& s);
+
   // Constructors.
   //
   simTypes_t();
@@ -829,6 +1081,9 @@ class simTypes_t : public ::xml_schema::type {
  protected:
   Cuboid_sequence Cuboid_;
   Sphere_sequence Sphere_;
+  LinkedCellsColouringSingle_sequence LinkedCellsColouringSingle_;
+  LinkedCellsColouringMultiple_sequence LinkedCellsColouringMultiple_;
+  LinkedCellsColouringLocks_sequence LinkedCellsColouringLocks_;
 };
 
 class input_t : public ::xml_schema::type {
