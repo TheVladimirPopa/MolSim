@@ -222,14 +222,12 @@ bool Configuration::tryParseXml() {
   xmlParser->initializeParticleTypes();
   checkpointPath = xmlParser->getCheckpointPath();
   container = xmlParser->initialiseLinkedCellContainerFromXML();
-  thermostat = xmlParser->initialiseThermostatFromXML(*container);
+  thermostat = std::make_unique<ThermostatArg>(xmlParser->getThermostat());
 
   return true;
 }
 
 std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() { return std::move(container); }
-
-std::unique_ptr<Thermostat> Configuration::takeThermostat() { return std::move(thermostat); }
 
 void Configuration::printUsage() {
   std::cout << " Usage\n"

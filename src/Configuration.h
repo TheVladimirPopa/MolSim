@@ -61,7 +61,7 @@ class Configuration {
   std::unique_ptr<LinkedCellsContainer> container;
 
   /// The thermostat of the container
-  std::unique_ptr<Thermostat> thermostat;
+  std::unique_ptr<ThermostatArg> thermostat;
 
   // Performance measurement, log behavior
   /// Enable performance logging
@@ -146,7 +146,7 @@ class Configuration {
   [[nodiscard]] std::vector<ParticleShape> getParticleShapes() { return particleShapes; }
 
   [[nodiscard]] std::unique_ptr<LinkedCellsContainer> takeContainer();
-  [[nodiscard]] std::unique_ptr<Thermostat> takeThermostat();
+  [[nodiscard]] ThermostatArg* getThermostat() { return thermostat.get(); };
 
   // Input
   [[nodiscard]] std::string getInputPath() const { return inFilePath; }

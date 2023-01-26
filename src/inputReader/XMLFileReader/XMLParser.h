@@ -212,7 +212,7 @@ class XMLParser {
    * Thermostat from the XML file
    * @return Returns a ThermostatArg
    */
-  ThermostatArg extractThermostat() {
+  ThermostatArg getThermostat() {
     for (auto &it : simulation->Thermostat()) {
       auto initialTemp = it.initialTemp();
       auto targetTemp = it.targetTemp();
@@ -384,7 +384,7 @@ class XMLParser {
    * @return Returns a Thermostat
    */
   std::unique_ptr<Thermostat> initialiseThermostatFromXML(IContainer &container) {
-    ThermostatArg thermostatArg = extractThermostat();
+    ThermostatArg thermostatArg = getThermostat();
     size_t dimension = thermostatArg.getDimension();
     return std::make_unique<Thermostat>(container, thermostatArg.getInitialTemp(), thermostatArg.getTargetTemp(),
                                         thermostatArg.getMaxTempChange(), thermostatArg.getPeriodLength(), dimension);

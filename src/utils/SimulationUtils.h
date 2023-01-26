@@ -79,10 +79,11 @@ std::unique_ptr<Thermostat> makeDefaultThermostat(IContainer &container);
 
 /**
  * Makes a new thermostat
- * @param thermostat A thermostat that will be returned. (This is a placeholder to streamline the interface for now)
+ * @param container The container that receives the thermostat
+ * @param ThermostatArg The arguments for the thermostat
  * @return The thermostat
  */
-std::unique_ptr<Thermostat> makeThermostat(std::unique_ptr<Thermostat> thermostat);
+std::unique_ptr<Thermostat> makeThermostat(IContainer &container, ThermostatArg thermostat);
 
 }  // namespace SimulationUtils
 

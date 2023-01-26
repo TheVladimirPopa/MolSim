@@ -84,8 +84,10 @@ std::unique_ptr<IWriter> SimulationUtils::makeWriter(WriterType writerType) {
 std::unique_ptr<Thermostat> SimulationUtils::makeDefaultThermostat(IContainer& container) {
   return std::make_unique<Thermostat>(container, 40., 40., 5., 1000, 2);
 }
-std::unique_ptr<Thermostat> SimulationUtils::makeThermostat(std::unique_ptr<Thermostat> thermo) {
-  return std::move(thermo);  // Placeholder
+std::unique_ptr<Thermostat> SimulationUtils::makeThermostat(IContainer& container, ThermostatArg thermArg) {
+  size_t dimension = 3;
+  return std::make_unique<Thermostat>(container, thermArg.getInitialTemp(), thermArg.getTargetTemp(),
+                                      thermArg.getMaxTempChange(), thermArg.getPeriodLength(), dimension);
 }
 void ConfigurationUtils::configureLogging(int logLevel, bool disableLogging) {
   auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);

@@ -44,7 +44,7 @@ int main(int argc, char* argsv[]) {
   auto model = SimulationUtils::makeModel(config.getSelectedModel(), config.getDeltaT(), config.getCutOff());
   auto writer = config.hasFileOutputEnabled() ? SimulationUtils::makeWriter(WriterType::VTKWriter)
                                               : SimulationUtils::makeWriter(WriterType::NoWriter);
-  auto thermostat = isXmlInput ? SimulationUtils::makeThermostat(config.takeThermostat())
+  auto thermostat = isXmlInput ? SimulationUtils::makeThermostat(*container, *config.getThermostat())
                                : SimulationUtils::makeDefaultThermostat(*container);
 
   // 4. Start simulation
