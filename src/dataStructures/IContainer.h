@@ -2,6 +2,7 @@
 #include <fstream>
 #include <functional>
 
+#include "MembraneStructure.h"
 #include "Particle.h"
 /**  \image html runtime.png width=900px
  *    \image latex runtime.png "Runtimes comparison" width = [goodwidth]cm
@@ -63,6 +64,29 @@ class IContainer {
    * @return the number of particles
    */
   virtual size_t size() = 0;
+
+  /**
+   * Attaches a membrane structure to the container.
+   * For now (worksheet 5) only Membrane-structures are supported.
+   * @param membrane The membrane that will be attached to the container.
+   */
+  virtual void push_back(MembraneStructure membrane) = 0;
+
+  /**
+   * Returns a reference to a vector containing the particles of the container.
+   * @return A vector containing particles
+   */
+  virtual std::vector<Particle> &getParticlesRef() = 0;
+
+  /**
+   * @return True, if the container has structures and supports structures. Otherwise false.
+   */
+  virtual bool containsStructures() { return false; };
+
+  /**
+   * @return Reference to membrane vector
+   */
+  virtual std::vector<MembraneStructure> &getStructureVectorRef() { throw std::runtime_error("Not implemented."); }
 
   virtual ~IContainer() = default;
 };

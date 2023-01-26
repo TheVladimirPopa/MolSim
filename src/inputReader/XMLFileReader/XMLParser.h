@@ -1,18 +1,19 @@
-//
-// Created by vladi on 11/27/2022.
-//
 #pragma once
 #include <memory>
 
 #include "Simulation.h"
-#include "XMLParser.h"
+#include "dataStructures/LinkedCellsBoundary.h"
+#include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
+#include "inputReader/XMLFileReader/Args/MembraneArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
 #include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
+#include "utils/MolSimEnums.h"
+#include "utils/SimulationUtils.h"
 
 class XMLParser {
  private:
@@ -80,15 +81,15 @@ class XMLParser {
     }
     throw std::invalid_argument("Invalid boundary string");
   }
+
   /**
-   * Chooses the container type
-   * @return Returns true if a LinkedCellsContainer is detected, false otherwise
+   * @return Returns type of the container specified in the xml file
    */
-  bool chooseStrategy() {
+  ContainerType getContainerType() {
     for (auto &it : simulation->Container_T()) {
-      if (it.LinkedCell().empty()) return false;
+      if (it.LinkedCell().empty()) return ::ContainerType::VECTOR;
     }
-    return true;
+    return ContainerType::LINKED_CELLS;
   }
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
@@ -169,12 +170,49 @@ class XMLParser {
 
     return sphereArgs;
   }
+
+  std::vector<MembraneArg> extractMembrane() {
+    std::vector<MembraneArg> args;
+    for (auto &it : simulation->Membrane()) {
+      auto pos = it.position();
+      auto dim = it.dimension();
+      auto vel = it.velocity();
+      auto dist = it.distance();
+      auto mass = it.mass();
+      auto stiff = it.stiffness();
+      auto bl = it.bondLength();
+      auto cor = it.cutOffRadius();
+      auto type = it.type();
+
+      args.emplace_back(generate_double_array(pos), generate_int_array(dim), generate_double_array(vel),
+                        extractMembraneForces(), dist, mass, stiff, bl, cor, type);
+    }
+    return args;
+  }
+
+  std::vector<MembraneForceArg> extractMembraneForces() {
+    std::vector<MembraneForceArg> membraneForces;
+    for (auto &it : simulation->Membrane()) {
+      for (auto &mf : it.membraneForce()) {
+        auto row = mf.row();
+        auto col = mf.column();
+        auto x = mf.x();
+        auto y = mf.y();
+        auto z = mf.z();
+        auto ts = mf.timeSpan();
+
+        membraneForces.emplace_back(row, col, x, y, z, ts);
+      }
+    }
+
+    return membraneForces;
+  }
   /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
    * @return Returns a ThermostatArg
    */
-  ThermostatArg extractThermostat() {
+  ThermostatArg getThermostat() {
     for (auto &it : simulation->Thermostat()) {
       auto initialTemp = it.initialTemp();
       auto targetTemp = it.targetTemp();
@@ -216,7 +254,8 @@ class XMLParser {
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  void initialiseCuboidsFromXML(IContainer &container) const {
+  [[nodiscard]] std::vector<ParticleGeneration::cuboid> getCuboids() const {
+    std::vector<ParticleGeneration::cuboid> cuboids;
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
 
     for (auto &it : cuboidArgs) {
@@ -227,22 +266,26 @@ class XMLParser {
       cuboid.distance = it.getDistance();
       cuboid.mass = it.getMass();
       cuboid.type = it.getType();
-      ParticleGeneration::addCuboidToParticleContainer(container, cuboid);
+      cuboids.push_back(cuboid);
     }
+
+    return cuboids;
   }
   /**
-   * Initialises the given string with the InputFile path for checkpointing
+   * Return path where to load the checkpoint from
    * @param checkpoint
    */
-  void initCheckpoint(std::string &checkpoint) {
+  std::string getCheckpointPath() {
     SimulationArg args = extractSimulation();
-    checkpoint = args.getInputFile();
+    return args.getInputFile();
   }
   /**
-   * Adds all spheres read from the path file to a given LinkedCellsContainer
+   * Adds all spheres read from the path file to a given Container
    * @param linkedCellsContainer
    */
-  void initialiseSpheresFromXML(IContainer &container) const {
+  [[nodiscard]] std::vector<ParticleGeneration::sphere> getSpheres() const {
+    std::vector<ParticleGeneration::sphere> spheres;
+
     std::vector<SphereArg> sphereArgs = extractSpheres();
     for (auto &it : sphereArgs) {
       ParticleGeneration::sphere sphere;
@@ -253,23 +296,70 @@ class XMLParser {
       sphere.distance = it.getDistance();
       sphere.mass = it.getMass();
       sphere.type = it.getType();
-      ParticleGeneration::addSphereToParticleContainer(container, sphere);
+      spheres.push_back(sphere);
     }
+
+    return spheres;
+  }
+
+  /**
+   * @return Returns the Lennard Jones cutOffRadius of the simulation
+   */
+  [[nodiscard]] double getCutOffRadius() const { return simulation->cutOffRadius(); }
+
+  /**
+   * Reads membranes from xml file
+   * @return Extracted membranes
+   */
+  std::vector<ParticleGeneration::membrane> getMembranes() {
+    std::vector<ParticleGeneration::membrane> membranes;
+    std::vector<MembraneArg> membraneArgs = extractMembrane();
+
+    for (auto &it : membraneArgs) {
+      ParticleGeneration::membrane membrane;
+      membrane.position = it.getPosition();
+      membrane.dimension = it.getDimension();
+      membrane.velocity = it.getVelocity();
+      membrane.distance = it.getDistance();
+      membrane.mass = it.getMass();
+      membrane.type = it.getType();
+      membrane.bondLength = it.getBondLength();
+      membrane.stiffness = it.getStiffness();
+      membrane.cutOffRadius = it.getCutOffRadius();
+      std::vector<ParticleGeneration::MembraneForce> membraneForces;
+      for (MembraneForceArg mfa : it.getMembraneForces()) {
+        ParticleGeneration::MembraneForce membraneForce;
+        membraneForce.row = mfa.getRow();
+        membraneForce.column = mfa.getColumn();
+        membraneForce.x = mfa.getX();
+        membraneForce.y = mfa.getY();
+        membraneForce.z = mfa.getZ();
+        membraneForce.timeSpan = mfa.getTimeSpan();
+        membraneForces.emplace_back(membraneForce);
+      }
+      membrane.membraneForces = membraneForces;
+      membranes.push_back(membrane);
+    }
+
+    return membranes;
   }
   /**
-   * Initialises a cutOffRadius from the path file
-   * @return Returns the cutOffRadius
+   * @return Returns the gravity constant
    */
-  double initCutOffRadiusXML() { return simulation->cutOffRadius(); }
+  [[nodiscard]] double getGravityConstant() const { return simulation->gravity(); }
+
   /**
-   * Initialises the gravity from the path file
-   * @return Returns the gravity
+   * @return The selected model
    */
-  double initGravityFromXML() { return simulation->gravity(); }
+  [[nodiscard]] ModelType getModel() const {
+    // TODO: Read this value from "simulation" once the xml part is updated
+    return ModelType::LennardJones;
+  }
+
   /**
    * Registers the particles read in the path file
    */
-  void registerParticlesFromXML() const {
+  void initializeParticleTypes() const {
     std::vector<ParticleArg> particleArgs = extractParticles();
     for (auto &p : particleArgs) {
       Particle::registerParticleType(p.getId(), p.getEpsilon(), p.getSigma());
@@ -279,38 +369,31 @@ class XMLParser {
    * Constructs a LinkedCellsContainer from the path file if that container type is chosen
    * @return Returns a LinkedCellsContainer
    */
-  LinkedCellsContainer initialiseLinkedCellContainerFromXML() {
-    if (chooseStrategy()) {
-      LinkedCellArg linkedCellArg = extractLinkedCell();
-      std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
-      std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
-
-      return LinkedCellsContainer{linkedCellArg.getCellSize(), lowerBound, upperBound};
-    } else {
-      std::array<double, 3> zeroBound = {0., 0., 0.};
-      return LinkedCellsContainer{0, zeroBound, zeroBound};
-    }
+  std::unique_ptr<LinkedCellsContainer> initialiseLinkedCellContainerFromXML() {
+    LinkedCellArg linkedCellArg = extractLinkedCell();
+    std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
+    std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
+    auto container = std::make_unique<LinkedCellsContainer>(linkedCellArg.getCellSize(), lowerBound, upperBound);
+    applyBoundariesFromXML(*container);
+    return container;
   }
+
   /**
    * Constructs a thermostat from the path file and a given container
    * @param container
    * @return Returns a Thermostat
    */
-  Thermostat initialiseThermostatFromXML(IContainer &container) {
-    ThermostatArg thermostatArg = extractThermostat();
+  std::unique_ptr<Thermostat> initialiseThermostatFromXML(IContainer &container) {
+    ThermostatArg thermostatArg = getThermostat();
     size_t dimension = thermostatArg.getDimension();
-    return Thermostat{container,
-                      thermostatArg.getInitialTemp(),
-                      thermostatArg.getTargetTemp(),
-                      thermostatArg.getMaxTempChange(),
-                      thermostatArg.getPeriodLength(),
-                      dimension};
+    return std::make_unique<Thermostat>(container, thermostatArg.getInitialTemp(), thermostatArg.getTargetTemp(),
+                                        thermostatArg.getMaxTempChange(), thermostatArg.getPeriodLength(), dimension);
   }
   /**
    *  Sets boundaries read from the path file to a given LinkedCellContainer
    * @param linkedCellsContainer
    */
-  void XMLLinkedCellBoundaries(LinkedCellsContainer &linkedCellsContainer) {
+  void applyBoundariesFromXML(LinkedCellsContainer &linkedCellsContainer) {
     LinkedCellArg linkedCellArg = extractLinkedCell();
     linkedCellsContainer.setBoundaries({
         {CubeSide::LEFT, XMLParser::strToEnumBoundary(linkedCellArg.getBoundLeft())},
@@ -321,4 +404,8 @@ class XMLParser {
         {CubeSide::BACK, XMLParser::strToEnumBoundary(linkedCellArg.getBoundBack())},
     });
   }
+
+  double getEndTime() { return simulation->endTime(); }
+  double getDeltaT() { return simulation->deltaT(); }
+  double getWriteInterval() { return simulation->writeOutFrequency(); }
 };

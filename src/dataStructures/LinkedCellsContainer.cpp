@@ -1,10 +1,11 @@
 #include "LinkedCellsContainer.h"
 
 #include "LinkedCellsBoundary.h"
+#include "dataStructures/MembraneStructure.h"
 #include "utils/ArrayUtils.h"
 
-LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
-                                           std::array<double, 3> &rightUpperBound)
+LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> leftLowerBound,
+                                           std::array<double, 3> rightUpperBound)
     : cells{},
       gridSize{cellSize},
       leftLowerCorner{leftLowerBound},
@@ -90,9 +91,8 @@ size_t LinkedCellsContainer::getCellIndexOfPosition(std::array<double, 3> const 
   return getVectorIndexFromCoord(indexInBox[0], indexInBox[1], indexInBox[2]);
 }
 
-std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors(Particle &particle) {
-  std::vector<std::reference_wrapper<Particle>> neighbors;
-
+void LinkedCellsContainer::forEachNeighbor(Particle &particle,
+                                           std::function<void(Particle &, Particle &)> &binaryFunction) {
   size_t gridCell = getCellIndexOfPosition(particle.getX());
   for (size_t indexOffset : indexOffsetAdjacent) {
     // Special case to match particles within one cell
@@ -100,7 +100,7 @@ std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors
       for (auto &&particleIndex : cells[gridCell].particles) {
         auto &neighborParticle = particlesVector[particleIndex];
 
-        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
+        if (&particle != &neighborParticle) binaryFunction(particle, neighborParticle);
       }
     } else {
       // Loop so the particles of each of the two cells and match them
@@ -110,19 +110,10 @@ std::vector<std::reference_wrapper<Particle>> LinkedCellsContainer::getNeighbors
       for (auto &&cellBParticle : cells[partnerCellIndex].particles) {
         auto &neighborParticle = particlesVector[cellBParticle];
 
-        if (&particle != &neighborParticle) neighbors.push_back(neighborParticle);
+        if (&particle != &neighborParticle) binaryFunction(particle, neighborParticle);
       }
     }
   }
-
-  return neighbors;
-}
-
-void LinkedCellsContainer::forEachNeighbor(Particle &particle,
-                                           std::function<void(Particle &, Particle &)> &binaryFunction) {
-  std::vector<std::reference_wrapper<Particle>> neighbors = getNeighbors(particle);
-
-  for (auto &neighbor : neighbors) binaryFunction(particle, neighbor);
 }
 
 void LinkedCellsContainer::forEach(std::function<void(Particle &)> &unaryFunction) {
@@ -142,30 +133,29 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   }
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
-      continue;
-    }
+    if (cells[index].type == CellType::halo || cells[index].isEmpty()) continue;
     for (size_t indexOffset : indexOffsetAdjacent) {
       // Special case to match particles within one cell
       if (indexOffset == 0) {
         auto &particles = cells[index].particles;
         for (auto first = particles.begin(); first != particles.end(); ++first) {
-          for (auto second = first; second != particles.end(); ++second) {
-            // Don't run the function on a pair consisting of the same particle
-            if (*second == *first) continue;
+          for (auto second = std::next(first); second != particles.end(); ++second) {
             binaryFunction(particlesVector[*first], particlesVector[*second]);
           }
         }
-
       } else {
         // Loop so the particles of each of the two cells and match them
-        for (auto cellAParticle : cells[index].particles) {
-          for (auto cellBParticle : cells[index + indexOffset].particles) {
-            binaryFunction(particlesVector[cellAParticle], particlesVector[cellBParticle]);
+        for (auto indexA : cells[index].particles) {
+          for (auto indexB : cells[index + indexOffset].particles) {
+            binaryFunction(particlesVector[indexA], particlesVector[indexB]);
           }
         }
       }
     }
+  }
+
+  for (auto &structure : structuresVector) {
+    if (structure.hasArtificalForces()) structure.applyArtificialForces();
   }
 }
 
@@ -181,12 +171,19 @@ void LinkedCellsContainer::emplace_back(std::array<double, 3> x_arg, std::array<
   particlesVector.emplace_back(x_arg, v_arg, m_arg, type);
   size_t index = getCellIndexOfPosition(x_arg);
   cells[index].particles.push_back(particlesVector.size() - 1);
+  particlesVector.back().setId(particlesVector.size() - 1);
 }
 
 void LinkedCellsContainer::push_back(Particle &particle) {
   particlesVector.push_back(std::forward<Particle &>(particle));
   size_t index = getCellIndexOfPosition(particle.getX());
   cells[index].particles.push_back(particlesVector.size() - 1);
+  particlesVector.back().setId(particlesVector.size() - 1);
+}
+
+void LinkedCellsContainer::push_back(MembraneStructure membrane) {
+  structuresVector.push_back(membrane);
+  structuresVector.back().setStructureVectorIndex(structuresVector.size() - 1);
 }
 
 void LinkedCellsContainer::recalculateStructure() {

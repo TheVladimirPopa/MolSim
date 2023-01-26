@@ -8,6 +8,7 @@
             <xsd:element name="SimTypes" type="simTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Container_T" type="containerTypes_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Membrane" type="membrane_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
@@ -122,6 +123,32 @@
         <xsd:attribute name="id" type="xsd:int" use="required"/>
         <xsd:attribute name="epsilon" type="xsd:double" use="required"/>
         <xsd:attribute name="sigma" type="xsd:double" use="required"/>
+    </xsd:complexType>
+
+    <!--  Membrane  -->
+    <xsd:complexType name="membrane_t">
+        <xsd:sequence>
+            <xsd:element name="position" type="array_d"/>
+            <xsd:element name="dimension" type="array_i"/>
+            <xsd:element name="velocity" type="array_d"/>
+            <xsd:element name="membraneForce" type="membrane_force" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="distance" type="xsd:double" use="required"/>
+        <xsd:attribute name="mass" type="xsd:double" use="required"/>
+        <xsd:attribute name="stiffness" type="xsd:double" use="required"/>
+        <xsd:attribute name="bondLength" type="xsd:double" use="required"/>
+        <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
+        <xsd:attribute name="type" type="xsd:int" use="required"/>
+    </xsd:complexType>
+
+    <!--  Membrane Force  -->
+    <xsd:complexType name="membrane_force">
+        <xsd:attribute name="row" type="xsd:int" use="required"/>
+        <xsd:attribute name="column" type="xsd:int" use="required"/>
+        <xsd:attribute name="x" type="xsd:double" use="required"/>
+        <xsd:attribute name="y" type="xsd:double" use="required"/>
+        <xsd:attribute name="z" type="xsd:double" use="required"/>
+        <xsd:attribute name="timeSpan" type="xsd:int" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>

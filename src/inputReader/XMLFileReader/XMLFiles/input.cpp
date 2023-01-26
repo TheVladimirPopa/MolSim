@@ -67,6 +67,12 @@ simulation_t::Thermostat_sequence& simulation_t::Thermostat() { return this->The
 
 void simulation_t::Thermostat(const Thermostat_sequence& s) { this->Thermostat_ = s; }
 
+const simulation_t::Membrane_sequence& simulation_t::Membrane() const { return this->Membrane_; }
+
+simulation_t::Membrane_sequence& simulation_t::Membrane() { return this->Membrane_; }
+
+void simulation_t::Membrane(const Membrane_sequence& s) { this->Membrane_ = s; }
+
 const simulation_t::InputFile_sequence& simulation_t::InputFile() const { return this->InputFile_; }
 
 simulation_t::InputFile_sequence& simulation_t::InputFile() { return this->InputFile_; }
@@ -452,6 +458,114 @@ particle_t::sigma_type& particle_t::sigma() { return this->sigma_.get(); }
 
 void particle_t::sigma(const sigma_type& x) { this->sigma_.set(x); }
 
+// membrane_t
+//
+
+const membrane_t::position_type& membrane_t::position() const { return this->position_.get(); }
+
+membrane_t::position_type& membrane_t::position() { return this->position_.get(); }
+
+void membrane_t::position(const position_type& x) { this->position_.set(x); }
+
+void membrane_t::position(::std::unique_ptr<position_type> x) { this->position_.set(std::move(x)); }
+
+const membrane_t::dimension_type& membrane_t::dimension() const { return this->dimension_.get(); }
+
+membrane_t::dimension_type& membrane_t::dimension() { return this->dimension_.get(); }
+
+void membrane_t::dimension(const dimension_type& x) { this->dimension_.set(x); }
+
+void membrane_t::dimension(::std::unique_ptr<dimension_type> x) { this->dimension_.set(std::move(x)); }
+
+const membrane_t::velocity_type& membrane_t::velocity() const { return this->velocity_.get(); }
+
+membrane_t::velocity_type& membrane_t::velocity() { return this->velocity_.get(); }
+
+void membrane_t::velocity(const velocity_type& x) { this->velocity_.set(x); }
+
+void membrane_t::velocity(::std::unique_ptr<velocity_type> x) { this->velocity_.set(std::move(x)); }
+
+const membrane_t::membraneForce_sequence& membrane_t::membraneForce() const { return this->membraneForce_; }
+
+membrane_t::membraneForce_sequence& membrane_t::membraneForce() { return this->membraneForce_; }
+
+void membrane_t::membraneForce(const membraneForce_sequence& s) { this->membraneForce_ = s; }
+
+const membrane_t::distance_type& membrane_t::distance() const { return this->distance_.get(); }
+
+membrane_t::distance_type& membrane_t::distance() { return this->distance_.get(); }
+
+void membrane_t::distance(const distance_type& x) { this->distance_.set(x); }
+
+const membrane_t::mass_type& membrane_t::mass() const { return this->mass_.get(); }
+
+membrane_t::mass_type& membrane_t::mass() { return this->mass_.get(); }
+
+void membrane_t::mass(const mass_type& x) { this->mass_.set(x); }
+
+const membrane_t::stiffness_type& membrane_t::stiffness() const { return this->stiffness_.get(); }
+
+membrane_t::stiffness_type& membrane_t::stiffness() { return this->stiffness_.get(); }
+
+void membrane_t::stiffness(const stiffness_type& x) { this->stiffness_.set(x); }
+
+const membrane_t::bondLength_type& membrane_t::bondLength() const { return this->bondLength_.get(); }
+
+membrane_t::bondLength_type& membrane_t::bondLength() { return this->bondLength_.get(); }
+
+void membrane_t::bondLength(const bondLength_type& x) { this->bondLength_.set(x); }
+
+const membrane_t::cutOffRadius_type& membrane_t::cutOffRadius() const { return this->cutOffRadius_.get(); }
+
+membrane_t::cutOffRadius_type& membrane_t::cutOffRadius() { return this->cutOffRadius_.get(); }
+
+void membrane_t::cutOffRadius(const cutOffRadius_type& x) { this->cutOffRadius_.set(x); }
+
+const membrane_t::type_type& membrane_t::type() const { return this->type_.get(); }
+
+membrane_t::type_type& membrane_t::type() { return this->type_.get(); }
+
+void membrane_t::type(const type_type& x) { this->type_.set(x); }
+
+// membrane_force
+//
+
+const membrane_force::row_type& membrane_force::row() const { return this->row_.get(); }
+
+membrane_force::row_type& membrane_force::row() { return this->row_.get(); }
+
+void membrane_force::row(const row_type& x) { this->row_.set(x); }
+
+const membrane_force::column_type& membrane_force::column() const { return this->column_.get(); }
+
+membrane_force::column_type& membrane_force::column() { return this->column_.get(); }
+
+void membrane_force::column(const column_type& x) { this->column_.set(x); }
+
+const membrane_force::x_type& membrane_force::x() const { return this->x_.get(); }
+
+membrane_force::x_type& membrane_force::x() { return this->x_.get(); }
+
+void membrane_force::x(const x_type& x) { this->x_.set(x); }
+
+const membrane_force::y_type& membrane_force::y() const { return this->y_.get(); }
+
+membrane_force::y_type& membrane_force::y() { return this->y_.get(); }
+
+void membrane_force::y(const y_type& x) { this->y_.set(x); }
+
+const membrane_force::z_type& membrane_force::z() const { return this->z_.get(); }
+
+membrane_force::z_type& membrane_force::z() { return this->z_.get(); }
+
+void membrane_force::z(const z_type& x) { this->z_.set(x); }
+
+const membrane_force::timeSpan_type& membrane_force::timeSpan() const { return this->timeSpan_.get(); }
+
+membrane_force::timeSpan_type& membrane_force::timeSpan() { return this->timeSpan_.get(); }
+
+void membrane_force::timeSpan(const timeSpan_type& x) { this->timeSpan_.set(x); }
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // simulation_t
@@ -465,6 +579,7 @@ simulation_t::simulation_t(const endTime_type& endTime, const deltaT_type& delta
       SimTypes_(this),
       Container_T_(this),
       Thermostat_(this),
+      Membrane_(this),
       InputFile_(this),
       endTime_(endTime, this),
       deltaT_(deltaT, this),
@@ -479,6 +594,7 @@ simulation_t::simulation_t(const simulation_t& x, ::xml_schema::flags f, ::xml_s
       SimTypes_(x.SimTypes_, f, this),
       Container_T_(x.Container_T_, f, this),
       Thermostat_(x.Thermostat_, f, this),
+      Membrane_(x.Membrane_, f, this),
       InputFile_(x.InputFile_, f, this),
       endTime_(x.endTime_, f, this),
       deltaT_(x.deltaT_, f, this),
@@ -493,6 +609,7 @@ simulation_t::simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f
       SimTypes_(this),
       Container_T_(this),
       Thermostat_(this),
+      Membrane_(this),
       InputFile_(this),
       endTime_(this),
       deltaT_(this),
@@ -544,6 +661,15 @@ void simulation_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
       ::std::unique_ptr<Thermostat_type> r(Thermostat_traits::create(i, f, this));
 
       this->Thermostat_.push_back(::std::move(r));
+      continue;
+    }
+
+    // Membrane
+    //
+    if (n.name() == "Membrane" && n.namespace_().empty()) {
+      ::std::unique_ptr<Membrane_type> r(Membrane_traits::create(i, f, this));
+
+      this->Membrane_.push_back(::std::move(r));
       continue;
     }
 
@@ -630,6 +756,7 @@ simulation_t& simulation_t::operator=(const simulation_t& x) {
     this->SimTypes_ = x.SimTypes_;
     this->Container_T_ = x.Container_T_;
     this->Thermostat_ = x.Thermostat_;
+    this->Membrane_ = x.Membrane_;
     this->InputFile_ = x.InputFile_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
@@ -1727,6 +1854,334 @@ particle_t& particle_t::operator=(const particle_t& x) {
 }
 
 particle_t::~particle_t() {}
+
+// membrane_t
+//
+
+membrane_t::membrane_t(const position_type& position, const dimension_type& dimension, const velocity_type& velocity,
+                       const distance_type& distance, const mass_type& mass, const stiffness_type& stiffness,
+                       const bondLength_type& bondLength, const cutOffRadius_type& cutOffRadius, const type_type& type)
+    : ::xml_schema::type(),
+      position_(position, this),
+      dimension_(dimension, this),
+      velocity_(velocity, this),
+      membraneForce_(this),
+      distance_(distance, this),
+      mass_(mass, this),
+      stiffness_(stiffness, this),
+      bondLength_(bondLength, this),
+      cutOffRadius_(cutOffRadius, this),
+      type_(type, this) {}
+
+membrane_t::membrane_t(::std::unique_ptr<position_type> position, ::std::unique_ptr<dimension_type> dimension,
+                       ::std::unique_ptr<velocity_type> velocity, const distance_type& distance, const mass_type& mass,
+                       const stiffness_type& stiffness, const bondLength_type& bondLength,
+                       const cutOffRadius_type& cutOffRadius, const type_type& type)
+    : ::xml_schema::type(),
+      position_(std::move(position), this),
+      dimension_(std::move(dimension), this),
+      velocity_(std::move(velocity), this),
+      membraneForce_(this),
+      distance_(distance, this),
+      mass_(mass, this),
+      stiffness_(stiffness, this),
+      bondLength_(bondLength, this),
+      cutOffRadius_(cutOffRadius, this),
+      type_(type, this) {}
+
+membrane_t::membrane_t(const membrane_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(x, f, c),
+      position_(x.position_, f, this),
+      dimension_(x.dimension_, f, this),
+      velocity_(x.velocity_, f, this),
+      membraneForce_(x.membraneForce_, f, this),
+      distance_(x.distance_, f, this),
+      mass_(x.mass_, f, this),
+      stiffness_(x.stiffness_, f, this),
+      bondLength_(x.bondLength_, f, this),
+      cutOffRadius_(x.cutOffRadius_, f, this),
+      type_(x.type_, f, this) {}
+
+membrane_t::membrane_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
+      position_(this),
+      dimension_(this),
+      velocity_(this),
+      membraneForce_(this),
+      distance_(this),
+      mass_(this),
+      stiffness_(this),
+      bondLength_(this),
+      cutOffRadius_(this),
+      type_(this) {
+  if ((f & ::xml_schema::flags::base) == 0) {
+    ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
+    this->parse(p, f);
+  }
+}
+
+void membrane_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
+  for (; p.more_content(); p.next_content(false)) {
+    const ::xercesc::DOMElement& i(p.cur_element());
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+    // position
+    //
+    if (n.name() == "position" && n.namespace_().empty()) {
+      ::std::unique_ptr<position_type> r(position_traits::create(i, f, this));
+
+      if (!position_.present()) {
+        this->position_.set(::std::move(r));
+        continue;
+      }
+    }
+
+    // dimension
+    //
+    if (n.name() == "dimension" && n.namespace_().empty()) {
+      ::std::unique_ptr<dimension_type> r(dimension_traits::create(i, f, this));
+
+      if (!dimension_.present()) {
+        this->dimension_.set(::std::move(r));
+        continue;
+      }
+    }
+
+    // velocity
+    //
+    if (n.name() == "velocity" && n.namespace_().empty()) {
+      ::std::unique_ptr<velocity_type> r(velocity_traits::create(i, f, this));
+
+      if (!velocity_.present()) {
+        this->velocity_.set(::std::move(r));
+        continue;
+      }
+    }
+
+    // membraneForce
+    //
+    if (n.name() == "membraneForce" && n.namespace_().empty()) {
+      ::std::unique_ptr<membraneForce_type> r(membraneForce_traits::create(i, f, this));
+
+      this->membraneForce_.push_back(::std::move(r));
+      continue;
+    }
+
+    break;
+  }
+
+  if (!position_.present()) {
+    throw ::xsd::cxx::tree::expected_element<char>("position", "");
+  }
+
+  if (!dimension_.present()) {
+    throw ::xsd::cxx::tree::expected_element<char>("dimension", "");
+  }
+
+  if (!velocity_.present()) {
+    throw ::xsd::cxx::tree::expected_element<char>("velocity", "");
+  }
+
+  while (p.more_attributes()) {
+    const ::xercesc::DOMAttr& i(p.next_attribute());
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+    if (n.name() == "distance" && n.namespace_().empty()) {
+      this->distance_.set(distance_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "mass" && n.namespace_().empty()) {
+      this->mass_.set(mass_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "stiffness" && n.namespace_().empty()) {
+      this->stiffness_.set(stiffness_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "bondLength" && n.namespace_().empty()) {
+      this->bondLength_.set(bondLength_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "cutOffRadius" && n.namespace_().empty()) {
+      this->cutOffRadius_.set(cutOffRadius_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "type" && n.namespace_().empty()) {
+      this->type_.set(type_traits::create(i, f, this));
+      continue;
+    }
+  }
+
+  if (!distance_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("distance", "");
+  }
+
+  if (!mass_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("mass", "");
+  }
+
+  if (!stiffness_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("stiffness", "");
+  }
+
+  if (!bondLength_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("bondLength", "");
+  }
+
+  if (!cutOffRadius_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("cutOffRadius", "");
+  }
+
+  if (!type_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("type", "");
+  }
+}
+
+membrane_t* membrane_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class membrane_t(*this, f, c);
+}
+
+membrane_t& membrane_t::operator=(const membrane_t& x) {
+  if (this != &x) {
+    static_cast< ::xml_schema::type&>(*this) = x;
+    this->position_ = x.position_;
+    this->dimension_ = x.dimension_;
+    this->velocity_ = x.velocity_;
+    this->membraneForce_ = x.membraneForce_;
+    this->distance_ = x.distance_;
+    this->mass_ = x.mass_;
+    this->stiffness_ = x.stiffness_;
+    this->bondLength_ = x.bondLength_;
+    this->cutOffRadius_ = x.cutOffRadius_;
+    this->type_ = x.type_;
+  }
+
+  return *this;
+}
+
+membrane_t::~membrane_t() {}
+
+// membrane_force
+//
+
+membrane_force::membrane_force(const row_type& row, const column_type& column, const x_type& x, const y_type& y,
+                               const z_type& z, const timeSpan_type& timeSpan)
+    : ::xml_schema::type(),
+      row_(row, this),
+      column_(column, this),
+      x_(x, this),
+      y_(y, this),
+      z_(z, this),
+      timeSpan_(timeSpan, this) {}
+
+membrane_force::membrane_force(const membrane_force& x, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(x, f, c),
+      row_(x.row_, f, this),
+      column_(x.column_, f, this),
+      x_(x.x_, f, this),
+      y_(x.y_, f, this),
+      z_(x.z_, f, this),
+      timeSpan_(x.timeSpan_, f, this) {}
+
+membrane_force::membrane_force(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
+      row_(this),
+      column_(this),
+      x_(this),
+      y_(this),
+      z_(this),
+      timeSpan_(this) {
+  if ((f & ::xml_schema::flags::base) == 0) {
+    ::xsd::cxx::xml::dom::parser<char> p(e, false, false, true);
+    this->parse(p, f);
+  }
+}
+
+void membrane_force::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
+  while (p.more_attributes()) {
+    const ::xercesc::DOMAttr& i(p.next_attribute());
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+    if (n.name() == "row" && n.namespace_().empty()) {
+      this->row_.set(row_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "column" && n.namespace_().empty()) {
+      this->column_.set(column_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "x" && n.namespace_().empty()) {
+      this->x_.set(x_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "y" && n.namespace_().empty()) {
+      this->y_.set(y_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "z" && n.namespace_().empty()) {
+      this->z_.set(z_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "timeSpan" && n.namespace_().empty()) {
+      this->timeSpan_.set(timeSpan_traits::create(i, f, this));
+      continue;
+    }
+  }
+
+  if (!row_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("row", "");
+  }
+
+  if (!column_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("column", "");
+  }
+
+  if (!x_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("x", "");
+  }
+
+  if (!y_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("y", "");
+  }
+
+  if (!z_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("z", "");
+  }
+
+  if (!timeSpan_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("timeSpan", "");
+  }
+}
+
+membrane_force* membrane_force::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class membrane_force(*this, f, c);
+}
+
+membrane_force& membrane_force::operator=(const membrane_force& x) {
+  if (this != &x) {
+    static_cast< ::xml_schema::type&>(*this) = x;
+    this->row_ = x.row_;
+    this->column_ = x.column_;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+    this->timeSpan_ = x.timeSpan_;
+  }
+
+  return *this;
+}
+
+membrane_force::~membrane_force() {}
 
 #include <istream>
 #include <xsd/cxx/tree/error-handler.hxx>

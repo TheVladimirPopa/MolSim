@@ -232,6 +232,8 @@ class vectorContainer_t;
 class boundary_t;
 class thermostat_t;
 class particle_t;
+class membrane_t;
+class membrane_force;
 
 #include <algorithm>  // std::binary_search
 #include <limits>     // std::numeric_limits
@@ -301,6 +303,20 @@ class simulation_t : public ::xml_schema::type {
   Thermostat_sequence& Thermostat();
 
   void Thermostat(const Thermostat_sequence& s);
+
+  // Membrane
+  //
+  typedef ::membrane_t Membrane_type;
+  typedef ::xsd::cxx::tree::sequence<Membrane_type> Membrane_sequence;
+  typedef Membrane_sequence::iterator Membrane_iterator;
+  typedef Membrane_sequence::const_iterator Membrane_const_iterator;
+  typedef ::xsd::cxx::tree::traits<Membrane_type, char> Membrane_traits;
+
+  const Membrane_sequence& Membrane() const;
+
+  Membrane_sequence& Membrane();
+
+  void Membrane(const Membrane_sequence& s);
 
   // InputFile
   //
@@ -409,6 +425,7 @@ class simulation_t : public ::xml_schema::type {
   SimTypes_sequence SimTypes_;
   Container_T_sequence Container_T_;
   Thermostat_sequence Thermostat_;
+  Membrane_sequence Membrane_;
   InputFile_sequence InputFile_;
   ::xsd::cxx::tree::one<endTime_type> endTime_;
   ::xsd::cxx::tree::one<deltaT_type> deltaT_;
@@ -1258,6 +1275,261 @@ class particle_t : public ::xml_schema::type {
   ::xsd::cxx::tree::one<id_type> id_;
   ::xsd::cxx::tree::one<epsilon_type> epsilon_;
   ::xsd::cxx::tree::one<sigma_type> sigma_;
+};
+
+class membrane_t : public ::xml_schema::type {
+ public:
+  // position
+  //
+  typedef ::array_d position_type;
+  typedef ::xsd::cxx::tree::traits<position_type, char> position_traits;
+
+  const position_type& position() const;
+
+  position_type& position();
+
+  void position(const position_type& x);
+
+  void position(::std::unique_ptr<position_type> p);
+
+  // dimension
+  //
+  typedef ::array_i dimension_type;
+  typedef ::xsd::cxx::tree::traits<dimension_type, char> dimension_traits;
+
+  const dimension_type& dimension() const;
+
+  dimension_type& dimension();
+
+  void dimension(const dimension_type& x);
+
+  void dimension(::std::unique_ptr<dimension_type> p);
+
+  // velocity
+  //
+  typedef ::array_d velocity_type;
+  typedef ::xsd::cxx::tree::traits<velocity_type, char> velocity_traits;
+
+  const velocity_type& velocity() const;
+
+  velocity_type& velocity();
+
+  void velocity(const velocity_type& x);
+
+  void velocity(::std::unique_ptr<velocity_type> p);
+
+  // membraneForce
+  //
+  typedef ::membrane_force membraneForce_type;
+  typedef ::xsd::cxx::tree::sequence<membraneForce_type> membraneForce_sequence;
+  typedef membraneForce_sequence::iterator membraneForce_iterator;
+  typedef membraneForce_sequence::const_iterator membraneForce_const_iterator;
+  typedef ::xsd::cxx::tree::traits<membraneForce_type, char> membraneForce_traits;
+
+  const membraneForce_sequence& membraneForce() const;
+
+  membraneForce_sequence& membraneForce();
+
+  void membraneForce(const membraneForce_sequence& s);
+
+  // distance
+  //
+  typedef ::xml_schema::double_ distance_type;
+  typedef ::xsd::cxx::tree::traits<distance_type, char, ::xsd::cxx::tree::schema_type::double_> distance_traits;
+
+  const distance_type& distance() const;
+
+  distance_type& distance();
+
+  void distance(const distance_type& x);
+
+  // mass
+  //
+  typedef ::xml_schema::double_ mass_type;
+  typedef ::xsd::cxx::tree::traits<mass_type, char, ::xsd::cxx::tree::schema_type::double_> mass_traits;
+
+  const mass_type& mass() const;
+
+  mass_type& mass();
+
+  void mass(const mass_type& x);
+
+  // stiffness
+  //
+  typedef ::xml_schema::double_ stiffness_type;
+  typedef ::xsd::cxx::tree::traits<stiffness_type, char, ::xsd::cxx::tree::schema_type::double_> stiffness_traits;
+
+  const stiffness_type& stiffness() const;
+
+  stiffness_type& stiffness();
+
+  void stiffness(const stiffness_type& x);
+
+  // bondLength
+  //
+  typedef ::xml_schema::double_ bondLength_type;
+  typedef ::xsd::cxx::tree::traits<bondLength_type, char, ::xsd::cxx::tree::schema_type::double_> bondLength_traits;
+
+  const bondLength_type& bondLength() const;
+
+  bondLength_type& bondLength();
+
+  void bondLength(const bondLength_type& x);
+
+  // cutOffRadius
+  //
+  typedef ::xml_schema::double_ cutOffRadius_type;
+  typedef ::xsd::cxx::tree::traits<cutOffRadius_type, char, ::xsd::cxx::tree::schema_type::double_> cutOffRadius_traits;
+
+  const cutOffRadius_type& cutOffRadius() const;
+
+  cutOffRadius_type& cutOffRadius();
+
+  void cutOffRadius(const cutOffRadius_type& x);
+
+  // type
+  //
+  typedef ::xml_schema::int_ type_type;
+  typedef ::xsd::cxx::tree::traits<type_type, char> type_traits;
+
+  const type_type& type() const;
+
+  type_type& type();
+
+  void type(const type_type& x);
+
+  // Constructors.
+  //
+  membrane_t(const position_type&, const dimension_type&, const velocity_type&, const distance_type&, const mass_type&,
+             const stiffness_type&, const bondLength_type&, const cutOffRadius_type&, const type_type&);
+
+  membrane_t(::std::unique_ptr<position_type>, ::std::unique_ptr<dimension_type>, ::std::unique_ptr<velocity_type>,
+             const distance_type&, const mass_type&, const stiffness_type&, const bondLength_type&,
+             const cutOffRadius_type&, const type_type&);
+
+  membrane_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  membrane_t(const membrane_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual membrane_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  membrane_t& operator=(const membrane_t& x);
+
+  virtual ~membrane_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<position_type> position_;
+  ::xsd::cxx::tree::one<dimension_type> dimension_;
+  ::xsd::cxx::tree::one<velocity_type> velocity_;
+  membraneForce_sequence membraneForce_;
+  ::xsd::cxx::tree::one<distance_type> distance_;
+  ::xsd::cxx::tree::one<mass_type> mass_;
+  ::xsd::cxx::tree::one<stiffness_type> stiffness_;
+  ::xsd::cxx::tree::one<bondLength_type> bondLength_;
+  ::xsd::cxx::tree::one<cutOffRadius_type> cutOffRadius_;
+  ::xsd::cxx::tree::one<type_type> type_;
+};
+
+class membrane_force : public ::xml_schema::type {
+ public:
+  // row
+  //
+  typedef ::xml_schema::int_ row_type;
+  typedef ::xsd::cxx::tree::traits<row_type, char> row_traits;
+
+  const row_type& row() const;
+
+  row_type& row();
+
+  void row(const row_type& x);
+
+  // column
+  //
+  typedef ::xml_schema::int_ column_type;
+  typedef ::xsd::cxx::tree::traits<column_type, char> column_traits;
+
+  const column_type& column() const;
+
+  column_type& column();
+
+  void column(const column_type& x);
+
+  // x
+  //
+  typedef ::xml_schema::double_ x_type;
+  typedef ::xsd::cxx::tree::traits<x_type, char, ::xsd::cxx::tree::schema_type::double_> x_traits;
+
+  const x_type& x() const;
+
+  x_type& x();
+
+  void x(const x_type& x);
+
+  // y
+  //
+  typedef ::xml_schema::double_ y_type;
+  typedef ::xsd::cxx::tree::traits<y_type, char, ::xsd::cxx::tree::schema_type::double_> y_traits;
+
+  const y_type& y() const;
+
+  y_type& y();
+
+  void y(const y_type& x);
+
+  // z
+  //
+  typedef ::xml_schema::double_ z_type;
+  typedef ::xsd::cxx::tree::traits<z_type, char, ::xsd::cxx::tree::schema_type::double_> z_traits;
+
+  const z_type& z() const;
+
+  z_type& z();
+
+  void z(const z_type& x);
+
+  // timeSpan
+  //
+  typedef ::xml_schema::int_ timeSpan_type;
+  typedef ::xsd::cxx::tree::traits<timeSpan_type, char> timeSpan_traits;
+
+  const timeSpan_type& timeSpan() const;
+
+  timeSpan_type& timeSpan();
+
+  void timeSpan(const timeSpan_type& x);
+
+  // Constructors.
+  //
+  membrane_force(const row_type&, const column_type&, const x_type&, const y_type&, const z_type&,
+                 const timeSpan_type&);
+
+  membrane_force(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  membrane_force(const membrane_force& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual membrane_force* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  membrane_force& operator=(const membrane_force& x);
+
+  virtual ~membrane_force();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<row_type> row_;
+  ::xsd::cxx::tree::one<column_type> column_;
+  ::xsd::cxx::tree::one<x_type> x_;
+  ::xsd::cxx::tree::one<y_type> y_;
+  ::xsd::cxx::tree::one<z_type> z_;
+  ::xsd::cxx::tree::one<timeSpan_type> timeSpan_;
 };
 
 #include <iosfwd>

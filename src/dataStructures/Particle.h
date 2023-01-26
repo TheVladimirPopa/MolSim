@@ -10,12 +10,15 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#define NOT_IN_STRUCTURE 0xffffffff
+#define NO_UNIQUE_ID 0xffffffff
 
 class IModel;
 class NewtonsLawModel;
 class LennardJonesModel;
 class Thermostat;
 class LineProcessorCheckpoint;
+class MembraneStructure;
 
 class Particle {
  private:
@@ -65,6 +68,12 @@ class Particle {
    * cleanup.
    */
   bool isDeleted_;
+
+  /// The id or index of the structure the particle is a member of. -1 if not set.
+  size_t structureId;
+
+  /// The id or index of the particle. -1 if not set.
+  size_t particleId;
 
   struct ParticleType {
     double const epsilon;
@@ -146,7 +155,7 @@ class Particle {
    * true iff a particle no longer is part of the simulation and waits for
    * cleanup.
    */
-  bool isDeleted() { return isDeleted_; }
+  bool isDeleted() const { return isDeleted_; }
 
   /**
    * Deleted particle by setting it's deletion state.
@@ -161,6 +170,48 @@ class Particle {
    * @param sigma Lennard-Jones sigma parameter
    */
   static void registerParticleType(int type, double epsilon, double sigma);
+
+  /**
+   * Adds force to the particle and subtracts force from partner particle.
+   * Implements Newtons Third law.
+   * @param partner The particle that gets the negative force applied
+   * @param force The force that gets added to the particle and subtracted from the partner
+   */
+  void applySymmetricForce(Particle &partner, const std::array<double, 3> &force);
+
+  /**
+   * Adds force to particle.
+   * @param force the force that gets added to the particle
+   */
+  void applyForce(const std::array<double, 3> &force);
+
+  /**
+   * Sets the structure membership of the current particle
+   * @param structureId_ The structure the particle is a member of
+   */
+  void setStructure(size_t structureId_) { structureId = structureId_; }
+
+  /**
+   * @return The structure the particle is part of
+   */
+  size_t getStructure() { return structureId; }
+
+  /**
+   * @return Whether the particle is member of a structure
+   */
+  bool isInStructure() const { return structureId != NOT_IN_STRUCTURE; }
+
+  /**
+   * Sets id of particle
+   * @param particleId_ Id of particle
+   * @note This is used for the membrane
+   */
+  void setId(size_t id) { particleId = id; }
+
+  /**
+   * @return Id of particle
+   */
+  size_t getId() const { return particleId; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);
