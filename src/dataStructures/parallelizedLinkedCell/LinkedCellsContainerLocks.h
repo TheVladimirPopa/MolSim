@@ -5,10 +5,6 @@ class LinkedCellsContainerLocks : public LinkedCellsContainer {
 #ifdef _OPENMP
 
  public:
-  LinkedCellsContainerLocks(double cellSize, std::array<double, 3> &leftLowerBound,
-                            std::array<double, 3> &rightUpperBound)
-      : LinkedCellsContainer(cellSize, leftLowerBound, rightUpperBound) {}
-
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
     recalculateStructure();
     applyBoundaries();
