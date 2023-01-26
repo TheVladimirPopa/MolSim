@@ -1,26 +1,26 @@
-#include "MembraneMolecule.h"
+#include "MembraneStructure.h"
 
-bool MembraneMolecule::positionIsInMembrane(std::array<unsigned long, 3> pos) const {
+bool MembraneStructure::positionIsInMembrane(std::array<unsigned long, 3> pos) const {
   // unsigned long will underflow for negative values
   if (pos[0] >= dimensions[0] || pos[1] >= dimensions[1] || pos[2] >= dimensions[2]) return false;
   return true;
 }
 
-size_t MembraneMolecule::positionToIndex(std::array<unsigned long, 3> pos) const {
+size_t MembraneStructure::positionToIndex(std::array<unsigned long, 3> pos) const {
   return startIndex + pos[0] + (pos[1] * dimensions[0]) + (pos[2] * dimensions[0] * dimensions[1]);
 }
 
-[[maybe_unused]] Particle& MembraneMolecule::getParticleByPosition(std::array<unsigned long, 3> pos) {
+[[maybe_unused]] Particle& MembraneStructure::getParticleByPosition(std::array<unsigned long, 3> pos) {
   return particles->at(positionToIndex(pos));
 }
 
-void MembraneMolecule::applyDirectForce(Particle& x, Particle& y) const { physics.addDirectForce(x, y); }
+void MembraneStructure::applyDirectForce(Particle& x, Particle& y) const { physics.addDirectForce(x, y); }
 
-void MembraneMolecule::applyDiagonalForce(Particle& x, Particle& y) const { physics.addDiagonalForce(x, y); }
+void MembraneStructure::applyDiagonalForce(Particle& x, Particle& y) const { physics.addDiagonalForce(x, y); }
 
-void MembraneMolecule::applyRepulsiveForce(Particle& p1, Particle& p2) { physics.addForces(p1, p2); }
+void MembraneStructure::applyRepulsiveForce(Particle& p1, Particle& p2) { physics.addForces(p1, p2); }
 
-MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
+MembraneStructure::MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                                    std::vector<Particle>& particles)
     : dimensions{dimensions},
       startIndex{particles.size() - (dimensions[0] * dimensions[1] * dimensions[2])},
@@ -47,7 +47,7 @@ MembraneMolecule::MembraneMolecule(std::array<size_t, 3> dimensions, double stif
   }
 }
 
-void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
+void MembraneStructure::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
                                           unsigned long timeSpan) {
   MembraneForce mf{};
 
@@ -63,7 +63,7 @@ void MembraneMolecule::addForceToParticle(unsigned int row, unsigned int column,
   artificialForces.push_back(mf);
 }
 
-void MembraneMolecule::applyInternalForces() {
+void MembraneStructure::applyInternalForces() {
   //  o o o o   <--- We iterate over the membrane particle grid.
   //  o o o o        Direct forces: For each particle, we build a pair, by taking the right and lower particle.
   //  o o o o        Diagonal forces: For each particle, we build a pair, by taking the left and right lower particle.
@@ -87,7 +87,7 @@ void MembraneMolecule::applyInternalForces() {
   if (!artificialForces.empty()) applyArtificialForces();
 }
 
-void MembraneMolecule::applyArtificialForces() {
+void MembraneStructure::applyArtificialForces() {
   // Apply forces defined for the individual particles within the membrane
   auto& particle = *particles;
   bool allForcesUsedUp{true};
@@ -101,7 +101,7 @@ void MembraneMolecule::applyArtificialForces() {
   if (allForcesUsedUp) artificialForces.clear();
 }
 
-[[maybe_unused]] bool MembraneMolecule::indicesAreNeighbours(size_t indexA, size_t indexB) {
+[[maybe_unused]] bool MembraneStructure::indicesAreNeighbours(size_t indexA, size_t indexB) {
   // Assume indexA is the smaller index. Then there are 4 neighbour indices:
   // o x o  indexB is right neighbour (index + 1), lower left neighbour (index + 1 - width)
   // o o o  lower neighbour (index + width) or lower right neighbour (index + 1 + width)
@@ -115,7 +115,7 @@ void MembraneMolecule::applyArtificialForces() {
   return difference == 1 || difference + 1 - dimensions[dimWidth] <= 2;
 }
 
-void MembraneMolecule::applyForce(Particle& p1, Particle& p2, size_t indexP1, size_t indexP2) {
+void MembraneStructure::applyForce(Particle& p1, Particle& p2, size_t indexP1, size_t indexP2) {
   size_t diff = indexP1 < indexP2 ? indexP2 - indexP1 : indexP1 - indexP2;
 
   if (diff == 1 || diff == dimensions[dimWidth]) return applyDirectForce(p1, p2);
@@ -124,6 +124,6 @@ void MembraneMolecule::applyForce(Particle& p1, Particle& p2, size_t indexP1, si
   return applyRepulsiveForce(p1, p2);
 }
 
-void MembraneMolecule::setMoleculeVectorIndex(size_t index) {
-  for (auto& particle : *this) particle.setMolecule(index);
+void MembraneStructure::setStructureVectorIndex(size_t index) {
+  for (auto& particle : *this) particle.setStructure(index);
 }

@@ -8,7 +8,7 @@
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
 
-class MembraneMolecule {
+class MembraneStructure {
  private:
   /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
   const std::array<size_t, 3> dimensions{2, 2, 1};
@@ -93,7 +93,7 @@ class MembraneMolecule {
   void applyDiagonalForce(Particle& x, Particle& y) const;
 
  public:
-  MembraneMolecule(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
+  MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                    std::vector<Particle>& particles);
 
   /**
@@ -124,7 +124,7 @@ class MembraneMolecule {
   void applyRepulsiveForce(Particle& p1, Particle& p2);
 
   /**
-   * Applies the correct inner molecule force selected based on indices.
+   * Applies the correct inner structure force selected based on indices.
    * @param p1 Particle 1
    * @param p2 Particle 2
    * @param indexP1 Index of particle 1
@@ -146,20 +146,20 @@ class MembraneMolecule {
   bool hasArtificalForces() { return !artificialForces.empty(); }
 
   /**
-   * In practice this id marks the membrane molecule to be uniquely identifiable.
-   * @param index The index the molecule has within the respective container
-   * @note The linked cells container expects this index to be set to where the molecule lies within its own molecule
+   * In practice this id marks the membrane structure to be uniquely identifiable.
+   * @param index The index the structure has within the respective container
+   * @note The linked cells container expects this index to be set to where the structure lies within its own structure
    * vector.
    */
-  void setMoleculeVectorIndex(size_t index);
+  void setStructureVectorIndex(size_t index);
 
   /**
-   * @return The begin() iterator over the particles of the molecule
+   * @return The begin() iterator over the particles of the structure
    */
   auto begin() { return particles->begin(); };
 
   /**
-   * @return The end() iterator over the particles of the molecule
+   * @return The end() iterator over the particles of the structure
    */
   auto end() {
     auto it = particles->begin();
@@ -168,7 +168,7 @@ class MembraneMolecule {
   }
 
   /**
-   * @return The number of particles that are part of the molecule
+   * @return The number of particles that are part of the structure
    */
   [[nodiscard]] size_t size() const { return particleCount; }
 };

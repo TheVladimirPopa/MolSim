@@ -16,8 +16,8 @@ class LinkedCellsContainer : public IContainer {
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
-  /// The vector containing all molecules. (Only membranes for now, worksheet 5)
-  std::vector<MembraneMolecule> moleculesVector;
+  /// The vector containing all structures. (Only membranes for now, worksheet 5)
+  std::vector<MembraneStructure> structuresVector;
 
   /// A vector containing all the cells
   std::vector<cell> cells;
@@ -116,7 +116,7 @@ class LinkedCellsContainer : public IContainer {
 
   void push_back(Particle &particle) override;
 
-  void push_back(MembraneMolecule membrane);
+  void push_back(MembraneStructure membrane);
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
@@ -179,10 +179,10 @@ class LinkedCellsContainer : public IContainer {
   [[nodiscard]] std::array<double, 3> getRightUpperCorner() const { return rightUpperCorner; }
 
   /**
-   * Returns molecules that are attached to the container
-   * @return attached molecules
+   * Returns structures that are attached to the container
+   * @return attached structures
    */
-  [[nodiscard]] std::vector<MembraneMolecule> &getMoleculesVectorRef() { return moleculesVector; };
+  [[nodiscard]] std::vector<MembraneStructure> &getStructureVectorRef() { return structuresVector; };
 
   /**
    * Returns reference to particles vector
@@ -191,7 +191,7 @@ class LinkedCellsContainer : public IContainer {
   [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return particlesVector; }
 
   /**
-   * @return True if the linked cells container has molecules
+   * @return True if the linked cells container has structures
    */
-  [[nodiscard]] bool containsMolecules() { return !moleculesVector.empty(); };
+  [[nodiscard]] bool containsStructures() { return !structuresVector.empty(); };
 };

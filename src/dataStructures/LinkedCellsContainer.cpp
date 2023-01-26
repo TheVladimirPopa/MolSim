@@ -1,7 +1,7 @@
 #include "LinkedCellsContainer.h"
 
 #include "LinkedCellsBoundary.h"
-#include "dataStructures/MembraneMolecule.h"
+#include "dataStructures/MembraneStructure.h"
 #include "utils/ArrayUtils.h"
 
 LinkedCellsContainer::LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound,
@@ -155,8 +155,8 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
     }
   }
 
-  for (auto &molecule : moleculesVector) {
-    if (molecule.hasArtificalForces()) molecule.applyArtificialForces();
+  for (auto &structure : structuresVector) {
+    if (structure.hasArtificalForces()) structure.applyArtificialForces();
   }
 }
 
@@ -182,9 +182,9 @@ void LinkedCellsContainer::push_back(Particle &particle) {
   particlesVector.back().setId(particlesVector.size() - 1);
 }
 
-void LinkedCellsContainer::push_back(MembraneMolecule membrane) {
-  moleculesVector.push_back(membrane);
-  moleculesVector.back().setMoleculeVectorIndex(moleculesVector.size() - 1);
+void LinkedCellsContainer::push_back(MembraneStructure membrane) {
+  structuresVector.push_back(membrane);
+  structuresVector.back().setStructureVectorIndex(structuresVector.size() - 1);
 }
 
 void LinkedCellsContainer::recalculateStructure() {

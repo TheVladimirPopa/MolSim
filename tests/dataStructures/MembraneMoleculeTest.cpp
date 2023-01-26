@@ -1,5 +1,5 @@
 #include "dataStructures/LinkedCellsContainer.h"
-#include "dataStructures/MembraneMolecule.h"
+#include "dataStructures/MembraneStructure.h"
 #include "gtest/gtest.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -8,7 +8,7 @@ using MembraneInput = ParticleGeneration::membrane;
 using v3d = std::array<double, 3>;
 
 /**
- * @return A membrane struct that can be used to generate the actual molecule
+ * @return A membrane struct that can be used to generate the actual body
  */
 MembraneInput makeSampleMembraneInput() {
   MembraneInput mem{};
@@ -34,14 +34,14 @@ std::unique_ptr<LinkedCellsContainer> makeSampleContainer() {
 /**
  * Checks whether diagonal and non-diagonal forces are applied correctly within the membrane.
  */
-TEST(MembraneMolecule, Essentials) {
+TEST(MembraneStructure, Essentials) {
   auto cont = makeSampleContainer();
   auto mem = makeSampleMembraneInput();
   ParticleGeneration::addMembraneToParticleContainer(*cont, mem);
 
   // Check location
-  ASSERT_EQ(cont->getMoleculesVectorRef().size(), 1);
-  MembraneMolecule& membrane = cont->getMoleculesVectorRef().back();
+  ASSERT_EQ(cont->getStructureVectorRef().size(), 1);
+  MembraneStructure& membrane = cont->getStructureVectorRef().back();
   EXPECT_EQ(membrane.size(), 4);
 
   std::vector<v3d> targetLocations{
@@ -81,7 +81,7 @@ TEST(MembraneMolecule, Essentials) {
 /**
  * Checks whether artificial forces are applied correctly
  */
-TEST(MembraneMolecule, ArtificialForces) {
+TEST(MembraneStructure, ArtificialForces) {
   auto cont = makeSampleContainer();
   auto mem = makeSampleMembraneInput();
   mem.dimension = {5, 5, 1};
@@ -91,18 +91,18 @@ TEST(MembraneMolecule, ArtificialForces) {
 
   ParticleGeneration::addMembraneToParticleContainer(*cont, mem);
 
-  auto& molecule = cont->getMoleculesVectorRef().back();
+  auto& membrane = cont->getStructureVectorRef().back();
   auto expectedForce = v3d{0, 0, 0};
   for (size_t i = 0; i < 157; i++) {
     if (i <= 155) {
-      EXPECT_TRUE(molecule.hasArtificalForces()) << "Molecule lost artificial force too early.";
+      EXPECT_TRUE(membrane.hasArtificalForces()) << "Membrane lost artificial force too early.";
     } else {
-      EXPECT_FALSE(molecule.hasArtificalForces()) << "Molecule kept artificial forces for too long";
+      EXPECT_FALSE(membrane.hasArtificalForces()) << "Membrane kept artificial forces for too long";
     }
 
     if (i < 150) expectedForce[1] += 1;
 
-    molecule.applyArtificialForces();
+    membrane.applyArtificialForces();
     EXPECT_EQ(cont->getParticlesRef()[0].getF(), expectedForce)
         << "Expected different force when applying artificial force";
   }
@@ -111,7 +111,7 @@ TEST(MembraneMolecule, ArtificialForces) {
 /**
  * Tests whether non neighbouring particles are correctly repulsed to avoid self penetration
  */
-TEST(MembraneMolecule, RepulsiveForces) {
+TEST(MembraneStructure, RepulsiveForces) {
   auto mem = makeSampleMembraneInput();
   auto cont = makeSampleContainer();
   mem.dimension = {20, 1, 20};
@@ -126,7 +126,7 @@ TEST(MembraneMolecule, RepulsiveForces) {
   auto x2 = v3d{11, 10, 10};
   particle2.setX(x2);
 
-  cont->getMoleculesVectorRef().back().applyForce(particle1, particle2, 0, 10);
+  cont->getStructureVectorRef().back().applyForce(particle1, particle2, 0, 10);
 
   auto expectedForce1 = v3d{-120., 0.0, 0.0};
   ASSERT_EQ(particle1.getF(), expectedForce1);

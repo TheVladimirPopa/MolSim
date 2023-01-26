@@ -40,7 +40,7 @@ class VectorContainer : public IContainer {
 
   void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
 
-  void push_back(MembraneMolecule membrane) override { moleculesVector.push_back(membrane); }
+  void push_back(MembraneStructure membrane) override { structuresVector.push_back(membrane); }
 
   std::vector<Particle> &getVector() { return vector; };
 
@@ -50,6 +50,6 @@ class VectorContainer : public IContainer {
   /// The vector containing all the particles
   std::vector<Particle> vector{};
 
-  /// The vector containing all molecules. (Only membranes for now, worksheet 5)
-  std::vector<MembraneMolecule> moleculesVector;
+  /// The vector containing all structures. (Only membranes for now, worksheet 5)
+  std::vector<MembraneStructure> structuresVector;
 };

@@ -10,7 +10,7 @@
 #include <array>
 #include <string>
 #include <unordered_map>
-#define NOT_IN_MOLECULE 0xffffffff
+#define NOT_IN_STRUCTURE 0xffffffff
 #define NO_UNIQUE_ID 0xffffffff
 
 class IModel;
@@ -18,7 +18,7 @@ class NewtonsLawModel;
 class LennardJonesModel;
 class Thermostat;
 class LineProcessorCheckpoint;
-class MembraneMolecule;
+class MembraneStructure;
 
 class Particle {
  private:
@@ -69,8 +69,8 @@ class Particle {
    */
   bool isDeleted_;
 
-  /// The id or index of the molecule the particle is a member of. -1 if not set.
-  size_t moleculeId;
+  /// The id or index of the structure the particle is a member of. -1 if not set.
+  size_t structureId;
 
   /// The id or index of the particle. -1 if not set.
   size_t particleId;
@@ -186,20 +186,20 @@ class Particle {
   void applyForce(const std::array<double, 3> &force);
 
   /**
-   * Sets the molecule membership of the current particle
-   * @param pMolecule The molecule the particle is a member of
+   * Sets the structure membership of the current particle
+   * @param structureId_ The structure the particle is a member of
    */
-  void setMolecule(size_t moleculeId_) { moleculeId = moleculeId_; }
+  void setStructure(size_t structureId_) { structureId = structureId_; }
 
   /**
-   * @return The molecule the particle is part of
+   * @return The structure the particle is part of
    */
-  size_t getMolecule() { return moleculeId; }
+  size_t getStructure() { return structureId; }
 
   /**
-   * @return Whether the particle is member of a molecule
+   * @return Whether the particle is member of a structure
    */
-  bool isInMolecule() const { return moleculeId != NOT_IN_MOLECULE; }
+  bool isInStructure() const { return structureId != NOT_IN_STRUCTURE; }
 
   /**
    * Sets id of particle

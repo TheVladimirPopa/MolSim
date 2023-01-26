@@ -7,7 +7,7 @@
 #include <array>
 using std::array;
 using vec3d = std::array<double, 3>;
-#include "dataStructures/MembraneMolecule.h"
+#include "dataStructures/MembraneStructure.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -120,12 +120,12 @@ void ParticleGeneration::addMembraneToParticleContainer(LinkedCellsContainer &co
     }
   }
 
-  // Then generate membrane molecule. The last particles of the container are consider to be part of the molecule.
+  // Then generate membrane structure. The last particles of the container are consider to be part of the structure.
   std::array<size_t, 3> castedDimension = {static_cast<size_t>(data.dimension[0]),
                                            static_cast<size_t>(data.dimension[1]),
                                            static_cast<size_t>(data.dimension[2])};
 
-  MembraneMolecule membrane{castedDimension, data.stiffness, data.bondLength, data.cutOffRadius,
+  MembraneStructure membrane{castedDimension, data.stiffness, data.bondLength, data.cutOffRadius,
                             container.getParticlesRef()};
   for (auto &mf : data.membraneForces)
     membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);

@@ -36,11 +36,11 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
 
-  // Enable molecule physics handling on demand
-  if (particles.containsMolecules()) {
+  // Enable structure physics handling on demand
+  if (particles.containsStructures()) {
     addForces = [&model, &particles](P p1, P p2) {
-      if (p1.isInMolecule() && p1.getMolecule() == p2.getMolecule())
-        particles.getMoleculesVectorRef()[p1.getMolecule()].applyForce(p1, p2, p1.getId(), p2.getId());
+      if (p1.isInStructure() && p1.getStructure() == p2.getStructure())
+        particles.getStructureVectorRef()[p1.getStructure()].applyForce(p1, p2, p1.getId(), p2.getId());
       else
         model.addForces(std::forward<P>(p1), std::forward<P>(p2));
     };
@@ -50,8 +50,8 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   if (thermostat.getPeriodLength() != 0) thermostat.initializeTemperature();
 
   // Initialize the force so that we know the current force for the first loop
-  if (particles.containsMolecules())
-    for (auto &mol : particles.getMoleculesVectorRef()) mol.applyArtificialForces();
+  if (particles.containsStructures())
+    for (auto &mol : particles.getStructureVectorRef()) mol.applyArtificialForces();
 
   particles.forEach(updateF);
   particles.forEachPair(addForces);
