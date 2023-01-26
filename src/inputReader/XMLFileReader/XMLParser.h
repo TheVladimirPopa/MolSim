@@ -87,10 +87,22 @@ class XMLParser {
    * @return Returns type of the container specified in the xml file
    */
   ContainerType getContainerType() {
-    for (auto &it : simulation->Container_T()) {
-      if (it.LinkedCell().empty()) return ::ContainerType::VECTOR;
-    }
-    return ContainerType::LINKED_CELLS;
+    if (simulation->Container_T().front().VectorCont().size() > 0) return ContainerType::VECTOR;
+
+    if (simulation->Container_T().front().LinkedCell().size() > 0) return ContainerType::LINKED_CELLS;
+
+    /** TODO UNCOMMENT THIS, ONCE THE SCHEMA IS UPDATED
+    if (simulation->Container_T().front().LinkedCellsColouringSingle().size() > 0)
+      return ContainerType::LINKED_CELLS_COLOURING_SINGLE;
+
+    if (simulation->Container_T().front().LinkedCellsColouringMultiple().size() > 0)
+      return ContainerType::LINKED_CELLS_COLOURING_MULTIPLE;
+
+    if (simulation->Container_T().front().LinkedCellsColouringLocks().size() > 0)
+      return ContainerType::LINKED_CELLS_LOCKS;
+    */
+
+    throw std::runtime_error("Please update XMLParser.h if there is a new container type.");
   }
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
@@ -98,30 +110,29 @@ class XMLParser {
    * @return Returns a LinkedCellArg
    */
   LinkedCellArg extractLinkedCell() {
-    for (auto &it : simulation->Container_T()) {
-      for (auto &c : it.LinkedCell()) {
-        auto lb = c.leftLowerBound();
-        auto rb = c.rightUpperBound();
-        auto cs = c.cellSize();
-        auto left = c.left();
-        auto right = c.right();
-        auto top = c.top();
-        auto bottom = c.bottom();
-        auto front = c.front();
-        auto back = c.back();
+    if (simulation->Container_T().size() < 1 || simulation->Container_T().front().LinkedCell().size() != 1)
+      throw std::invalid_argument("XML Parser expected a single linked cells container.");
 
-        LinkedCellArg linkedCellArg = LinkedCellArg(cs, generate_double_array(lb), generate_double_array(rb));
-        linkedCellArg.setBoundLeft(left);
-        linkedCellArg.setBoundRight(right);
-        linkedCellArg.setBoundTop(top);
-        linkedCellArg.setBoundBottom(bottom);
-        linkedCellArg.setBoundFront(front);
-        linkedCellArg.setBoundBack(back);
-        return linkedCellArg;
-      }
-    }
+    auto &c = simulation->Container_T().front().LinkedCell().front();
 
-    throw std::invalid_argument("XML Parser found no linked cells container");
+    auto lb = c.leftLowerBound();
+    auto rb = c.rightUpperBound();
+    auto cs = c.cellSize();
+    auto left = c.left();
+    auto right = c.right();
+    auto top = c.top();
+    auto bottom = c.bottom();
+    auto front = c.front();
+    auto back = c.back();
+
+    LinkedCellArg linkedCellArg = LinkedCellArg(cs, generate_double_array(lb), generate_double_array(rb));
+    linkedCellArg.setBoundLeft(left);
+    linkedCellArg.setBoundRight(right);
+    linkedCellArg.setBoundTop(top);
+    linkedCellArg.setBoundBottom(bottom);
+    linkedCellArg.setBoundFront(front);
+    linkedCellArg.setBoundBack(back);
+    return linkedCellArg;
   }
   /**
    * Extracts the arguments (position, velocity, dimension, distance, mass,
@@ -430,6 +441,7 @@ class XMLParser {
    */
   [[nodiscard]] ModelType getModel() const {
     // TODO: Read this value from "simulation" once the xml part is updated
+
     return ModelType::LennardJones;
   }
 

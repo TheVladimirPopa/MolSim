@@ -58,7 +58,7 @@ class Configuration {
   ContainerType containerType{ContainerType::LINKED_CELLS};
 
   /// The container itself
-  std::unique_ptr<LinkedCellsContainer> container;
+  std::unique_ptr<LinkedCellArg> container;
 
   /// The thermostat of the container
   std::unique_ptr<ThermostatArg> thermostat;
@@ -145,7 +145,7 @@ class Configuration {
   [[nodiscard]] SimTypeDeprecated getSimType() const { return simType; };
   [[nodiscard]] std::vector<ParticleShape> getParticleShapes() { return particleShapes; }
 
-  [[nodiscard]] std::unique_ptr<LinkedCellsContainer> takeContainer();
+  [[nodiscard]] LinkedCellArg* getContainerSpecs() { return container.get(); };
   [[nodiscard]] ThermostatArg* getThermostat() { return thermostat.get(); };
 
   // Input

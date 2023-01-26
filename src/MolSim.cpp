@@ -27,7 +27,7 @@ int main(int argc, char* argsv[]) {
   // 2. Set up container and populate it with particles
   std::unique_ptr<IContainer> container;
   if (isXmlInput) {
-    container = SimulationUtils::makeContainer(config.getContainerType(), config.takeContainer());
+    container = SimulationUtils::makeContainer(config.getContainerType(), config.getContainerSpecs());
   } else {
     container = SimulationUtils::makeDefaultContainer();
   }
