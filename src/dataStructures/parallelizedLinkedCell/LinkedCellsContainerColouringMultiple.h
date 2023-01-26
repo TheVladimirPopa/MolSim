@@ -52,24 +52,26 @@ class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
             if (indexOffset == 0) {
               auto &particles = cells[index].particles;
               for (auto first = particles.begin(); first != particles.end(); ++first) {
-                for (auto second = first; second != particles.end(); ++second) {
-                  // Don't run the function on a pair consisting of the same particle
-                  if (*second == *first) continue;
+                for (auto second = std::next(first); second != particles.end(); ++second) {
                   binaryFunction(particlesVector[*first], particlesVector[*second]);
                 }
               }
 
             } else {
               // Loop so the particles of each of the two cells and match them
-              for (auto cellAParticle : cells[index].particles) {
-                for (auto cellBParticle : cells[index + indexOffset].particles) {
-                  binaryFunction(particlesVector[cellAParticle], particlesVector[cellBParticle]);
+              for (auto indexA : cells[index].particles) {
+                for (auto indexB : cells[index + indexOffset].particles) {
+                  binaryFunction(particlesVector[indexA], particlesVector[indexB]);
                 }
               }
             }
           }
         }
       }
+    }
+
+    for (auto &structure : structuresVector) {
+      if (structure.hasArtificalForces()) structure.applyArtificialForces();
     }
   }
 
