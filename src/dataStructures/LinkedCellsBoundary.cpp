@@ -80,7 +80,7 @@ void LinkedCellsBoundary::deleteOutFlow() {
 
 using namespace ReflectiveBoundary;
 void LinkedCellsBoundary::reflectParticles() {
-  auto reflectParticle = [this](Particle& particle){
+  auto reflectParticle = [this](Particle& particle) {
     auto distance = getDistanceToBoundary(particle);
 
     double reflectDistance = SIXTH_ROOT_OF_2 * particle.getSigma();

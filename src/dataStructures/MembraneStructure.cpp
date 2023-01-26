@@ -20,8 +20,8 @@ void MembraneStructure::applyDiagonalForce(Particle& x, Particle& y) const { phy
 
 void MembraneStructure::applyRepulsiveForce(Particle& p1, Particle& p2) { physics.addForces(p1, p2); }
 
-MembraneStructure::MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
-                                   std::vector<Particle>& particles)
+MembraneStructure::MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
+                                     double cutOff, std::vector<Particle>& particles)
     : dimensions{dimensions},
       startIndex{particles.size() - (dimensions[0] * dimensions[1] * dimensions[2])},
       particleCount{dimensions[0] * dimensions[1] * dimensions[2]},
@@ -48,7 +48,7 @@ MembraneStructure::MembraneStructure(std::array<size_t, 3> dimensions, double st
 }
 
 void MembraneStructure::addForceToParticle(unsigned int row, unsigned int column, std::array<double, 3> force,
-                                          unsigned long timeSpan) {
+                                           unsigned long timeSpan) {
   MembraneForce mf{};
 
   std::array<unsigned long, 3> pos3d{0, 0, 0};

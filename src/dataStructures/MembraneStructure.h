@@ -94,7 +94,7 @@ class MembraneStructure {
 
  public:
   MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
-                   std::vector<Particle>& particles);
+                    std::vector<Particle>& particles);
 
   /**
    * Defines the force that gets applied to a single, specified particle of the membrane in each iteration.

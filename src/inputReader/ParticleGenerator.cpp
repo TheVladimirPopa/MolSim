@@ -126,7 +126,7 @@ void ParticleGeneration::addMembraneToParticleContainer(LinkedCellsContainer &co
                                            static_cast<size_t>(data.dimension[2])};
 
   MembraneStructure membrane{castedDimension, data.stiffness, data.bondLength, data.cutOffRadius,
-                            container.getParticlesRef()};
+                             container.getParticlesRef()};
   for (auto &mf : data.membraneForces)
     membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
 

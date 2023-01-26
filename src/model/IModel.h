@@ -8,7 +8,7 @@ class IModel {
   double delta_t;
 
  public:
-  virtual ~IModel() {};
+  virtual ~IModel(){};
 
   /**
    * Calculate position of particle
