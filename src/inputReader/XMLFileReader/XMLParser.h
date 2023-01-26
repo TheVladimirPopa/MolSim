@@ -254,7 +254,7 @@ class XMLParser {
    * Adds all cuboids read from the path file to a given LinkedCellsContainer
    * @param linkedCellsContainer
    */
-  std::vector<ParticleGeneration::cuboid> getCuboids() const {
+  [[nodiscard]] std::vector<ParticleGeneration::cuboid> getCuboids() const {
     std::vector<ParticleGeneration::cuboid> cuboids;
     std::vector<CuboidArg> cuboidArgs = this->extractCuboid();
 
@@ -307,13 +307,12 @@ class XMLParser {
    */
   [[nodiscard]] double getCutOffRadius() const { return simulation->cutOffRadius(); }
 
-
   /**
-   * Initialises the Membrane from the path file
-   * @param arg
-   * @return
+   * Reads membranes from xml file
+   * @return Extracted membranes
    */
-  void initialiseMembraneFromXML(LinkedCellsContainer &container) {
+  std::vector<ParticleGeneration::membrane> getMembranes() {
+    std::vector<ParticleGeneration::membrane> membranes;
     std::vector<MembraneArg> membraneArgs = extractMembrane();
 
     for (auto &it : membraneArgs) {
@@ -339,8 +338,10 @@ class XMLParser {
         membraneForces.emplace_back(membraneForce);
       }
       membrane.membraneForces = membraneForces;
-      ParticleGeneration::addMembraneToParticleContainer(container, membrane);
+      membranes.push_back(membrane);
     }
+
+    return membranes;
   }
   /**
    * @return Returns the gravity constant

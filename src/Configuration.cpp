@@ -217,7 +217,7 @@ bool Configuration::tryParseXml() {
 
   for (auto sphere : xmlParser->getSpheres()) particleShapes.push_back(sphere);
   for (auto cuboid : xmlParser->getCuboids()) particleShapes.push_back(cuboid);
-  // TODO: Add membrane after merge. Also update SimulationUtils
+  for (auto membrane : xmlParser->getMembranes()) particleShapes.push_back(membrane);
 
   xmlParser->initializeParticleTypes();
   checkpointPath = xmlParser->getCheckpointPath();

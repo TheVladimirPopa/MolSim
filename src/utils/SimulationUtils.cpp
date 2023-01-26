@@ -1,5 +1,7 @@
 #include "SimulationUtils.h"
 
+#include "dataStructures/VectorContainer.h"
+
 std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.
   std::array<double, 3> leftLowerCorner{-15., -20., -5};
@@ -52,7 +54,11 @@ void SimulationUtils::populateContainer(IContainer& container, std::vector<Parti
     if (std::holds_alternative<ParticleGeneration::sphere>(shape))
       ParticleGeneration::addSphereToParticleContainer(container, std::get<ParticleGeneration::sphere>(shape));
 
-    // Todo: Add membrane
+    if (std::holds_alternative<ParticleGeneration::membrane>(shape)) {
+      auto lcContainer = dynamic_cast<LinkedCellsContainer*>(&container);
+      if (lcContainer == nullptr) throw("Membranes are only supported by the linked cells container.");
+      ParticleGeneration::addMembraneToParticleContainer(*lcContainer, std::get<ParticleGeneration::membrane>(shape));
+    }
   }
 }
 void SimulationUtils::loadCheckpoint(IContainer& container, std::string checkpointPath) {

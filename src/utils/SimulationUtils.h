@@ -12,7 +12,8 @@
 
 using duration = std::chrono::nanoseconds;
 using time_point = std::chrono::time_point<std::chrono::steady_clock, duration>;
-using ParticleShape = std::variant<ParticleGeneration::sphere, ParticleGeneration::cuboid>;
+using ParticleShape =
+    std::variant<ParticleGeneration::sphere, ParticleGeneration::cuboid, ParticleGeneration::membrane>;
 
 namespace SimulationUtils {
 
