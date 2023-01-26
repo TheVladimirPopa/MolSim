@@ -27,7 +27,7 @@ std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, s
     throw std::runtime_error("Unsupported container type. Check Simulationutils.h");
 }
 void SimulationUtils::populateContainerViaFile(IContainer& container, std::string filePath, SimTypeDeprecated type) {
-  spdlog::info("Generating particles via File input. (Warning: Deprecated)");
+  spdlog::info("Generating particles via file input. (Warning: Deprecated)");
   switch (type) {
     case SimTypeDeprecated::Single: {
       FileReader::readFileSingle(container, filePath.data());
@@ -43,8 +43,8 @@ void SimulationUtils::populateContainerViaFile(IContainer& container, std::strin
     }
   }
 }
-void SimulationUtils::populateContainer(IContainer& container, bool loadCheckpoint, std::vector<ParticleShape> shapes) {
-  spdlog::info("Generating particles via XML input.");
+void SimulationUtils::populateContainer(IContainer& container, std::vector<ParticleShape> shapes) {
+  spdlog::info("Generating particles.");
   for (auto shape : shapes) {
     if (std::holds_alternative<ParticleGeneration::cuboid>(shape))
       ParticleGeneration::addCuboidToParticleContainer(container, std::get<ParticleGeneration::cuboid>(shape));

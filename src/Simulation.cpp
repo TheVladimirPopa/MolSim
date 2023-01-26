@@ -7,12 +7,16 @@
 #include "outputWriter/CheckpointFileWriter.h"
 #include "spdlog/spdlog.h"
 #define CHECKPOINT_PATH "./checkpoint.txt"
+#define PROGRESS_MSG_COUNT 15
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
                           double gravitationalConstant, bool checkpointing) {
+  size_t expectedIterationCount = std::ceil((endTime - startTime) / deltaT);
+  size_t printProgressInterval =
+      ((expectedIterationCount / PROGRESS_MSG_COUNT) / writeOutFrequency) * writeOutFrequency;
+
   double current_time = startTime;
   int iteration = 0;
-
   size_t updateCount = 0;
 
   // Pass methods of model as lambdas. More lightweight than std::function.
@@ -52,15 +56,15 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
 
-      if (iteration % (writeOutFrequency * 50) == 0 && startTime < endTime)
-        spdlog::info("Completed {} iterations.", iteration);
+      if ((printProgressInterval == 0 || iteration % printProgressInterval == 0) && startTime < endTime)
+        spdlog::info("Completed {} iterations. ({:0.1f}%)", iteration, (100.0 * iteration) / expectedIterationCount);
     }
 
     iteration++;
   }
   moleculeUpdateCount = updateCount;
 
-  spdlog::info("Completed {} iterations.", iteration);
+  spdlog::info("Completed {} iterations. (100.0%)", iteration);
   if (checkpointing) {
     spdlog::info("Writing checkpoint.");
     CheckpointFileWriter checkpointFileWriter{};

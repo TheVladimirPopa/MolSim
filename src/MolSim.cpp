@@ -17,7 +17,7 @@ int main(int argc, char* argsv[]) {
     return 1;
   }
 
-  // 1. Load config & configure logging (e.g. no logging when performance measurement)
+  // 1. Load config, configure logging
   Configuration config = Configuration::parseOptions(argc, argsv);
   bool isXmlInput = config.getInputType() == InputType::XML;
   if (isXmlInput && !config.tryParseXml()) exit(EXIT_FAILURE);
@@ -33,7 +33,7 @@ int main(int argc, char* argsv[]) {
   }
 
   if (isXmlInput) {
-    SimulationUtils::populateContainer(*container, config.hasLoadCheckpointEnabled(), config.getParticleShapes());
+    SimulationUtils::populateContainer(*container, config.getParticleShapes());
   } else {
     SimulationUtils::populateContainerViaFile(*container, config.getInputPath(), config.getSimType());
   }
@@ -69,6 +69,6 @@ int main(int argc, char* argsv[]) {
     ConfigurationUtils::printPerformanceMeasure(startTime, endTime, simulation);
   if (config.hasHitrateMeasureEnabled()) ConfigurationUtils::printHitrateMeasure(std::move(model));
 
-  spdlog::info("Simulation completed successfully.");
+  spdlog::info("Your simulation is completed. Terminating.");
   return EXIT_SUCCESS;
 }
