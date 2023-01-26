@@ -98,7 +98,7 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
   spdlog::debug("Added sphere particles to particle container.");
 }
 
-void ParticleGeneration::addMembraneToParticleContainer(LinkedCellsContainer &container,
+void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
                                                         ParticleGeneration::membrane const &data) {
   if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
     spdlog::error("Only single layer membranes are supported. Please check your input file.");

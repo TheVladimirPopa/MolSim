@@ -54,11 +54,8 @@ void SimulationUtils::populateContainer(IContainer& container, std::vector<Parti
     if (std::holds_alternative<ParticleGeneration::sphere>(shape))
       ParticleGeneration::addSphereToParticleContainer(container, std::get<ParticleGeneration::sphere>(shape));
 
-    if (std::holds_alternative<ParticleGeneration::membrane>(shape)) {
-      auto lcContainer = dynamic_cast<LinkedCellsContainer*>(&container);
-      if (lcContainer == nullptr) throw("Membranes are only supported by the linked cells container.");
-      ParticleGeneration::addMembraneToParticleContainer(*lcContainer, std::get<ParticleGeneration::membrane>(shape));
-    }
+    if (std::holds_alternative<ParticleGeneration::membrane>(shape))
+      ParticleGeneration::addMembraneToParticleContainer(container, std::get<ParticleGeneration::membrane>(shape));
   }
 }
 void SimulationUtils::loadCheckpoint(IContainer& container, std::string checkpointPath) {

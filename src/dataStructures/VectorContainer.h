@@ -26,6 +26,10 @@ class VectorContainer : public IContainer {
         binaryFunction(vector[i], vector[j]);
       }
     }
+
+    for (auto &structure : structuresVector) {
+      if (structure.hasArtificalForces()) structure.applyArtificialForces();
+    }
   }
 
   size_t size() override { return vector.size(); }
@@ -36,15 +40,33 @@ class VectorContainer : public IContainer {
 
   void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type) override {
     vector.emplace_back(x_arg, v_arg, m_arg, type);
+    vector.back().setId(vector.size() - 1);
   };
 
-  void push_back(Particle &particle) override { vector.push_back(std::forward<Particle &>(particle)); }
+  void push_back(Particle &particle) override {
+    vector.push_back(std::forward<Particle &>(particle));
+    vector.back().setId(vector.size() - 1);
+  }
 
-  void push_back(MembraneStructure membrane) override { structuresVector.push_back(membrane); }
+  void push_back(MembraneStructure membrane) override {
+    structuresVector.push_back(membrane);
+    structuresVector.back().setStructureVectorIndex(structuresVector.size() - 1);
+  }
 
   std::vector<Particle> &getVector() { return vector; };
 
-  [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return vector; }
+  [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return getVector(); }
+
+  /**
+   * @return True if the container has structures
+   */
+  [[nodiscard]] bool containsStructures() override { return !structuresVector.empty(); };
+
+  /**
+   * Returns structures that are attached to the container
+   * @return attached structures
+   */
+  [[nodiscard]] std::vector<MembraneStructure> &getStructureVectorRef() override { return structuresVector; };
 
  private:
   /// The vector containing all the particles
