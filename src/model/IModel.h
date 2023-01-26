@@ -8,7 +8,7 @@ class IModel {
   double delta_t;
 
  public:
-  virtual ~IModel(){};
+  virtual ~IModel() {}
 
   /**
    * Calculate position of particle
@@ -39,4 +39,14 @@ class IModel {
    * @param d_t Simulated length of a single iteration
    */
   void setDeltaT(double const &d_t) { delta_t = d_t; }
+
+  /**
+   * @return Counted number of non zero force interactions between particles.
+   */
+  virtual size_t getHits() const { return 0; }
+
+  /**
+   * @return Counted number of interactions between particles, including zero force interactions.
+   */
+  virtual size_t getComparisons() const { return 0; }
 };

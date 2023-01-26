@@ -45,8 +45,8 @@ TEST(XMLParser, initSimulation) {
 TEST(XMLParser, initLinkedCellContainerBoundary) {
   XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization2.xml");
 
-  LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
-  xmlParser.XMLLinkedCellBoundaries(linkedCellsContainer);
+  LinkedCellsContainer linkedCellsContainer = *xmlParser.initialiseLinkedCellContainerFromXML().get();
+  xmlParser.applyBoundariesFromXML(linkedCellsContainer);
 
   for (auto it : linkedCellsContainer.getBoundaries()) {
     switch (it.getSide()) {
@@ -233,9 +233,9 @@ TEST(XMLParser, testCuboidInput) {
  */
 TEST(XMLParser, thermostatTest) {
   XMLParser xmlParser = XMLParser("../tests/resources/XMLTestCases/Initialization1.xml");
-  LinkedCellsContainer linkedCellsContainer = xmlParser.initialiseLinkedCellContainerFromXML();
+  LinkedCellsContainer linkedCellsContainer = *xmlParser.initialiseLinkedCellContainerFromXML().get();
   IContainer *container = &linkedCellsContainer;
-  Thermostat thermostat = xmlParser.initialiseThermostatFromXML(*container);
+  Thermostat thermostat = *xmlParser.initialiseThermostatFromXML(*container).get();
 
   EXPECT_EQ(thermostat.getInitialTemperature(), 40);
   EXPECT_EQ(thermostat.getTargetTemperature(), 40);
