@@ -158,6 +158,7 @@ class Particle {
   friend class IModel;
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
+  friend class SmoothedLennardJonesModel;
   friend class Thermostat;
   friend class Simulation;
   friend class LineProcessorCheckpoint;

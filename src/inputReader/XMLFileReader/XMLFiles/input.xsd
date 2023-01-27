@@ -72,7 +72,7 @@
         <xsd:attribute name="type" type="xsd:int" use="required"/>
     </xsd:complexType>
 
-    <!--    SimTypes-->
+    <!--  SimTypes  -->
     <xsd:complexType name="simTypes_t">
         <xsd:sequence>
             <xsd:element name="Cuboid" type="cuboid_t" minOccurs="0" maxOccurs="unbounded"/>
@@ -109,6 +109,7 @@
         <xsd:attribute name="parallelization" type="paraType_t" use="required"/>
     </xsd:complexType>
 
+    <!--  Parallelization Type  -->
     <xsd:simpleType name="paraType_t">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="None"/>
