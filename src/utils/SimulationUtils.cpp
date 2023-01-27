@@ -24,39 +24,39 @@ std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   return defaultContainer;
 }
 
-std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, LinkedCellArg* lcArg) {
+std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, LinkedCellArg* spec) {
   if (type == ContainerType::VECTOR) return std::make_unique<VectorContainer>();
 
-  // Handle LinkedCells container types
-  if (lcArg == nullptr) throw std::runtime_error("Could not make container. Encountered nullpointer.");
+  // Currently only vector and linked cells containers are supported. Assume the container is linked cells.
+  auto makeLinkedCells = [](auto type, double cellSize, auto left,
+                            auto right) -> std::unique_ptr<LinkedCellsContainer> {
+    if (type == ContainerType::LINKED_CELLS) return std::make_unique<LinkedCellsContainer>(cellSize, left, right);
 
-  double cellSize = lcArg->getCellSize();
-  auto left = lcArg->getLeftLowerBound();
-  auto right = lcArg->getRightUpperBound();
+    if (type == ContainerType::LINKED_CELLS_COLOURING_SINGLE)
+      return std::make_unique<LinkedCellsContainerColouringSingle>(cellSize, left, right);
 
-  std::unique_ptr<LinkedCellsContainer> linkedCells;
-  if (type == ContainerType::LINKED_CELLS) linkedCells = std::make_unique<LinkedCellsContainer>(cellSize, left, right);
+    if (type == ContainerType::LINKED_CELLS_COLOURING_MULTIPLE)
+      return std::make_unique<LinkedCellsContainerColouringMultiple>(cellSize, left, right);
 
-  if (type == ContainerType::LINKED_CELLS_COLOURING_SINGLE)
-    linkedCells = std::make_unique<LinkedCellsContainerColouringSingle>(cellSize, left, right);
+    if (type == ContainerType::LINKED_CELLS_LOCKS)
+      return std::make_unique<LinkedCellsContainerLocks>(cellSize, left, right);
 
-  if (type == ContainerType::LINKED_CELLS_COLOURING_MULTIPLE)
-    linkedCells = std::make_unique<LinkedCellsContainerColouringMultiple>(cellSize, left, right);
+    throw std::runtime_error("Make function for ContainerType not implemented. Check SimulationUtils.cpp.");
+  };
 
-  if (type == ContainerType::LINKED_CELLS_LOCKS)
-    throw std::runtime_error("Lock container not implemented");
-    // linkedCells = std::make_unique<LinkedCellsContainerLocks>(cellSize, left, right);
+  if (spec == nullptr) throw std::runtime_error("Expected linked cells container specs. Check SimulationUtils.cpp.");
+  auto container = makeLinkedCells(type, spec->getCellSize(), spec->getLeftLowerBound(), spec->getRightUpperBound());
 
-  linkedCells->setBoundaries({
-      {CubeSide::LEFT, XMLParser::strToEnumBoundary(lcArg->getBoundLeft())},
-      {CubeSide::RIGHT, XMLParser::strToEnumBoundary(lcArg->getBoundRight())},
-      {CubeSide::TOP, XMLParser::strToEnumBoundary(lcArg->getBoundTop())},
-      {CubeSide::BOTTOM, XMLParser::strToEnumBoundary(lcArg->getBoundBottom())},
-      {CubeSide::FRONT, XMLParser::strToEnumBoundary(lcArg->getBoundFront())},
-      {CubeSide::BACK, XMLParser::strToEnumBoundary(lcArg->getBoundBack())},
+  container->setBoundaries({
+      {CubeSide::LEFT, XMLParser::strToEnumBoundary(spec->getBoundLeft())},
+      {CubeSide::RIGHT, XMLParser::strToEnumBoundary(spec->getBoundRight())},
+      {CubeSide::TOP, XMLParser::strToEnumBoundary(spec->getBoundTop())},
+      {CubeSide::BOTTOM, XMLParser::strToEnumBoundary(spec->getBoundBottom())},
+      {CubeSide::FRONT, XMLParser::strToEnumBoundary(spec->getBoundFront())},
+      {CubeSide::BACK, XMLParser::strToEnumBoundary(spec->getBoundBack())},
   });
 
-  return linkedCells;
+  return container;
 }
 
 void SimulationUtils::populateContainerViaFile(IContainer& container, std::string filePath, SimTypeDeprecated type) {

@@ -1,7 +1,7 @@
 #pragma once
 #include "dataStructures/LinkedCellsContainer.h"
 
-class LinkedCellsContainerLocks : LinkedCellsContainer {
+class LinkedCellsContainerLocks : public LinkedCellsContainer {
 #ifdef _OPENMP
 
  public:
