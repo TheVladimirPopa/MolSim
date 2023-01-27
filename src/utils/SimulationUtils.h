@@ -23,7 +23,7 @@ namespace SimulationUtils {
  * @param container A container that can be returned (this is a placeholder to stream line the interface for now)
  * @return The container
  */
-std::unique_ptr<IContainer> makeContainer(ContainerType type, std::unique_ptr<IContainer> container);
+std::unique_ptr<IContainer> makeContainer(ContainerType type, LinkedCellArg *spec);
 
 /**
  * Makes a default container. The container is a hard coded linked cells container.

@@ -2,6 +2,10 @@
 #include "dataStructures/LinkedCellsContainer.h"
 
 class LinkedCellsContainerLocks : public LinkedCellsContainer {
+ public:
+  LinkedCellsContainerLocks(double cellSize, std::array<double, 3> &leftLowerBound,
+                            std::array<double, 3> &rightUpperBound)
+      : LinkedCellsContainer(cellSize, leftLowerBound, rightUpperBound) {}
 #ifdef _OPENMP
 
  public:

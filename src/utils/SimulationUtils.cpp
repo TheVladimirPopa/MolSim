@@ -1,6 +1,9 @@
 #include "SimulationUtils.h"
 
 #include "dataStructures/VectorContainer.h"
+#include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringMultiple.h"
+#include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringSingle.h"
+#include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerLocks.h"
 
 std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.
@@ -20,14 +23,42 @@ std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
 
   return defaultContainer;
 }
-std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, std::unique_ptr<IContainer> container) {
-  if (type == ContainerType::VECTOR)
-    return std::make_unique<VectorContainer>();
-  else if (type == ContainerType::LINKED_CELLS)
-    return container;  // This is a placeholder for now
-  else
-    throw std::runtime_error("Unsupported container type. Check Simulationutils.h");
+
+std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, LinkedCellArg* spec) {
+  if (type == ContainerType::VECTOR) return std::make_unique<VectorContainer>();
+
+  // Currently only vector and linked cells containers are supported. Assume the container is linked cells.
+  auto makeLinkedCells = [](auto type, double cellSize, auto left,
+                            auto right) -> std::unique_ptr<LinkedCellsContainer> {
+    if (type == ContainerType::LINKED_CELLS) return std::make_unique<LinkedCellsContainer>(cellSize, left, right);
+
+    if (type == ContainerType::LINKED_CELLS_COLOURING_SINGLE)
+      return std::make_unique<LinkedCellsContainerColouringSingle>(cellSize, left, right);
+
+    if (type == ContainerType::LINKED_CELLS_COLOURING_MULTIPLE)
+      return std::make_unique<LinkedCellsContainerColouringMultiple>(cellSize, left, right);
+
+    if (type == ContainerType::LINKED_CELLS_LOCKS)
+      return std::make_unique<LinkedCellsContainerLocks>(cellSize, left, right);
+
+    throw std::runtime_error("Make function for ContainerType not implemented. Check SimulationUtils.cpp.");
+  };
+
+  if (spec == nullptr) throw std::runtime_error("Expected linked cells container specs. Check SimulationUtils.cpp.");
+  auto container = makeLinkedCells(type, spec->getCellSize(), spec->getLeftLowerBound(), spec->getRightUpperBound());
+
+  container->setBoundaries({
+      {CubeSide::LEFT, XMLParser::strToEnumBoundary(spec->getBoundLeft())},
+      {CubeSide::RIGHT, XMLParser::strToEnumBoundary(spec->getBoundRight())},
+      {CubeSide::TOP, XMLParser::strToEnumBoundary(spec->getBoundTop())},
+      {CubeSide::BOTTOM, XMLParser::strToEnumBoundary(spec->getBoundBottom())},
+      {CubeSide::FRONT, XMLParser::strToEnumBoundary(spec->getBoundFront())},
+      {CubeSide::BACK, XMLParser::strToEnumBoundary(spec->getBoundBack())},
+  });
+
+  return container;
 }
+
 void SimulationUtils::populateContainerViaFile(IContainer& container, std::string filePath, SimTypeDeprecated type) {
   spdlog::info("Generating particles via file input. (Warning: Deprecated)");
   switch (type) {
@@ -45,6 +76,7 @@ void SimulationUtils::populateContainerViaFile(IContainer& container, std::strin
     }
   }
 }
+
 void SimulationUtils::populateContainer(IContainer& container, std::vector<ParticleShape> shapes) {
   spdlog::info("Generating particles.");
   for (auto shape : shapes) {
@@ -58,10 +90,12 @@ void SimulationUtils::populateContainer(IContainer& container, std::vector<Parti
       ParticleGeneration::addMembraneToParticleContainer(container, std::get<ParticleGeneration::membrane>(shape));
   }
 }
+
 void SimulationUtils::loadCheckpoint(IContainer& container, std::string checkpointPath) {
   spdlog::info("Loading checkpoint file.");
   FileReader::readFileCheckpoint(container, checkpointPath.data());
 }
+
 std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double deltaT, double cutOff) {
   std::unique_ptr<IModel> model;
 
@@ -76,19 +110,23 @@ std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double d
   model->setDeltaT(deltaT);
   return model;
 }
+
 std::unique_ptr<IWriter> SimulationUtils::makeWriter(WriterType writerType) {
   if (writerType == WriterType::VTKWriter) return std::make_unique<VTKWriter>();
 
   return std::make_unique<NoWriter>();
 }
+
 std::unique_ptr<Thermostat> SimulationUtils::makeDefaultThermostat(IContainer& container) {
   return std::make_unique<Thermostat>(container, 40., 40., 5., 1000, 2);
 }
+
 std::unique_ptr<Thermostat> SimulationUtils::makeThermostat(IContainer& container, ThermostatArg thermArg) {
   size_t dimension = 3;
   return std::make_unique<Thermostat>(container, thermArg.getInitialTemp(), thermArg.getTargetTemp(),
                                       thermArg.getMaxTempChange(), thermArg.getPeriodLength(), dimension);
 }
+
 void ConfigurationUtils::configureLogging(int logLevel, bool disableLogging) {
   auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("../logs/logger", 1048576 * 5, 5, true);
   auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -117,6 +155,7 @@ void ConfigurationUtils::configureLogging(int logLevel, bool disableLogging) {
   spdlog::set_default_logger(std::make_shared<spdlog::logger>("", spdlog::sinks_init_list({console_sink, file_sink})));
   spdlog::set_level(spdlog::level::trace);
 }
+
 void ConfigurationUtils::printPerformanceMeasure(time_point startTime, time_point endTime, Simulation& simulation) {
   auto durationSec = std::chrono::duration<double>{endTime - startTime}.count();
   auto iterationCount = std::ceil(simulation.getEndTime() / simulation.getDeltaT());
@@ -133,6 +172,7 @@ void ConfigurationUtils::printPerformanceMeasure(time_point startTime, time_poin
             << "Molecule Updates per second: "
             << (static_cast<double>(simulation.getMoleculeUpdateCount()) / durationSec) << std::endl;
 }
+
 void ConfigurationUtils::printHitrateMeasure(std::unique_ptr<IModel> model) {
   std::cout << "########################################################\n"
                "Results of hit-rate measurement\n"
