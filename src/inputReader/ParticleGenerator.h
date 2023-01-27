@@ -5,6 +5,7 @@
 #include <array>
 
 #include "dataStructures/IContainer.h"
+#include "dataStructures/LinkedCellsContainer.h"
 
 namespace ParticleGeneration {
 /**
@@ -46,6 +47,31 @@ struct sphere {
 };
 
 /**
+ * The force that applies to a specific membrane particle for timeSpan iterations.
+ */
+struct MembraneForce {
+  unsigned int row{};
+  unsigned int column{};
+  double x{};
+  double y{};
+  double z{};
+  unsigned long timeSpan{};
+};
+
+/**
+ * Struct containing all the values specifying a membrane. In essence a membrane structure has the structure of a
+ * cuboid where the size of 1 dimension must be 1. Beware that the force calculation is different to a cuboid or sphere.
+ * Structures get special treatment with respect to the force calculation, to ensure e.g. that they do not accidentally
+ * get ripped apart.
+ */
+struct membrane : cuboid {
+  double bondLength{2.2};
+  double stiffness{300.};
+  double cutOffRadius{1e30};
+  std::vector<MembraneForce> membraneForces;
+};
+
+/**
  * Generate all the single particles for a cuboid and places them in the
  * container
  * @note The particle velocity is calculated with @see
@@ -67,4 +93,10 @@ void addCuboidToParticleContainer(IContainer &container, cuboid const &data);
  */
 void addSphereToParticleContainer(IContainer &container, sphere const &data);
 
+/**
+ * Adds a membrane structure to the container. Structures are treated differently to particles in the force calculation.
+ * @param container The container that receives the membrane structure
+ * @param data The membrane struct which holds the data for the generation
+ */
+void addMembraneToParticleContainer(IContainer &container, membrane const &data);
 };  // namespace ParticleGeneration

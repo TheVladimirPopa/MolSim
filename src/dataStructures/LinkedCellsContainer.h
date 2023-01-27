@@ -12,9 +12,12 @@
  *    \image latex runtime-linkedcells.png "Runtime" width = [goodwidth]cm
  */
 class LinkedCellsContainer : public IContainer {
- private:
+ protected:
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
+
+  /// The vector containing all structures. (Only membranes for now, worksheet 5)
+  std::vector<MembraneStructure> structuresVector;
 
   /// A vector containing all the cells
   std::vector<cell> cells;
@@ -59,6 +62,7 @@ class LinkedCellsContainer : public IContainer {
    */
   size_t getVectorIndexFromCoord(size_t x, size_t y, size_t z);
 
+ public:
   /** All the offsets for adjacent cells which have a greater index than the
    * current one, it has a length of 14 since their are 26 adjacent cells to one
    * cell and only 13 of them have a greater index. Offset of 0 is also added
@@ -66,13 +70,7 @@ class LinkedCellsContainer : public IContainer {
    */
   std::array<size_t, 14> indexOffsetAdjacent{};
 
-  /**
-   * Generates neighbor list for theoretical particle by taking the particles of surrounding cells
-   * @param particle A particle for which the neighboring particles will be determined
-   * @return List of neighboring particles (ignores cutoff distance)
-   */
-  std::vector<std::reference_wrapper<Particle>> getNeighbors(Particle &particle);
-
+ protected:
   /**
    * Links up boundary cells and halo cells depending on the configuration of periodic boundaries that was applied.
    */
@@ -94,7 +92,7 @@ class LinkedCellsContainer : public IContainer {
    * @param leftLowerBound The left lower corner of the domain bounding box
    * @param rightUpperBound The right upper corner of the domain bounding box
    */
-  LinkedCellsContainer(double cellSize, std::array<double, 3> &leftLowerBound, std::array<double, 3> &rightUpperBound);
+  LinkedCellsContainer(double cellSize, std::array<double, 3> leftLowerBound, std::array<double, 3> rightUpperBound);
 
   ~LinkedCellsContainer() override = default;
 
@@ -120,6 +118,8 @@ class LinkedCellsContainer : public IContainer {
   void emplace_back(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type) override;
 
   void push_back(Particle &particle) override;
+
+  void push_back(MembraneStructure membrane);
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct
@@ -180,4 +180,21 @@ class LinkedCellsContainer : public IContainer {
    * @return the rightUpperCorner
    */
   [[nodiscard]] std::array<double, 3> getRightUpperCorner() const { return rightUpperCorner; }
+
+  /**
+   * Returns structures that are attached to the container
+   * @return attached structures
+   */
+  [[nodiscard]] std::vector<MembraneStructure> &getStructureVectorRef() { return structuresVector; };
+
+  /**
+   * Returns reference to particles vector
+   * @return Reference to particles vector
+   */
+  [[nodiscard]] std::vector<Particle> &getParticlesRef() override { return particlesVector; }
+
+  /**
+   * @return True if the linked cells container has structures
+   */
+  [[nodiscard]] bool containsStructures() { return !structuresVector.empty(); };
 };

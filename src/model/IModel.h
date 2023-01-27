@@ -1,7 +1,6 @@
 #pragma once
 
 #include "dataStructures/Particle.h"
-#include "dataStructures/VectorContainer.h"
 #include "utils/ArrayUtils.h"
 
 class IModel {
@@ -9,6 +8,8 @@ class IModel {
   double delta_t;
 
  public:
+  virtual ~IModel() {}
+
   /**
    * Calculate position of particle
    * @param p The particle that gets its location changed
@@ -31,11 +32,21 @@ class IModel {
    * DO NOT FORGET TO RESET THE CURRENT FORCES ON THE PARTICLE AT THE START OF
    * EACH ITERATION.
    */
-  virtual void addForces(Particle &p1, Particle &p2) = 0;
+  virtual void addForces(Particle &p1, Particle &p2) const = 0;
 
   /**
    * Sets the time period for the individual simulation iterations.
    * @param d_t Simulated length of a single iteration
    */
   void setDeltaT(double const &d_t) { delta_t = d_t; }
+
+  /**
+   * @return Counted number of non zero force interactions between particles.
+   */
+  virtual size_t getHits() const { return 0; }
+
+  /**
+   * @return Counted number of interactions between particles, including zero force interactions.
+   */
+  virtual size_t getComparisons() const { return 0; }
 };

@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include "dataStructures/VectorContainer.h"
 #include "gtest/gtest.h"
 #include "model/LennardJonesModel.h"
 #include "model/NewtonsLawModel.h"

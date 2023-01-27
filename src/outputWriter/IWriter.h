@@ -6,6 +6,8 @@
 #include "dataStructures/Particle.h"
 class IWriter {
  public:
+  virtual ~IWriter() {}
+
   /**
    * Write the current state of each particle in the container to the specified
    * file

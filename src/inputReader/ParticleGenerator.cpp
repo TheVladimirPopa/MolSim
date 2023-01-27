@@ -7,6 +7,7 @@
 #include <array>
 using std::array;
 using vec3d = std::array<double, 3>;
+#include "dataStructures/MembraneStructure.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -95,4 +96,39 @@ void ParticleGeneration::addSphereToParticleContainer(IContainer &container, Par
   }
 
   spdlog::debug("Added sphere particles to particle container.");
+}
+
+void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
+                                                        ParticleGeneration::membrane const &data) {
+  if (data.dimension[0] != 1 && data.dimension[1] != 1 && data.dimension[2] != 1) {
+    spdlog::error("Only single layer membranes are supported. Please check your input file.");
+    exit(EXIT_FAILURE);
+  }
+
+  // Insert particles into container
+  std::array<double, 3> position{};
+  for (int x = 0; x < data.dimension[0]; ++x) {
+    for (int y = 0; y < data.dimension[1]; ++y) {
+      for (int z = 0; z < data.dimension[2]; ++z) {
+        position = data.position;
+        position[0] += x * data.distance;
+        position[1] += y * data.distance;
+        position[2] += z * data.distance;
+
+        container.emplace_back(position, data.velocity, data.mass, data.type);
+      }
+    }
+  }
+
+  // Then generate membrane structure. The last particles of the container are consider to be part of the structure.
+  std::array<size_t, 3> castedDimension = {static_cast<size_t>(data.dimension[0]),
+                                           static_cast<size_t>(data.dimension[1]),
+                                           static_cast<size_t>(data.dimension[2])};
+
+  MembraneStructure membrane{castedDimension, data.stiffness, data.bondLength, data.cutOffRadius,
+                             container.getParticlesRef()};
+  for (auto &mf : data.membraneForces)
+    membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
+
+  container.push_back(membrane);
 }
