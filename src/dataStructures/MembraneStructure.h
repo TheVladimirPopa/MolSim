@@ -156,13 +156,13 @@ class MembraneStructure {
   /**
    * @return The begin() iterator over the particles of the structure
    */
-  auto begin() { return particles->begin(); };
+  auto begin() { return particles->begin() + startIndex; };
 
   /**
    * @return The end() iterator over the particles of the structure
    */
   auto end() {
-    auto it = particles->begin();
+    auto it = begin();
     std::advance(it, particleCount);
     return it;
   }
