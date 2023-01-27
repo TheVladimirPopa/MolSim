@@ -18,7 +18,7 @@
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="10.0" cutOffRadius="2.0">
+        <LinkedCell cellSize="10.0" cutOffRadius="2.0" parallelization="None">
             <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
             <rightUpperBound x="55.0" y="30.0" z="5"/>
             <left>REFLECT</left>
