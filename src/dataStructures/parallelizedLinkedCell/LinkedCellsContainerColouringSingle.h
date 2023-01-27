@@ -40,7 +40,7 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
     }
 
     for (auto &colour : colourList) {
-#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(static, 2)
+#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(dynamic, 2)
       for (auto index : colour) {
         if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
           continue;
