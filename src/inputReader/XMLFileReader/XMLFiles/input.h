@@ -1094,7 +1094,7 @@ class linkedCellContainer_t : public ::xml_schema::type {
 
 class paraType_t : public ::xml_schema::string {
  public:
-  enum value { None, ColouringSingle, ColouringMultiple, ColouringLocks };
+  enum value { None, ColouringSingle, ColouringMultiple, Locks };
 
   paraType_t(value v);
 

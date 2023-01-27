@@ -103,7 +103,7 @@
             <xsd:enumeration value="None"/>
             <xsd:enumeration value="ColouringSingle"/>
             <xsd:enumeration value="ColouringMultiple"/>
-            <xsd:enumeration value="ColouringLocks"/>
+            <xsd:enumeration value="Locks"/>
         </xsd:restriction>
     </xsd:simpleType>
 

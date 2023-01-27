@@ -1701,11 +1701,10 @@ paraType_t::value paraType_t::_xsd_paraType_t_convert() const {
   return *i;
 }
 
-const char* const paraType_t::_xsd_paraType_t_literals_[4] = {"None", "ColouringSingle", "ColouringMultiple",
-                                                              "ColouringLocks"};
+const char* const paraType_t::_xsd_paraType_t_literals_[4] = {"None", "ColouringSingle", "ColouringMultiple", "Locks"};
 
 const paraType_t::value paraType_t::_xsd_paraType_t_indexes_[4] = {
-    ::paraType_t::ColouringLocks, ::paraType_t::ColouringMultiple, ::paraType_t::ColouringSingle, ::paraType_t::None};
+    ::paraType_t::ColouringMultiple, ::paraType_t::ColouringSingle, ::paraType_t::Locks, ::paraType_t::None};
 
 // vectorContainer_t
 //
