@@ -1,8 +1,13 @@
 #include "LinkedCellArg.h"
 
+#include <utility>
+
 LinkedCellArg::LinkedCellArg(double cellSize, const std::array<double, 3> &leftLowerBound,
-                             const std::array<double, 3> &rightUpperBound)
-    : cellSize(cellSize), leftLowerBound(leftLowerBound), rightUpperBound(rightUpperBound) {}
+                             const std::array<double, 3> &rightUpperBound, std::string parallelization)
+    : cellSize(cellSize),
+      leftLowerBound(leftLowerBound),
+      rightUpperBound(rightUpperBound),
+      parallelization{std::move(parallelization)} {}
 
 double LinkedCellArg::getCellSize() const { return cellSize; }
 
@@ -33,3 +38,5 @@ void LinkedCellArg::setBoundFront(const std::string &boundFront) { bound_front =
 const std::string &LinkedCellArg::getBoundBack() const { return bound_back; }
 
 void LinkedCellArg::setBoundBack(const std::string &boundBack) { bound_back = boundBack; }
+
+const std::string &LinkedCellArg::getParallelization() const { return parallelization; }
