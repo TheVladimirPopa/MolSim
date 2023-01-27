@@ -255,125 +255,6 @@ sphere_t::type_type& sphere_t::type() { return this->type_.get(); }
 
 void sphere_t::type(const type_type& x) { this->type_.set(x); }
 
-// linkedCellsColouringSingle_t
-//
-
-const linkedCellsColouringSingle_t::leftLowerBound_type& linkedCellsColouringSingle_t::leftLowerBound() const {
-  return this->leftLowerBound_.get();
-}
-
-linkedCellsColouringSingle_t::leftLowerBound_type& linkedCellsColouringSingle_t::leftLowerBound() {
-  return this->leftLowerBound_.get();
-}
-
-void linkedCellsColouringSingle_t::leftLowerBound(const leftLowerBound_type& x) { this->leftLowerBound_.set(x); }
-
-void linkedCellsColouringSingle_t::leftLowerBound(::std::unique_ptr<leftLowerBound_type> x) {
-  this->leftLowerBound_.set(std::move(x));
-}
-
-const linkedCellsColouringSingle_t::rightUpperBound_type& linkedCellsColouringSingle_t::rightUpperBound() const {
-  return this->rightUpperBound_.get();
-}
-
-linkedCellsColouringSingle_t::rightUpperBound_type& linkedCellsColouringSingle_t::rightUpperBound() {
-  return this->rightUpperBound_.get();
-}
-
-void linkedCellsColouringSingle_t::rightUpperBound(const rightUpperBound_type& x) { this->rightUpperBound_.set(x); }
-
-void linkedCellsColouringSingle_t::rightUpperBound(::std::unique_ptr<rightUpperBound_type> x) {
-  this->rightUpperBound_.set(std::move(x));
-}
-
-const linkedCellsColouringSingle_t::cellSize_type& linkedCellsColouringSingle_t::cellSize() const {
-  return this->cellSize_.get();
-}
-
-linkedCellsColouringSingle_t::cellSize_type& linkedCellsColouringSingle_t::cellSize() { return this->cellSize_.get(); }
-
-void linkedCellsColouringSingle_t::cellSize(const cellSize_type& x) { this->cellSize_.set(x); }
-
-// linkedCellsColouringMultiple_t
-//
-
-const linkedCellsColouringMultiple_t::leftLowerBound_type& linkedCellsColouringMultiple_t::leftLowerBound() const {
-  return this->leftLowerBound_.get();
-}
-
-linkedCellsColouringMultiple_t::leftLowerBound_type& linkedCellsColouringMultiple_t::leftLowerBound() {
-  return this->leftLowerBound_.get();
-}
-
-void linkedCellsColouringMultiple_t::leftLowerBound(const leftLowerBound_type& x) { this->leftLowerBound_.set(x); }
-
-void linkedCellsColouringMultiple_t::leftLowerBound(::std::unique_ptr<leftLowerBound_type> x) {
-  this->leftLowerBound_.set(std::move(x));
-}
-
-const linkedCellsColouringMultiple_t::rightUpperBound_type& linkedCellsColouringMultiple_t::rightUpperBound() const {
-  return this->rightUpperBound_.get();
-}
-
-linkedCellsColouringMultiple_t::rightUpperBound_type& linkedCellsColouringMultiple_t::rightUpperBound() {
-  return this->rightUpperBound_.get();
-}
-
-void linkedCellsColouringMultiple_t::rightUpperBound(const rightUpperBound_type& x) { this->rightUpperBound_.set(x); }
-
-void linkedCellsColouringMultiple_t::rightUpperBound(::std::unique_ptr<rightUpperBound_type> x) {
-  this->rightUpperBound_.set(std::move(x));
-}
-
-const linkedCellsColouringMultiple_t::cellSize_type& linkedCellsColouringMultiple_t::cellSize() const {
-  return this->cellSize_.get();
-}
-
-linkedCellsColouringMultiple_t::cellSize_type& linkedCellsColouringMultiple_t::cellSize() {
-  return this->cellSize_.get();
-}
-
-void linkedCellsColouringMultiple_t::cellSize(const cellSize_type& x) { this->cellSize_.set(x); }
-
-// linkedCellsColouringLocks_t
-//
-
-const linkedCellsColouringLocks_t::leftLowerBound_type& linkedCellsColouringLocks_t::leftLowerBound() const {
-  return this->leftLowerBound_.get();
-}
-
-linkedCellsColouringLocks_t::leftLowerBound_type& linkedCellsColouringLocks_t::leftLowerBound() {
-  return this->leftLowerBound_.get();
-}
-
-void linkedCellsColouringLocks_t::leftLowerBound(const leftLowerBound_type& x) { this->leftLowerBound_.set(x); }
-
-void linkedCellsColouringLocks_t::leftLowerBound(::std::unique_ptr<leftLowerBound_type> x) {
-  this->leftLowerBound_.set(std::move(x));
-}
-
-const linkedCellsColouringLocks_t::rightUpperBound_type& linkedCellsColouringLocks_t::rightUpperBound() const {
-  return this->rightUpperBound_.get();
-}
-
-linkedCellsColouringLocks_t::rightUpperBound_type& linkedCellsColouringLocks_t::rightUpperBound() {
-  return this->rightUpperBound_.get();
-}
-
-void linkedCellsColouringLocks_t::rightUpperBound(const rightUpperBound_type& x) { this->rightUpperBound_.set(x); }
-
-void linkedCellsColouringLocks_t::rightUpperBound(::std::unique_ptr<rightUpperBound_type> x) {
-  this->rightUpperBound_.set(std::move(x));
-}
-
-const linkedCellsColouringLocks_t::cellSize_type& linkedCellsColouringLocks_t::cellSize() const {
-  return this->cellSize_.get();
-}
-
-linkedCellsColouringLocks_t::cellSize_type& linkedCellsColouringLocks_t::cellSize() { return this->cellSize_.get(); }
-
-void linkedCellsColouringLocks_t::cellSize(const cellSize_type& x) { this->cellSize_.set(x); }
-
 // simTypes_t
 //
 
@@ -388,42 +269,6 @@ const simTypes_t::Sphere_sequence& simTypes_t::Sphere() const { return this->Sph
 simTypes_t::Sphere_sequence& simTypes_t::Sphere() { return this->Sphere_; }
 
 void simTypes_t::Sphere(const Sphere_sequence& s) { this->Sphere_ = s; }
-
-const simTypes_t::LinkedCellsColouringSingle_sequence& simTypes_t::LinkedCellsColouringSingle() const {
-  return this->LinkedCellsColouringSingle_;
-}
-
-simTypes_t::LinkedCellsColouringSingle_sequence& simTypes_t::LinkedCellsColouringSingle() {
-  return this->LinkedCellsColouringSingle_;
-}
-
-void simTypes_t::LinkedCellsColouringSingle(const LinkedCellsColouringSingle_sequence& s) {
-  this->LinkedCellsColouringSingle_ = s;
-}
-
-const simTypes_t::LinkedCellsColouringMultiple_sequence& simTypes_t::LinkedCellsColouringMultiple() const {
-  return this->LinkedCellsColouringMultiple_;
-}
-
-simTypes_t::LinkedCellsColouringMultiple_sequence& simTypes_t::LinkedCellsColouringMultiple() {
-  return this->LinkedCellsColouringMultiple_;
-}
-
-void simTypes_t::LinkedCellsColouringMultiple(const LinkedCellsColouringMultiple_sequence& s) {
-  this->LinkedCellsColouringMultiple_ = s;
-}
-
-const simTypes_t::LinkedCellsColouringLocks_sequence& simTypes_t::LinkedCellsColouringLocks() const {
-  return this->LinkedCellsColouringLocks_;
-}
-
-simTypes_t::LinkedCellsColouringLocks_sequence& simTypes_t::LinkedCellsColouringLocks() {
-  return this->LinkedCellsColouringLocks_;
-}
-
-void simTypes_t::LinkedCellsColouringLocks(const LinkedCellsColouringLocks_sequence& s) {
-  this->LinkedCellsColouringLocks_ = s;
-}
 
 // input_t
 //
@@ -535,6 +380,40 @@ const linkedCellContainer_t::cellSize_type& linkedCellContainer_t::cellSize() co
 linkedCellContainer_t::cellSize_type& linkedCellContainer_t::cellSize() { return this->cellSize_.get(); }
 
 void linkedCellContainer_t::cellSize(const cellSize_type& x) { this->cellSize_.set(x); }
+
+const linkedCellContainer_t::parallelization_type& linkedCellContainer_t::parallelization() const {
+  return this->parallelization_.get();
+}
+
+linkedCellContainer_t::parallelization_type& linkedCellContainer_t::parallelization() {
+  return this->parallelization_.get();
+}
+
+void linkedCellContainer_t::parallelization(const parallelization_type& x) { this->parallelization_.set(x); }
+
+void linkedCellContainer_t::parallelization(::std::unique_ptr<parallelization_type> x) {
+  this->parallelization_.set(std::move(x));
+}
+
+// paraType_t
+//
+
+paraType_t::paraType_t(value v) : ::xml_schema::string(_xsd_paraType_t_literals_[v]) {}
+
+paraType_t::paraType_t(const char* v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const ::std::string& v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const ::xml_schema::string& v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const paraType_t& v, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(v, f, c) {}
+
+paraType_t& paraType_t::operator=(value v) {
+  static_cast< ::xml_schema::string&>(*this) = ::xml_schema::string(_xsd_paraType_t_literals_[v]);
+
+  return *this;
+}
 
 // vectorContainer_t
 //
@@ -1377,359 +1256,16 @@ sphere_t& sphere_t::operator=(const sphere_t& x) {
 
 sphere_t::~sphere_t() {}
 
-// linkedCellsColouringSingle_t
-//
-
-linkedCellsColouringSingle_t::linkedCellsColouringSingle_t(const leftLowerBound_type& leftLowerBound,
-                                                           const rightUpperBound_type& rightUpperBound,
-                                                           const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(leftLowerBound, this),
-      rightUpperBound_(rightUpperBound, this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringSingle_t::linkedCellsColouringSingle_t(::std::unique_ptr<leftLowerBound_type> leftLowerBound,
-                                                           ::std::unique_ptr<rightUpperBound_type> rightUpperBound,
-                                                           const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(std::move(leftLowerBound), this),
-      rightUpperBound_(std::move(rightUpperBound), this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringSingle_t::linkedCellsColouringSingle_t(const linkedCellsColouringSingle_t& x, ::xml_schema::flags f,
-                                                           ::xml_schema::container* c)
-    : ::xml_schema::type(x, f, c),
-      leftLowerBound_(x.leftLowerBound_, f, this),
-      rightUpperBound_(x.rightUpperBound_, f, this),
-      cellSize_(x.cellSize_, f, this) {}
-
-linkedCellsColouringSingle_t::linkedCellsColouringSingle_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                                                           ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      leftLowerBound_(this),
-      rightUpperBound_(this),
-      cellSize_(this) {
-  if ((f & ::xml_schema::flags::base) == 0) {
-    ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
-    this->parse(p, f);
-  }
-}
-
-void linkedCellsColouringSingle_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
-  for (; p.more_content(); p.next_content(false)) {
-    const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    // leftLowerBound
-    //
-    if (n.name() == "leftLowerBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<leftLowerBound_type> r(leftLowerBound_traits::create(i, f, this));
-
-      if (!leftLowerBound_.present()) {
-        this->leftLowerBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    // rightUpperBound
-    //
-    if (n.name() == "rightUpperBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<rightUpperBound_type> r(rightUpperBound_traits::create(i, f, this));
-
-      if (!rightUpperBound_.present()) {
-        this->rightUpperBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!leftLowerBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("leftLowerBound", "");
-  }
-
-  if (!rightUpperBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("rightUpperBound", "");
-  }
-
-  while (p.more_attributes()) {
-    const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    if (n.name() == "cellSize" && n.namespace_().empty()) {
-      this->cellSize_.set(cellSize_traits::create(i, f, this));
-      continue;
-    }
-  }
-
-  if (!cellSize_.present()) {
-    throw ::xsd::cxx::tree::expected_attribute<char>("cellSize", "");
-  }
-}
-
-linkedCellsColouringSingle_t* linkedCellsColouringSingle_t::_clone(::xml_schema::flags f,
-                                                                   ::xml_schema::container* c) const {
-  return new class linkedCellsColouringSingle_t(*this, f, c);
-}
-
-linkedCellsColouringSingle_t& linkedCellsColouringSingle_t::operator=(const linkedCellsColouringSingle_t& x) {
-  if (this != &x) {
-    static_cast< ::xml_schema::type&>(*this) = x;
-    this->leftLowerBound_ = x.leftLowerBound_;
-    this->rightUpperBound_ = x.rightUpperBound_;
-    this->cellSize_ = x.cellSize_;
-  }
-
-  return *this;
-}
-
-linkedCellsColouringSingle_t::~linkedCellsColouringSingle_t() {}
-
-// linkedCellsColouringMultiple_t
-//
-
-linkedCellsColouringMultiple_t::linkedCellsColouringMultiple_t(const leftLowerBound_type& leftLowerBound,
-                                                               const rightUpperBound_type& rightUpperBound,
-                                                               const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(leftLowerBound, this),
-      rightUpperBound_(rightUpperBound, this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringMultiple_t::linkedCellsColouringMultiple_t(::std::unique_ptr<leftLowerBound_type> leftLowerBound,
-                                                               ::std::unique_ptr<rightUpperBound_type> rightUpperBound,
-                                                               const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(std::move(leftLowerBound), this),
-      rightUpperBound_(std::move(rightUpperBound), this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringMultiple_t::linkedCellsColouringMultiple_t(const linkedCellsColouringMultiple_t& x,
-                                                               ::xml_schema::flags f, ::xml_schema::container* c)
-    : ::xml_schema::type(x, f, c),
-      leftLowerBound_(x.leftLowerBound_, f, this),
-      rightUpperBound_(x.rightUpperBound_, f, this),
-      cellSize_(x.cellSize_, f, this) {}
-
-linkedCellsColouringMultiple_t::linkedCellsColouringMultiple_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                                                               ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      leftLowerBound_(this),
-      rightUpperBound_(this),
-      cellSize_(this) {
-  if ((f & ::xml_schema::flags::base) == 0) {
-    ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
-    this->parse(p, f);
-  }
-}
-
-void linkedCellsColouringMultiple_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
-  for (; p.more_content(); p.next_content(false)) {
-    const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    // leftLowerBound
-    //
-    if (n.name() == "leftLowerBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<leftLowerBound_type> r(leftLowerBound_traits::create(i, f, this));
-
-      if (!leftLowerBound_.present()) {
-        this->leftLowerBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    // rightUpperBound
-    //
-    if (n.name() == "rightUpperBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<rightUpperBound_type> r(rightUpperBound_traits::create(i, f, this));
-
-      if (!rightUpperBound_.present()) {
-        this->rightUpperBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!leftLowerBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("leftLowerBound", "");
-  }
-
-  if (!rightUpperBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("rightUpperBound", "");
-  }
-
-  while (p.more_attributes()) {
-    const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    if (n.name() == "cellSize" && n.namespace_().empty()) {
-      this->cellSize_.set(cellSize_traits::create(i, f, this));
-      continue;
-    }
-  }
-
-  if (!cellSize_.present()) {
-    throw ::xsd::cxx::tree::expected_attribute<char>("cellSize", "");
-  }
-}
-
-linkedCellsColouringMultiple_t* linkedCellsColouringMultiple_t::_clone(::xml_schema::flags f,
-                                                                       ::xml_schema::container* c) const {
-  return new class linkedCellsColouringMultiple_t(*this, f, c);
-}
-
-linkedCellsColouringMultiple_t& linkedCellsColouringMultiple_t::operator=(const linkedCellsColouringMultiple_t& x) {
-  if (this != &x) {
-    static_cast< ::xml_schema::type&>(*this) = x;
-    this->leftLowerBound_ = x.leftLowerBound_;
-    this->rightUpperBound_ = x.rightUpperBound_;
-    this->cellSize_ = x.cellSize_;
-  }
-
-  return *this;
-}
-
-linkedCellsColouringMultiple_t::~linkedCellsColouringMultiple_t() {}
-
-// linkedCellsColouringLocks_t
-//
-
-linkedCellsColouringLocks_t::linkedCellsColouringLocks_t(const leftLowerBound_type& leftLowerBound,
-                                                         const rightUpperBound_type& rightUpperBound,
-                                                         const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(leftLowerBound, this),
-      rightUpperBound_(rightUpperBound, this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringLocks_t::linkedCellsColouringLocks_t(::std::unique_ptr<leftLowerBound_type> leftLowerBound,
-                                                         ::std::unique_ptr<rightUpperBound_type> rightUpperBound,
-                                                         const cellSize_type& cellSize)
-    : ::xml_schema::type(),
-      leftLowerBound_(std::move(leftLowerBound), this),
-      rightUpperBound_(std::move(rightUpperBound), this),
-      cellSize_(cellSize, this) {}
-
-linkedCellsColouringLocks_t::linkedCellsColouringLocks_t(const linkedCellsColouringLocks_t& x, ::xml_schema::flags f,
-                                                         ::xml_schema::container* c)
-    : ::xml_schema::type(x, f, c),
-      leftLowerBound_(x.leftLowerBound_, f, this),
-      rightUpperBound_(x.rightUpperBound_, f, this),
-      cellSize_(x.cellSize_, f, this) {}
-
-linkedCellsColouringLocks_t::linkedCellsColouringLocks_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
-                                                         ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      leftLowerBound_(this),
-      rightUpperBound_(this),
-      cellSize_(this) {
-  if ((f & ::xml_schema::flags::base) == 0) {
-    ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
-    this->parse(p, f);
-  }
-}
-
-void linkedCellsColouringLocks_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
-  for (; p.more_content(); p.next_content(false)) {
-    const ::xercesc::DOMElement& i(p.cur_element());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    // leftLowerBound
-    //
-    if (n.name() == "leftLowerBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<leftLowerBound_type> r(leftLowerBound_traits::create(i, f, this));
-
-      if (!leftLowerBound_.present()) {
-        this->leftLowerBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    // rightUpperBound
-    //
-    if (n.name() == "rightUpperBound" && n.namespace_().empty()) {
-      ::std::unique_ptr<rightUpperBound_type> r(rightUpperBound_traits::create(i, f, this));
-
-      if (!rightUpperBound_.present()) {
-        this->rightUpperBound_.set(::std::move(r));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!leftLowerBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("leftLowerBound", "");
-  }
-
-  if (!rightUpperBound_.present()) {
-    throw ::xsd::cxx::tree::expected_element<char>("rightUpperBound", "");
-  }
-
-  while (p.more_attributes()) {
-    const ::xercesc::DOMAttr& i(p.next_attribute());
-    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
-
-    if (n.name() == "cellSize" && n.namespace_().empty()) {
-      this->cellSize_.set(cellSize_traits::create(i, f, this));
-      continue;
-    }
-  }
-
-  if (!cellSize_.present()) {
-    throw ::xsd::cxx::tree::expected_attribute<char>("cellSize", "");
-  }
-}
-
-linkedCellsColouringLocks_t* linkedCellsColouringLocks_t::_clone(::xml_schema::flags f,
-                                                                 ::xml_schema::container* c) const {
-  return new class linkedCellsColouringLocks_t(*this, f, c);
-}
-
-linkedCellsColouringLocks_t& linkedCellsColouringLocks_t::operator=(const linkedCellsColouringLocks_t& x) {
-  if (this != &x) {
-    static_cast< ::xml_schema::type&>(*this) = x;
-    this->leftLowerBound_ = x.leftLowerBound_;
-    this->rightUpperBound_ = x.rightUpperBound_;
-    this->cellSize_ = x.cellSize_;
-  }
-
-  return *this;
-}
-
-linkedCellsColouringLocks_t::~linkedCellsColouringLocks_t() {}
-
 // simTypes_t
 //
 
-simTypes_t::simTypes_t()
-    : ::xml_schema::type(),
-      Cuboid_(this),
-      Sphere_(this),
-      LinkedCellsColouringSingle_(this),
-      LinkedCellsColouringMultiple_(this),
-      LinkedCellsColouringLocks_(this) {}
+simTypes_t::simTypes_t() : ::xml_schema::type(), Cuboid_(this), Sphere_(this) {}
 
 simTypes_t::simTypes_t(const simTypes_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
-    : ::xml_schema::type(x, f, c),
-      Cuboid_(x.Cuboid_, f, this),
-      Sphere_(x.Sphere_, f, this),
-      LinkedCellsColouringSingle_(x.LinkedCellsColouringSingle_, f, this),
-      LinkedCellsColouringMultiple_(x.LinkedCellsColouringMultiple_, f, this),
-      LinkedCellsColouringLocks_(x.LinkedCellsColouringLocks_, f, this) {}
+    : ::xml_schema::type(x, f, c), Cuboid_(x.Cuboid_, f, this), Sphere_(x.Sphere_, f, this) {}
 
 simTypes_t::simTypes_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
-    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
-      Cuboid_(this),
-      Sphere_(this),
-      LinkedCellsColouringSingle_(this),
-      LinkedCellsColouringMultiple_(this),
-      LinkedCellsColouringLocks_(this) {
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c), Cuboid_(this), Sphere_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, false);
     this->parse(p, f);
@@ -1759,33 +1295,6 @@ void simTypes_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flag
       continue;
     }
 
-    // LinkedCellsColouringSingle
-    //
-    if (n.name() == "LinkedCellsColouringSingle" && n.namespace_().empty()) {
-      ::std::unique_ptr<LinkedCellsColouringSingle_type> r(LinkedCellsColouringSingle_traits::create(i, f, this));
-
-      this->LinkedCellsColouringSingle_.push_back(::std::move(r));
-      continue;
-    }
-
-    // LinkedCellsColouringMultiple
-    //
-    if (n.name() == "LinkedCellsColouringMultiple" && n.namespace_().empty()) {
-      ::std::unique_ptr<LinkedCellsColouringMultiple_type> r(LinkedCellsColouringMultiple_traits::create(i, f, this));
-
-      this->LinkedCellsColouringMultiple_.push_back(::std::move(r));
-      continue;
-    }
-
-    // LinkedCellsColouringLocks
-    //
-    if (n.name() == "LinkedCellsColouringLocks" && n.namespace_().empty()) {
-      ::std::unique_ptr<LinkedCellsColouringLocks_type> r(LinkedCellsColouringLocks_traits::create(i, f, this));
-
-      this->LinkedCellsColouringLocks_.push_back(::std::move(r));
-      continue;
-    }
-
     break;
   }
 }
@@ -1799,9 +1308,6 @@ simTypes_t& simTypes_t::operator=(const simTypes_t& x) {
     static_cast< ::xml_schema::type&>(*this) = x;
     this->Cuboid_ = x.Cuboid_;
     this->Sphere_ = x.Sphere_;
-    this->LinkedCellsColouringSingle_ = x.LinkedCellsColouringSingle_;
-    this->LinkedCellsColouringMultiple_ = x.LinkedCellsColouringMultiple_;
-    this->LinkedCellsColouringLocks_ = x.LinkedCellsColouringLocks_;
   }
 
   return *this;
@@ -1922,7 +1428,7 @@ linkedCellContainer_t::linkedCellContainer_t(const leftLowerBound_type& leftLowe
                                              const rightUpperBound_type& rightUpperBound, const left_type& left,
                                              const right_type& right, const top_type& top, const bottom_type& bottom,
                                              const front_type& front, const back_type& back,
-                                             const cellSize_type& cellSize)
+                                             const cellSize_type& cellSize, const parallelization_type& parallelization)
     : ::xml_schema::type(),
       leftLowerBound_(leftLowerBound, this),
       rightUpperBound_(rightUpperBound, this),
@@ -1932,13 +1438,14 @@ linkedCellContainer_t::linkedCellContainer_t(const leftLowerBound_type& leftLowe
       bottom_(bottom, this),
       front_(front, this),
       back_(back, this),
-      cellSize_(cellSize, this) {}
+      cellSize_(cellSize, this),
+      parallelization_(parallelization, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(::std::unique_ptr<leftLowerBound_type> leftLowerBound,
                                              ::std::unique_ptr<rightUpperBound_type> rightUpperBound,
                                              const left_type& left, const right_type& right, const top_type& top,
                                              const bottom_type& bottom, const front_type& front, const back_type& back,
-                                             const cellSize_type& cellSize)
+                                             const cellSize_type& cellSize, const parallelization_type& parallelization)
     : ::xml_schema::type(),
       leftLowerBound_(std::move(leftLowerBound), this),
       rightUpperBound_(std::move(rightUpperBound), this),
@@ -1948,7 +1455,8 @@ linkedCellContainer_t::linkedCellContainer_t(::std::unique_ptr<leftLowerBound_ty
       bottom_(bottom, this),
       front_(front, this),
       back_(back, this),
-      cellSize_(cellSize, this) {}
+      cellSize_(cellSize, this),
+      parallelization_(parallelization, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(const linkedCellContainer_t& x, ::xml_schema::flags f,
                                              ::xml_schema::container* c)
@@ -1961,7 +1469,8 @@ linkedCellContainer_t::linkedCellContainer_t(const linkedCellContainer_t& x, ::x
       bottom_(x.bottom_, f, this),
       front_(x.front_, f, this),
       back_(x.back_, f, this),
-      cellSize_(x.cellSize_, f, this) {}
+      cellSize_(x.cellSize_, f, this),
+      parallelization_(x.parallelization_, f, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
                                              ::xml_schema::container* c)
@@ -1974,7 +1483,8 @@ linkedCellContainer_t::linkedCellContainer_t(const ::xercesc::DOMElement& e, ::x
       bottom_(this),
       front_(this),
       back_(this),
-      cellSize_(this) {
+      cellSize_(this),
+      parallelization_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
     this->parse(p, f);
@@ -2117,10 +1627,19 @@ void linkedCellContainer_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_s
       this->cellSize_.set(cellSize_traits::create(i, f, this));
       continue;
     }
+
+    if (n.name() == "parallelization" && n.namespace_().empty()) {
+      this->parallelization_.set(parallelization_traits::create(i, f, this));
+      continue;
+    }
   }
 
   if (!cellSize_.present()) {
     throw ::xsd::cxx::tree::expected_attribute<char>("cellSize", "");
+  }
+
+  if (!parallelization_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("parallelization", "");
   }
 }
 
@@ -2140,12 +1659,53 @@ linkedCellContainer_t& linkedCellContainer_t::operator=(const linkedCellContaine
     this->front_ = x.front_;
     this->back_ = x.back_;
     this->cellSize_ = x.cellSize_;
+    this->parallelization_ = x.parallelization_;
   }
 
   return *this;
 }
 
 linkedCellContainer_t::~linkedCellContainer_t() {}
+
+// paraType_t
+//
+
+paraType_t::paraType_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(e, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t::paraType_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(a, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t::paraType_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f,
+                       ::xml_schema::container* c)
+    : ::xml_schema::string(s, e, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t* paraType_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class paraType_t(*this, f, c);
+}
+
+paraType_t::value paraType_t::_xsd_paraType_t_convert() const {
+  ::xsd::cxx::tree::enum_comparator<char> c(_xsd_paraType_t_literals_);
+  const value* i(::std::lower_bound(_xsd_paraType_t_indexes_, _xsd_paraType_t_indexes_ + 4, *this, c));
+
+  if (i == _xsd_paraType_t_indexes_ + 4 || _xsd_paraType_t_literals_[*i] != *this) {
+    throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
+  }
+
+  return *i;
+}
+
+const char* const paraType_t::_xsd_paraType_t_literals_[4] = {"None", "ColouringSingle", "ColouringMultiple",
+                                                              "ColouringLocks"};
+
+const paraType_t::value paraType_t::_xsd_paraType_t_indexes_[4] = {
+    ::paraType_t::ColouringLocks, ::paraType_t::ColouringMultiple, ::paraType_t::ColouringSingle, ::paraType_t::None};
 
 // vectorContainer_t
 //
@@ -2877,4 +2437,3 @@ membrane_force::~membrane_force() {}
 //
 //
 // End epilogue.
-

@@ -14,10 +14,11 @@ class LinkedCellArg {
   std::string bound_bottom;
   std::string bound_front;
   std::string bound_back;
+  std::string parallelization;
 
  public:
   LinkedCellArg(double cellSize, const std::array<double, 3> &leftLowerBound,
-                const std::array<double, 3> &rightUpperBound);
+                const std::array<double, 3> &rightUpperBound, std::string parallelization);
 
   [[nodiscard]] double getCellSize() const;
 
@@ -26,6 +27,8 @@ class LinkedCellArg {
   [[nodiscard]] const std::array<double, 3> &getRightUpperBound() const;
 
   [[nodiscard]] const std::string &getBoundLeft() const;
+
+  [[nodiscard]] const std::string &getParallelization() const;
 
   void setBoundLeft(const std::string &boundLeft);
 

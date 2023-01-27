@@ -6,7 +6,6 @@
 #include "dataStructures/LinkedCellsContainer.h"
 #include "inputReader/XMLFileReader/Args/CuboidArg.h"
 #include "inputReader/XMLFileReader/Args/LinkedCellArg.h"
-#include "inputReader/XMLFileReader/Args/LinkedCellsColouringArg.h"
 #include "inputReader/XMLFileReader/Args/MembraneArg.h"
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
@@ -89,21 +88,21 @@ class XMLParser {
   ContainerType getContainerType() {
     if (simulation->Container_T().front().VectorCont().size() > 0) return ContainerType::VECTOR;
 
-    if (simulation->Container_T().front().LinkedCell().size() > 0) return ContainerType::LINKED_CELLS;
+    if (simulation->Container_T().front().LinkedCell().size() > 0) {
+      std::string parallelization = simulation->Container_T().front().LinkedCell().front().parallelization();
 
-    /** TODO UNCOMMENT THIS, ONCE THE SCHEMA IS UPDATED
-    if (simulation->Container_T().front().LinkedCellsColouringSingle().size() > 0)
-      return ContainerType::LINKED_CELLS_COLOURING_SINGLE;
+      if (parallelization == "None") return ContainerType::LINKED_CELLS;
 
-    if (simulation->Container_T().front().LinkedCellsColouringMultiple().size() > 0)
-      return ContainerType::LINKED_CELLS_COLOURING_MULTIPLE;
+      if (parallelization == "ColouringSingle") return ContainerType::LINKED_CELLS_COLOURING_SINGLE;
 
-    if (simulation->Container_T().front().LinkedCellsColouringLocks().size() > 0)
-      return ContainerType::LINKED_CELLS_LOCKS;
-    */
+      if (parallelization == "ColouringMultiple") return ContainerType::LINKED_CELLS_COLOURING_MULTIPLE;
 
-    throw std::runtime_error("Please update XMLParser.h if there is a new container type.");
+      if (parallelization == "ColouringLocks") return ContainerType::LINKED_CELLS_LOCKS;
+    }
+
+    throw std::runtime_error("Please update XMLParser.h, if there is a new container type.");
   }
+
   /**
    * Extracts the arguments (boundaries, cellSize) used to initialise a
    * LinkedCellContainer from the XML file
@@ -124,8 +123,9 @@ class XMLParser {
     auto bottom = c.bottom();
     auto front = c.front();
     auto back = c.back();
+    auto para = c.parallelization();
 
-    LinkedCellArg linkedCellArg = LinkedCellArg(cs, generate_double_array(lb), generate_double_array(rb));
+    LinkedCellArg linkedCellArg = LinkedCellArg(cs, generate_double_array(lb), generate_double_array(rb), para);
     linkedCellArg.setBoundLeft(left);
     linkedCellArg.setBoundRight(right);
     linkedCellArg.setBoundTop(top);
@@ -220,66 +220,6 @@ class XMLParser {
     return membraneForces;
   }
   /**
-   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringSingles
-   * from the XML file
-   * @return Returns a vector of linkedCellsColouringArg
-   */
-  [[nodiscard]] std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringSingle() const {
-    std::vector<LinkedCellsColouringArg> singleArgs;
-
-    for (auto &it : simulation->SimTypes()) {
-      for (auto &s : it.LinkedCellsColouringSingle()) {
-        auto cs = s.cellSize();
-        auto lb = s.leftLowerBound();
-        auto rb = s.rightUpperBound();
-
-        singleArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
-      }
-    }
-
-    return singleArgs;
-  }
-  /**
-   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringMultiples
-   * from the XML file
-   * @return Returns a vector of linkedCellsColouringArg
-   */
-  [[nodiscard]] std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringMultiple() const {
-    std::vector<LinkedCellsColouringArg> multipleArgs;
-
-    for (auto &it : simulation->SimTypes()) {
-      for (auto &s : it.LinkedCellsColouringMultiple()) {
-        auto cs = s.cellSize();
-        auto lb = s.leftLowerBound();
-        auto rb = s.rightUpperBound();
-
-        multipleArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
-      }
-    }
-
-    return multipleArgs;
-  }
-  /**
-   * Extracts the arguments (cellSize, leftLowerBound, rightUpperBound) used to initialise linkedCellsColouringLocks
-   * from the XML file
-   * @return Returns a vector of linkedCellsColouringArg
-   */
-  std::vector<LinkedCellsColouringArg> extractLinkedCellsColouringLocks() const {
-    std::vector<LinkedCellsColouringArg> locksArgs;
-
-    for (auto &it : simulation->SimTypes()) {
-      for (auto &s : it.LinkedCellsColouringLocks()) {
-        auto cs = s.cellSize();
-        auto lb = s.leftLowerBound();
-        auto rb = s.rightUpperBound();
-
-        locksArgs.emplace_back(cs, generate_double_array(lb), generate_double_array(rb));
-      }
-    }
-
-    return locksArgs;
-  }
-  /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
    * @return Returns a ThermostatArg
@@ -342,21 +282,6 @@ class XMLParser {
     }
 
     return cuboids;
-  }
-
-  void initialiseLinkedCellsSinglesFromXML() const {
-    std::vector<LinkedCellsColouringArg> singleArgs = this->extractLinkedCellsColouringSingle();
-    // init
-  }
-
-  void initialiseLinkedCellsMultiplesFromXML() const {
-    std::vector<LinkedCellsColouringArg> multipleArgs = this->extractLinkedCellsColouringMultiple();
-    // init
-  }
-
-  void initialiseLinkedCellsLocksFromXML() const {
-    std::vector<LinkedCellsColouringArg> multipleArgs = this->extractLinkedCellsColouringLocks();
-    // init
   }
 
   /**
@@ -441,7 +366,6 @@ class XMLParser {
    */
   [[nodiscard]] ModelType getModel() const {
     // TODO: Read this value from "simulation" once the xml part is updated
-
     return ModelType::LennardJones;
   }
 
@@ -462,6 +386,7 @@ class XMLParser {
     LinkedCellArg linkedCellArg = extractLinkedCell();
     std::array<double, 3> lowerBound = linkedCellArg.getLeftLowerBound();
     std::array<double, 3> upperBound = linkedCellArg.getRightUpperBound();
+    std::string parallelization = linkedCellArg.getParallelization();
     auto container = std::make_unique<LinkedCellsContainer>(linkedCellArg.getCellSize(), lowerBound, upperBound);
     applyBoundariesFromXML(*container);
     return container;
