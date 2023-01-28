@@ -49,7 +49,7 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 ```
 Usage
         ./MolSim -i <filepath> [-f <input-file>] [-t (single|cuboid|sphere)] [-o <output-file>] [-e <endtime>]
-                                [-d <deltaT>] [-w <iteration-count>] [-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q]
+                                [-d <deltaT>] [-w <iteration-count>] [-n] [-j] [-p] [-r] [-s] [-c] [-v] [-v] [-q]
 
 OPTIONS:
         -i <filepath>, --xml=<filepath>
@@ -67,6 +67,10 @@ OPTIONS:
                 Use the given <filepath> as the path for 
                 the outputfiles(iteration number and file-ending are added automatically)
                 If not specified "MD_vtk" is used
+                
+        -j, --statistics
+                If active particle statistics (e.g. the radial distribution function) will
+                be printed out
                 
         -n, --no-output
                 If active no files will be written, even overwrites -o.

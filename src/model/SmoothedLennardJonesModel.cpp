@@ -1,14 +1,13 @@
 #include "SmoothedLennardJonesModel.h"
 
-#include "LennardJonesModel.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::dotProduct;
 
-void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) {
+void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   double length = dotProduct(p1.x - p2.x);  // d_ij
-  ++comparisons;
+  //++comparisons;
   if (length >= radius_c * radius_c) return;
-  ++hits;
+  //++hits;
 
   // Calculate (sigma⁶/length³)
   double sigma = (p1.sigma + p2.sigma) / 2;

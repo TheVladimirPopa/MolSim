@@ -13,7 +13,7 @@ enum class ContainerType {
 };
 
 /// Type of the used model
-enum class ModelType { NewtonsLaw, LennardJones };
+enum class ModelType { NewtonsLaw, LennardJones, SmoothedLennardJones };
 
 /// Type of the used writer
 enum class WriterType { NoWriter, VTKWriter };

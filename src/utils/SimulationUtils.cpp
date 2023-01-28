@@ -1,6 +1,7 @@
 #include "SimulationUtils.h"
 
 #include "dataStructures/VectorContainer.h"
+#include "model/SmoothedLennardJonesModel.h"
 
 std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.
@@ -62,11 +63,13 @@ void SimulationUtils::loadCheckpoint(IContainer& container, std::string checkpoi
   spdlog::info("Loading checkpoint file.");
   FileReader::readFileCheckpoint(container, checkpointPath.data());
 }
-std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double deltaT, double cutOff) {
+std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double deltaT, double cutOff, double radius_l) {
   std::unique_ptr<IModel> model;
 
   if (modelType == ModelType::LennardJones) {
     model = std::make_unique<LennardJonesModel>(cutOff);
+  } else if (modelType == ModelType::SmoothedLennardJones) {
+    model = std::make_unique<SmoothedLennardJonesModel>(cutOff, radius_l);
   } else if (modelType == ModelType::NewtonsLaw) {
     model = std::make_unique<NewtonsLawModel>();
   } else {

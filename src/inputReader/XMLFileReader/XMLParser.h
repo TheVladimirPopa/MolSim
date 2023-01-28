@@ -372,15 +372,22 @@ class XMLParser {
    * @return The selected model
    */
   [[nodiscard]] ModelType getModel() const {
-    // TODO: Read this value from "simulation" once the xml part is updated
-    return ModelType::LennardJones;
+//    return ModelType::SmoothedLennardJones;
+    if (simulation->Model() == "LennardJones") {
+      return ModelType::LennardJones;
+    } else if (simulation->Model() == "SmoothedLennardJones") {
+      return ModelType::SmoothedLennardJones;
+    } else if (simulation->Model() == "Gravity") {
+      return ModelType::NewtonsLaw;
+    }
+    throw std::invalid_argument("Invalid model");
   }
 
   /**
    * Initialises the radius_l from the path file
    * @return
    */
-  double initRadius_l() { return simulation->radius_l(); }
+  double getRadius_l() { return simulation->radius_l(); }
   /**
    * Registers the particles read in the path file
    */

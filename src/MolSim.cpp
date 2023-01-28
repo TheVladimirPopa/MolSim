@@ -41,7 +41,8 @@ int main(int argc, char* argsv[]) {
   if (config.hasLoadCheckpointEnabled()) SimulationUtils::loadCheckpoint(*container, config.getCheckpointPath());
 
   // 3. Select model, writer, prepare thermostat
-  auto model = SimulationUtils::makeModel(config.getSelectedModel(), config.getDeltaT(), config.getCutOff());
+  auto model = SimulationUtils::makeModel(config.getSelectedModel(), config.getDeltaT(), config.getCutOff(),
+                                          config.getRadiusL());
   auto writer = config.hasFileOutputEnabled() ? SimulationUtils::makeWriter(WriterType::VTKWriter)
                                               : SimulationUtils::makeWriter(WriterType::NoWriter);
   auto thermostat = isXmlInput ? SimulationUtils::makeThermostat(*container, *config.getThermostat())
@@ -60,7 +61,7 @@ int main(int argc, char* argsv[]) {
   auto startTime = std::chrono::steady_clock::now();
 
   simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
-                      config.hasWriteCheckpointEnabled());
+                      config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics());
 
   auto endTime = std::chrono::steady_clock::now();
 

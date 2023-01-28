@@ -61,7 +61,7 @@ void loadCheckpoint(IContainer &container, std::string checkpointPath);
  * @param cutOff The cutoff radius which is used by the model
  * @return The prepared model
  */
-std::unique_ptr<IModel> makeModel(ModelType modelType, double deltaT, double cutOff = 1e9);
+std::unique_ptr<IModel> makeModel(ModelType modelType, double deltaT, double cutOff = 1e9, double radius_l = 1e9);
 
 /**
  * Makes a writer that can output the contents of a container to a file

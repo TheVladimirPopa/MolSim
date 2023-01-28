@@ -17,7 +17,7 @@ class SmoothedLennardJonesModel : public IModel {
    * @param radius_l
    */
   explicit SmoothedLennardJonesModel(double cutOffRadius, double radius_l)
-      : radius_c{cutOffRadius}, radius_l{radius_l} {};
+      : radius_c{cutOffRadius * cutOffRadius}, radius_l{radius_l} {};
   ~SmoothedLennardJonesModel() = default;
 
   /**
@@ -25,7 +25,7 @@ class SmoothedLennardJonesModel : public IModel {
    * @param p1 The particle which influences particle p2
    * @param p2 The particle which influences particle p1
    */
-  void addForces(Particle &p1, Particle &p2);
+  void addForces(Particle &p1, Particle &p2) const override;
 
   size_t getHits() const { return hits; }
   size_t getComparisons() const { return comparisons; }

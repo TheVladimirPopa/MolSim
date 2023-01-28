@@ -35,6 +35,9 @@ class Configuration {
   /// Whether or not to write a checkpoint file after the simulation is finished
   bool writeCheckpoint{false};
 
+  /// Whether or not to write thermodynamic statistics for the simulation
+  bool registerStatistics{false};
+
   /// Whether or not to write files
   bool disableFileWriting{false};
 
@@ -53,6 +56,9 @@ class Configuration {
 
   /// The cutoff distance after which for a particle pair force calculation is ignored
   double cutOff{4.0};
+
+  /// The radius for the SmoothedLennardJones Model
+  double radius_l{4.0};
 
   /// The type of the container where particles are stored (e.g. vector or linked cells)
   ContainerType containerType{ContainerType::LINKED_CELLS};
@@ -129,6 +135,7 @@ class Configuration {
   [[nodiscard]] bool hasFileOutputEnabled() const { return !disableFileWriting; };
   [[nodiscard]] bool hasLoadCheckpointEnabled() const { return readCheckpoint; }
   [[nodiscard]] bool hasWriteCheckpointEnabled() const { return writeCheckpoint; }
+  [[nodiscard]] bool hasRegisterStatistics() const { return registerStatistics; }
   [[nodiscard]] bool hasPerformanceMeasureEnabled() const { return performanceMeasure; };
   [[nodiscard]] bool hasHitrateMeasureEnabled() const { return hitRateMeasure; };
 
@@ -138,6 +145,7 @@ class Configuration {
   [[nodiscard]] double getEndTime() const { return endTime; };
   [[nodiscard]] double getWriteInterval() const { return outputWriteInterval; };
   [[nodiscard]] double getCutOff() const { return cutOff; }
+  [[nodiscard]] double getRadiusL() const { return radius_l; }
   [[nodiscard]] ModelType getSelectedModel() const {
     return getInputType() != InputType::XML ? ModelType::LennardJones : xmlParser->getModel();
   }

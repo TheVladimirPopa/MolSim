@@ -44,7 +44,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
 
   std::function<void(P, P)> addForces{
       [&model](P p1, P p2) { model.addForces(std::forward<P>(p1), std::forward<P>(p2)); }};
-  std::function<void(P p)> registerTime{[current_time](Particle &p) { p.timePosition.emplace_back(p.getX()); }};
+  std::function<void(P p)> registerTime{[](Particle &p) { p.timePosition.emplace_back(p.getX()); }};
 
   // Enable structure physics handling on demand
   if (particles.containsStructures()) {
@@ -66,7 +66,9 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   particles.forEach(updateF);
   particles.forEachPair(addForces);
 
-  if (statistics) particles.forEach(registerTime);
+  if (statistics) {
+    particles.forEach(registerTime);
+  }
 
   // for this loop, we assume: current x, current f and current v are known
   while (current_time < endTime) {

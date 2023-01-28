@@ -85,6 +85,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
                                          {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
+                                         {"statistics", no_argument, nullptr, 'j'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
                                          {"end-time", required_argument, nullptr, 'e'},
@@ -102,7 +103,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   // Define behavior
   int opt{0};
-  while ((opt = getopt_long(argc, argsv, "sci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "sci:o:njt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
@@ -132,6 +133,10 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
       }
       case 'c': {
         config.readCheckpoint = true;
+        break;
+      }
+      case 'j': {
+        config.registerStatistics = true;
         break;
       }
       case 'e': {
@@ -183,10 +188,11 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (config.getSelectedModel() == ModelType::NewtonsLaw && config.hasHitrateMeasureEnabled()) {
-    spdlog::error("The Newtons Law model does not support hitrate measurement.");
-    exit(EXIT_FAILURE);
-  }
+  // Issue: Model is called before xmlParser is initialised
+  //  if (config.getSelectedModel() == ModelType::NewtonsLaw && config.hasHitrateMeasureEnabled()) {
+  //    spdlog::error("The Newtons Law model does not support hitrate measurement.");
+  //    exit(EXIT_FAILURE);
+  //  }
 
   if (config.hasPerformanceMeasureEnabled() && config.hasLoggingEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
@@ -212,6 +218,7 @@ bool Configuration::tryParseXml() {
   gravityConstant = xmlParser->getGravityConstant();
   outputWriteInterval = xmlParser->getWriteInterval();
   cutOff = xmlParser->getCutOffRadius();
+  radius_l = xmlParser->getRadius_l();
   containerType = xmlParser->getContainerType();
   outFileName = xmlParser->extractSimulation().getFilename();
 
@@ -231,13 +238,13 @@ std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() { return st
 
 void Configuration::printUsage() {
   std::cout << " Usage\n"
-               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
+               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-j] [-v] [-v] [-q] [-x]\n"
                "\n"
                " Usage (deprecated)\n"
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
+               "[-n] [-p] [-r] [-s] [-c] [-j] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -248,7 +255,7 @@ void Configuration::printHelp() {
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-v] [-v] [-q]\n"
+               "[-n] [-j] [-p] [-r] [-v] [-v] [-q]\n"
                "\n"
                "OPTIONS:\n"
                "        -i <filepath>, --xml=<filepath>\n"
@@ -268,6 +275,9 @@ void Configuration::printHelp() {
                "added automatically)\n"
                "                If not specified \"MD_vtk\" is used\n"
                "                \n"
+               "        -j, --statistics\n"
+               "                If active particle statistics (e.g. the radial distribution function) will \n"
+               "                be printed out\n"
                "        -n, --no-output\n"
                "                If active no files will be written, even overwrites "
                "-o.\n"
