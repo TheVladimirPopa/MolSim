@@ -17,7 +17,7 @@ class SmoothedLennardJonesModel : public IModel {
    * @param radius_l
    */
   explicit SmoothedLennardJonesModel(double cutOffRadius, double radius_l)
-      : radius_c{cutOffRadius * cutOffRadius}, radius_l{radius_l} {};
+      : radius_c{cutOffRadius}, radius_l{radius_l} {};
   ~SmoothedLennardJonesModel() = default;
 
   /**

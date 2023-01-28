@@ -19,9 +19,11 @@ class ThermodynamicStatistics {
     double var = 0;
 
     for (Particle &p : particleContainer.particlesVector) {
-      var += dotProduct(
+      auto dist = dotProduct(
           getTruePosition(particleContainer, p.getTimePosition().at(currentTime), p.getPeriodicBoundariesCrossed()) -
           p.getTimePosition().at(referenceTime));
+      dist *= dist;
+      var += dist;
       p.getPeriodicBoundariesCrossed() = {0, 0, 0};
     }
 
@@ -56,8 +58,10 @@ class ThermodynamicStatistics {
   static double var(VectorContainer &particleContainer, int currentTime, int referenceTime) {
     double var = 0;
 
-    for (const Particle &p : particleContainer.vector) {
-      var += dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
+    for (Particle &p : particleContainer.vector) {
+      auto dist = dotProduct(p.getTimePosition().at(currentTime) - p.getTimePosition().at(referenceTime));
+      dist *= dist;
+      var += dist;
     }
 
     var /= (double)particleContainer.size();
@@ -125,10 +129,10 @@ class ThermodynamicStatistics {
           if (r > i && r < i + delta_r) {
             numPairs++;
           }
-          double density = numPairs;
           if (numPairs == 0) {
             continue;
           }
+          double density = numPairs;
           density /= 4 * PI / 3;
           double aux = (i + delta_r);
           aux *= aux * aux;

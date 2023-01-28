@@ -10,7 +10,7 @@ void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   //++hits;
 
   // Calculate (sigma⁶/length³)
-  double sigma = (p1.sigma + p2.sigma) / 2;
+  double sigma = p1.sigma == p2.sigma ? p1.sigma : (p1.sigma + p2.sigma) / 2;
   double sig_len = sigma * sigma / length;  // (sigma²/length)
   sig_len *= sig_len * sig_len;             // (sigma²/length)³
 
@@ -60,7 +60,7 @@ void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
     auto d8 = 5 * radius_l * d5 / 2 - 2 * radius_l * d6 - 3 * d5 / 2 * length + d6 * length;
     d8 *= length;
 
-    d1 *= d4 + d7 + d8;
+    d1 *= (d4 + d7 + d8);
     d = d1 * d;
 
     force = d;
