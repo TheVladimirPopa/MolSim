@@ -14,7 +14,6 @@ class LinkedCellsContainerLocks : public LinkedCellsContainer {
     applyBoundaries();
 
     if (hasPeriodicBoundaries) {
-      // TODO: SAVE THIS CALL BY MANUALLY RELINKING PARTICLES!
       recalculateStructure();
       applyPeriodicForces(binaryFunction);
     }
