@@ -372,7 +372,7 @@ class XMLParser {
    * @return The selected model
    */
   [[nodiscard]] ModelType getModel() const {
-//    return ModelType::SmoothedLennardJones;
+    //    return ModelType::SmoothedLennardJones;
     if (simulation->Model() == "LennardJones") {
       return ModelType::LennardJones;
     } else if (simulation->Model() == "SmoothedLennardJones") {
