@@ -18,7 +18,7 @@ class LinkedCellArg {
 
  public:
   LinkedCellArg(double cellSize, const std::array<double, 3> &leftLowerBound,
-                const std::array<double, 3> &rightUpperBound, std::string  parallelization);
+                const std::array<double, 3> &rightUpperBound, std::string parallelization);
 
   [[nodiscard]] double getCellSize() const;
 
