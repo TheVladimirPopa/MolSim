@@ -1,4 +1,6 @@
 #pragma once
+#include <omp.h>
+
 #include <algorithm>
 #include <array>
 #include <list>
@@ -57,6 +59,11 @@ struct cell {
   /// A reference to the 3D size of the LinkedCells container
   std::array<double, 3>* cubeSize;
 
+#ifdef _OPENMP
+  /// A lock for exclusive write access
+  omp_lock_t ompLock;
+#endif
+
   /// A struct describing a link partner and the offset that must be applied for particles to move into the linkpartner
   struct PeriodicPartner {
     cell* pCell;
@@ -67,7 +74,12 @@ struct cell {
   std::vector<PeriodicPartner> periodicPartners;
 
   explicit cell(CellType t, size_t index, std::array<unsigned int, 3>* dimensions, std::array<double, 3>* cubeSize)
-      : particles{}, type{t}, cellVectorIndex{index}, gridDimensions{dimensions}, cubeSize{cubeSize} {}
+      : particles{}, type{t}, cellVectorIndex{index}, gridDimensions{dimensions}, cubeSize{cubeSize} {
+#ifdef _OPENMP
+    omp_init_lock(&ompLock);
+    omp_unset_lock(&ompLock);
+#endif
+  }
 
   /// Returns whether the cell is empty
   inline bool isEmpty() { return particles.empty(); }
@@ -196,4 +208,9 @@ struct cell {
 
     linkPartnerUnique(diagonalHaloCellPosition, cells, offset);
   }
+#ifdef _OPENMP
+  inline void lock() { omp_set_lock(&ompLock); }
+
+  inline void unlock() { omp_unset_lock(&ompLock); }
+#endif
 };

@@ -12,7 +12,7 @@
  *    \image latex runtime-linkedcells.png "Runtime" width = [goodwidth]cm
  */
 class LinkedCellsContainer : public IContainer {
- private:
+ protected:
   /// The vector containing all the particles
   std::vector<Particle> particlesVector;
 
@@ -62,6 +62,7 @@ class LinkedCellsContainer : public IContainer {
    */
   size_t getVectorIndexFromCoord(size_t x, size_t y, size_t z);
 
+ public:
   /** All the offsets for adjacent cells which have a greater index than the
    * current one, it has a length of 14 since their are 26 adjacent cells to one
    * cell and only 13 of them have a greater index. Offset of 0 is also added
@@ -69,6 +70,7 @@ class LinkedCellsContainer : public IContainer {
    */
   std::array<size_t, 14> indexOffsetAdjacent{};
 
+ protected:
   /**
    * Links up boundary cells and halo cells depending on the configuration of periodic boundaries that was applied.
    */

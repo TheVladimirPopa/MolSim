@@ -95,7 +95,17 @@
             <xsd:element name="back" type="boundary_t"/>
         </xsd:sequence>
         <xsd:attribute name="cellSize" type="xsd:double" use="required"/>
+        <xsd:attribute name="parallelization" type="paraType_t" use="required"/>
     </xsd:complexType>
+
+    <xsd:simpleType name="paraType_t">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="ColouringSingle"/>
+            <xsd:enumeration value="ColouringMultiple"/>
+            <xsd:enumeration value="Locks"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <!-- Vector Container-->
     <xsd:complexType name="vectorContainer_t"/>

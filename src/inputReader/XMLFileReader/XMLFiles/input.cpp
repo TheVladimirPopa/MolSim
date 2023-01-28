@@ -381,6 +381,40 @@ linkedCellContainer_t::cellSize_type& linkedCellContainer_t::cellSize() { return
 
 void linkedCellContainer_t::cellSize(const cellSize_type& x) { this->cellSize_.set(x); }
 
+const linkedCellContainer_t::parallelization_type& linkedCellContainer_t::parallelization() const {
+  return this->parallelization_.get();
+}
+
+linkedCellContainer_t::parallelization_type& linkedCellContainer_t::parallelization() {
+  return this->parallelization_.get();
+}
+
+void linkedCellContainer_t::parallelization(const parallelization_type& x) { this->parallelization_.set(x); }
+
+void linkedCellContainer_t::parallelization(::std::unique_ptr<parallelization_type> x) {
+  this->parallelization_.set(std::move(x));
+}
+
+// paraType_t
+//
+
+paraType_t::paraType_t(value v) : ::xml_schema::string(_xsd_paraType_t_literals_[v]) {}
+
+paraType_t::paraType_t(const char* v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const ::std::string& v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const ::xml_schema::string& v) : ::xml_schema::string(v) {}
+
+paraType_t::paraType_t(const paraType_t& v, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(v, f, c) {}
+
+paraType_t& paraType_t::operator=(value v) {
+  static_cast< ::xml_schema::string&>(*this) = ::xml_schema::string(_xsd_paraType_t_literals_[v]);
+
+  return *this;
+}
+
 // vectorContainer_t
 //
 
@@ -1394,7 +1428,7 @@ linkedCellContainer_t::linkedCellContainer_t(const leftLowerBound_type& leftLowe
                                              const rightUpperBound_type& rightUpperBound, const left_type& left,
                                              const right_type& right, const top_type& top, const bottom_type& bottom,
                                              const front_type& front, const back_type& back,
-                                             const cellSize_type& cellSize)
+                                             const cellSize_type& cellSize, const parallelization_type& parallelization)
     : ::xml_schema::type(),
       leftLowerBound_(leftLowerBound, this),
       rightUpperBound_(rightUpperBound, this),
@@ -1404,13 +1438,14 @@ linkedCellContainer_t::linkedCellContainer_t(const leftLowerBound_type& leftLowe
       bottom_(bottom, this),
       front_(front, this),
       back_(back, this),
-      cellSize_(cellSize, this) {}
+      cellSize_(cellSize, this),
+      parallelization_(parallelization, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(::std::unique_ptr<leftLowerBound_type> leftLowerBound,
                                              ::std::unique_ptr<rightUpperBound_type> rightUpperBound,
                                              const left_type& left, const right_type& right, const top_type& top,
                                              const bottom_type& bottom, const front_type& front, const back_type& back,
-                                             const cellSize_type& cellSize)
+                                             const cellSize_type& cellSize, const parallelization_type& parallelization)
     : ::xml_schema::type(),
       leftLowerBound_(std::move(leftLowerBound), this),
       rightUpperBound_(std::move(rightUpperBound), this),
@@ -1420,7 +1455,8 @@ linkedCellContainer_t::linkedCellContainer_t(::std::unique_ptr<leftLowerBound_ty
       bottom_(bottom, this),
       front_(front, this),
       back_(back, this),
-      cellSize_(cellSize, this) {}
+      cellSize_(cellSize, this),
+      parallelization_(parallelization, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(const linkedCellContainer_t& x, ::xml_schema::flags f,
                                              ::xml_schema::container* c)
@@ -1433,7 +1469,8 @@ linkedCellContainer_t::linkedCellContainer_t(const linkedCellContainer_t& x, ::x
       bottom_(x.bottom_, f, this),
       front_(x.front_, f, this),
       back_(x.back_, f, this),
-      cellSize_(x.cellSize_, f, this) {}
+      cellSize_(x.cellSize_, f, this),
+      parallelization_(x.parallelization_, f, this) {}
 
 linkedCellContainer_t::linkedCellContainer_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f,
                                              ::xml_schema::container* c)
@@ -1446,7 +1483,8 @@ linkedCellContainer_t::linkedCellContainer_t(const ::xercesc::DOMElement& e, ::x
       bottom_(this),
       front_(this),
       back_(this),
-      cellSize_(this) {
+      cellSize_(this),
+      parallelization_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
     this->parse(p, f);
@@ -1589,10 +1627,19 @@ void linkedCellContainer_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_s
       this->cellSize_.set(cellSize_traits::create(i, f, this));
       continue;
     }
+
+    if (n.name() == "parallelization" && n.namespace_().empty()) {
+      this->parallelization_.set(parallelization_traits::create(i, f, this));
+      continue;
+    }
   }
 
   if (!cellSize_.present()) {
     throw ::xsd::cxx::tree::expected_attribute<char>("cellSize", "");
+  }
+
+  if (!parallelization_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("parallelization", "");
   }
 }
 
@@ -1612,12 +1659,52 @@ linkedCellContainer_t& linkedCellContainer_t::operator=(const linkedCellContaine
     this->front_ = x.front_;
     this->back_ = x.back_;
     this->cellSize_ = x.cellSize_;
+    this->parallelization_ = x.parallelization_;
   }
 
   return *this;
 }
 
 linkedCellContainer_t::~linkedCellContainer_t() {}
+
+// paraType_t
+//
+
+paraType_t::paraType_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(e, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t::paraType_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(a, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t::paraType_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f,
+                       ::xml_schema::container* c)
+    : ::xml_schema::string(s, e, f, c) {
+  _xsd_paraType_t_convert();
+}
+
+paraType_t* paraType_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class paraType_t(*this, f, c);
+}
+
+paraType_t::value paraType_t::_xsd_paraType_t_convert() const {
+  ::xsd::cxx::tree::enum_comparator<char> c(_xsd_paraType_t_literals_);
+  const value* i(::std::lower_bound(_xsd_paraType_t_indexes_, _xsd_paraType_t_indexes_ + 4, *this, c));
+
+  if (i == _xsd_paraType_t_indexes_ + 4 || _xsd_paraType_t_literals_[*i] != *this) {
+    throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
+  }
+
+  return *i;
+}
+
+const char* const paraType_t::_xsd_paraType_t_literals_[4] = {"None", "ColouringSingle", "ColouringMultiple", "Locks"};
+
+const paraType_t::value paraType_t::_xsd_paraType_t_indexes_[4] = {
+    ::paraType_t::ColouringMultiple, ::paraType_t::ColouringSingle, ::paraType_t::Locks, ::paraType_t::None};
 
 // vectorContainer_t
 //

@@ -133,8 +133,7 @@ void LinkedCellsContainer::forEachPair(std::function<void(Particle &, Particle &
   }
 
   for (size_t index = 0; index < cells.size(); ++index) {
-    if (cells[index].type == CellType::halo) continue;
-
+    if (cells[index].type == CellType::halo || cells[index].isEmpty()) continue;
     for (size_t indexOffset : indexOffsetAdjacent) {
       // Special case to match particles within one cell
       if (indexOffset == 0) {

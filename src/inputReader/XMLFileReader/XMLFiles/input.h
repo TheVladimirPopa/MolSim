@@ -228,6 +228,7 @@ class simTypes_t;
 class input_t;
 class containerTypes_t;
 class linkedCellContainer_t;
+class paraType_t;
 class vectorContainer_t;
 class boundary_t;
 class thermostat_t;
@@ -1040,14 +1041,28 @@ class linkedCellContainer_t : public ::xml_schema::type {
 
   void cellSize(const cellSize_type& x);
 
+  // parallelization
+  //
+  typedef ::paraType_t parallelization_type;
+  typedef ::xsd::cxx::tree::traits<parallelization_type, char> parallelization_traits;
+
+  const parallelization_type& parallelization() const;
+
+  parallelization_type& parallelization();
+
+  void parallelization(const parallelization_type& x);
+
+  void parallelization(::std::unique_ptr<parallelization_type> p);
+
   // Constructors.
   //
   linkedCellContainer_t(const leftLowerBound_type&, const rightUpperBound_type&, const left_type&, const right_type&,
-                        const top_type&, const bottom_type&, const front_type&, const back_type&, const cellSize_type&);
+                        const top_type&, const bottom_type&, const front_type&, const back_type&, const cellSize_type&,
+                        const parallelization_type&);
 
   linkedCellContainer_t(::std::unique_ptr<leftLowerBound_type>, ::std::unique_ptr<rightUpperBound_type>,
                         const left_type&, const right_type&, const top_type&, const bottom_type&, const front_type&,
-                        const back_type&, const cellSize_type&);
+                        const back_type&, const cellSize_type&, const parallelization_type&);
 
   linkedCellContainer_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
@@ -1074,6 +1089,42 @@ class linkedCellContainer_t : public ::xml_schema::type {
   ::xsd::cxx::tree::one<front_type> front_;
   ::xsd::cxx::tree::one<back_type> back_;
   ::xsd::cxx::tree::one<cellSize_type> cellSize_;
+  ::xsd::cxx::tree::one<parallelization_type> parallelization_;
+};
+
+class paraType_t : public ::xml_schema::string {
+ public:
+  enum value { None, ColouringSingle, ColouringMultiple, Locks };
+
+  paraType_t(value v);
+
+  paraType_t(const char* v);
+
+  paraType_t(const ::std::string& v);
+
+  paraType_t(const ::xml_schema::string& v);
+
+  paraType_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  paraType_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  paraType_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  paraType_t(const paraType_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual paraType_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  paraType_t& operator=(value v);
+
+  virtual operator value() const { return _xsd_paraType_t_convert(); }
+
+ protected:
+  value _xsd_paraType_t_convert() const;
+
+ public:
+  static const char* const _xsd_paraType_t_literals_[4];
+  static const value _xsd_paraType_t_indexes_[4];
 };
 
 class vectorContainer_t : public ::xml_schema::type {

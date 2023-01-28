@@ -26,13 +26,13 @@
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="10.0">
+        <LinkedCell cellSize="10.0" parallelization="None">
             <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
             <rightUpperBound x="55.0" y="30.0" z="5"/>
             <left>REFLECT</left>
             <right>REFLECT</right>
             <top>PERIODIC</top>
-            <bottom>REFLECT</bottom>
+            <bottom>PERIODIC</bottom>
             <front>REFLECT</front>
             <back>REFLECT</back>
         </LinkedCell>
@@ -40,7 +40,7 @@
 
     <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
 
-    <Membrane distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="1">
+    <Membrane distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="1" cutOffRadius="3.0">
         <position x="15.0" y="15.0" z="15.0"/>
         <dimension x="50" y="50" z="1"/>
         <velocity x="0.0" y="0.0" z="0.0"/>
