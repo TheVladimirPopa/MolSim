@@ -10,6 +10,7 @@
 #include "spdlog/spdlog.h"
 #define CHECKPOINT_PATH "./checkpoint.txt"
 #define STATISTICS_PATH "./thermodynamic_statistics.txt"
+#define STATISTICS_FREQUENCY 1000
 #define PROGRESS_MSG_COUNT 15
 
 void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
@@ -23,7 +24,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   int iteration = 0;
   size_t updateCount = 0;
 
-  StatisticsWriter statisticsWriter(&particles);
+  StatisticsWriter statisticsWriter(&particles, STATISTICS_FREQUENCY);
 
   // Pass methods of model as lambdas. More lightweight than std::function.
   using P = Particle &;
@@ -67,6 +68,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   particles.forEachPair(addForces);
 
   if (statistics) {
+    remove(STATISTICS_PATH);
     particles.forEach(registerTime);
   }
 
@@ -91,7 +93,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
     }
 
     // Every 1000th iteration the statistics are being written
-    if (iteration % 1000 == 0 && iteration != 0 && statistics) {
+    if (iteration % STATISTICS_FREQUENCY == 0 && iteration != 0 && statistics) {
       particles.forEach(registerTime);
       statisticsWriter.writeFile(STATISTICS_PATH, iteration, particles);
     }

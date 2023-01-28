@@ -6,6 +6,7 @@
 
 class StatisticsWriter : public IWriter {
  private:
+  int frequency;
   std::ofstream file;
   IContainer *particleContainer;
   /**
@@ -16,10 +17,9 @@ class StatisticsWriter : public IWriter {
 
   /**
    * Writes the particle data into the file
-   * @param p the given particle
    * @param iteration the current iteration
    */
-  void registerParticle(const Particle& p, int iteration);
+  void registerParticle(int iteration);
 
   /**
    * Used to determine the class of an object (similar to instanceof in Java)
@@ -38,7 +38,7 @@ class StatisticsWriter : public IWriter {
    * Constructs a public StatistiWriter for the given container
    * @param particleContainer the given IContainer (either VectorContainer or LinkedCellsContainer
    */
-  explicit StatisticsWriter(IContainer *particleContainer);
+  explicit StatisticsWriter(IContainer *particleContainer, int frequency);
   /**
    * Writes the statistics of each particle
    * @param filename

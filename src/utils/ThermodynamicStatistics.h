@@ -86,6 +86,9 @@ class ThermodynamicStatistics {
           if (r > i && r < i + delta_r) {
             numPairs++;
           }
+          if (numPairs == 0) {
+            continue;
+          }
           double density = numPairs;
           density /= 4 * PI / 3;
           double aux = (i + delta_r);
@@ -123,6 +126,9 @@ class ThermodynamicStatistics {
             numPairs++;
           }
           double density = numPairs;
+          if (numPairs == 0) {
+            continue;
+          }
           density /= 4 * PI / 3;
           double aux = (i + delta_r);
           aux *= aux * aux;

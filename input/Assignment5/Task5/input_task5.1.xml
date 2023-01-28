@@ -12,7 +12,7 @@
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="3">
+        <LinkedCell cellSize="3" parallelization="None">
             <leftLowerBound x="0" y="0" z="0"/>
             <rightUpperBound x="9.2" y="9.2" z="9.2"/>
             <left>PERIODIC</left>
