@@ -1,10 +1,18 @@
 #pragma once
 #include "dataStructures/LinkedCellsContainer.h"
 
+/**
+ * Uses domain colouring to ensure that no race conditions can occur
+ * Each colour is a vector of cell indices, which are arranged that no neighbouring cell is overlapping
+ * To achieve this 18 colours were used
+ */
 class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
-#ifdef _OPENMP
-
  private:
+  /**
+   * Is a vector of vectors of indices into the cell vector.
+   * @note These are organized in a way that all cells within a colour can be processed in parallel without any race
+   * conditions
+   */
   std::vector<std::vector<size_t>> colourList{};
 
  public:
@@ -29,6 +37,7 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
     }
   }
 
+#ifdef _OPENMP
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
     recalculateStructure();
     applyBoundaries();

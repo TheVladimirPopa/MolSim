@@ -1,9 +1,19 @@
 #pragma once
 #include "dataStructures/LinkedCellsContainer.h"
 
+/**
+ * Uses domain colouring to ensure that no race conditions can occur
+ * Each colour is a vector of an array of cell indices, which are arranged that no neighbouring cell of such an array
+ * block is overlapping with an other array block. To achieve this 8 colours were used. One thread therefore always has
+ * to work in a block of 4 cells.
+ */
 class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
-#ifdef _OPENMP
  private:
+  /**
+   * Is a vector of vectors of 4 element arrays of indices into the cell vector.
+   * @note These are organized in a way that all cells within a colour the inner VECOTR can be processed in parallel
+   * without any race conditions, when each thread is assigned a complete array of indices
+   */
   std::vector<std::vector<std::array<size_t, 4>>> colourList{};
 
  public:
@@ -29,6 +39,7 @@ class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
       }
     }
   }
+#ifdef _OPENMP
 
   void forEachPair(std::function<void(Particle &, Particle &)> &binaryFunction) override {
     recalculateStructure();
