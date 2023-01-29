@@ -43,7 +43,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   if (particles.containsStructures()) {
     addForces = [&model, &particles](P p1, P p2) {
       if (p1.isInStructure() && (p1.getStructure() == p2.getStructure()))
-        particles.getStructureVectorRef()[p1.getStructure()].applyForce(p1, p2, p1.getId(), p2.getId());
+        particles.getStructureVectorRef()[p1.getStructure()].applyForce(p1, p2);
       else
         model.addForces(std::forward<P>(p1), std::forward<P>(p2));
     };

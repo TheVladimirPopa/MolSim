@@ -115,12 +115,18 @@ void MembraneStructure::applyArtificialForces() {
   return difference == 1 || difference + 1 - dimensions[dimWidth] <= 2;
 }
 
-void MembraneStructure::applyForce(Particle& p1, Particle& p2, size_t indexP1, size_t indexP2) {
-  size_t diff = indexP1 < indexP2 ? indexP2 - indexP1 : indexP1 - indexP2;
+void MembraneStructure::applyForce(Particle& p1, Particle& p2) {
+  if (p2.getId() < p1.getId()) return applyForce(p2, p1);
+  size_t diff = p2.getId() - p1.getId();
+  size_t width = dimensions[dimWidth];
 
-  if (diff == 1 || diff == dimensions[dimWidth]) return applyDirectForce(p1, p2);
+  bool isNotAtRightBorder = (p1.getId() - startIndex) % width + 1 != width;
+  if ((diff == 1 && isNotAtRightBorder) || diff == width) return applyDirectForce(p1, p2);
 
-  if (diff == dimensions[dimWidth] - 1 || diff == dimensions[dimWidth] + 1) return applyDiagonalForce(p1, p2);
+  bool isNotAtLeftBorder = (p1.getId() - startIndex) % width != 0;
+  if (((diff == width - 1) && isNotAtLeftBorder) || ((diff == width + 1) && isNotAtRightBorder))
+    return applyDiagonalForce(p1, p2);
+
   return applyRepulsiveForce(p1, p2);
 }
 

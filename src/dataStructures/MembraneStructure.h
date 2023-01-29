@@ -69,14 +69,6 @@ class MembraneStructure {
   [[nodiscard]] size_t positionToIndex(std::array<unsigned long, 3> pos) const;
 
   /**
-   * Returns the particle that holds the given 3d position.
-   * Note: Check with positionIsInMembrane first, whether the location is valid.
-   * @param pos Position where a particle sits
-   * @return The particle
-   */
-  [[maybe_unused]] [[nodiscard]] Particle& getParticleByPosition(std::array<unsigned long, 3> pos);
-
-  /**
    * Applies the default force that is meant to be applied to direct neighbours
    * (= particles that are either horizontal or vertical neighbours).
    * @param x The first particle that influences the second particle
@@ -91,7 +83,6 @@ class MembraneStructure {
    * @param y The second particle that influences the first particle
    */
   void applyDiagonalForce(Particle& x, Particle& y) const;
-
  public:
   MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                     std::vector<Particle>& particles);
@@ -130,7 +121,7 @@ class MembraneStructure {
    * @param indexP1 Index of particle 1
    * @param indexP2 Index of particle 2
    */
-  void applyForce(Particle& p1, Particle& p2, size_t indexP1, size_t indexP2);
+  void applyForce(Particle& p1, Particle& p2);
 
   /**
    * Returns whether the two passed particle indices are neighbours (direct or diagonal)
@@ -154,6 +145,14 @@ class MembraneStructure {
   void setStructureVectorIndex(size_t index);
 
   /**
+   * Returns the particle that holds the given a 3d grid position.
+   * Note: Check with positionIsInMembrane first, whether the location is valid.
+   * @param pos Position where a particle sits
+   * @return The particle
+   */
+  [[maybe_unused]] [[nodiscard]] Particle& getParticleByPosition(std::array<unsigned long, 3> pos);
+
+  /**
    * @return The begin() iterator over the particles of the structure
    */
   auto begin() { return particles->begin() + startIndex; };
@@ -161,11 +160,7 @@ class MembraneStructure {
   /**
    * @return The end() iterator over the particles of the structure
    */
-  auto end() {
-    auto it = begin();
-    std::advance(it, particleCount);
-    return it;
-  }
+  auto end() { return begin() + particleCount; }
 
   /**
    * @return The number of particles that are part of the structure
