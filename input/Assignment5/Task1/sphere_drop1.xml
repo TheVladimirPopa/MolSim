@@ -1,0 +1,36 @@
+<Simulation_XML endTime="250.0" deltaT="0.00075" writeOutFrequency="500" filename="ws5_task1_drop1.vtk" cutOffRadius="4"
+                gravity="0">
+
+    <Particle id="0" epsilon="1.0" sigma="1.2"/>
+    <Particle id="1" epsilon="1.0" sigma="1.0"/>
+
+    <SimTypes>
+        <Sphere radius="7" dimension="3" distance="1.3" mass="1.0" type="1">
+            <position x="67.5" y="67.5" z="75.0"/>
+            <velocity x="0.0" y="0.0" z="-2.5"/>
+        </Sphere>
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="4" parallelization="None">
+            <leftLowerBound x="0.0" y="0.0" z="0.0"/>
+            <rightUpperBound x="148.0" y="148.0" z="148.0"/>
+            <left>OUTFLOW</left>
+            <right>OUTFLOW</right>
+            <top>OUTFLOW</top>
+            <bottom>REFLECT</bottom>
+            <front>OUTFLOW</front>
+            <back>OUTFLOW</back>
+        </LinkedCell>
+    </Container_T>
+
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="0" dimension="3"/>
+
+    <Membrane distance="1.4" mass="1.0" stiffness="150.0" bondLength="1.4" type="0" cutOffRadius="4">
+        <position x="24.0" y="24.0" z="50.0"/>
+        <dimension x="60" y="60" z="1"/>
+        <velocity x="0.0" y="0.0" z="0.0"/>
+    </Membrane>
+
+    <InputFile path="./checkpoint.txt"/>
+</Simulation_XML>
