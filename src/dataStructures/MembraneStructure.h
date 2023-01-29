@@ -83,6 +83,7 @@ class MembraneStructure {
    * @param y The second particle that influences the first particle
    */
   void applyDiagonalForce(Particle& x, Particle& y) const;
+
  public:
   MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
                     std::vector<Particle>& particles);
