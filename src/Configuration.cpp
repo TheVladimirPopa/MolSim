@@ -85,7 +85,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
                                          {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
-                                         {"statistics", optional_argument, nullptr, 'j'},
+                                         {"statistics", no_argument, nullptr, 'j'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
                                          {"end-time", required_argument, nullptr, 'e'},
@@ -103,7 +103,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   // Define behavior
   int opt{0};
-  while ((opt = getopt_long(argc, argsv, "s:ci:o:nj:t:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "s:ci:o:njt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
@@ -136,10 +136,6 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'j': {
-        config.toCheckpointPath = optarg != nullptr ? optarg : "./thermodynamic_statistics.txt";
-        if (optarg == nullptr)
-          spdlog::info("No checkpoint output file was specified, so ./thermodynamic_statistics.txt is used");
-
         config.registerStatistics = true;
         break;
       }
@@ -230,6 +226,13 @@ bool Configuration::tryParseXml() {
   fromCheckpointPath = xmlParser->getCheckpointPath();
   container = xmlParser->initialiseLinkedCellContainerFromXML();
   thermostat = std::make_unique<ThermostatArg>(xmlParser->getThermostat());
+
+  StatArg statArg = xmlParser->extractStatistics();
+  statFrequency = statArg.getFrequency();
+  rdfDeltaR = statArg.getRdfDeltaR();
+  rdfStart = statArg.getRdfStart();
+  rdfEnd = statArg.getRdfEnd();
+  statFile = statArg.getPath();
 
   return true;
 }

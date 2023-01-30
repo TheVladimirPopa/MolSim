@@ -10,6 +10,7 @@
             <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Membrane" type="membrane_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Statistics" type="statistics_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="Model" type="model_t" use="required"/>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
@@ -55,7 +56,6 @@
         <xsd:attribute name="distance" type="xsd:double" use="required"/>
         <xsd:attribute name="mass" type="xsd:double" use="required"/>
         <xsd:attribute name="type" type="xsd:int" use="required"/>
-
     </xsd:complexType>
 
     <!-- Sphere-->
@@ -64,7 +64,6 @@
             <xsd:element name="position" type="array_d"/>
             <xsd:element name="velocity" type="array_d"/>
         </xsd:sequence>
-
         <xsd:attribute name="radius" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="dimension" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="distance" type="xsd:double" use="required"/>
@@ -171,6 +170,15 @@
         <xsd:attribute name="y" type="xsd:double" use="required"/>
         <xsd:attribute name="z" type="xsd:double" use="required"/>
         <xsd:attribute name="timeSpan" type="xsd:int" use="required"/>
+    </xsd:complexType>
+
+    <!--  Statistics  -->
+    <xsd:complexType name="statistics_t">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+        <xsd:attribute name="frequency" type="xsd:int" use="required"/>
+        <xsd:attribute name="rdfDeltaR" type="xsd:double" use="required"/>
+        <xsd:attribute name="rdfStart" type="xsd:double" use="required"/>
+        <xsd:attribute name="rdfEnd" type="xsd:double" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>

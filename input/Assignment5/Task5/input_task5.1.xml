@@ -28,4 +28,6 @@
 
     <InputFile path="./checkpoint.txt"/>
 
+    <Statistics path="./statistics.txt" frequency="1000" rdfDeltaR="1" rdfStart="1" rdfEnd="50"/>
+
 </Simulation_XML>

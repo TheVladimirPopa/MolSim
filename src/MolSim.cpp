@@ -63,7 +63,8 @@ int main(int argc, char* argsv[]) {
   auto startTime = std::chrono::steady_clock::now();
 
   auto checkpointWriter = CheckpointFileWriter(config.getToCheckpointPath());
-  auto statisticsWriter = StatisticsWriter(*container, 1000, config.getStatFile(), 1, 1, 50);
+  auto statisticsWriter = StatisticsWriter(*container, config.getStatFrequency(), config.getStatFile(),
+                                           config.getRdfDeltaR(), config.getRdfStart(), config.getRdfEnd());
 
   simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
                       config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics(), checkpointWriter,

@@ -44,6 +44,14 @@ class Configuration {
   /// File where the statistics will be saved
   std::string statFile;
 
+  int statFrequency{1000};
+
+  double rdfDeltaR{1};
+
+  double rdfStart{1};
+
+  double rdfEnd{50};
+
   /// Whether or not to write files
   bool disableFileWriting{false};
 
@@ -166,6 +174,10 @@ class Configuration {
   [[nodiscard]] std::string getFromCheckpointPath() const { return fromCheckpointPath; };
   [[nodiscard]] std::string getToCheckpointPath() const { return toCheckpointPath; };
   [[nodiscard]] std::string getStatFile() const { return statFile; }
+  [[nodiscard]] int getStatFrequency() const { return statFrequency; }
+  [[nodiscard]] double getRdfDeltaR() const { return rdfDeltaR; }
+  [[nodiscard]] double getRdfStart() const { return rdfStart; }
+  [[nodiscard]] double getRdfEnd() const { return rdfEnd; }
 
   // Output
   [[nodiscard]] std::string getFileName() const { return outFileName; };

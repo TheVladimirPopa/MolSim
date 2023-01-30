@@ -13,6 +13,7 @@
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
+#include "inputReader/XMLFileReader/Args/StatArg.h"
 #include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
 #include "utils/MolSimEnums.h"
@@ -211,6 +212,20 @@ class XMLParser {
 
     return membraneForces;
   }
+
+  StatArg extractStatistics() {
+    for (auto &it : simulation->Statistics()) {
+      auto freq = it.frequency();
+      auto dr = it.rdfDeltaR();
+      auto start = it.rdfStart();
+      auto end = it.rdfEnd();
+      auto path = it.path();
+
+      return StatArg{freq, dr, start, end, path};
+    }
+    return StatArg{1000, 1, 1, 50, "./statistics.txt"};
+  }
+
   /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file

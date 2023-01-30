@@ -51,7 +51,7 @@ std::vector<double> ThermodynamicStatistics::radialDistributionFunction(double d
       if (p1 == p2) {
         continue;
       }
-      double r = dotProduct(p1.getX() - p2.getX());
+      double r = L2Norm(p1.getX() - p2.getX());
       for (double i = intervalStart; i <= intervalEnd; i += delta_r) {
         int numPairs = 0;
         if (r > i && r <= i + delta_r) {
