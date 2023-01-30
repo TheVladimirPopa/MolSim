@@ -13,9 +13,16 @@ class ThermodynamicStatistics {
    * @param boundariesCrossed
    * @return
    */
-  static std::array<double, 3> getTruePosition(LinkedCellsContainer &particleContainer, std::array<double, 3> oldPosition,
-                                        std::array<int, 3> boundariesCrossed);
+  static std::array<double, 3> getTruePosition(LinkedCellsContainer &particleContainer,
+                                               std::array<double, 3> oldPosition, std::array<int, 3> boundariesCrossed);
 
+  /**
+   * Used to determine the class of an object (similar to instanceof in Java)
+   * @tparam Base
+   * @tparam T
+   * @param ptr
+   * @return
+   */
   template <typename Base, typename T>
   inline bool instanceof (const T *ptr) {
     return dynamic_cast<const Base *>(ptr) != nullptr;

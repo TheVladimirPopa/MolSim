@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "inputReader/XMLFileReader/XMLParser.h"
 #include "utils/SimulationUtils.h"

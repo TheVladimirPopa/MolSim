@@ -1,73 +1,76 @@
 #include "SmoothedLennardJonesModel.h"
 
+#include "LennardJonesModel.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::dotProduct;
+using ArrayUtils::L2Norm;
 
 void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
-  double length = dotProduct(p1.x - p2.x);  // d_ij
+  double length_sqr = dotProduct(p1.x - p2.x);
   //++comparisons;
-  if (length >= radius_c * radius_c) return;
+  if (length_sqr >= radius_c * radius_c) return;
   //++hits;
 
-  // Calculate (sigma⁶/length³)
+  // Calculate (sigma⁶/length⁶)
   double sigma = p1.sigma == p2.sigma ? p1.sigma : (p1.sigma + p2.sigma) / 2;
-  double sig_len = sigma * sigma / length;  // (sigma²/length)
-  sig_len *= sig_len * sig_len;             // (sigma²/length)³
-
   // This is the force formula from worksheet 2 slightly reformulated for better numerical accuracy.
   double epsilon = p1.epsilon == p2.epsilon ? p1.epsilon : std::sqrt(p1.epsilon * p2.epsilon);
 
   std::array<double, 3> force{};
 
-  if (length <= radius_l) {
-    force = ((-24 * epsilon) / length) * (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
-  } else if (radius_l <= length && length <= radius_c) {
+  double distance = L2Norm(p1.x - p2.x);
+
+  if (distance <= radius_l) {
+    double sig_len = sigma * sigma / length_sqr;  // (sigma²/length²)
+    sig_len *= sig_len * sig_len;                 // (sigma²/length²)³
+    force = ((-24 * epsilon) / length_sqr) * (sig_len * (1 - (2 * sig_len))) * (p1.x - p2.x);
+  } else if (radius_l <= distance && distance <= radius_c) {
     // x_j - x_i
-    auto d = p2.x - p1.x;
+    auto diff = p2.x - p1.x;
 
     // -24 * sigma^(6) * epsilon
-    auto d1 = -24 * sigma * sigma * sigma;
-    d1 *= sigma * sigma * sigma;
-    d1 *= epsilon;
+    auto potentialConst = -24 * sigma * sigma * sigma;
+    potentialConst *= sigma * sigma * sigma;
+    potentialConst *= epsilon;
     // d_ij^(14)
-    auto d2 = length;
+    auto distTo14 = distance;
     for (int i = 2; i <= 14; i++) {
-      d2 *= length;
+      distTo14 *= distance;
     }
     // (r_c * r_l)^3
-    auto d3 = radius_c - radius_l;
-    d3 *= d3 * d3;
-    d2 *= d3;
+    auto radialDiffCubed = radius_c - radius_l;
+    radialDiffCubed *= radialDiffCubed * radialDiffCubed;
+    distTo14 *= radialDiffCubed;
 
     // (-24 * sigma^(6) * epsilon) / (d_ij^(14) * (r_c * r_l)^3)
-    d1 /= d2;
+    potentialConst /= distTo14;
 
-    d1 *= (radius_c - length);
+    potentialConst *= (radius_c - distance);
 
     // r_c^2 * (2 * sigma^6 - d_ij^6)
-    auto d4 = radius_c * radius_c;
-    auto d5 = 2 * sigma * sigma * sigma;
-    d5 *= sigma * sigma * sigma;
-    auto d6 = length * length * length;
-    d6 *= length * length * length;
-    d4 *= (d5 - d6);
+    auto rc_squared = radius_c * radius_c;
+    auto doubleSigmaTo6 = 2 * sigma * sigma * sigma;
+    doubleSigmaTo6 *= sigma * sigma * sigma;
+    auto distanceTo6 = distance * distance * distance;
+    distanceTo6 *= distanceTo6;
+    rc_squared *= (doubleSigmaTo6 - distanceTo6);
 
     // r_c * (3 * r_l - d_ij) * (d_ij^6 - 2 * sigma^6)
-    auto d7 = radius_c * (3 * radius_l - length);
-    d7 *= (d6 - d5);
+    auto rc_TimesRadDiff_TimesSigmaDiff = radius_c * (3 * radius_l - distance);
+    rc_TimesRadDiff_TimesSigmaDiff *= (distanceTo6 - doubleSigmaTo6);
 
     // d_ij * (5 * r_l * sigma^6 - 2 * r_l * d_ij^6 - 3 * sigma^6 * d_ij + d_ij^7)
-    auto d8 = 5 * radius_l * d5 / 2 - 2 * radius_l * d6 - 3 * d5 / 2 * length + d6 * length;
-    d8 *= length;
+    auto distTimesDiff = 5 * radius_l * doubleSigmaTo6 / 2 - 2 * radius_l * distanceTo6 -
+                         3 * doubleSigmaTo6 / 2 * distance + distanceTo6 * distance;
+    distTimesDiff *= distance;
 
-    d1 *= (d4 + d7 + d8);
-    d = d1 * d;
+    potentialConst *= (rc_squared + rc_TimesRadDiff_TimesSigmaDiff + distTimesDiff);
+    diff = potentialConst * diff;
 
-    force = d;
+    force = diff;
   } else {
     force = {0., 0., 0.};
   }
 
-  p1.f = p1.f + force;
-  p2.f = p2.f - force;
+  p1.applySymmetricForce(p2, force);
 }

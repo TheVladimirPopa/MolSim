@@ -4,8 +4,7 @@
 #include "dataStructures/IContainer.h"
 #include "dataStructures/LinkedCellsContainer.h"
 #include "dataStructures/VectorContainer.h"
-#define PI 3.141592653589793238462643383279502884L
-using ArrayUtils::dotProduct;
+#define PI 3.14159265358979323846
 using ArrayUtils::L2Norm;
 
 std::array<double, 3> ThermodynamicStatistics::getTruePosition(LinkedCellsContainer &particleContainer,
@@ -52,19 +51,21 @@ std::vector<double> ThermodynamicStatistics::radialDistributionFunction(double d
         continue;
       }
       double r = L2Norm(p1.getX() - p2.getX());
-      for (double i = intervalStart; i <= intervalEnd; i += delta_r) {
-        int numPairs = 0;
+      double i = intervalStart;
+      while (i <= intervalEnd) {
+        double numPairs = 0;
         if (r > i && r <= i + delta_r) {
           numPairs++;
         }
         if (numPairs == 0) {
           continue;
         }
-        double cubeDiff = (r + delta_r);
+        double cubeDiff = (i + delta_r);
         cubeDiff *= cubeDiff * cubeDiff;
-        cubeDiff -= (r * r * r);
+        cubeDiff -= (i * i * i);
         double density = (3.0 * numPairs) / ((4 * PI * cubeDiff));
         densities.emplace_back(density);
+        i += delta_r;
       }
     }
   }

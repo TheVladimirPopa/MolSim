@@ -81,7 +81,7 @@ int Configuration::getWriteInterval(string writeIntervalAsString) {
 Configuration Configuration::parseOptions(int argc, char *argsv[]) {
   // Specify command line input parameters
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
-                                         {"export-checkpoint", optional_argument, nullptr, 's'},
+                                         {"export-checkpoint", required_argument, nullptr, 's'},
                                          {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
@@ -136,6 +136,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'j': {
+        spdlog::info("Statistics will be printed out.");
         config.registerStatistics = true;
         break;
       }

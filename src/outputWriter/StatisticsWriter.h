@@ -29,18 +29,6 @@ class StatisticsWriter : public IWriter {
    */
   void registerParticle(int iteration);
 
-  /**
-   * Used to determine the class of an object (similar to instanceof in Java)
-   * @tparam Base
-   * @tparam T
-   * @param ptr
-   * @return
-   */
-  template <typename Base, typename T>
-  inline bool instanceof (const T *ptr) {
-    return dynamic_cast<const Base *>(ptr) != nullptr;
-  }
-
  public:
   /**
    * Constructs a public StatistiWriter for the given container

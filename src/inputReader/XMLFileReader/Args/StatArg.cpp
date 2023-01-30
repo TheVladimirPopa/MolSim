@@ -1,7 +1,9 @@
 #include "StatArg.h"
 
-StatArg::StatArg(int frequency, double rdfDeltaR, double rdfStart, double rdfEnd, const std::string& path)
-    : frequency(frequency), rdfDeltaR(rdfDeltaR), rdfStart(rdfStart), rdfEnd(rdfEnd), path(path) {}
+#include <utility>
+
+StatArg::StatArg(int frequency, double rdfDeltaR, double rdfStart, double rdfEnd, std::string path)
+    : frequency{frequency}, rdfDeltaR{rdfDeltaR}, rdfStart{rdfStart}, rdfEnd{rdfEnd}, path{std::move(path)} {}
 
 int StatArg::getFrequency() const { return frequency; }
 

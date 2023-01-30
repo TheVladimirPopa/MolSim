@@ -2,7 +2,6 @@
 // Created by leo on 09.11.22.
 //
 #pragma once
-#include "Configuration.h"
 #include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
 #include "inputReader/FileReader.h"

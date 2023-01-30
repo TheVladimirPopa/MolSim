@@ -3,7 +3,6 @@
 //
 #include "Simulation.h"
 
-#include "Configuration.h"
 #include "outputWriter/CheckpointFileWriter.h"
 #include "outputWriter/StatisticsWriter.h"
 #include "spdlog/spdlog.h"
@@ -76,8 +75,6 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
     if (thermostat.getPeriodLength() != 0 && iteration % thermostat.getPeriodLength() == 0 && iteration != 0) {
       thermostat.applyThermostat();
     }
-
-    current_time += deltaT;
 
     if (iteration % writeOutFrequency == 0) {
       fileWriter.writeFile(filename, iteration, particles);
