@@ -5,6 +5,8 @@
  * Uses domain colouring to ensure that no race conditions can occur
  * Each colour is a vector of cell indices, which are arranged that no neighbouring cell is overlapping
  * To achieve this 18 colours were used
+ *  \image html colouringSingle.gif width=900px
+ *  \image latex colouringSingle.gif "Colouring schema" width = [goodwidth]cm
  */
 class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
  private:

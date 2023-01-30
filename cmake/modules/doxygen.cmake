@@ -27,7 +27,9 @@ IF (BUILD_DOC)
 
         set(DOXYGEN_IMAGES "../images/runtime.png \
                 ../images/runtime-linkedcells.png \
-                ../images/runtime-directsum.png")
+                ../images/runtime-directsum.png \
+                ../images/colouringSingle.gif \
+                ../images/colouringMultiple.gif ")
 
         # Write the parameters to the doxygen-file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
