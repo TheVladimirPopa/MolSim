@@ -72,5 +72,6 @@ void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
     force = {0., 0., 0.};
   }
 
-  p1.applySymmetricForce(p2, force);
+  p1.f = p1.f + force;
+  p2.f = p2.f - force;
 }
