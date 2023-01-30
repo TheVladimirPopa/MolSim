@@ -81,11 +81,11 @@ int Configuration::getWriteInterval(string writeIntervalAsString) {
 Configuration Configuration::parseOptions(int argc, char *argsv[]) {
   // Specify command line input parameters
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
-                                         {"export-checkpoint", no_argument, nullptr, 's'},
+                                         {"export-checkpoint", optional_argument, nullptr, 's'},
                                          {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
-                                         {"statistics", no_argument, nullptr, 'j'},
+                                         {"statistics", optional_argument, nullptr, 'j'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
                                          {"end-time", required_argument, nullptr, 'e'},
@@ -103,7 +103,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   // Define behavior
   int opt{0};
-  while ((opt = getopt_long(argc, argsv, "sci:o:njt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "s:ci:o:nj:t:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
@@ -136,6 +136,10 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 'j': {
+        config.toCheckpointPath = optarg != nullptr ? optarg : "./thermodynamic_statistics.txt";
+        if (optarg == nullptr)
+          spdlog::info("No checkpoint output file was specified, so ./thermodynamic_statistics.txt is used");
+
         config.registerStatistics = true;
         break;
       }
@@ -148,6 +152,8 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 's': {
+        config.toCheckpointPath = optarg != nullptr ? optarg : "./checkpoint.txt";
+        if (optarg == nullptr) spdlog::info("No checkpoint output file was specified, so ./checkpoint.txt is used");
         config.writeCheckpoint = true;
         break;
       }
@@ -188,12 +194,6 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // Issue: Model is called before xmlParser is initialised
-  //  if (config.getSelectedModel() == ModelType::NewtonsLaw && config.hasHitrateMeasureEnabled()) {
-  //    spdlog::error("The Newtons Law model does not support hitrate measurement.");
-  //    exit(EXIT_FAILURE);
-  //  }
-
   if (config.hasPerformanceMeasureEnabled() && config.hasLoggingEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
     config.disableLogging = true;
@@ -227,7 +227,7 @@ bool Configuration::tryParseXml() {
   for (auto membrane : xmlParser->getMembranes()) particleShapes.push_back(membrane);
 
   xmlParser->initializeParticleTypes();
-  checkpointPath = xmlParser->getCheckpointPath();
+  fromCheckpointPath = xmlParser->getCheckpointPath();
   container = xmlParser->initialiseLinkedCellContainerFromXML();
   thermostat = std::make_unique<ThermostatArg>(xmlParser->getThermostat());
 

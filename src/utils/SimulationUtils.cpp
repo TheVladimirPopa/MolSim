@@ -2,6 +2,7 @@
 
 #include "dataStructures/VectorContainer.h"
 #include "model/SmoothedLennardJonesModel.h"
+#include "outputWriter/StatisticsWriter.h"
 
 std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.

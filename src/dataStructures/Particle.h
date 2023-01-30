@@ -91,7 +91,7 @@ class Particle {
    * Maps the position of the Particle at a particular time
    */
 
-  std::vector<std::array<double, 3>> timePosition;
+  std::array<double, 3> lastPosition;
 
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
@@ -135,7 +135,7 @@ class Particle {
 
   const std::array<double, 3> &getOldF() const { return old_f; }
 
-  const std::vector<std::array<double, 3>> &getTimePosition() const { return timePosition; }
+  const std::array<double, 3> &getLastPosition() const { return lastPosition; }
 
   std::array<int, 3> &getPeriodicBoundariesCrossed() { return periodicBoundariesCrossed; }
 

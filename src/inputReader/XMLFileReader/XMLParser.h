@@ -84,21 +84,6 @@ class XMLParser {
     }
     throw std::invalid_argument("Invalid boundary string");
   }
-
-  /**
-   * Extracts the model that is used for the simulation
-   * @return Returns the model used for the simulation
-   */
-  std::string extractModel() {
-    if (simulation->Model() == "LennardJones") {
-      return "LennardJones";
-    } else if (simulation->Model() == "SmoothedLennardJones") {
-      return "SmoothedLennardJones";
-    } else if (simulation->Model() == "Gravity") {
-      return "Gravity";
-    }
-    throw std::invalid_argument("Invalid model");
-  }
   /**
    * Chooses the container type
    * @return Returns true if a LinkedCellsContainer is detected, false otherwise
@@ -372,7 +357,6 @@ class XMLParser {
    * @return The selected model
    */
   [[nodiscard]] ModelType getModel() const {
-    //    return ModelType::SmoothedLennardJones;
     if (simulation->Model() == "LennardJones") {
       return ModelType::LennardJones;
     } else if (simulation->Model() == "SmoothedLennardJones") {

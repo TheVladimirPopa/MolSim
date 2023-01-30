@@ -17,7 +17,10 @@ class Configuration {
   std::string inFilePath;
 
   /// Path from where to read checkpoint data from
-  std::string checkpointPath;
+  std::string fromCheckpointPath;
+
+  /// Path where the checkpoint is saved at
+  std::string toCheckpointPath;
 
   /// The XML parser
   std::unique_ptr<XMLParser> xmlParser;
@@ -37,6 +40,9 @@ class Configuration {
 
   /// Whether or not to write thermodynamic statistics for the simulation
   bool registerStatistics{false};
+
+  /// File where the statistics will be saved
+  std::string statFile;
 
   /// Whether or not to write files
   bool disableFileWriting{false};
@@ -138,7 +144,6 @@ class Configuration {
   [[nodiscard]] bool hasRegisterStatistics() const { return registerStatistics; }
   [[nodiscard]] bool hasPerformanceMeasureEnabled() const { return performanceMeasure; };
   [[nodiscard]] bool hasHitrateMeasureEnabled() const { return hitRateMeasure; };
-
   // Simulation getters
   [[nodiscard]] double getGravityConst() const { return gravityConstant; };
   [[nodiscard]] double getDeltaT() const { return deltaT; };
@@ -152,14 +157,15 @@ class Configuration {
   [[nodiscard]] ContainerType getContainerType() { return containerType; }
   [[nodiscard]] SimTypeDeprecated getSimType() const { return simType; };
   [[nodiscard]] std::vector<ParticleShape> getParticleShapes() { return particleShapes; }
-
   [[nodiscard]] std::unique_ptr<LinkedCellsContainer> takeContainer();
   [[nodiscard]] ThermostatArg* getThermostat() { return thermostat.get(); };
-
   // Input
   [[nodiscard]] std::string getInputPath() const { return inFilePath; }
+
   [[nodiscard]] InputType getInputType() const { return inputType; };
-  [[nodiscard]] std::string getCheckpointPath() const { return checkpointPath; };
+  [[nodiscard]] std::string getFromCheckpointPath() const { return fromCheckpointPath; };
+  [[nodiscard]] std::string getToCheckpointPath() const { return toCheckpointPath; };
+  [[nodiscard]] std::string getStatFile() const { return statFile; }
 
   // Output
   [[nodiscard]] std::string getFileName() const { return outFileName; };

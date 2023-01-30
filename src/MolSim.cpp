@@ -3,6 +3,8 @@
 
 #include "Configuration.h"
 #include "Simulation.h"
+#include "outputWriter/CheckpointFileWriter.h"
+#include "outputWriter/StatisticsWriter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 #include "utils/SimulationUtils.h"
@@ -38,7 +40,7 @@ int main(int argc, char* argsv[]) {
     SimulationUtils::populateContainerViaFile(*container, config.getInputPath(), config.getSimType());
   }
 
-  if (config.hasLoadCheckpointEnabled()) SimulationUtils::loadCheckpoint(*container, config.getCheckpointPath());
+  if (config.hasLoadCheckpointEnabled()) SimulationUtils::loadCheckpoint(*container, config.getFromCheckpointPath());
 
   // 3. Select model, writer, prepare thermostat
   auto model = SimulationUtils::makeModel(config.getSelectedModel(), config.getDeltaT(), config.getCutOff(),
@@ -60,8 +62,12 @@ int main(int argc, char* argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
+  auto checkpointWriter = CheckpointFileWriter(config.getToCheckpointPath());
+  auto statisticsWriter = StatisticsWriter(*container, 1000, config.getStatFile(), 1, 1, 50);
+
   simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
-                      config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics());
+                      config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics(), checkpointWriter,
+                      statisticsWriter);
 
   auto endTime = std::chrono::steady_clock::now();
 

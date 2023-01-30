@@ -2,13 +2,16 @@
 // Created by leo on 09.11.22.
 //
 #pragma once
+#include "Configuration.h"
 #include "dataStructures/IContainer.h"
 #include "dataStructures/Particle.h"
 #include "inputReader/FileReader.h"
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
 #include "model/Thermostat.h"
+#include "outputWriter/CheckpointFileWriter.h"
 #include "outputWriter/IWriter.h"
+#include "outputWriter/StatisticsWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 class Simulation {
@@ -25,8 +28,9 @@ class Simulation {
    * @param gravitationalConstant The factor of the gravitational force that gets applied
    * to a particle every iteration
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                double gravitationalConstant = 0.0, bool checkpointing = false, bool statistics = false);
+  void simulate(IModel& model, IContainer& particles, IWriter& fileWriter, Thermostat& thermostat,
+                double gravitationalConstant, bool checkpointing, bool statistics, CheckpointFileWriter& cpfWriter,
+                StatisticsWriter& statWriter);
 
   /**
    * Sets the time until the simulation is run

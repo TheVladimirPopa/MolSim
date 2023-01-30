@@ -1,8 +1,8 @@
-<Simulation_XML endTime="250" deltaT="0.0025" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.3"
-                gravity="1" radius_l="1.9" Model="SmoothedLennardJones">
+<Simulation_XML endTime="250" deltaT="0.00078" writeOutFrequency="50" filename="Task5_2.vtk" cutOffRadius="2.3"
+                gravity="0" radius_l="1.9" Model="SmoothedLennardJones">
 
     <Container_T>
-        <LinkedCell cellSize="3">
+        <LinkedCell cellSize="4.0" parallelization="None">
             <leftLowerBound x="0" y="0" z="0"/>
             <rightUpperBound x="9.2" y="9.2" z="9.2"/>
             <left>PERIODIC</left>
@@ -16,6 +16,6 @@
 
     <Thermostat initialTemp="3.0" targetTemp="5.0" maxTempChange="0.0078" periodLength="1000" dimension="50"/>
 
-    <InputFile path="./checkpoint.txt"/>
+    <InputFile path="./checkpoint_51.txt"/>
 
 </Simulation_XML>

@@ -39,28 +39,27 @@ void StatisticsWriter::registerParticle(int iteration) {
     file << "Iteration: " << iteration << "\n"
          << "Var(t): ";
     // rdf: delta_r is set to 1 and i is in [1, 50]
-    if (instanceof <LinkedCellsContainer>(particleContainer)) {
-      file << ThermodynamicStatistics::var(reinterpret_cast<LinkedCellsContainer&>(*particleContainer),
-                                           iteration / frequency, iteration / frequency - 1)
-           << "\n"
-           << "RDF: ";
-      file << ThermodynamicStatistics::radialDistributionFunction(
-                  DELTA_R, reinterpret_cast<LinkedCellsContainer&>(*particleContainer), START, END)
-           << "\n";
-    } else {
-      file << ThermodynamicStatistics::var(reinterpret_cast<VectorContainer&>(*particleContainer),
-                                           iteration / frequency, iteration / frequency - 1)
-           << "\n"
-           << "RDF: ";
-      file << ThermodynamicStatistics::radialDistributionFunction(
-                  DELTA_R, reinterpret_cast<VectorContainer&>(*particleContainer), START, END)
-           << "\n";
-    }
+
+    file << stat.var(&particleContainer) << "\n"
+         << "RDF: ";
+    file << ThermodynamicStatistics::radialDistributionFunction(rdfDeltaR, &particleContainer, rdfStart, rdfEnd)
+         << "\n";
     file << "\n";
   }
 }
 
-StatisticsWriter::StatisticsWriter(IContainer* particleContainer, int frequency)
-    : frequency{frequency}, particleContainer{particleContainer} {}
+StatisticsWriter::StatisticsWriter(IContainer& particleContainer, int frequency, const std::string& filename,
+                                   double rdfDeltaR, double rdfStart, double rdfEnd)
+    : frequency{frequency},
+      particleContainer{particleContainer},
+      filename{filename},
+      rdfDeltaR{rdfDeltaR},
+      rdfStart{rdfStart},
+      rdfEnd{rdfEnd} {
+  const char* fn = filename.c_str();
+  remove(fn);
+}
+int StatisticsWriter::getFrequency() const { return frequency; }
+const std::string& StatisticsWriter::getFilename() const { return filename; }
 
 StatisticsWriter::~StatisticsWriter() = default;
