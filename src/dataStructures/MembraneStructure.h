@@ -10,9 +10,6 @@ using ArrayUtils::L2Norm;
 
 class MembraneStructure {
  private:
-  /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
-  const std::array<size_t, 3> dimensions{2, 2, 1};
-
   /// Defines where in the particles vector the first particle of the membrane is
   const size_t startIndex;
 
@@ -46,9 +43,6 @@ class MembraneStructure {
   /// The index of the dimension that defines the height e.g. 0
   int dimHeight{};
 
-  /// The index of the dimension that defines the width e.g. 1
-  int dimWidth{};
-
   /// The model defining forces between particles
   HarmonicPotentialModel physics;
 
@@ -68,6 +62,10 @@ class MembraneStructure {
    */
   [[nodiscard]] size_t positionToIndex(std::array<unsigned long, 3> pos) const;
 
+ protected:
+  /// The dimensions of the membrane. Note: One dimensions MUST be 1 as membranes are single layered.
+  const std::array<size_t, 3> dimensions{2, 2, 1};
+
   /**
    * Applies the default force that is meant to be applied to direct neighbours
    * (= particles that are either horizontal or vertical neighbours).
@@ -83,6 +81,9 @@ class MembraneStructure {
    * @param y The second particle that influences the first particle
    */
   void applyDiagonalForce(Particle& x, Particle& y) const;
+
+  /// The index of the dimension that defines the width e.g. 1
+  int dimWidth{};
 
  public:
   MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength, double cutOff,
@@ -122,7 +123,7 @@ class MembraneStructure {
    * @param indexP1 Index of particle 1
    * @param indexP2 Index of particle 2
    */
-  void applyForce(Particle& p1, Particle& p2);
+  virtual void applyForce(Particle& p1, Particle& p2);
 
   /**
    * Returns whether the two passed particle indices are neighbours (direct or diagonal)

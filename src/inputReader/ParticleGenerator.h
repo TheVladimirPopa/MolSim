@@ -72,6 +72,21 @@ struct membrane : cuboid {
 };
 
 /**
+ * Struct containing all the values specifying a nanotube.
+ */
+enum Axis { X = 0, Y = 1, Z = 2 };
+
+struct nanotube : sphere {
+  double bondLength{2.2};
+  double stiffness{300.};
+  double cutOffRadius{1e30};
+
+  Axis axis{Axis::X};
+  int particleRadius{2};
+  int height{5};
+};
+
+/**
  * Generate all the single particles for a cuboid and places them in the
  * container
  * @note The particle velocity is calculated with @see
@@ -99,4 +114,11 @@ void addSphereToParticleContainer(IContainer &container, sphere const &data);
  * @param data The membrane struct which holds the data for the generation
  */
 void addMembraneToParticleContainer(IContainer &container, membrane const &data);
+
+/**
+ * Adds a nanotube structure to the container. Structures are treated differently to particles in the force calculation.
+ * @param container The container that receives the membrane structure
+ * @param data The membrane struct which holds the data for the generation
+ */
+void addNanoTubeToParticleContainer(IContainer &container, nanotube const &data);
 };  // namespace ParticleGeneration

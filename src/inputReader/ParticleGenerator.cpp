@@ -8,6 +8,7 @@
 using std::array;
 using vec3d = std::array<double, 3>;
 #include "dataStructures/MembraneStructure.h"
+#include "dataStructures/NanoTubeStructure.h"
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 using ArrayUtils::L2Norm;
@@ -45,13 +46,32 @@ void ParticleGeneration::addCuboidToParticleContainer(IContainer &container, Par
  * @param dimension Dimension of the sphere
  * @param bolzmann_v The Bolzmann velocity
  */
-void addParticlesIfInSphere(IContainer &container, ParticleGeneration::sphere const &data, vec3d delta, int dimension) {
-  auto is_in_sphere = [&data](vec3d pos) { return L2Norm(pos - data.position) <= (data.radius * data.distance); };
+using ParticleGeneration::Axis;
+void addParticlesIfInSphere(IContainer &container, ParticleGeneration::sphere const &data, vec3d delta, int dimension,
+                            bool onlyOutline = false, Axis axis2d = Axis::X) {
+  // Function that checks if a position is part of sphere
+  std::function is_in_sphere = [&data](vec3d pos) {
+    return L2Norm(pos - data.position) <= (data.radius * data.distance);
+  };
+
+  if (onlyOutline) {
+    is_in_sphere = [&data](vec3d pos) {
+      bool isBorderOrInside = L2Norm(pos - data.position) <= (data.radius * data.distance);
+      bool isBorderOrOutside = L2Norm(pos - data.position) >= (data.radius * 0.9 * data.distance);
+
+      return isBorderOrInside && isBorderOrOutside;
+    };
+  }
+
+  unsigned sign_mask = 0b100;
+  if (axis2d == Axis::Y) sign_mask >>= 1;
+  if (axis2d == Axis::Z) sign_mask >>= 2;
 
   // Iterate binary vector over all 4 or 8 possible configurations for signs
-  bool checked = false;
+  bool checked = false;  // Check once for all 4 or 8 positions
+  std::vector<std::pair<int, v3d>> quadrantLocation;
   for (unsigned int sign_bin = 0b0000; sign_bin < 0b1000; sign_bin++) {
-    if (dimension == 2 && ((sign_bin & 0b100) != 0)) continue;
+    if (dimension == 2 && ((sign_bin & sign_mask) != 0)) continue;
 
     vec3d pos = data.position;
 
@@ -62,8 +82,13 @@ void addParticlesIfInSphere(IContainer &container, ParticleGeneration::sphere co
 
     if (!checked && !is_in_sphere(pos)) break;
     checked = true;
-    container.emplace_back(pos, data.velocity, data.mass, data.type);
+    quadrantLocation.push_back({sign_bin, pos});
+    // container.emplace_back(pos, data.velocity, data.mass, data.type);
   }
+
+  // Make sure particles are stored sorted by location. (Required for nanotube)
+  std::stable_sort(quadrantLocation.begin(), quadrantLocation.end());
+  for (auto &pair : quadrantLocation) container.emplace_back(pair.second);
 }
 
 void ParticleGeneration::addSphereToParticleContainer(IContainer &container, ParticleGeneration::sphere const &data) {
@@ -131,4 +156,44 @@ void ParticleGeneration::addMembraneToParticleContainer(IContainer &container,
     membrane.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
 
   container.push_back(membrane);
+}
+
+void ParticleGeneration::addNanoTubeToParticleContainer(IContainer &container,
+                                                        ParticleGeneration::nanotube const &data) {
+  // Calculate delta to center of circle. Delta is relativ to dimension the circle lies in.
+  auto getDeltaToOrigin = [](auto &data, auto &x, auto &y, auto &height) -> v3d {
+    auto xTransformed = (x - 1) * data.distance + 0.5 * data.distance;
+    auto yTransformed = (y - 1) * data.distance + 0.5 * data.distance;
+    auto realHeight = data.distance * height;
+
+    if (data.axis == Axis::X) return {realHeight, xTransformed, yTransformed};
+    if (data.axis == Axis::Y) return {xTransformed, realHeight, yTransformed};
+    return {xTransformed, yTransformed, realHeight};
+  };
+
+  // Build up nanotube ring by ring
+  size_t particlesPerCircle = container.size();
+  for (int currentHeight = 0; currentHeight < data.height; ++currentHeight) {
+    for (unsigned int x = 1; x <= data.radius; ++x) {
+      for (unsigned int y = 1; y <= data.radius; ++y) {
+        addParticlesIfInSphere(container, data, getDeltaToOrigin(data, x, y, currentHeight), 2, true, data.axis);
+      }
+    }
+  }
+
+  particlesPerCircle = (container.size() - particlesPerCircle) / data.height;
+
+  // TODO: Figure out dimension
+  // Then generate membrane structure. The last particles of the container are consider to be part of the structure.
+  std::array<size_t, 3> dimensions = {particlesPerCircle, static_cast<size_t>(data.height), 1};
+
+  NanoTubeStructure nanoTube{dimensions, data.stiffness, data.bondLength, data.cutOffRadius,
+                             container.getParticlesRef()};
+
+  // TODO:?
+  /**
+  for (auto &mf : data.membraneForces)
+    nanoTube.addForceToParticle(mf.row, mf.column, std::array<double, 3>{mf.x, mf.y, mf.z}, mf.timeSpan);
+    **/
+  container.push_back(nanoTube);
 }
