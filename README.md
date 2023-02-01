@@ -34,6 +34,10 @@ can be found [here](https://github.com/TUM-I5/MolSim).
 
    `-D BUILD_DOC=OFF` if Doxygen is not installed
 
+   `-D OPEN_MP=ON` is used to compile with open_mp support (default)
+
+   `-D BUILD_DOC=OFF` if open_mp should not be used
+
     ``` bash
      $ cmake .. -D BUILD_DOC=ON -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++
     ```
