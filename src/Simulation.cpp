@@ -32,7 +32,7 @@ void Simulation::simulate(IModel &model, IContainer &particles, IWriter &fileWri
   } else {
     updateF = [gravitationalConstant](P p) {
       p.updateForces();
-      p.f[2] += p.m * gravitationalConstant;
+      p.f[1] += p.m * gravitationalConstant;
     };
   }
 
