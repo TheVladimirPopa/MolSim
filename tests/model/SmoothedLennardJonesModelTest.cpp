@@ -13,7 +13,7 @@ TEST(SmoothedLennardJonesModel, ForceNew) {
 
   Particle p2{{distance, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
-  std::array<double, 3> expected_force = {0.566495 * 2.1, 0.0, 0.0};
+  std::array<double, 3> expected_force = {0.56649460220233661 * 2.1, 0.0, 0.0};
 
   SmoothedLennardJonesModel model{2.3, 1.9};
 
@@ -36,13 +36,13 @@ TEST(SmoothedLennardJonesModel, ForceNew) {
 TEST(SmoothedLennardJonesModel, ForceOld) {
   VectorContainer c{};
 
-  double distance = 1.8;
+  double distance = 2.0;
   Particle p1{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
   Particle p2{{distance, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
   std::array<double, 3> expected_force = {465.0 / 512.0, 0.0, 0.0};
 
-  SmoothedLennardJonesModel model{2.3, 1.9};
+  SmoothedLennardJonesModel model{2.3, 2.1};
   model.addForces(p1, p2);
 
   // Check if result is approximately correct

@@ -8,7 +8,7 @@ using ArrayUtils::L2Norm;
 void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   double length_sqr = dotProduct(p1.x - p2.x);
   //++comparisons;
-  if (length_sqr >= radius_c * radius_c) return;
+  //  if (length_sqr >= radius_c * radius_c) return;
   //++hits;
 
   // Calculate (sigma⁶/length⁶)
