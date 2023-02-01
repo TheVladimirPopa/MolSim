@@ -49,6 +49,9 @@ int main(int argc, char* argsv[]) {
                                               : SimulationUtils::makeWriter(WriterType::NoWriter);
   auto thermostat = isXmlInput ? SimulationUtils::makeThermostat(*container, *config.getThermostat())
                                : SimulationUtils::makeDefaultThermostat(*container);
+  auto checkpointWriter = CheckpointFileWriter(config.getToCheckpointPath());
+  auto statisticsWriter = StatisticsWriter(*container, config.getStatFrequency(), config.getStatFile(),
+                                           config.getRdfDeltaR(), config.getRdfStart(), config.getRdfEnd());
 
   // 4. Start simulation
   Simulation simulation{};
@@ -61,10 +64,6 @@ int main(int argc, char* argsv[]) {
                std::ceil(config.getEndTime() / config.getDeltaT()));
 
   auto startTime = std::chrono::steady_clock::now();
-
-  auto checkpointWriter = CheckpointFileWriter(config.getToCheckpointPath());
-  auto statisticsWriter = StatisticsWriter(*container, config.getStatFrequency(), config.getStatFile(),
-                                           config.getRdfDeltaR(), config.getRdfStart(), config.getRdfEnd());
 
   simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
                       config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics(), checkpointWriter,

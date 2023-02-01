@@ -68,7 +68,7 @@ void SmoothedLennardJonesModel::addForces(Particle &p1, Particle &p2) const {
     diff = potentialConst * diff;
 
     force = diff;
-  } else {
+  } else if (distance >= radius_c) {
     force = {0., 0., 0.};
   }
 
