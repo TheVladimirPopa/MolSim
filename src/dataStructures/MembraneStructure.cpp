@@ -22,13 +22,13 @@ void MembraneStructure::applyRepulsiveForce(Particle& p1, Particle& p2) { physic
 
 MembraneStructure::MembraneStructure(std::array<size_t, 3> dimensions, double stiffness, double bondLength,
                                      double cutOff, std::vector<Particle>& particles)
-    : dimensions{dimensions},
-      startIndex{particles.size() - (dimensions[0] * dimensions[1] * dimensions[2])},
+    : startIndex{particles.size() - (dimensions[0] * dimensions[1] * dimensions[2])},
       particleCount{dimensions[0] * dimensions[1] * dimensions[2]},
       particles{&particles},
       stiffness{stiffness},
       bondLength{bondLength},
-      physics(stiffness, bondLength, cutOff) {
+      physics(stiffness, bondLength, cutOff),
+      dimensions{dimensions} {
   // The membrane consists out of a single layer. Find out indices of which dimensions are relevant.
   for (int i = 0; i < 3; i++) {
     if (dimensions[i] == 1) {
