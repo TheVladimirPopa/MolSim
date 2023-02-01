@@ -14,7 +14,7 @@
         </LinkedCell>
     </Container_T>
 
-    <Thermostat initialTemp="3.0" targetTemp="0.02" maxTempChange="0.0025" periodLength="1000" dimension="25"/>
+    <Thermostat initialTemp="3.0" targetTemp="0.02" maxTempChange="0.0025" periodLength="25" dimension="3"/>
 
     <InputFile path="./checkpoint_52.txt"/>
 

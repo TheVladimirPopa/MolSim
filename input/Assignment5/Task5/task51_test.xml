@@ -1,4 +1,4 @@
-<Simulation_XML endTime="250" deltaT="0.001" writeOutFrequency="50" filename="Task5_2.vtk" cutOffRadius="2.3"
+<Simulation_XML endTime="44" deltaT="0.001" writeOutFrequency="50" filename="Task5_1Test.vtk" cutOffRadius="2.3"
                 gravity="0" radius_l="1.9" Model="SmoothedLennardJones">
 
     <Container_T>
@@ -14,8 +14,8 @@
         </LinkedCell>
     </Container_T>
 
-    <Thermostat initialTemp="3.0" targetTemp="0.5" maxTempChange="0.0078" periodLength="50" dimension="3"/>
+    <Thermostat initialTemp="0.01" targetTemp="3.0" maxTempChange="0.001" periodLength="1000" dimension="40"/>
+
 
     <InputFile path="./checkpoint_51.txt"/>
-
 </Simulation_XML>
