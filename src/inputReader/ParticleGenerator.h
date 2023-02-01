@@ -76,16 +76,23 @@ struct membrane : cuboid {
  */
 enum Axis { X = 0, Y = 1, Z = 2 };
 
-struct nanotube : sphere {
-  double bondLength{2.2};
-  double stiffness{300.};
-  double cutOffRadius{1e30};
-
+struct nanotube : membrane {
+  double radius;
   Axis axis{Axis::X};
-  int particleRadius{2};
-  int height{5};
+
+  std::vector<MembraneForce> membraneForces;
 };
 
+/**
+ * Convert array to size_t array
+ * @tparam NUMTYPE A type that can be casted to size_t
+ * @param inArray The array of size 3
+ * @return The casted std::array<size_t, 3>
+ */
+template <typename NUMTYPE>
+std::array<size_t, 3> toSizeTArray(std::array<NUMTYPE, 3> inArray) {
+  return {static_cast<size_t>(inArray[0]), static_cast<size_t>(inArray[1]), static_cast<size_t>(inArray[2])};
+}
 /**
  * Generate all the single particles for a cuboid and places them in the
  * container
@@ -121,4 +128,14 @@ void addMembraneToParticleContainer(IContainer &container, membrane const &data)
  * @param data The membrane struct which holds the data for the generation
  */
 void addNanoTubeToParticleContainer(IContainer &container, nanotube const &data);
+
+/**
+ * Get ordered locations of outline points of a circle
+ * @param position center of the circle
+ * @param radius Radius of the circle
+ * @param count Number of outline points
+ * @param axis The normal of the circle. / The Dimension that is orthogonal to the circle.
+ * @return The positions
+ */
+std::vector<v3d> getCircleLocations(v3d position, double radius, double count, Axis axis);
 };  // namespace ParticleGeneration
