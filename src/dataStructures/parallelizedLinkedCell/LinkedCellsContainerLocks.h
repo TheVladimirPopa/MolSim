@@ -18,7 +18,7 @@ class LinkedCellsContainerLocks : public LinkedCellsContainer {
       applyPeriodicForces(binaryFunction);
     }
 
-#pragma omp parallel for default(none) shared(binaryFunction, cells) schedule(dynamic, 4)
+#pragma omp parallel for default(none) shared(binaryFunction, cells) schedule(guided)
     for (size_t index = 0; index < cells.size(); ++index) {
       if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
         continue;
