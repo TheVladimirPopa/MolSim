@@ -9,7 +9,7 @@
 #define PROGRESS_MSG_COUNT 15
 
 void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWriter, Thermostat& thermostat,
-                          double gravitationalConstant, bool checkpointing, bool statistics,
+                          double gravitationalConstant, bool gasSimulation, bool checkpointing, bool statistics,
                           CheckpointFileWriter& cpfWriter, StatisticsWriter& statWriter) {
   spdlog::info("Simulation is starting...");
   size_t expectedIterationCount = std::ceil((endTime - startTime) / deltaT);
@@ -31,7 +31,7 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
   double avgVelocityPrevious{0};
   double avgVelocityCurrent{0};
   double criticalSpeed{3e3 * deltaT};
-  if (particles.isDense()) {
+  if (gasSimulation && particles.isDense()) {
     updateV = [&model, &avgVelocityCurrent, &avgVelocityPrevious, criticalSpeed](P p) {
       model.updateV(std::forward<P>(p));
 

@@ -65,7 +65,7 @@ int main(int argc, char* argsv[]) {
 
   auto startTime = std::chrono::steady_clock::now();
 
-  simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(),
+  simulation.simulate(*model, *container, *writer, *thermostat, config.getGravityConst(), config.getGasSimulation(),
                       config.hasWriteCheckpointEnabled(), config.hasRegisterStatistics(), checkpointWriter,
                       statisticsWriter);
 

@@ -88,6 +88,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
                                          {"statistics", no_argument, nullptr, 'j'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
+                                         {"gas", no_argument, nullptr, 'g'},
                                          {"end-time", required_argument, nullptr, 'e'},
                                          {"delta-t", required_argument, nullptr, 'd'},
                                          {"write-frequency", required_argument, nullptr, 'w'},
@@ -103,7 +104,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   // Define behavior
   int opt{0};
-  while ((opt = getopt_long(argc, argsv, "s:ci:o:njt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "s:ci:o:njgt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
@@ -140,6 +141,10 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         config.registerStatistics = true;
         break;
       }
+      case 'g': {
+        config.gasSimulation = true;
+        break;
+      }
       case 'e': {
         config.endTime = stringToEndTime(string(optarg));
         break;
@@ -149,8 +154,8 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 's': {
-        config.toCheckpointPath = optarg != nullptr ? optarg : "./checkpoint.txt";
-        if (optarg == nullptr) spdlog::info("No checkpoint output file was specified, so ./checkpoint.txt is used");
+        if (optarg == nullptr) spdlog::error("No checkpoint output file was specified, so ./checkpoint.txt is used");
+        config.toCheckpointPath = optarg;
         config.writeCheckpoint = true;
         break;
       }
@@ -242,13 +247,13 @@ std::unique_ptr<LinkedCellsContainer> Configuration::takeContainer() { return st
 
 void Configuration::printUsage() {
   std::cout << " Usage\n"
-               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-j] [-v] [-v] [-q] [-x]\n"
+               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-j] [-g] [-v] [-v] [-q] [-x]\n"
                "\n"
                " Usage (deprecated)\n"
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-s] [-c] [-j] [-v] [-v] [-q] [-x]\n"
+               "[-n] [-p] [-r] [-s] [-c] [-j] [-g] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -282,6 +287,8 @@ void Configuration::printHelp() {
                "        -j, --statistics\n"
                "                If active particle statistics (e.g. the radial distribution function) will \n"
                "                be printed out\n"
+               "        -g, --gas\n"
+               "                If active, \n"  // TODO
                "        -n, --no-output\n"
                "                If active no files will be written, even overwrites "
                "-o.\n"

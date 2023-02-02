@@ -51,4 +51,7 @@
     </Membrane>
 
     <InputFile path="./checkpoint.txt"/>
+
+    <Statistics path="./statistics.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
+
 </Simulation_XML>

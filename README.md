@@ -55,9 +55,9 @@ OPTIONS:
         -i <filepath>, --xml=<filepath>
                 Use the given <filepath> of an XML file as an input for the simulation.
         
-        -s, --export-checkpoint
+        -s <filepath>, --export-checkpoint=<filepath>
                 When set, the state of the particles after the simulation are saved to
-                the file ./checkpoint.txt
+                the <filepath>
                 
         -c, --input-checkpoint
                 When set, a previous checkpoint is taken as an input, in addition to the 
@@ -71,6 +71,9 @@ OPTIONS:
         -j, --statistics
                 If active particle statistics (e.g. the radial distribution function) will
                 be printed out
+        
+        -g, --gas
+                If active, ...
                 
         -n, --no-output
                 If active no files will be written, even overwrites -o.
@@ -169,7 +172,7 @@ We support XML file input. The file has to include:
 
 * the simulation parameters (endTime, deltaT, writeOutFrequency, filename, cutOffRadius, gravity)
 * _(optional)_ preinitialised particles
-* a simulationType (containing either Cuboids or Spheres)
+* _(optional)_ a simulationType (containing either Cuboids or Spheres)
 * a containerType, describing the strategy used (either LinkedCell for the linkedCells algorithm or VectorContainer for
   DirectSum)
 * when using the linkedCellsContainer cellSize and boundaries have to be specified
@@ -177,48 +180,65 @@ We support XML file input. The file has to include:
 * an input file (by default checkpoint.txt, in order to perform checkpointing)
 
 The following is an example of how an XML input file (e.g. for cuboid in the file ```./input/input_xml_example```:
+
 ```xml
 
-<Simulation_XML endTime="10.0" deltaT="0.0005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
-                gravity="-12.44">
+<Simulation_XML endTime="10.0" deltaT="0.005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
+                gravity="-12.44" radius_l="1.9" Model="LennardJones">
 
     <Particle id="0" epsilon="1.0" sigma="1.0"/>
     <Particle id="1" epsilon="1.0" sigma="0.9412"/>
 
     <SimTypes>
-        <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
-            <position x="0.0" y="0.0" z="0.0"/>
-            <velocity x="0.0" y="0.0" z="0.0"/>
-        </Sphere>
+        <Cuboid distance="1.12" mass="1.9" type="1">
+            <position x="80.0" y="0.0" z="0.0"/>
+            <dimension x="10" y="10" z="1"/>
+            <velocity x="-30.0" y="0.0" z="0.0"/>
+        </Cuboid>
 
-        <Sphere radius="6" dimension="2" distance="1.1225" mass="1.0" type="0">
-            <position x="4.0" y="15.0" z="0.0"/>
-            <velocity x="0.0" y="-10.0" z="0.0"/>
-        </Sphere>
+        <Cuboid distance="1.9" mass="1.7" type="1">
+            <position x="-110.0" y="0.0" z="0.0"/>
+            <dimension x="40" y="20" z="1"/>
+            <velocity x="40.0" y="0.0" z="0.0"/>
+        </Cuboid>
 
-        <Sphere radius="2" dimension="3" distance="1.1225" mass="1.0" type="1">
-            <position x="4.0" y="-15.0" z="0.0"/>
-            <velocity x="0.0" y="-10.0" z="0.0"/>
-        </Sphere>
+        <Cuboid distance="1.23" mass="0.5" type="1">
+            <position x="4.0" y="4.0" z="0.0"/>
+            <dimension x="3" y="3" z="3"/>
+            <velocity x="0.0" y="0.0" z="10.0"/>
+        </Cuboid>
 
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="10.0">
+        <LinkedCell cellSize="10.0" parallelization="None">
             <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
             <rightUpperBound x="55.0" y="30.0" z="5"/>
-            <left>REFLECT</left>
-            <right>REFLECT</right>
+            <left>PERIODIC</left>
+            <right>PERIODIC</right>
             <top>PERIODIC</top>
-            <bottom>REFLECT</bottom>
-            <front>REFLECT</front>
-            <back>REFLECT</back>
+            <bottom>PERIODIC</bottom>
+            <front>PERIODIC</front>
+            <back>PERIODIC</back>
         </LinkedCell>
     </Container_T>
 
     <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="1000" dimension="2"/>
 
+    <Membrane distance="2.2" mass="1.0" stiffness="300.0" bondLength="2.2" type="1" cutOffRadius="3.0">
+        <position x="15.0" y="15.0" z="15.0"/>
+        <dimension x="50" y="50" z="1"/>
+        <velocity x="0.0" y="0.0" z="0.0"/>
+        <membraneForce row="17" column="24" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
+        <membraneForce row="17" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
+        <membraneForce row="18" column="24" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
+        <membraneForce row="18" column="25" x="0.0" y="0.0" z="0.8" timeSpan="150"/>
+    </Membrane>
+
     <InputFile path="./checkpoint.txt"/>
+
+    <Statistics path="./statistics.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
+
 </Simulation_XML>
 ```
 

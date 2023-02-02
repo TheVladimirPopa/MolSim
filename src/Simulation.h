@@ -28,8 +28,8 @@ class Simulation {
    * to a particle every iteration
    */
   void simulate(IModel& model, IContainer& particles, IWriter& fileWriter, Thermostat& thermostat,
-                double gravitationalConstant, bool checkpointing, bool statistics, CheckpointFileWriter& cpfWriter,
-                StatisticsWriter& statWriter);
+                double gravitationalConstant, bool gasSimulation, bool checkpointing, bool statistics,
+                CheckpointFileWriter& cpfWriter, StatisticsWriter& statWriter);
 
   /**
    * Sets the time until the simulation is run

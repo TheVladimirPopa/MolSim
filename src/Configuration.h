@@ -45,13 +45,20 @@ class Configuration {
   /// File where the statistics will be saved
   std::string statFile;
 
+  /// How often statistics are printed out
   int statFrequency{1000};
 
+  /// Step size for the interval for the RDF
   double rdfDeltaR{1};
 
+  /// Start of the interval for the RDF
   double rdfStart{1};
 
+  /// End of the interval for the RDF
   double rdfEnd{50};
+
+  /// Whether or not there is a gas simulation
+  bool gasSimulation{false};
 
   /// Whether or not to write files
   bool disableFileWriting{false};
@@ -179,6 +186,7 @@ class Configuration {
   [[nodiscard]] double getRdfDeltaR() const { return rdfDeltaR; }
   [[nodiscard]] double getRdfStart() const { return rdfStart; }
   [[nodiscard]] double getRdfEnd() const { return rdfEnd; }
+  [[nodiscard]] bool getGasSimulation() const { return gasSimulation; }
 
   // Output
   [[nodiscard]] std::string getFileName() const { return outFileName; };
