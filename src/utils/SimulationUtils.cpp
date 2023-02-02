@@ -1,11 +1,11 @@
 #include "SimulationUtils.h"
 
 #include "dataStructures/VectorContainer.h"
-#include "model/SmoothedLennardJonesModel.h"
-#include "outputWriter/StatisticsWriter.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringMultiple.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringSingle.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerLocks.h"
+#include "model/SmoothedLennardJonesModel.h"
+#include "outputWriter/StatisticsWriter.h"
 
 std::unique_ptr<LinkedCellsContainer> SimulationUtils::makeDefaultContainer() {
   // Fallback, when no linked cells container is specified.

@@ -94,7 +94,6 @@ class Particle {
   std::array<double, 3> lastPosition;
 
  public:
-
  private:
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 

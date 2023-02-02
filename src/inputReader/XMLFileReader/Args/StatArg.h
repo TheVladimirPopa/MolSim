@@ -11,7 +11,7 @@ class StatArg {
   std::string path;
 
  public:
-  StatArg(int frequency, double rdfDeltaR, double rdfStart, double rdfEnd, std::string  path);
+  StatArg(int frequency, double rdfDeltaR, double rdfStart, double rdfEnd, std::string path);
 
   [[nodiscard]] int getFrequency() const;
 

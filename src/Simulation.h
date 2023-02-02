@@ -51,7 +51,7 @@ class Simulation {
    * added automatically)
    * @param filename the new path
    */
-  void setFilename(const std::string &filename) { Simulation::filename = filename; }
+  void setFilename(const std::string& filename) { Simulation::filename = filename; }
 
   /**
    * Returns the timestep by which the time gets increased in every iteration

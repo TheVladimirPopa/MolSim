@@ -44,5 +44,5 @@ class ThermodynamicStatistics {
    * @return a vector of the local densities
    */
   static std::vector<double> calculateRadialDistributionFunction(double deltaR, IContainer *particleContainer,
-                                                        double intervalStart, double intervalEnd);
+                                                                 double intervalStart, double intervalEnd);
 };
