@@ -5,6 +5,8 @@
  * Uses domain colouring to ensure that no race conditions can occur
  * Each colour is a vector of cell indices, which are arranged that no neighbouring cell is overlapping
  * To achieve this 18 colours were used
+ *  \image html colouringSingle.gif width=900px
+ *  \image latex colouringSingle.gif "Colouring schema" width = [goodwidth]cm
  */
 class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
  private:
@@ -48,7 +50,7 @@ class LinkedCellsContainerColouringSingle : public LinkedCellsContainer {
     }
 
     for (auto &colour : colourList) {
-#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(dynamic, 2)
+#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(guided)
       for (auto index : colour) {
         if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
           continue;

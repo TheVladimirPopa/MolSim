@@ -122,9 +122,10 @@ std::unique_ptr<Thermostat> SimulationUtils::makeDefaultThermostat(IContainer& c
 }
 
 std::unique_ptr<Thermostat> SimulationUtils::makeThermostat(IContainer& container, ThermostatArg thermArg) {
-  size_t dimension = 3;
+  double maxDouble = 1.79769e+308;
   return std::make_unique<Thermostat>(container, thermArg.getInitialTemp(), thermArg.getTargetTemp(),
-                                      thermArg.getMaxTempChange(), thermArg.getPeriodLength(), dimension);
+                                      thermArg.getMaxTempChange() < 0 ? maxDouble : thermArg.getMaxTempChange(),
+                                      thermArg.getPeriodLength(), thermArg.getDimension());
 }
 
 void ConfigurationUtils::configureLogging(int logLevel, bool disableLogging) {

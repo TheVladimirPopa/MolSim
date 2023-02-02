@@ -59,10 +59,13 @@ set(global_compiler_flags
         )
 
 IF (OPEN_MP)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qopenmp")
+  else ()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+  endif ()
 endif ()
 
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2")
 
 
 # Compile MolSim

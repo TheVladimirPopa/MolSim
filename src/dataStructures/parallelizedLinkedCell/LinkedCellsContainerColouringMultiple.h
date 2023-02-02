@@ -6,6 +6,8 @@
  * Each colour is a vector of an array of cell indices, which are arranged that no neighbouring cell of such an array
  * block is overlapping with an other array block. To achieve this 8 colours were used. One thread therefore always has
  * to work in a block of 4 cells.
+ *  \image html colouringMultiple.gif width=900px
+ *  \image latex colouringMultiple.gif "Colouring schema" width = [goodwidth]cm
  */
 class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
  private:
@@ -51,7 +53,7 @@ class LinkedCellsContainerColouringMultiple : public LinkedCellsContainer {
     }
 
     for (auto &colour : colourList) {
-#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(dynamic)
+#pragma omp parallel for default(none) shared(binaryFunction, cells, colour) schedule(guided)
       for (auto &colourGroup : colour) {
         for (auto index : colourGroup) {
           if (cells[index].type == CellType::halo || cells[index].isEmpty()) {
