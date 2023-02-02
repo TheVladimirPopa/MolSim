@@ -19,7 +19,7 @@
     </SimTypes>
 
     <Container_T>
-        <LinkedCell cellSize="3.6" parallelization="ColouringMultiple">
+        <LinkedCell cellSize="3.6" parallelization="ColouringSingle">
             <leftLowerBound x="0" y="0" z="0"/>
             <rightUpperBound x="32.4" y="32.4" z="32.4"/>
             <left>PERIODIC</left>
