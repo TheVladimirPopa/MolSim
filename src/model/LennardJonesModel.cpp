@@ -5,9 +5,8 @@ using ArrayUtils::dotProduct;
 
 void LennardJonesModel::addForces(Particle &p1, Particle &p2) const {
   double length_sqr = dotProduct(p1.x - p2.x);
-  //++comparisons;
+
   if (length_sqr >= cutOffRadiusSquared) return;
-  //++hits;
 
   // Calculate (sigma⁶/length⁶)
   double sigma = p1.sigma == p2.sigma ? p1.sigma : (p1.sigma + p2.sigma) / 2;
