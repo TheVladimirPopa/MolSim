@@ -11,7 +11,7 @@ std::array<double, 3> ThermodynamicStatistics::getTruePosition(LinkedCellsContai
                                                                std::array<double, 3> oldPosition,
                                                                std::array<int, 3> boundariesCrossed) {
   for (int i = 0; i < 3; i++) {
-    oldPosition[i] += boundariesCrossed[i] * particleContainer.cubeSize[i];
+    oldPosition[i] += (boundariesCrossed[i] * particleContainer.cubeSize[i]);
   }
   return oldPosition;
 }
@@ -63,10 +63,6 @@ std::vector<double> ThermodynamicStatistics::calculateRadialDistributionFunction
         }
       }
     }
-//    if (numPairs == 0) {
-//      i += deltaR;
-//      continue;
-//    }
 
     double cubeDiff = (i + deltaR);
     cubeDiff *= cubeDiff * cubeDiff;

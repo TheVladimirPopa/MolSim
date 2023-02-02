@@ -16,6 +16,8 @@
 
     <Thermostat initialTemp="3.0" targetTemp="0.02" maxTempChange="0.0025" periodLength="25" dimension="3"/>
 
-    <InputFile path="./checkpoint_52.txt"/>
+    <InputFile path="./checkpoint_51.txt"/>
+
+    <Statistics path="./statistics_Supercooling.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
 
 </Simulation_XML>
