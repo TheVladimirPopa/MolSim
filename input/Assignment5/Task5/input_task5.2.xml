@@ -1,4 +1,4 @@
-<Simulation_XML endTime="250" deltaT="0.001" writeOutFrequency="50" filename="Task5_2.vtk" cutOffRadius="2.3"
+<Simulation_XML endTime="250" deltaT="0.001" writeOutFrequency="500" filename="Task5_2.vtk" cutOffRadius="2.3"
                 gravity="0" radius_l="1.9" Model="SmoothedLennardJones">
 
     <Container_T>
