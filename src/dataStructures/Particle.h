@@ -121,7 +121,7 @@ class Particle {
  public:
   explicit Particle(int type = 0);
 
-  Particle(const Particle &other);
+  Particle(const Particle &other) = default;
 
   Particle(
       // for visualization, we need always 3 coordinates
