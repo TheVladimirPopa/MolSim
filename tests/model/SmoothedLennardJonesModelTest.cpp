@@ -5,6 +5,9 @@
 #include "gtest/gtest.h"
 #include "model/SmoothedLennardJonesModel.h"
 
+/**
+ * Check if the SmoothedLennardJonesModel is applied when the particle distance is between the cutoffRadius and radius_l
+ */
 TEST(SmoothedLennardJonesModel, ForceNew) {
   VectorContainer c{};
 
@@ -33,6 +36,9 @@ TEST(SmoothedLennardJonesModel, ForceNew) {
       << "Note: this last expect might assume unreasonable precision.";
 }
 
+/**
+ * Check if the regulat LennardJones Potential is used for distance <= radius_l
+ */
 TEST(SmoothedLennardJonesModel, ForceOld) {
   VectorContainer c{};
 
@@ -59,6 +65,10 @@ TEST(SmoothedLennardJonesModel, ForceOld) {
   EXPECT_NEAR(p1.getF()[0], expected_force[0], std::numeric_limits<double>::epsilon())
       << "Note: this last expect might assume unreasonable precision.";
 }
+
+/**
+ * Check if the applied forces are 0 when the particles are too far apart (beyond the cutoffRadius)
+ */
 
 TEST(SmoothedLennardJonesModel, ForceNewNull) {
   VectorContainer c{};

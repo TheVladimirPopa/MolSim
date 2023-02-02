@@ -15,12 +15,12 @@
         <LinkedCell cellSize="2.3" parallelization="None">
             <leftLowerBound x="0" y="0" z="0"/>
             <rightUpperBound x="9.2" y="9.2" z="9.2"/>
-            <left>REFLECT</left>
-            <right>REFLECT</right>
-            <top>REFLECT</top>
-            <bottom>REFLECT</bottom>
-            <front>REFLECT</front>
-            <back>REFLECT</back>
+            <left>PERIODIC</left>
+            <right>PERIODIC</right>
+            <top>PERIODIC</top>
+            <bottom>PERIODIC</bottom>
+            <front>PERIODIC</front>
+            <back>PERIODIC</back>
         </LinkedCell>
     </Container_T>
 

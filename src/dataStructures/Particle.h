@@ -121,6 +121,7 @@ class Particle {
  public:
   explicit Particle(int type = 0);
 
+  //  Particle(const Particle &other);
   Particle(const Particle &other) = default;
 
   Particle(
@@ -236,7 +237,7 @@ class Particle {
    */
   size_t getId() const { return particleId; }
 
-  void setLastPosition(const std::array<double, 3> &lastPosition) { this->lastPosition = lastPosition; }
+  void setLastPosition(const std::array<double, 3> &lp) { this->lastPosition = lp; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

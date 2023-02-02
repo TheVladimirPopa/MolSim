@@ -41,34 +41,41 @@ double ThermodynamicStatistics::calculateVariance(IContainer *particleContainer)
   return var;
 }
 
-std::vector<double> ThermodynamicStatistics::calculateRadialDistributionFunction(double delta_r,
+std::vector<double> ThermodynamicStatistics::calculateRadialDistributionFunction(double deltaR,
                                                                                  IContainer *particleContainer,
                                                                                  double intervalStart,
                                                                                  double intervalEnd) {
   std::vector<double> densities;
-  for (Particle p1 : particleContainer->getParticlesRef()) {
-    for (Particle p2 : particleContainer->getParticlesRef()) {
-      if (p1 == p2) {
-        continue;
-      }
-      double r = L2Norm(p1.getX() - p2.getX());
-      double i = intervalStart;
-      while (i <= intervalEnd) {
-        double numPairs = 0;
-        if (r > i && r <= i + delta_r) {
+  int size = static_cast<int>(particleContainer->size());
+  double i = intervalStart;
+  while (i <= intervalEnd) {
+    double numPairs = 0;
+
+    for (int j = 0; j < size - 1; j++) {
+      Particle p1 = particleContainer->getParticlesRef().at(j);
+
+      for (int k = j + 1; k < size; k++) {
+        Particle p2 = particleContainer->getParticlesRef().at(k);
+
+        double r = L2Norm(p1.getX() - p2.getX());
+        if (r > i && r <= i + deltaR) {
           numPairs++;
         }
-        if (numPairs == 0) {
-          continue;
-        }
-        double cubeDiff = (i + delta_r);
-        cubeDiff *= cubeDiff * cubeDiff;
-        cubeDiff -= (i * i * i);
-        double density = (3.0 * numPairs) / ((4 * PI * cubeDiff));
-        densities.emplace_back(density);
-        i += delta_r;
       }
     }
+//    if (numPairs == 0) {
+//      i += deltaR;
+//      continue;
+//    }
+
+    double cubeDiff = (i + deltaR);
+    cubeDiff *= cubeDiff * cubeDiff;
+    cubeDiff -= (i * i * i);
+    double density = (3.0 * numPairs) / ((4 * PI * cubeDiff));
+    densities.emplace_back(density);
+
+    i += deltaR;
   }
+
   return densities;
 }

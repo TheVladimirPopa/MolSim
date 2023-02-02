@@ -37,12 +37,12 @@ class ThermodynamicStatistics {
   double calculateVariance(IContainer *particleContainer);
   /**
    * Computes the calculateRadialDistributionFunction for particles in a LinkedCellsContainer
-   * @param delta_r
+   * @param deltaR
    * @param particleContainer
    * @param intervalStart
    * @param intervalEnd
    * @return a vector of the local densities
    */
-  static std::vector<double> calculateRadialDistributionFunction(double delta_r, IContainer *particleContainer,
+  static std::vector<double> calculateRadialDistributionFunction(double deltaR, IContainer *particleContainer,
                                                         double intervalStart, double intervalEnd);
 };
