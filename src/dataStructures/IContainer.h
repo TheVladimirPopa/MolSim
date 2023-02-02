@@ -89,4 +89,11 @@ class IContainer {
   virtual std::vector<MembraneStructure> &getStructureVectorRef() { throw std::runtime_error("Not implemented."); }
 
   virtual ~IContainer() = default;
+
+  /**
+   * Whether the container is dense, which means that there are a lot of particles packed tightly together.
+   * This is only relevant when using periodic boundaries.
+   * @return The container is packed densly
+   */
+  virtual bool isDense() { return false; }
 };

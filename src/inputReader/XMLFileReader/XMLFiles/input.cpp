@@ -79,6 +79,20 @@ simulation_t::InputFile_sequence& simulation_t::InputFile() { return this->Input
 
 void simulation_t::InputFile(const InputFile_sequence& s) { this->InputFile_ = s; }
 
+const simulation_t::Statistics_sequence& simulation_t::Statistics() const { return this->Statistics_; }
+
+simulation_t::Statistics_sequence& simulation_t::Statistics() { return this->Statistics_; }
+
+void simulation_t::Statistics(const Statistics_sequence& s) { this->Statistics_ = s; }
+
+const simulation_t::Model_type& simulation_t::Model() const { return this->Model_.get(); }
+
+simulation_t::Model_type& simulation_t::Model() { return this->Model_.get(); }
+
+void simulation_t::Model(const Model_type& x) { this->Model_.set(x); }
+
+void simulation_t::Model(::std::unique_ptr<Model_type> x) { this->Model_.set(std::move(x)); }
+
 const simulation_t::endTime_type& simulation_t::endTime() const { return this->endTime_.get(); }
 
 simulation_t::endTime_type& simulation_t::endTime() { return this->endTime_.get(); }
@@ -118,6 +132,31 @@ const simulation_t::gravity_type& simulation_t::gravity() const { return this->g
 simulation_t::gravity_type& simulation_t::gravity() { return this->gravity_.get(); }
 
 void simulation_t::gravity(const gravity_type& x) { this->gravity_.set(x); }
+
+const simulation_t::radius_l_type& simulation_t::radius_l() const { return this->radius_l_.get(); }
+
+simulation_t::radius_l_type& simulation_t::radius_l() { return this->radius_l_.get(); }
+
+void simulation_t::radius_l(const radius_l_type& x) { this->radius_l_.set(x); }
+
+// model_t
+//
+
+model_t::model_t(value v) : ::xml_schema::string(_xsd_model_t_literals_[v]) {}
+
+model_t::model_t(const char* v) : ::xml_schema::string(v) {}
+
+model_t::model_t(const ::std::string& v) : ::xml_schema::string(v) {}
+
+model_t::model_t(const ::xml_schema::string& v) : ::xml_schema::string(v) {}
+
+model_t::model_t(const model_t& v, ::xml_schema::flags f, ::xml_schema::container* c) : ::xml_schema::string(v, f, c) {}
+
+model_t& model_t::operator=(value v) {
+  static_cast< ::xml_schema::string&>(*this) = ::xml_schema::string(_xsd_model_t_literals_[v]);
+
+  return *this;
+}
 
 // array_i
 //
@@ -600,14 +639,50 @@ membrane_force::timeSpan_type& membrane_force::timeSpan() { return this->timeSpa
 
 void membrane_force::timeSpan(const timeSpan_type& x) { this->timeSpan_.set(x); }
 
+// statistics_t
+//
+
+const statistics_t::path_type& statistics_t::path() const { return this->path_.get(); }
+
+statistics_t::path_type& statistics_t::path() { return this->path_.get(); }
+
+void statistics_t::path(const path_type& x) { this->path_.set(x); }
+
+void statistics_t::path(::std::unique_ptr<path_type> x) { this->path_.set(std::move(x)); }
+
+const statistics_t::frequency_type& statistics_t::frequency() const { return this->frequency_.get(); }
+
+statistics_t::frequency_type& statistics_t::frequency() { return this->frequency_.get(); }
+
+void statistics_t::frequency(const frequency_type& x) { this->frequency_.set(x); }
+
+const statistics_t::rdfDeltaR_type& statistics_t::rdfDeltaR() const { return this->rdfDeltaR_.get(); }
+
+statistics_t::rdfDeltaR_type& statistics_t::rdfDeltaR() { return this->rdfDeltaR_.get(); }
+
+void statistics_t::rdfDeltaR(const rdfDeltaR_type& x) { this->rdfDeltaR_.set(x); }
+
+const statistics_t::rdfStart_type& statistics_t::rdfStart() const { return this->rdfStart_.get(); }
+
+statistics_t::rdfStart_type& statistics_t::rdfStart() { return this->rdfStart_.get(); }
+
+void statistics_t::rdfStart(const rdfStart_type& x) { this->rdfStart_.set(x); }
+
+const statistics_t::rdfEnd_type& statistics_t::rdfEnd() const { return this->rdfEnd_.get(); }
+
+statistics_t::rdfEnd_type& statistics_t::rdfEnd() { return this->rdfEnd_.get(); }
+
+void statistics_t::rdfEnd(const rdfEnd_type& x) { this->rdfEnd_.set(x); }
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // simulation_t
 //
 
-simulation_t::simulation_t(const endTime_type& endTime, const deltaT_type& deltaT,
+simulation_t::simulation_t(const Model_type& Model, const endTime_type& endTime, const deltaT_type& deltaT,
                            const writeOutFrequency_type& writeOutFrequency, const filename_type& filename,
-                           const cutOffRadius_type& cutOffRadius, const gravity_type& gravity)
+                           const cutOffRadius_type& cutOffRadius, const gravity_type& gravity,
+                           const radius_l_type& radius_l)
     : ::xml_schema::type(),
       Particle_(this),
       SimTypes_(this),
@@ -615,12 +690,15 @@ simulation_t::simulation_t(const endTime_type& endTime, const deltaT_type& delta
       Thermostat_(this),
       Membrane_(this),
       InputFile_(this),
+      Statistics_(this),
+      Model_(Model, this),
       endTime_(endTime, this),
       deltaT_(deltaT, this),
       writeOutFrequency_(writeOutFrequency, this),
       filename_(filename, this),
       cutOffRadius_(cutOffRadius, this),
-      gravity_(gravity, this) {}
+      gravity_(gravity, this),
+      radius_l_(radius_l, this) {}
 
 simulation_t::simulation_t(const simulation_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(x, f, c),
@@ -630,12 +708,15 @@ simulation_t::simulation_t(const simulation_t& x, ::xml_schema::flags f, ::xml_s
       Thermostat_(x.Thermostat_, f, this),
       Membrane_(x.Membrane_, f, this),
       InputFile_(x.InputFile_, f, this),
+      Statistics_(x.Statistics_, f, this),
+      Model_(x.Model_, f, this),
       endTime_(x.endTime_, f, this),
       deltaT_(x.deltaT_, f, this),
       writeOutFrequency_(x.writeOutFrequency_, f, this),
       filename_(x.filename_, f, this),
       cutOffRadius_(x.cutOffRadius_, f, this),
-      gravity_(x.gravity_, f, this) {}
+      gravity_(x.gravity_, f, this),
+      radius_l_(x.radius_l_, f, this) {}
 
 simulation_t::simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
     : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
@@ -645,12 +726,15 @@ simulation_t::simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f
       Thermostat_(this),
       Membrane_(this),
       InputFile_(this),
+      Statistics_(this),
+      Model_(this),
       endTime_(this),
       deltaT_(this),
       writeOutFrequency_(this),
       filename_(this),
       cutOffRadius_(this),
-      gravity_(this) {
+      gravity_(this),
+      radius_l_(this) {
   if ((f & ::xml_schema::flags::base) == 0) {
     ::xsd::cxx::xml::dom::parser<char> p(e, true, false, true);
     this->parse(p, f);
@@ -716,12 +800,26 @@ void simulation_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
       continue;
     }
 
+    // Statistics
+    //
+    if (n.name() == "Statistics" && n.namespace_().empty()) {
+      ::std::unique_ptr<Statistics_type> r(Statistics_traits::create(i, f, this));
+
+      this->Statistics_.push_back(::std::move(r));
+      continue;
+    }
+
     break;
   }
 
   while (p.more_attributes()) {
     const ::xercesc::DOMAttr& i(p.next_attribute());
     const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+    if (n.name() == "Model" && n.namespace_().empty()) {
+      this->Model_.set(Model_traits::create(i, f, this));
+      continue;
+    }
 
     if (n.name() == "endTime" && n.namespace_().empty()) {
       this->endTime_.set(endTime_traits::create(i, f, this));
@@ -752,6 +850,15 @@ void simulation_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
       this->gravity_.set(gravity_traits::create(i, f, this));
       continue;
     }
+
+    if (n.name() == "radius_l" && n.namespace_().empty()) {
+      this->radius_l_.set(radius_l_traits::create(i, f, this));
+      continue;
+    }
+  }
+
+  if (!Model_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("Model", "");
   }
 
   if (!endTime_.present()) {
@@ -777,6 +884,10 @@ void simulation_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::fl
   if (!gravity_.present()) {
     throw ::xsd::cxx::tree::expected_attribute<char>("gravity", "");
   }
+
+  if (!radius_l_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("radius_l", "");
+  }
 }
 
 simulation_t* simulation_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
@@ -792,18 +903,60 @@ simulation_t& simulation_t::operator=(const simulation_t& x) {
     this->Thermostat_ = x.Thermostat_;
     this->Membrane_ = x.Membrane_;
     this->InputFile_ = x.InputFile_;
+    this->Statistics_ = x.Statistics_;
+    this->Model_ = x.Model_;
     this->endTime_ = x.endTime_;
     this->deltaT_ = x.deltaT_;
     this->writeOutFrequency_ = x.writeOutFrequency_;
     this->filename_ = x.filename_;
     this->cutOffRadius_ = x.cutOffRadius_;
     this->gravity_ = x.gravity_;
+    this->radius_l_ = x.radius_l_;
   }
 
   return *this;
 }
 
 simulation_t::~simulation_t() {}
+
+// model_t
+//
+
+model_t::model_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(e, f, c) {
+  _xsd_model_t_convert();
+}
+
+model_t::model_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::string(a, f, c) {
+  _xsd_model_t_convert();
+}
+
+model_t::model_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f,
+                 ::xml_schema::container* c)
+    : ::xml_schema::string(s, e, f, c) {
+  _xsd_model_t_convert();
+}
+
+model_t* model_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class model_t(*this, f, c);
+}
+
+model_t::value model_t::_xsd_model_t_convert() const {
+  ::xsd::cxx::tree::enum_comparator<char> c(_xsd_model_t_literals_);
+  const value* i(::std::lower_bound(_xsd_model_t_indexes_, _xsd_model_t_indexes_ + 3, *this, c));
+
+  if (i == _xsd_model_t_indexes_ + 3 || _xsd_model_t_literals_[*i] != *this) {
+    throw ::xsd::cxx::tree::unexpected_enumerator<char>(*this);
+  }
+
+  return *i;
+}
+
+const char* const model_t::_xsd_model_t_literals_[3] = {"LennardJones", "SmoothedLennardJones", "Gravity"};
+
+const model_t::value model_t::_xsd_model_t_indexes_[3] = {::model_t::Gravity, ::model_t::LennardJones,
+                                                          ::model_t::SmoothedLennardJones};
 
 // array_i
 //
@@ -2269,6 +2422,110 @@ membrane_force& membrane_force::operator=(const membrane_force& x) {
 }
 
 membrane_force::~membrane_force() {}
+
+// statistics_t
+//
+
+statistics_t::statistics_t(const path_type& path, const frequency_type& frequency, const rdfDeltaR_type& rdfDeltaR,
+                           const rdfStart_type& rdfStart, const rdfEnd_type& rdfEnd)
+    : ::xml_schema::type(),
+      path_(path, this),
+      frequency_(frequency, this),
+      rdfDeltaR_(rdfDeltaR, this),
+      rdfStart_(rdfStart, this),
+      rdfEnd_(rdfEnd, this) {}
+
+statistics_t::statistics_t(const statistics_t& x, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(x, f, c),
+      path_(x.path_, f, this),
+      frequency_(x.frequency_, f, this),
+      rdfDeltaR_(x.rdfDeltaR_, f, this),
+      rdfStart_(x.rdfStart_, f, this),
+      rdfEnd_(x.rdfEnd_, f, this) {}
+
+statistics_t::statistics_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f, ::xml_schema::container* c)
+    : ::xml_schema::type(e, f | ::xml_schema::flags::base, c),
+      path_(this),
+      frequency_(this),
+      rdfDeltaR_(this),
+      rdfStart_(this),
+      rdfEnd_(this) {
+  if ((f & ::xml_schema::flags::base) == 0) {
+    ::xsd::cxx::xml::dom::parser<char> p(e, false, false, true);
+    this->parse(p, f);
+  }
+}
+
+void statistics_t::parse(::xsd::cxx::xml::dom::parser<char>& p, ::xml_schema::flags f) {
+  while (p.more_attributes()) {
+    const ::xercesc::DOMAttr& i(p.next_attribute());
+    const ::xsd::cxx::xml::qualified_name<char> n(::xsd::cxx::xml::dom::name<char>(i));
+
+    if (n.name() == "path" && n.namespace_().empty()) {
+      this->path_.set(path_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "frequency" && n.namespace_().empty()) {
+      this->frequency_.set(frequency_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "rdfDeltaR" && n.namespace_().empty()) {
+      this->rdfDeltaR_.set(rdfDeltaR_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "rdfStart" && n.namespace_().empty()) {
+      this->rdfStart_.set(rdfStart_traits::create(i, f, this));
+      continue;
+    }
+
+    if (n.name() == "rdfEnd" && n.namespace_().empty()) {
+      this->rdfEnd_.set(rdfEnd_traits::create(i, f, this));
+      continue;
+    }
+  }
+
+  if (!path_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("path", "");
+  }
+
+  if (!frequency_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("frequency", "");
+  }
+
+  if (!rdfDeltaR_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("rdfDeltaR", "");
+  }
+
+  if (!rdfStart_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("rdfStart", "");
+  }
+
+  if (!rdfEnd_.present()) {
+    throw ::xsd::cxx::tree::expected_attribute<char>("rdfEnd", "");
+  }
+}
+
+statistics_t* statistics_t::_clone(::xml_schema::flags f, ::xml_schema::container* c) const {
+  return new class statistics_t(*this, f, c);
+}
+
+statistics_t& statistics_t::operator=(const statistics_t& x) {
+  if (this != &x) {
+    static_cast< ::xml_schema::type&>(*this) = x;
+    this->path_ = x.path_;
+    this->frequency_ = x.frequency_;
+    this->rdfDeltaR_ = x.rdfDeltaR_;
+    this->rdfStart_ = x.rdfStart_;
+    this->rdfEnd_ = x.rdfEnd_;
+  }
+
+  return *this;
+}
+
+statistics_t::~statistics_t() {}
 
 #include <istream>
 #include <xsd/cxx/tree/error-handler.hxx>

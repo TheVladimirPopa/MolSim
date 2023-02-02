@@ -81,12 +81,14 @@ int Configuration::getWriteInterval(string writeIntervalAsString) {
 Configuration Configuration::parseOptions(int argc, char *argsv[]) {
   // Specify command line input parameters
   static struct option long_options[] = {{"xml", required_argument, nullptr, 'i'},
-                                         {"export-checkpoint", no_argument, nullptr, 's'},
+                                         {"export-checkpoint", required_argument, nullptr, 's'},
                                          {"input-checkpoint", no_argument, nullptr, 'c'},
                                          {"output-file", required_argument, nullptr, 'o'},
                                          {"no-output", no_argument, nullptr, 'n'},
+                                         {"statistics", no_argument, nullptr, 'j'},
                                          {"type", required_argument, nullptr, 't'},
                                          {"input-file", required_argument, nullptr, 'f'},
+                                         {"gas", no_argument, nullptr, 'g'},
                                          {"end-time", required_argument, nullptr, 'e'},
                                          {"delta-t", required_argument, nullptr, 'd'},
                                          {"write-frequency", required_argument, nullptr, 'w'},
@@ -102,7 +104,7 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
 
   // Define behavior
   int opt{0};
-  while ((opt = getopt_long(argc, argsv, "sci:o:nt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
+  while ((opt = getopt_long(argc, argsv, "s:ci:o:njgt:f:e:d:w:prvqh", long_options, nullptr)) != -1) {
     switch (opt) {
       case 'o': {
         config.outFileName = optarg;
@@ -134,6 +136,15 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         config.readCheckpoint = true;
         break;
       }
+      case 'j': {
+        spdlog::info("Statistics will be printed out.");
+        config.registerStatistics = true;
+        break;
+      }
+      case 'g': {
+        config.gasSimulation = true;
+        break;
+      }
       case 'e': {
         config.endTime = stringToEndTime(string(optarg));
         break;
@@ -143,6 +154,8 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
         break;
       }
       case 's': {
+        if (optarg == nullptr) spdlog::error("No checkpoint output file was specified, so ./checkpoint.txt is used");
+        config.toCheckpointPath = optarg;
         config.writeCheckpoint = true;
         break;
       }
@@ -183,11 +196,6 @@ Configuration Configuration::parseOptions(int argc, char *argsv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if (config.getSelectedModel() == ModelType::NewtonsLaw && config.hasHitrateMeasureEnabled()) {
-    spdlog::error("The Newtons Law model does not support hitrate measurement.");
-    exit(EXIT_FAILURE);
-  }
-
   if (config.hasPerformanceMeasureEnabled() && config.hasLoggingEnabled()) {
     spdlog::info("Disabling file output and logging for performance measurement.");
     config.disableLogging = true;
@@ -212,6 +220,7 @@ bool Configuration::tryParseXml() {
   gravityConstant = xmlParser->getGravityConstant();
   outputWriteInterval = xmlParser->getWriteInterval();
   cutOff = xmlParser->getCutOffRadius();
+  radius_l = xmlParser->getRadius_l();
   containerType = xmlParser->getContainerType();
   outFileName = xmlParser->extractSimulation().getFilename();
 
@@ -220,22 +229,29 @@ bool Configuration::tryParseXml() {
   for (auto membrane : xmlParser->getMembranes()) particleShapes.push_back(membrane);
 
   xmlParser->initializeParticleTypes();
-  checkpointPath = xmlParser->getCheckpointPath();
+  fromCheckpointPath = xmlParser->getCheckpointPath();
   container = std::make_unique<LinkedCellArg>(xmlParser->extractLinkedCell());
   thermostat = std::make_unique<ThermostatArg>(xmlParser->getThermostat());
+
+  StatArg statArg = xmlParser->extractStatistics();
+  statFrequency = statArg.getFrequency();
+  rdfDeltaR = statArg.getRdfDeltaR();
+  rdfStart = statArg.getRdfStart();
+  rdfEnd = statArg.getRdfEnd();
+  statFile = statArg.getPath();
 
   return true;
 }
 
 void Configuration::printUsage() {
   std::cout << " Usage\n"
-               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
+               "        ./MolSim -i <input-file> [-n] [-p] [-r] [-s] [-c] [-j] [-g] [-v] [-v] [-q] [-x]\n"
                "\n"
                " Usage (deprecated)\n"
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-s] [-c] [-v] [-v] [-q] [-x]\n"
+               "[-n] [-p] [-r] [-s] [-c] [-j] [-g] [-v] [-v] [-q] [-x]\n"
                "\n"
                "For more information run ./Molsim -h or ./Molsim --help"
             << std::endl;
@@ -246,7 +262,7 @@ void Configuration::printHelp() {
                "        ./MolSim -f <input-file> [-t (single|cuboid|sphere)] [-o "
                "<output-file>] [-e <endtime>]\n"
                "                                [-d <deltaT>] [-w <iteration-count>] "
-               "[-n] [-p] [-r] [-v] [-v] [-q]\n"
+               "[-n] [-j] [-p] [-r] [-v] [-v] [-q]\n"
                "\n"
                "OPTIONS:\n"
                "        -i <filepath>, --xml=<filepath>\n"
@@ -266,6 +282,13 @@ void Configuration::printHelp() {
                "added automatically)\n"
                "                If not specified \"MD_vtk\" is used\n"
                "                \n"
+               "        -j, --statistics\n"
+               "                If active particle statistics (e.g. the radial distribution function) will \n"
+               "                be printed out\n"
+               "        -g, --gas\n"
+               "                Enable for high pressure, high density gas simulations. Only relevant when\n"
+               "                using periodic boundaries. Will ensure that particles are evenly accelerated\n"
+               "                when increasing temperature. \n"
                "        -n, --no-output\n"
                "                If active no files will be written, even overwrites "
                "-o.\n"

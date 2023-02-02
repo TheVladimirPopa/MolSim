@@ -1,5 +1,5 @@
 <Simulation_XML endTime="10.0" deltaT="0.019" writeOutFrequency="20" filename="_MD.vtk" cutOffRadius="2.0"
-                gravity="-12.44">
+                gravity="-12.44" radius_l="1.9" Model="LennardJones">
     <SimTypes>
         <Sphere radius="3" dimension="2" distance="1.1225" mass="1.0" type="1">
             <position x="0.0" y="0.0" z="0.0"/>

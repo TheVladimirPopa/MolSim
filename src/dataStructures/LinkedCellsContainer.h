@@ -83,6 +83,7 @@ class LinkedCellsContainer : public IContainer {
 
   // The boundaries need access to dimensions, particles, cells
   friend class LinkedCellsBoundary;
+  friend class ThermodynamicStatistics;
 
  public:
   /**
@@ -119,6 +120,8 @@ class LinkedCellsContainer : public IContainer {
   void push_back(Particle &particle) override;
 
   void push_back(MembraneStructure membrane);
+
+  bool isDense();
 
   /**
    * Reorders the datastructure to make sure all particles are in the correct

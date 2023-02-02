@@ -1,6 +1,7 @@
 #include "CheckpointFileWriter.h"
 
 #include <iostream>
+#include <utility>
 
 void CheckpointFileWriter::writeFile(const std::string& filename, int iteration, IContainer& particles) {
   file.open(filename, std::ios::out);
@@ -48,6 +49,8 @@ void CheckpointFileWriter::checkpointParticle(const Particle& p) {
   }
 }
 
-CheckpointFileWriter::CheckpointFileWriter() {}
+CheckpointFileWriter::CheckpointFileWriter(std::string outputFile) : outputFile{std::move(outputFile)} {}
+
+const std::string& CheckpointFileWriter::getOutputFile() const { return outputFile; }
 
 CheckpointFileWriter::~CheckpointFileWriter() = default;

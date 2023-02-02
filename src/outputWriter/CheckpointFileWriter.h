@@ -5,12 +5,13 @@
 class CheckpointFileWriter : public IWriter {
  private:
   std::ofstream file;
+  std::string outputFile;
 
  public:
   /**
    * Constructs a CheckpointFileWriter
    */
-  explicit CheckpointFileWriter();
+  CheckpointFileWriter(std::string outputFile);
   /**
    * Writes the checkpoint of each particle into the path file
    * @param filename unused
@@ -18,6 +19,8 @@ class CheckpointFileWriter : public IWriter {
    * @param particles
    */
   void writeFile(const std::string &filename, int iteration, IContainer &particles) override;
+
+  const std::string &getOutputFile() const;
 
   ~CheckpointFileWriter();
 

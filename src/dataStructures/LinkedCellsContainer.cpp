@@ -261,6 +261,28 @@ std::vector<CubeSide> getLeadingSides(std::vector<LinkedCellsBoundary> boundarie
   return leadingSides;
 }
 
+bool LinkedCellsContainer::isDense() {
+  if (!hasPeriodicBoundaries) return false;
+
+  size_t numberOfCells{0};
+  size_t numberOfUsedCells{0};
+  for (size_t index = 0; index < cells.size(); ++index) {
+    if (cells[index].type == CellType::halo) continue;
+
+    numberOfCells++;
+    if (!cells[index].particles.empty()) numberOfUsedCells++;
+  }
+
+  double cellUsage = (1.0 * numberOfUsedCells) / numberOfCells;
+
+  // If more than 75% of cells are used and the density of cells in the container is over 0.4 particles per cubic
+  // measurement unit of the container then we consider the container to be dense.
+  // If the container is dense and periodic boundaries are active and the -g --gas flag is enabled then particles
+  // whose velocity is well above the average of other particles, will be slowed.
+  double cubicSize = cubeSize[0] * cubeSize[1] * cubeSize[2];
+  return (cellUsage > 0.75) && (size() / cubicSize) > 0.4;
+}
+
 void LinkedCellsContainer::linkBoundaryToHaloCells() {
   // Periodic boundaries musst occur in pairs. E.g. a LEFT + RIGHT periodic boundary.
 

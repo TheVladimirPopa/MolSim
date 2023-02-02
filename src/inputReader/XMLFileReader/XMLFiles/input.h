@@ -220,6 +220,7 @@ const XMLCh* const tree_node_key = ::xsd::cxx::tree::user_data_keys::node;
 // Forward declarations.
 //
 class simulation_t;
+class model_t;
 class array_i;
 class array_d;
 class cuboid_t;
@@ -235,6 +236,7 @@ class thermostat_t;
 class particle_t;
 class membrane_t;
 class membrane_force;
+class statistics_t;
 
 #include <algorithm>  // std::binary_search
 #include <limits>     // std::numeric_limits
@@ -333,6 +335,33 @@ class simulation_t : public ::xml_schema::type {
 
   void InputFile(const InputFile_sequence& s);
 
+  // Statistics
+  //
+  typedef ::statistics_t Statistics_type;
+  typedef ::xsd::cxx::tree::sequence<Statistics_type> Statistics_sequence;
+  typedef Statistics_sequence::iterator Statistics_iterator;
+  typedef Statistics_sequence::const_iterator Statistics_const_iterator;
+  typedef ::xsd::cxx::tree::traits<Statistics_type, char> Statistics_traits;
+
+  const Statistics_sequence& Statistics() const;
+
+  Statistics_sequence& Statistics();
+
+  void Statistics(const Statistics_sequence& s);
+
+  // Model
+  //
+  typedef ::model_t Model_type;
+  typedef ::xsd::cxx::tree::traits<Model_type, char> Model_traits;
+
+  const Model_type& Model() const;
+
+  Model_type& Model();
+
+  void Model(const Model_type& x);
+
+  void Model(::std::unique_ptr<Model_type> p);
+
   // endTime
   //
   typedef ::xml_schema::double_ endTime_type;
@@ -401,10 +430,21 @@ class simulation_t : public ::xml_schema::type {
 
   void gravity(const gravity_type& x);
 
+  // radius_l
+  //
+  typedef ::xml_schema::double_ radius_l_type;
+  typedef ::xsd::cxx::tree::traits<radius_l_type, char, ::xsd::cxx::tree::schema_type::double_> radius_l_traits;
+
+  const radius_l_type& radius_l() const;
+
+  radius_l_type& radius_l();
+
+  void radius_l(const radius_l_type& x);
+
   // Constructors.
   //
-  simulation_t(const endTime_type&, const deltaT_type&, const writeOutFrequency_type&, const filename_type&,
-               const cutOffRadius_type&, const gravity_type&);
+  simulation_t(const Model_type&, const endTime_type&, const deltaT_type&, const writeOutFrequency_type&,
+               const filename_type&, const cutOffRadius_type&, const gravity_type&, const radius_l_type&);
 
   simulation_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
 
@@ -428,12 +468,50 @@ class simulation_t : public ::xml_schema::type {
   Thermostat_sequence Thermostat_;
   Membrane_sequence Membrane_;
   InputFile_sequence InputFile_;
+  Statistics_sequence Statistics_;
+  ::xsd::cxx::tree::one<Model_type> Model_;
   ::xsd::cxx::tree::one<endTime_type> endTime_;
   ::xsd::cxx::tree::one<deltaT_type> deltaT_;
   ::xsd::cxx::tree::one<writeOutFrequency_type> writeOutFrequency_;
   ::xsd::cxx::tree::one<filename_type> filename_;
   ::xsd::cxx::tree::one<cutOffRadius_type> cutOffRadius_;
   ::xsd::cxx::tree::one<gravity_type> gravity_;
+  ::xsd::cxx::tree::one<radius_l_type> radius_l_;
+};
+
+class model_t : public ::xml_schema::string {
+ public:
+  enum value { LennardJones, SmoothedLennardJones, Gravity };
+
+  model_t(value v);
+
+  model_t(const char* v);
+
+  model_t(const ::std::string& v);
+
+  model_t(const ::xml_schema::string& v);
+
+  model_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  model_t(const ::xercesc::DOMAttr& a, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  model_t(const ::std::string& s, const ::xercesc::DOMElement* e, ::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0);
+
+  model_t(const model_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual model_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  model_t& operator=(value v);
+
+  virtual operator value() const { return _xsd_model_t_convert(); }
+
+ protected:
+  value _xsd_model_t_convert() const;
+
+ public:
+  static const char* const _xsd_model_t_literals_[3];
+  static const value _xsd_model_t_indexes_[3];
 };
 
 class array_i : public ::xml_schema::type {
@@ -1581,6 +1659,93 @@ class membrane_force : public ::xml_schema::type {
   ::xsd::cxx::tree::one<y_type> y_;
   ::xsd::cxx::tree::one<z_type> z_;
   ::xsd::cxx::tree::one<timeSpan_type> timeSpan_;
+};
+
+class statistics_t : public ::xml_schema::type {
+ public:
+  // path
+  //
+  typedef ::xml_schema::string path_type;
+  typedef ::xsd::cxx::tree::traits<path_type, char> path_traits;
+
+  const path_type& path() const;
+
+  path_type& path();
+
+  void path(const path_type& x);
+
+  void path(::std::unique_ptr<path_type> p);
+
+  // frequency
+  //
+  typedef ::xml_schema::int_ frequency_type;
+  typedef ::xsd::cxx::tree::traits<frequency_type, char> frequency_traits;
+
+  const frequency_type& frequency() const;
+
+  frequency_type& frequency();
+
+  void frequency(const frequency_type& x);
+
+  // rdfDeltaR
+  //
+  typedef ::xml_schema::double_ rdfDeltaR_type;
+  typedef ::xsd::cxx::tree::traits<rdfDeltaR_type, char, ::xsd::cxx::tree::schema_type::double_> rdfDeltaR_traits;
+
+  const rdfDeltaR_type& rdfDeltaR() const;
+
+  rdfDeltaR_type& rdfDeltaR();
+
+  void rdfDeltaR(const rdfDeltaR_type& x);
+
+  // rdfStart
+  //
+  typedef ::xml_schema::double_ rdfStart_type;
+  typedef ::xsd::cxx::tree::traits<rdfStart_type, char, ::xsd::cxx::tree::schema_type::double_> rdfStart_traits;
+
+  const rdfStart_type& rdfStart() const;
+
+  rdfStart_type& rdfStart();
+
+  void rdfStart(const rdfStart_type& x);
+
+  // rdfEnd
+  //
+  typedef ::xml_schema::double_ rdfEnd_type;
+  typedef ::xsd::cxx::tree::traits<rdfEnd_type, char, ::xsd::cxx::tree::schema_type::double_> rdfEnd_traits;
+
+  const rdfEnd_type& rdfEnd() const;
+
+  rdfEnd_type& rdfEnd();
+
+  void rdfEnd(const rdfEnd_type& x);
+
+  // Constructors.
+  //
+  statistics_t(const path_type&, const frequency_type&, const rdfDeltaR_type&, const rdfStart_type&,
+               const rdfEnd_type&);
+
+  statistics_t(const ::xercesc::DOMElement& e, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  statistics_t(const statistics_t& x, ::xml_schema::flags f = 0, ::xml_schema::container* c = 0);
+
+  virtual statistics_t* _clone(::xml_schema::flags f = 0, ::xml_schema::container* c = 0) const;
+
+  statistics_t& operator=(const statistics_t& x);
+
+  virtual ~statistics_t();
+
+  // Implementation.
+  //
+ protected:
+  void parse(::xsd::cxx::xml::dom::parser<char>&, ::xml_schema::flags);
+
+ protected:
+  ::xsd::cxx::tree::one<path_type> path_;
+  ::xsd::cxx::tree::one<frequency_type> frequency_;
+  ::xsd::cxx::tree::one<rdfDeltaR_type> rdfDeltaR_;
+  ::xsd::cxx::tree::one<rdfStart_type> rdfStart_;
+  ::xsd::cxx::tree::one<rdfEnd_type> rdfEnd_;
 };
 
 #include <iosfwd>

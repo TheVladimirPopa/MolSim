@@ -10,15 +10,27 @@
             <xsd:element name="Thermostat" type="thermostat_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="Membrane" type="membrane_t" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="InputFile" type="input_t" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="Statistics" type="statistics_t" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
+        <xsd:attribute name="Model" type="model_t" use="required"/>
         <xsd:attribute name="endTime" type="xsd:double" use="required"/>
         <xsd:attribute name="deltaT" type="xsd:double" use="required"/>
         <xsd:attribute name="writeOutFrequency" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="filename" type="xsd:string" use="required"/>
         <xsd:attribute name="cutOffRadius" type="xsd:double" use="required"/>
         <xsd:attribute name="gravity" type="xsd:double" use="required"/>
+        <xsd:attribute name="radius_l" type="xsd:double" use="required"/>
     </xsd:complexType>
     <xsd:element name="Simulation_XML" type="simulation_t"/>
+
+    <!--Models-->
+    <xsd:simpleType name="model_t">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="LennardJones"/>
+            <xsd:enumeration value="SmoothedLennardJones"/>
+            <xsd:enumeration value="Gravity"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <!--Int Array-->
     <xsd:complexType name="array_i">
@@ -44,7 +56,6 @@
         <xsd:attribute name="distance" type="xsd:double" use="required"/>
         <xsd:attribute name="mass" type="xsd:double" use="required"/>
         <xsd:attribute name="type" type="xsd:int" use="required"/>
-
     </xsd:complexType>
 
     <!-- Sphere-->
@@ -53,7 +64,6 @@
             <xsd:element name="position" type="array_d"/>
             <xsd:element name="velocity" type="array_d"/>
         </xsd:sequence>
-
         <xsd:attribute name="radius" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="dimension" type="xsd:unsignedInt" use="required"/>
         <xsd:attribute name="distance" type="xsd:double" use="required"/>
@@ -61,7 +71,7 @@
         <xsd:attribute name="type" type="xsd:int" use="required"/>
     </xsd:complexType>
 
-    <!--    SimTypes-->
+    <!--  SimTypes  -->
     <xsd:complexType name="simTypes_t">
         <xsd:sequence>
             <xsd:element name="Cuboid" type="cuboid_t" minOccurs="0" maxOccurs="unbounded"/>
@@ -98,6 +108,7 @@
         <xsd:attribute name="parallelization" type="paraType_t" use="required"/>
     </xsd:complexType>
 
+    <!--  Parallelization Type  -->
     <xsd:simpleType name="paraType_t">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="None"/>
@@ -159,6 +170,15 @@
         <xsd:attribute name="y" type="xsd:double" use="required"/>
         <xsd:attribute name="z" type="xsd:double" use="required"/>
         <xsd:attribute name="timeSpan" type="xsd:int" use="required"/>
+    </xsd:complexType>
+
+    <!--  Statistics  -->
+    <xsd:complexType name="statistics_t">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+        <xsd:attribute name="frequency" type="xsd:int" use="required"/>
+        <xsd:attribute name="rdfDeltaR" type="xsd:double" use="required"/>
+        <xsd:attribute name="rdfStart" type="xsd:double" use="required"/>
+        <xsd:attribute name="rdfEnd" type="xsd:double" use="required"/>
     </xsd:complexType>
 
 </xsd:schema>

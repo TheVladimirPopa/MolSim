@@ -1,3 +1,6 @@
+//
+// Created by vladi on 11/27/2022.
+//
 #pragma once
 #include <memory>
 
@@ -10,6 +13,7 @@
 #include "inputReader/XMLFileReader/Args/ParticleArg.h"
 #include "inputReader/XMLFileReader/Args/SimulationArg.h"
 #include "inputReader/XMLFileReader/Args/SphereArg.h"
+#include "inputReader/XMLFileReader/Args/StatArg.h"
 #include "inputReader/XMLFileReader/Args/ThermostatArg.h"
 #include "inputReader/XMLFileReader/XMLFiles/input.h"
 #include "utils/MolSimEnums.h"
@@ -81,9 +85,9 @@ class XMLParser {
     }
     throw std::invalid_argument("Invalid boundary string");
   }
-
   /**
-   * @return Returns type of the container specified in the xml file
+   * Chooses the container type
+   * @return Returns true if a LinkedCellsContainer is detected, false otherwise
    */
   ContainerType getContainerType() {
     if (simulation->Container_T().front().VectorCont().size() > 0) return ContainerType::VECTOR;
@@ -218,6 +222,20 @@ class XMLParser {
 
     return membraneForces;
   }
+
+  StatArg extractStatistics() {
+    for (auto &it : simulation->Statistics()) {
+      auto freq = it.frequency();
+      auto dr = it.rdfDeltaR();
+      auto start = it.rdfStart();
+      auto end = it.rdfEnd();
+      auto path = it.path();
+
+      return StatArg{freq, dr, start, end, path};
+    }
+    return StatArg{1000, 1, 1, 50, "./statistics.txt"};
+  }
+
   /**
    * Extracts the arguments (initTemp, targetTemp, maxTempChange, periodLength, dimension) used to initialise a
    * Thermostat from the XML file
@@ -364,10 +382,21 @@ class XMLParser {
    * @return The selected model
    */
   [[nodiscard]] ModelType getModel() const {
-    // TODO: Read this value from "simulation" once the xml part is updated
-    return ModelType::LennardJones;
+    if (simulation->Model() == "LennardJones") {
+      return ModelType::LennardJones;
+    } else if (simulation->Model() == "SmoothedLennardJones") {
+      return ModelType::SmoothedLennardJones;
+    } else if (simulation->Model() == "Gravity") {
+      return ModelType::NewtonsLaw;
+    }
+    throw std::invalid_argument("Invalid model");
   }
 
+  /**
+   * Initialises the radius_l from the path file
+   * @return
+   */
+  double getRadius_l() { return simulation->radius_l(); }
   /**
    * Registers the particles read in the path file
    */

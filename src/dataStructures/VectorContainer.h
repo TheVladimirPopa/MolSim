@@ -13,6 +13,8 @@
  *    \image latex runtime-directsum.png "Runtime" width = [goodwidth]cm
  */
 class VectorContainer : public IContainer {
+  friend class ThermodynamicStatistics;
+
  public:
   void forEach(std::function<void(Particle &)> &unaryFunction) override {
     for (size_t i = 0; i < size(); ++i) {

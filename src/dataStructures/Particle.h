@@ -12,6 +12,7 @@
 #include <unordered_map>
 #define NOT_IN_STRUCTURE 0xffffffff
 #define NO_UNIQUE_ID 0xffffffff
+#include <vector>
 
 class IModel;
 class NewtonsLawModel;
@@ -19,6 +20,7 @@ class LennardJonesModel;
 class Thermostat;
 class LineProcessorCheckpoint;
 class MembraneStructure;
+class SmoothedLennardJonesModel;
 
 class Particle {
  private:
@@ -64,6 +66,11 @@ class Particle {
   double sigma;
 
   /**
+   * Counts how many times a periodic boun
+   */
+  std::array<int, 3> periodicBoundariesCrossed;
+
+  /**
    * Is true when a particle no longer is part of the simulation and waits for
    * cleanup.
    */
@@ -80,6 +87,15 @@ class Particle {
     double const sigma;
   };
 
+  /**
+   * Maps the position of the Particle at a particular time
+   */
+
+  std::array<double, 3> lastPosition;
+
+ public:
+
+ private:
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
   /**
@@ -105,7 +121,8 @@ class Particle {
  public:
   explicit Particle(int type = 0);
 
-  Particle(const Particle &other);
+  //  Particle(const Particle &other);
+  Particle(const Particle &other) = default;
 
   Particle(
       // for visualization, we need always 3 coordinates
@@ -121,6 +138,10 @@ class Particle {
   const std::array<double, 3> &getF() const { return f; }
 
   const std::array<double, 3> &getOldF() const { return old_f; }
+
+  const std::array<double, 3> &getLastPosition() const { return lastPosition; }
+
+  std::array<int, 3> &getPeriodicBoundariesCrossed() { return periodicBoundariesCrossed; }
 
   void setX(std::array<double, 3> const &x_arg) { x = x_arg; }
 
@@ -141,6 +162,7 @@ class Particle {
   friend class IModel;
   friend class NewtonsLawModel;
   friend class LennardJonesModel;
+  friend class SmoothedLennardJonesModel;
   friend class Thermostat;
   friend class Simulation;
   friend class LineProcessorCheckpoint;
@@ -185,6 +207,8 @@ class Particle {
    */
   void applyForce(const std::array<double, 3> &force);
 
+  void setF(const std::array<double, 3> &force) { f = force; }
+
   /**
    * Sets the structure membership of the current particle
    * @param structureId_ The structure the particle is a member of
@@ -212,6 +236,8 @@ class Particle {
    * @return Id of particle
    */
   size_t getId() const { return particleId; }
+
+  void setLastPosition(const std::array<double, 3> &lp) { this->lastPosition = lp; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

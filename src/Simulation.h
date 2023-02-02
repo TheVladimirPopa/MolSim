@@ -8,7 +8,9 @@
 #include "model/IModel.h"
 #include "model/NewtonsLawModel.h"
 #include "model/Thermostat.h"
+#include "outputWriter/CheckpointFileWriter.h"
 #include "outputWriter/IWriter.h"
+#include "outputWriter/StatisticsWriter.h"
 #include "outputWriter/VTKWriter.h"
 
 class Simulation {
@@ -25,8 +27,9 @@ class Simulation {
    * @param gravitationalConstant The factor of the gravitational force that gets applied
    * to a particle every iteration
    */
-  void simulate(IModel &model, IContainer &particles, IWriter &fileWriter, Thermostat &thermostat,
-                double gravitationalConstant = 0.0, bool checkpointing = false);
+  void simulate(IModel& model, IContainer& particles, IWriter& fileWriter, Thermostat& thermostat,
+                double gravitationalConstant, bool gasSimulation, bool checkpointing, bool statistics,
+                CheckpointFileWriter& cpfWriter, StatisticsWriter& statWriter);
 
   /**
    * Sets the time until the simulation is run

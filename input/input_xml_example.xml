@@ -1,5 +1,5 @@
 <Simulation_XML endTime="10.0" deltaT="0.005" writeOutFrequency="50" filename="MD.vtk" cutOffRadius="2.0"
-                gravity="-12.44">
+                gravity="-12.44" radius_l="1.9" Model="LennardJones">
 
     <Particle id="0" epsilon="1.0" sigma="1.0"/>
     <Particle id="1" epsilon="1.0" sigma="0.9412"/>
@@ -29,12 +29,12 @@
         <LinkedCell cellSize="10.0" parallelization="None">
             <leftLowerBound x="-15.0" y="-20.0" z="-5"/>
             <rightUpperBound x="55.0" y="30.0" z="5"/>
-            <left>REFLECT</left>
-            <right>REFLECT</right>
+            <left>PERIODIC</left>
+            <right>PERIODIC</right>
             <top>PERIODIC</top>
             <bottom>PERIODIC</bottom>
-            <front>REFLECT</front>
-            <back>REFLECT</back>
+            <front>PERIODIC</front>
+            <back>PERIODIC</back>
         </LinkedCell>
     </Container_T>
 
@@ -51,4 +51,7 @@
     </Membrane>
 
     <InputFile path="./checkpoint.txt"/>
+
+    <Statistics path="./statistics.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
+
 </Simulation_XML>

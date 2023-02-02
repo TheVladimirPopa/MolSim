@@ -1,6 +1,8 @@
 #include "SimulationUtils.h"
 
 #include "dataStructures/VectorContainer.h"
+#include "model/SmoothedLennardJonesModel.h"
+#include "outputWriter/StatisticsWriter.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringMultiple.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerColouringSingle.h"
 #include "dataStructures/parallelizedLinkedCell/LinkedCellsContainerLocks.h"
@@ -58,7 +60,6 @@ std::unique_ptr<IContainer> SimulationUtils::makeContainer(ContainerType type, L
 
   return container;
 }
-
 void SimulationUtils::populateContainerViaFile(IContainer& container, std::string filePath, SimTypeDeprecated type) {
   spdlog::info("Generating particles via file input. (Warning: Deprecated)");
   switch (type) {
@@ -76,7 +77,6 @@ void SimulationUtils::populateContainerViaFile(IContainer& container, std::strin
     }
   }
 }
-
 void SimulationUtils::populateContainer(IContainer& container, std::vector<ParticleShape> shapes) {
   spdlog::info("Generating particles.");
   for (auto shape : shapes) {
@@ -90,17 +90,17 @@ void SimulationUtils::populateContainer(IContainer& container, std::vector<Parti
       ParticleGeneration::addMembraneToParticleContainer(container, std::get<ParticleGeneration::membrane>(shape));
   }
 }
-
 void SimulationUtils::loadCheckpoint(IContainer& container, std::string checkpointPath) {
   spdlog::info("Loading checkpoint file.");
   FileReader::readFileCheckpoint(container, checkpointPath.data());
 }
-
-std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double deltaT, double cutOff) {
+std::unique_ptr<IModel> SimulationUtils::makeModel(ModelType modelType, double deltaT, double cutOff, double radius_l) {
   std::unique_ptr<IModel> model;
 
   if (modelType == ModelType::LennardJones) {
     model = std::make_unique<LennardJonesModel>(cutOff);
+  } else if (modelType == ModelType::SmoothedLennardJones) {
+    model = std::make_unique<SmoothedLennardJonesModel>(cutOff, radius_l);
   } else if (modelType == ModelType::NewtonsLaw) {
     model = std::make_unique<NewtonsLawModel>();
   } else {

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "inputReader/XMLFileReader/XMLParser.h"
 #include "utils/SimulationUtils.h"
@@ -17,7 +18,10 @@ class Configuration {
   std::string inFilePath;
 
   /// Path from where to read checkpoint data from
-  std::string checkpointPath;
+  std::string fromCheckpointPath;
+
+  /// Path where the checkpoint is saved at
+  std::string toCheckpointPath;
 
   /// The XML parser
   std::unique_ptr<XMLParser> xmlParser;
@@ -34,6 +38,27 @@ class Configuration {
 
   /// Whether or not to write a checkpoint file after the simulation is finished
   bool writeCheckpoint{false};
+
+  /// Whether or not to write thermodynamic statistics for the simulation
+  bool registerStatistics{false};
+
+  /// File where the statistics will be saved
+  std::string statFile;
+
+  /// How often statistics are printed out
+  int statFrequency{1000};
+
+  /// Step size for the interval for the RDF
+  double rdfDeltaR{1};
+
+  /// Start of the interval for the RDF
+  double rdfStart{1};
+
+  /// End of the interval for the RDF
+  double rdfEnd{50};
+
+  /// Whether or not there is a gas simulation
+  bool gasSimulation{false};
 
   /// Whether or not to write files
   bool disableFileWriting{false};
@@ -53,6 +78,9 @@ class Configuration {
 
   /// The cutoff distance after which for a particle pair force calculation is ignored
   double cutOff{4.0};
+
+  /// The radius for the SmoothedLennardJones Model
+  double radius_l{4.0};
 
   /// The type of the container where particles are stored (e.g. vector or linked cells)
   ContainerType containerType{ContainerType::LINKED_CELLS};
@@ -129,6 +157,7 @@ class Configuration {
   [[nodiscard]] bool hasFileOutputEnabled() const { return !disableFileWriting; };
   [[nodiscard]] bool hasLoadCheckpointEnabled() const { return readCheckpoint; }
   [[nodiscard]] bool hasWriteCheckpointEnabled() const { return writeCheckpoint; }
+  [[nodiscard]] bool hasRegisterStatistics() const { return registerStatistics; }
   [[nodiscard]] bool hasPerformanceMeasureEnabled() const { return performanceMeasure; };
   [[nodiscard]] bool hasHitrateMeasureEnabled() const { return hitRateMeasure; };
 
@@ -138,6 +167,7 @@ class Configuration {
   [[nodiscard]] double getEndTime() const { return endTime; };
   [[nodiscard]] double getWriteInterval() const { return outputWriteInterval; };
   [[nodiscard]] double getCutOff() const { return cutOff; }
+  [[nodiscard]] double getRadiusL() const { return radius_l; }
   [[nodiscard]] ModelType getSelectedModel() const {
     return getInputType() != InputType::XML ? ModelType::LennardJones : xmlParser->getModel();
   }
@@ -151,7 +181,14 @@ class Configuration {
   // Input
   [[nodiscard]] std::string getInputPath() const { return inFilePath; }
   [[nodiscard]] InputType getInputType() const { return inputType; };
-  [[nodiscard]] std::string getCheckpointPath() const { return checkpointPath; };
+  [[nodiscard]] std::string getFromCheckpointPath() const { return fromCheckpointPath; };
+  [[nodiscard]] std::string getToCheckpointPath() const { return toCheckpointPath; };
+  [[nodiscard]] std::string getStatFile() const { return statFile; }
+  [[nodiscard]] int getStatFrequency() const { return statFrequency; }
+  [[nodiscard]] double getRdfDeltaR() const { return rdfDeltaR; }
+  [[nodiscard]] double getRdfStart() const { return rdfStart; }
+  [[nodiscard]] double getRdfEnd() const { return rdfEnd; }
+  [[nodiscard]] bool getGasSimulation() const { return gasSimulation; }
 
   // Output
   [[nodiscard]] std::string getFileName() const { return outFileName; };
