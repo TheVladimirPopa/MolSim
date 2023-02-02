@@ -8,11 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 option(OPEN_MP "Enable openMP" ON)
 
 
-# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.22:
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.22.0")
-  cmake_policy(SET CMP0135 NEW)
-endif ()
-
 # let cmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
 
