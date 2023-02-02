@@ -288,7 +288,9 @@ void Configuration::printHelp() {
                "                If active particle statistics (e.g. the radial distribution function) will \n"
                "                be printed out\n"
                "        -g, --gas\n"
-               "                If active, \n"  // TODO
+               "                Enable for high pressure, high density gas simulations. Only relevant when\n"
+               "                using periodic boundaries. Will ensure that particles are evenly accelerated\n"
+               "                when increasing temperature. \n"
                "        -n, --no-output\n"
                "                If active no files will be written, even overwrites "
                "-o.\n"

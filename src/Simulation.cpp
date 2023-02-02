@@ -28,17 +28,18 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
   }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
 
+  // If wanted, for high pressure gas simulations velocity smoothing can be enabled with -g
   double avgVelocityPrevious{0};
   double avgVelocityCurrent{0};
-  double criticalSpeed{3e3 * deltaT};
+  double criticalSpeed{3000 * deltaT};
   if (gasSimulation && particles.isDense()) {
     updateV = [&model, &avgVelocityCurrent, &avgVelocityPrevious, criticalSpeed](P p) {
       model.updateV(std::forward<P>(p));
 
       auto velocityProduct = ArrayUtils::dotProduct(p.v);
       if (avgVelocityPrevious > criticalSpeed && velocityProduct > (10 * avgVelocityPrevious)) {
-        spdlog::debug("Outlier adjusted.");
         p.v = (sqrt(avgVelocityPrevious / velocityProduct) * p.v);
+        spdlog::debug("Outlier adjusted.");
       }
 
       avgVelocityCurrent += velocityProduct;
@@ -107,7 +108,7 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
       particles.forEach(registerLastPosition);
     }
 
-    if (particles.size() != 0) {
+    if (gasSimulation && particles.size() != 0) {
       avgVelocityCurrent /= particles.size();
       avgVelocityPrevious = avgVelocityCurrent;
       avgVelocityCurrent = 0;

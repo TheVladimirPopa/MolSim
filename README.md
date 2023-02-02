@@ -73,7 +73,8 @@ OPTIONS:
                 be printed out
         
         -g, --gas
-                If active, ...
+                Enable for high pressure, high density gas simulations. Only relevant when using periodic boundaries.
+                Will ensure that particles are evenly accelerated when increasing temperature.
                 
         -n, --no-output
                 If active no files will be written, even overwrites -o.
