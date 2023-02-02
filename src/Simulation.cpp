@@ -37,7 +37,7 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
 
       auto velocityProduct = ArrayUtils::dotProduct(p.v);
       if (avgVelocityPrevious > criticalSpeed && velocityProduct > (10 * avgVelocityPrevious)) {
-        spdlog::info("Outlier adjusted.");
+        spdlog::debug("Outlier adjusted.");
         p.v = (sqrt(avgVelocityPrevious / velocityProduct) * p.v);
       }
 
