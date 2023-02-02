@@ -16,7 +16,7 @@ std::array<double, 3> ThermodynamicStatistics::getTruePosition(LinkedCellsContai
   return oldPosition;
 }
 
-double ThermodynamicStatistics::var(IContainer *particleContainer) {
+double ThermodynamicStatistics::calculateVariance(IContainer *particleContainer) {
   double var = 0;
 
   if (instanceof <VectorContainer>(particleContainer))
@@ -24,7 +24,6 @@ double ThermodynamicStatistics::var(IContainer *particleContainer) {
       auto dist = L2Norm(p.getX() - p.getLastPosition());
       dist *= dist;
       var += dist;
-      p.getPeriodicBoundariesCrossed() = {0, 0, 0};
     }
   else {
     auto &lcc = dynamic_cast<LinkedCellsContainer &>(*particleContainer);
@@ -42,8 +41,10 @@ double ThermodynamicStatistics::var(IContainer *particleContainer) {
   return var;
 }
 
-std::vector<double> ThermodynamicStatistics::radialDistributionFunction(double delta_r, IContainer *particleContainer,
-                                                                        double intervalStart, double intervalEnd) {
+std::vector<double> ThermodynamicStatistics::calculateRadialDistributionFunction(double delta_r,
+                                                                                 IContainer *particleContainer,
+                                                                                 double intervalStart,
+                                                                                 double intervalEnd) {
   std::vector<double> densities;
   for (Particle p1 : particleContainer->getParticlesRef()) {
     for (Particle p2 : particleContainer->getParticlesRef()) {

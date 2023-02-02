@@ -93,6 +93,9 @@ class Particle {
 
   std::array<double, 3> lastPosition;
 
+ public:
+
+ private:
   static inline std::unordered_map<int, ParticleType> typeToParametersMap{};
 
   /**
@@ -230,6 +233,8 @@ class Particle {
    * @return Id of particle
    */
   size_t getId() const { return particleId; }
+
+  void setLastPosition(const std::array<double, 3> &lastPosition) { this->lastPosition = lastPosition; }
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

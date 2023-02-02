@@ -28,8 +28,8 @@ void StatisticsWriter::writeFile(size_t size) {
           "#\n"
           "# Molecule data consists of\n"
           "# * iteration (integer value)\n"
-          "# * var (double value)\n"
-          "# * radialDistributionFunction (vector of double values)\n";
+          "# * calculateVariance (double value)\n"
+          "# * calculateRadialDistributionFunction (vector of double values)\n";
   file << size << " Particles"
        << "\n";
 }
@@ -40,9 +40,10 @@ void StatisticsWriter::registerParticle(int iteration) {
          << "Var(t): ";
     // rdf: delta_r is set to 1 and i is in [1, 50]
 
-    file << stat.var(&particleContainer) << "\n"
+    file << stat.calculateVariance(&particleContainer) << "\n"
          << "RDF: ";
-    file << ThermodynamicStatistics::radialDistributionFunction(rdfDeltaR, &particleContainer, rdfStart, rdfEnd)
+    file << ThermodynamicStatistics::calculateRadialDistributionFunction(rdfDeltaR, &particleContainer, rdfStart,
+                                                                         rdfEnd)
          << "\n";
     file << "\n";
   }
