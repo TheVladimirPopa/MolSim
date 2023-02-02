@@ -1,4 +1,4 @@
-<Simulation_XML endTime="50" deltaT="0.0005" writeOutFrequency="200000" filename="ass4Task2" cutOffRadius="3"
+<Simulation_XML endTime="0.5" deltaT="0.0005" writeOutFrequency="200000" filename="ass4Task2" cutOffRadius="3"
                 gravity="-12.44">
 
     <Particle id="0" epsilon="1.0" sigma="1.2"/>
