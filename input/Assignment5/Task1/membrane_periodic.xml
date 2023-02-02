@@ -1,0 +1,44 @@
+<Simulation_XML endTime="100.0" deltaT="0.0015" writeOutFrequency="50" filename="ws5_task1_mem_periodic.vtk" cutOffRadius="4"
+                gravity="0.2">
+
+    <Particle id="0" epsilon="1.0" sigma="1.2"/>
+    <Particle id="1" epsilon="1.0" sigma="1.0"/>
+
+    <SimTypes>
+        <Cuboid distance="3" mass="1.0" type="2">
+            <position x="10" y="67.5" z="10"/>
+            <dimension x="15" y="15" z="15"/>
+            <velocity x="6.0" y="-6.0" z="6.0"/>
+        </Cuboid>
+
+    </SimTypes>
+
+    <Container_T>
+        <LinkedCell cellSize="4" parallelization="None">
+            <leftLowerBound x="0.0" y="0.0" z="0.0"/>
+            <rightUpperBound x="148.0" y="148.0" z="148.0"/>
+            <left>PERIODIC</left>
+            <right>PERIODIC</right>
+            <top>PERIODIC</top>
+            <bottom>PERIODIC</bottom>
+            <front>PERIODIC</front>
+            <back>PERIODIC</back>
+        </LinkedCell>
+    </Container_T>
+
+    <Thermostat initialTemp="40" targetTemp="40" maxTempChange="400" periodLength="0" dimension="3"/>
+
+    <Membrane distance="1.4" mass="1.0" stiffness="150.0" bondLength="1.4" type="0" cutOffRadius="4">
+        <position x="24.0" y="24.0" z="65.0"/>
+        <dimension x="60" y="60" z="1"/>
+        <velocity x="1.0" y="2.0" z="3.0"/>
+    </Membrane>
+
+    <Membrane distance="1.8" mass="1.0" stiffness="300.0" bondLength="1.8" type="1" cutOffRadius="4">
+        <position x="15.0" y="15.0" z="15.0"/>
+        <dimension x="50" y="1" z="50"/>
+        <velocity x="0.0" y="0.0" z="3.0"/>
+    </Membrane>
+
+    <InputFile path="./checkpoint.txt"/>
+</Simulation_XML>
