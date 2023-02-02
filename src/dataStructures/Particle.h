@@ -203,6 +203,8 @@ class Particle {
    */
   void applyForce(const std::array<double, 3> &force);
 
+  void setF(const std::array<double, 3> &force) { f = force; }
+
   /**
    * Sets the structure membership of the current particle
    * @param structureId_ The structure the particle is a member of

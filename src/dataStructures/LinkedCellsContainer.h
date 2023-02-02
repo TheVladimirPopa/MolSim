@@ -121,6 +121,8 @@ class LinkedCellsContainer : public IContainer {
 
   void push_back(MembraneStructure membrane);
 
+  bool isDense();
+
   /**
    * Reorders the datastructure to make sure all particles are in the correct
    * cell, is automatically called before each forEachPair call

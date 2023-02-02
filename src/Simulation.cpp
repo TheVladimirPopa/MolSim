@@ -27,6 +27,24 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
     ++updateCount;
   }};
   std::function<void(P)> updateV{[&model](P p) { model.updateV(std::forward<P>(p)); }};
+
+  double avgVelocityPrevious{0};
+  double avgVelocityCurrent{0};
+  double criticalSpeed{3e3 * deltaT};
+  if (particles.isDense()) {
+    updateV = [&model, &avgVelocityCurrent, &avgVelocityPrevious, criticalSpeed](P p) {
+      model.updateV(std::forward<P>(p));
+
+      auto velocityProduct = ArrayUtils::dotProduct(p.v);
+      if (avgVelocityPrevious > criticalSpeed && velocityProduct > (10 * avgVelocityPrevious)) {
+        spdlog::info("Outlier adjusted.");
+        p.v = (sqrt(avgVelocityPrevious / velocityProduct) * p.v);
+      }
+
+      avgVelocityCurrent += velocityProduct;
+    };
+  }
+
   std::function<void(P)> updateF;
   if (gravitationalConstant == 0) {
     updateF = [](P p) { p.updateForces(); };
@@ -87,6 +105,12 @@ void Simulation::simulate(IModel& model, IContainer& particles, IWriter& fileWri
     if (statistics && iteration % statWriter.getFrequency() == 0 && iteration != 0) {
       statWriter.writeFile(statWriter.getFilename(), iteration, particles);
       particles.forEach(registerLastPosition);
+    }
+
+    if (particles.size() != 0) {
+      avgVelocityCurrent /= particles.size();
+      avgVelocityPrevious = avgVelocityCurrent;
+      avgVelocityCurrent = 0;
     }
 
     current_time += deltaT;

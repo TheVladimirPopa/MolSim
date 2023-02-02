@@ -261,6 +261,24 @@ std::vector<CubeSide> getLeadingSides(std::vector<LinkedCellsBoundary> boundarie
   return leadingSides;
 }
 
+bool LinkedCellsContainer::isDense() {
+  if (!hasPeriodicBoundaries) return false;
+
+  double cubicSize = cubeSize[0] * cubeSize[1] * cubeSize[2];
+
+  bool noEmptyCells{true};
+  for (size_t index = 0; index < cells.size(); ++index) {
+    if (cells[index].type == CellType::halo) continue;
+
+    if (cells[index].particles.empty()) {
+      noEmptyCells = false;
+      break;
+    }
+  }
+
+  return noEmptyCells && (size() / cubicSize) > 0.4;
+}
+
 void LinkedCellsContainer::linkBoundaryToHaloCells() {
   // Periodic boundaries musst occur in pairs. E.g. a LEFT + RIGHT periodic boundary.
 
