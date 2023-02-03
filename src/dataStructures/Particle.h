@@ -226,7 +226,7 @@ class Particle {
 
   /**
    * Sets id of particle
-   * @param particleId_ Id of particle
+   * @param id Id of particle
    * @note This is used for the membrane
    */
   void setId(size_t id) { particleId = id; }

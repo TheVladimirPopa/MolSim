@@ -31,8 +31,13 @@ class StatisticsWriter : public IWriter {
 
  public:
   /**
-   * Constructs a public StatistiWriter for the given container
+   * Constructs a public StatisticWriter for the given container
    * @param particleContainer the given IContainer (either VectorContainer or LinkedCellsContainer
+   * @param frequency the frequency in which the writer should be invoked
+   * @param filename the resulting filename prefix
+   * @param rdfDeltaR The resolution of the rdf buckets
+   * @param rdfStart The start radius where the first bucket begins
+   * @param rdfEnd The radius where the last bucket begins
    */
   explicit StatisticsWriter(IContainer &particleContainer, int frequency, const std::string &filename, double rdfDeltaR,
                             double rdfStart, double rdfEnd);

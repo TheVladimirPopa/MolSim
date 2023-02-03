@@ -119,8 +119,6 @@ class MembraneStructure {
    * Applies the correct inner structure force selected based on indices.
    * @param p1 Particle 1
    * @param p2 Particle 2
-   * @param indexP1 Index of particle 1
-   * @param indexP2 Index of particle 2
    */
   void applyForce(Particle& p1, Particle& p2);
 

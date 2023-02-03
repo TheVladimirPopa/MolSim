@@ -20,7 +20,7 @@ namespace SimulationUtils {
 /**
  * Makes a container that can hold particles
  * @param type Type of the container (vector or linked cells)
- * @param container A container that can be returned (this is a placeholder to stream line the interface for now)
+ * @param spec The arguments for which the container should be build
  * @return The container
  */
 std::unique_ptr<IContainer> makeContainer(ContainerType type, LinkedCellArg *spec);
@@ -59,6 +59,7 @@ void loadCheckpoint(IContainer &container, std::string checkpointPath);
  * @param modelType The type of the model (e.g. lennard-jones)
  * @param deltaT The delta_t which is used by the model
  * @param cutOff The cutoff radius which is used by the model
+ * @param radius_l The radius used for the smoothed lennardJones model
  * @return The prepared model
  */
 std::unique_ptr<IModel> makeModel(ModelType modelType, double deltaT, double cutOff = 1e9, double radius_l = 1e9);
@@ -80,7 +81,7 @@ std::unique_ptr<Thermostat> makeDefaultThermostat(IContainer &container);
 /**
  * Makes a new thermostat
  * @param container The container that receives the thermostat
- * @param ThermostatArg The arguments for the thermostat
+ * @param thermostat The arguments for the thermostat
  * @return The thermostat
  */
 std::unique_ptr<Thermostat> makeThermostat(IContainer &container, ThermostatArg thermostat);

@@ -26,6 +26,11 @@ class Simulation {
    * @param thermostat The thermostat that controls the temperature
    * @param gravitationalConstant The factor of the gravitational force that gets applied
    * to a particle every iteration
+   * @param gasSimulation activates our velocity outlier removal
+   * @param statistics activates statistics writer
+   * @param checkpointing activates checkpoint writing
+   * @param cpfWriter the used writer for checkpoints
+   * @param statWriter the writer used for statitics
    */
   void simulate(IModel& model, IContainer& particles, IWriter& fileWriter, Thermostat& thermostat,
                 double gravitationalConstant, bool gasSimulation, bool checkpointing, bool statistics,
