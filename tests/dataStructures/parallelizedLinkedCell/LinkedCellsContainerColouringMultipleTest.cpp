@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 #include "utils/TestUtils.h"
 
+#ifdef _OPENMP
 /**
  * Make sure each cell gets processed, but within each colour no race conditions can occur
  */
@@ -80,3 +81,5 @@ TEST(LinkedCellsContainerColouringMultiple, compareResultsToLinkedCells) {
     }
   }
 }
+
+#endif

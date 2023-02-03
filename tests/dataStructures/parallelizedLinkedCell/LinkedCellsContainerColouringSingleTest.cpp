@@ -5,6 +5,7 @@
 
 using v3d = std::array<double, 3>;
 
+#ifdef _OPENMP
 /**
  * Make sure each cell gets processed, but within each colour no race conditions can occur
  */
@@ -74,3 +75,5 @@ TEST(LinkedCellsContainerColouringSingle, compareResultsToLinkedCells) {
     }
   }
 }
+
+#endif
