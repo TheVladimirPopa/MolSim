@@ -28,6 +28,6 @@
 
     <InputFile path="./checkpoint.txt"/>
 
-    <Statistics path="./statistics_Equilibrated_fluid.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
+    <Statistics path="./statistics_Equilibrated_fluid.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="0" rdfEnd="10"/>
 
 </Simulation_XML>

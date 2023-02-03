@@ -18,6 +18,6 @@
 
     <InputFile path="./checkpoint_51.txt"/>
 
-    <Statistics path="./statistics_Cooling.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="1" rdfEnd="10"/>
+    <Statistics path="./statistics_Cooling.txt" frequency="1000" rdfDeltaR="0.1" rdfStart="0" rdfEnd="10"/>
 
 </Simulation_XML>
