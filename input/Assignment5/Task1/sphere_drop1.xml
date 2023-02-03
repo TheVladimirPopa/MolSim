@@ -1,5 +1,5 @@
 <Simulation_XML endTime="150.0" deltaT="0.00075" writeOutFrequency="670" filename="ws5_task1_drop1.vtk" cutOffRadius="4"
-                gravity="0">
+                gravity="0" Model="LennardJones" radius_l="0">
 
     <Particle id="0" epsilon="1.0" sigma="1.2"/>
     <Particle id="1" epsilon="1.0" sigma="1.0"/>
