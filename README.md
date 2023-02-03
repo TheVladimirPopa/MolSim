@@ -105,14 +105,7 @@ OPTIONS:
         -p, --performance
                 Takes a performace measurement of the simulation, 
                 implicitly sets the -n flag and deactivates logging entirely.
-                
-        -r, --hit-rate
-               Measures the hit-rate of the pairwise force calculation.
-               It's defined as the number of pairwise force calculations which 
-               were within the cutoff radius (a hit), divided by the total 
-               number of pairwise force calculations.
-
-        
+                      
         -v, --verbose
                 If specified the log-level is lowered from INFO to DEBUG.
                 If specified twice the log-level is even lowered to TRACE.
@@ -180,8 +173,11 @@ We support XML file input. The file has to include:
 * _(optional)_ a simulationType (containing either Cuboids or Spheres)
 * a containerType, describing the strategy used (either LinkedCell for the linkedCells algorithm or VectorContainer for
   DirectSum)
+    * For parallelization the options `none`,`Locks`, `ColouringSingle` and `ColouringMultiple` are supported
 * when using the linkedCellsContainer cellSize and boundaries have to be specified
 * a thermostat with the appropriate parameters (initialTemp, targetTemp, maxChangeTemp, periodLength, dimension)
+    * If you don't have limitations for the maxChangeTemp use a negative value for it to deactivate this limitaion
+    * If you want to deactivate the thermostat completely, use periodLength 0
 * an input file (by default checkpoint.txt, in order to perform checkpointing)
 
 The following is an example of how an XML input file (e.g. for cuboid in the file ```./input/input_xml_example```:
